@@ -1,0 +1,4347 @@
+/*! normalize.css v3.0.1 | MIT License | git.io/normalize */
+html{
+ font-family:sans-serif;/* 1 */
+ -ms-text-size-adjust:100%;/* 2 */
+ -webkit-text-size-adjust:100%;/* 2 */
+}
+body{margin:0;}
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block;}
+audio,canvas,progress,video{display:inline-block;/* 1 */
+ vertical-align:baseline;/* 2 */
+}
+audio:not([controls]){display:none;height:0;}
+[hidden],template{display:none;}
+a{background:transparent;}
+a:active,a:hover{outline:0;}
+abbr[title]{border-bottom:1px dotted;}
+b,strong{font-weight:bold;}
+dfn{font-style:italic;}
+h1{font-size:2em;margin:0.67em 0;}
+mark{background:#ff0;color:#000;}
+small{font-size:80%;}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline;}
+sup{top:-0.5em;}
+sub{bottom:-0.25em;}
+img{border:0;}
+svg:not(:root){overflow:hidden;}
+figure{margin:1em 40px;}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0;}
+pre{overflow:auto;}
+code,kbd,pre,samp{font-family:monospace,monospace;font-size:1em;}
+button,input,optgroup,select,textarea{color:inherit;/* 1 */
+ font:inherit;/* 2 */
+ margin:0;/* 3 */
+}
+button{overflow:visible;}
+button,select{text-transform:none;}
+button,html input[type="button"],/* 1 */
+input[type="reset"],input[type="submit"]{-webkit-appearance:button;/* 2 */
+ cursor:pointer;/* 3 */
+}
+button[disabled],html input[disabled]{cursor:default;}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0;}
+input{line-height:normal;box-sizing: border-box;}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;/* 1 */
+ padding:0;/* 2 */
+}
+input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{height:auto;}
+input[type="search"]{-webkit-appearance:textfield;/* 1 */
+ -moz-box-sizing:content-box;-webkit-box-sizing:content-box;/* 2 */
+ box-sizing:content-box;}
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none;}
+fieldset{border:1px solid #c0c0c0;margin:0 2px;padding:0.35em 0.625em 0.75em;}
+legend{border:0;/* 1 */
+ padding:0;/* 2 */
+}
+textarea{overflow:auto; resize:none;}
+optgroup{font-weight:bold;}
+table{border-collapse:collapse;border-spacing:0; position:relative;}
+td,th{padding:0;}
+
+/**
+	base
+ */
+html,body { color:#555555; font-size: 12px; font-family: "Microsoft YaHei"; } 
+ul,li,dl,dt,dd { list-style: none; padding:0px; margin:0px;}
+
+select,
+input[type=text] {
+    height: 24px;
+    line-height: 24px;
+    padding: 0px 5px;
+    border:1px solid #D7D7D7;
+    
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+.border-box {
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+a { color:#4477aa; text-decoration: none;}
+a {color:#4477aa;}
+a:hover   {color:#ee5544;}
+
+.operate { 
+	color:#4477aa; 
+/*    border-bottom:1px dotted #4477aa; */
+	margin-right: 10px; 
+}
+
+hr { margin-top:10px; margin-bottom: 10px; border:none; border-top:1px solid #EEEEEE;}
+
+.em {color:#ee5544;}
+.em-2 { color:#60983D;}/*绿色*/ 
+.em-3 { color:#FF9900;}/*橙色*/ 
+.tr { text-align: right !important;}
+.tl { text-align: left !important;}
+.dialog-content .tablelist { table-layout:fixed;}
+.dialog-content .tablelist td .tl {
+	white-space:nowrap;
+    text-overflow:ellipsis;
+    -o-text-overflow:ellipsis;
+    overflow: hidden;
+}
+.tc { text-align: center !important;}
+.col-2 { width:50% !important;}
+
+.shoulder {
+	position: relative;
+	text-align: right;
+	margin-bottom:5px;
+}
+.shoulder > * {
+	margin-left: 10px;
+}
+
+.nopadding { padding:0px !important;}
+
+.inline-block {
+	position: relative;
+	display: inline-block !important;
+	*display: inline !important;
+	zoom: 1;
+}
+.block { display:block;}
+
+.notice-s {
+	position:relative;
+	padding-left:16px;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -129px 3px no-repeat;
+	font-size:12px;
+	color:#FF6501;
+}
+.notice-w {
+    position: relative;
+    padding-left: 22px;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -129px -590px no-repeat;
+    color: #EE5C44;
+    font-weight: bold;
+}
+
+.notice-light {
+    position: relative;
+    padding-left: 18px;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/bulb.png) 0px 1px no-repeat;
+    color: #FF6501;
+}
+
+.notice-grey {
+	position:relative;
+	margin-top:4px;
+	color:#A0A0A0;
+	font-size:12px;
+}
+.notice-red {
+	border: 2px solid #FFCCBB;
+	background: #FFFFFF;
+	padding: 6px 10px;
+	line-height: 20px;
+	text-align: left;
+	position: relative;
+	color: #EF5742;
+}
+.notice-2 {
+    position:relative;
+    color:#999999;
+    font-size:12px;
+}
+.notice-2 span {
+    color:#FF6600;  
+    background-image: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/bulb.png);
+    background-position: left 1px; 
+    background-repeat: no-repeat;
+    padding-left:18px;
+}
+
+.light-grey {
+	color:#dddddd;
+}
+.red{
+    color: #FF0101;
+}
+.dialog .notice {
+	color:#767676;
+	font-size:12px;
+}
+.text-break {
+	word-wrap: break-word; 
+	word-break:break-all;
+}
+
+.loading {
+	background-image:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/loading.gif);
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+.loading-2 {
+	background-image:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/loading_2.gif);
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.float-right {
+    float:right;
+}
+
+
+.goto-address .goto {
+    padding-left:18px;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -132px -1473px no-repeat;
+    color:#6280B3;
+    font-size:14px;
+    font-weight: bolder;
+}
+.goto-address .country {
+    font-size:14px;
+}
+.goto-address .address {
+    color: #888888;
+    margin-left:10px;
+    padding-left:10px;
+    border-left: 1px solid #D0D0D0;
+}
+
+.margin-top-10 { margin-top:10px; }
+.margin-top-20 { margin-top:20px; }
+.margin-top-30 { margin-top:30px; }
+.margin-bottom-10 { margin-bottom:10px; }
+.margin-bottom-20 { margin-bottom:20px; }
+.margin-bottom-30 { margin-bottom:30px; }
+.margin-left-10 { margin-left: 10px; }
+.margin-left-20 { margin-left: 20px; }
+.margin-left-30 { margin-left: 30px; }
+.no-margin-top {
+    margin-top: 0px !important;
+}
+
+.space-20 {
+    padding:20px;
+}
+
+.filter-down-arrow {
+    position:relative;
+    padding-right:8px;
+}
+.filter-down-arrow > i {
+    border:4px solid transparent;
+    border-top: 5px solid #4477aa;
+    position:absolute;
+    right:0px;
+    top:50%;
+    margin-top:-2px;
+}
+
+/**
+  icon
+*/
+.icon {
+	position: relative;
+	display: inline-block;
+	*zoom:1;
+	*display: inline;
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) 0px 0px no-repeat;
+}
+.icon.dropdown-es { 
+	width:8px;
+	height:5px;
+	background-position: -20px -80px;
+}
+.icon.dropdown-s { 
+	width:10px;
+	height:6px;
+	background-position: -30px -80px;
+}
+.icon.dropup-m {
+	width:15px;
+	height:6px;
+	background-position: 0px -80px;
+}
+.icon.dropleft-es {
+	width:6px;
+	height:10px;
+	background-position: -49px -80px;
+}
+.icon.downarrow {
+	width:15px;
+	height:7px;
+	background-position: -70px -70px;
+}
+
+.icon.dustbin{
+    width: 12px;
+    height: 14px;
+    background-position: -131px -1136px;
+}
+
+.icon.filter{
+    width: 14px;
+    height: 14px;
+    background-position: -131px -1049px;
+}
+
+.icon.user {
+	width:11px;
+	height:11px;
+	background-position: 0px -100px;
+}
+.icon.user-m {
+	width:20px;
+	height:16px;
+	background-position: -126px -708px;
+}
+.icon.local {
+	width:10px;
+	height:14px;
+	background-position: -20px -100px;
+}
+.icon.ontime {
+	width:24px;
+	height:24px;
+	background-position: 0px -130px;
+}
+.icon.underway {
+	width:24px;
+	height:24px;
+	background-position: -30px -130px;
+}
+.icon.delayed {
+	width:24px;
+	height:24px;
+	background-position: -60px -130px;
+}
+.icon.lost {
+	width:24px;
+	height:24px;
+	background-position: -70px -200px;
+}
+.icon.search {
+	width:16px;
+	height:16px;
+	background-position: 0px -170px;
+}
+.icon.search-min{
+    width:16px;
+    height:16px;
+    background-position: 0px -889px;
+}
+.icon.circle-green{
+    width: 12px;
+    height: 12px;
+    background-position: -18px -891px;
+}
+.icon.circle-red{
+    width: 12px;
+    height: 12px;
+    background-position: -37px -891px;
+}
+.icon.circle-white{
+    width: 12px;
+    height: 12px;
+    background-position: -57px -891px;
+}
+
+.icon.uploadfile {
+	width:13px;
+	height:12px;
+	background-position: -130px -150px;
+}
+.icon.plus-l {
+	width:19px;
+	height:19px;
+	background-position: -67px -170px;
+}
+.icon.uparrow-m {
+	width:15px;
+	height:16px;
+	background-position: -100px -170px;
+}
+.icon.uparrow-s {
+	width:16px;
+	height:10px;
+	background-position: 0px -600px;
+}
+.icon.datepicker {
+	width:18px;
+	height:18px;
+	background-position: 0px -200px;
+}
+.icon.item {
+	width: 20px;
+	height: 20px;
+	background-position: -120px -120px;
+}
+.icon.calc {
+	width: 22px;
+	height: 22px;
+	background-position: -120px -430px;
+}
+.icon.warning {
+	width: 22px;
+	height: 23px;
+	background-position: -120px -220px;
+}
+.icon.warning-2{
+	width: 20px;
+    height: 20px;
+	background-position:-129px -590px;
+}
+.icon.success {
+	width: 22px;
+	height: 22px;
+	background-position: -120px -191px;
+}
+.icon.import {
+	width: 22px;
+	height: 22px;
+	background-position: -120px -400px;
+}
+.icon.del {
+	width: 22px;
+	height: 22px;
+	background-position: -90px -120px;
+}
+.icon.del-1 {
+    width: 24px;
+    height: 24px;
+    background-position: -97px -563px;
+    vertical-align: middle;
+}
+.icon.eye {
+	width: 20px;
+	height: 10px;
+	background-position: -130px -380px;
+}
+.icon.add {
+	width: 14px;
+	height: 12px;
+	background-position: -130px -460px;
+}
+.icon.edit {
+	width: 14px;
+	height: 15px;
+	background-position: -130px -100px;
+	vertical-align: middle;
+}
+.icon.edit-1 {
+    width: 24px;
+    height: 24px;
+    background-position: -65px -563px;
+    vertical-align: middle;
+}
+.icon.notice {
+	width: 18px;
+	height: 18px;
+	background-position: -130px -620px;
+}
+.icon.dollar{
+	width:20px;
+	height:20px;
+	background-position: -126px -732px;
+}
+.icon.help{
+	width:22px;
+	height:22px;
+	background-position: -128px -648px;
+}
+.icon.eight{
+	width:22px;
+	height:18px;
+	background-position: -128px -680px;
+}
+.icon.cloud{
+    width: 14px;
+    height: 14px;
+    background-position: -130px -1159px;
+}
+.icon.A{
+	width:15px;
+	height:15px;
+	background-position: -0px -570px;
+}
+.icon.B{
+	width:15px;
+	height:15px;
+	background-position: -20px -570px;
+}
+.icon.V{
+	width:15px;
+	height:15px;
+	background-position: -40px -570px;
+}
+.icon.member-b{
+	width:20px;
+	height:20px;
+	background-position: -126px -762px;
+}
+.icon.phone{
+	width:20px;
+	height:20px;
+	background-position: -127px -792px;
+}
+.icon.anchor{
+	/*width:18px;
+	height:18px;
+	background-position: -127px -793px;*/
+}
+.icon.clock {
+	width:18px;
+	height:18px;
+	background-position: -127px -1015px;
+}
+.icon.print{
+	width:18px;
+	height:18px;
+    background-position: 0px -912px;
+}
+.icon.add-out-muli {
+	width:14px;
+	height:14px;
+	background-position: -129px -149px;
+}	
+a:hover .icon.add-out-muli {
+	width:14px;
+	height:14px;
+	background-position: -126px -842px;
+}	
+.icon.add-in-muli {
+	width:14px;
+	height:14px;
+	background-position: -126px -862px;
+}
+a:hover .icon.add-in-muli {
+	width:14px;
+	height:14px;
+	background-position: -126px -882px;
+}
+
+.icon.add-out-single {
+	width:14px;
+	height:14px;
+	background-position: -126px -902px;
+}	
+a:hover .icon.add-out-single {
+	width:14px;
+	height:14px;
+	background-position: -126px -922px;
+}	
+.icon.add-in-single {
+	width:14px;
+	height:14px;
+	background-position: -126px -942px;
+}
+a:hover .icon.add-in-single {
+	width:14px;
+	height:14px;
+	background-position: -126px -962px;
+}	
+
+.icon.dollor-e{
+	width:15px;
+	height:15px;
+	background-position: -126px -822px;
+}
+.icon.normal-inbound {
+    width:18px;
+    height:18px;
+    background-position: -129px -1285px;
+}
+.icon.domestic-inbound {
+    width:18px;
+    height:18px;
+    background-position: -129px -1314px;
+}   
+.icon.overseas-inbound {
+    width:18px;
+    height:18px;
+    background-position: -129px -1344px;
+}
+.icon.normal-lg-inbound {
+    width:40px;
+    height:37px;
+    background:url(imgs/normal-lg-inbound.png) center center no-repeat;
+}
+.icon.domestic-lg-inbound {
+    width:40px;
+    height:37px;
+    background:url(imgs/domestic-lg-inbound.png) center center no-repeat;
+}   
+.icon.overseas-lg-inbound {
+    width:40px;
+    height:37px;
+    background:url(imgs/overseas-lg-inbound.png) center center no-repeat;
+}
+
+/*AutoRulesSetting*/
+.check-icon{
+    padding-left: 26px;
+    background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -126px -1073px no-repeat;
+}
+.checked-icon{
+    padding-left: 26px;
+    background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -126px -1108px no-repeat;
+}
+
+.icon.up {
+    width:16px;
+    height: 16px;
+    background: url(imgs/icons.png) -132px -1500px no-repeat;
+    vertical-align: middle;
+}
+
+.clock {
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -131px -1425px no-repeat;
+    padding-left:20px;
+}
+
+/*首页*/
+.icon.MMP {
+	width: 16px;
+	height: 16px;
+	background-position: 0px 0px;
+}
+li:hover .icon.MMP,
+.on .icon.MMP {
+	background-position: 0px -20px;
+}
+/*库存*/
+.icon.MWO {
+	width: 18px;
+	height: 16px;
+	background-position: -20px 0px;
+}
+li:hover .icon.MWO,
+.on .icon.MWO {
+	background-position: -20px -20px;
+}
+/*海外仓*/
+.icon.MWI {
+	width: 18px;
+	height: 16px;
+	background-position: -40px 0px;
+}
+li:hover .icon.MWI,
+.on .icon.MWI {
+	background-position: -40px -20px;
+}
+.icon.MWH {
+	width: 16px;
+	height: 16px;
+	background-position: -60px 0px;
+}
+li:hover .icon.MWH,
+.on .icon.MWH {
+	background-position: -60px -20px;
+}
+/*结算管理*/
+.icon.MSE {
+	width: 16px;
+	height: 16px;
+	background-position: -80px 0px;
+}
+li:hover .icon.MSE,
+.on .icon.MSE {
+	background-position: -80px -20px;
+}
+/*产品管理*/
+.icon.MPD {
+	width: 16px;
+	height: 16px;
+	background-position: -100px 0px;
+}
+li:hover .icon.MPD,
+.on .icon.MPD {
+	background-position: -100px -20px;
+} 
+/*ISP*/
+.icon.ISP {
+    width: 18px;
+    height: 17px;
+    background-position: 1px -43px;
+}
+li:hover .icon.ISP,
+.on .icon.ISP {
+    background-position: -18px -43px;
+}
+/*金融服务*/
+.icon.FSP {
+    width: 18px;
+    height: 17px;
+    background-position: -40px -43px;
+}
+li:hover .icon.FSP,
+.on .icon.FSP {
+    background-position: -61px -43px;
+}
+/*个人中心*/
+.icon.USER {
+    width: 18px;
+    height: 17px;
+    background-position: -80px -43px;
+}
+li:hover .icon.USER,
+.on .icon.USER {
+    background-position: -99px -43px;
+}
+/*国际送仓*/
+.icon.GlobalTransfer {
+    width: 18px;
+    height: 17px;
+    background-position: -34px -95px;
+}
+li:hover .icon.GlobalTransfer,
+.on .icon.GlobalTransfer {
+    background-position: -56px -95px;
+}
+/*平台同步*/
+.icon.GFS {
+    width: 20px;
+    height: 17px;
+    background-position: -77px -95px;
+}
+li:hover .icon.GFS,
+.on .icon.GFS {
+    background-position: -101px -95px;
+}
+
+input.datepicker {
+    background-image: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/datepicker_icon.png);
+    background-repeat: no-repeat;
+    background-position: right center;
+    border: 1px solid #C7D3E3;
+    height:24px;
+}
+
+[class^='icon-'] {
+    display:inline-block;
+    *display:inline;
+    *zoom:1;
+}
+.icon-ontime-sm {
+    width:18px;
+    height:18px;
+    background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/status.png) 0px 0px no-repeat;
+}
+.icon-underway-sm {
+    width:18px;
+    height:18px;
+    background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/status.png) 0px -37px no-repeat;
+}
+.icon-delayed-sm {
+    width:18px;
+    height:18px;
+    background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/status.png) 0px -74px no-repeat;
+}
+.icon-chart {
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/chart.png) right center no-repeat;
+    padding-right: 14px;
+}
+/**
+  button
+*/
+.btn {
+	position: relative;
+	display: inline-block;
+	*display: inline;
+	zoom: 1;
+	cursor:pointer;
+	color:#FFFFFF;
+	border-radius: 2px;
+	vertical-align: middle;
+	border:none;
+	/* margin-left:10px; */
+	margin-right: 10px;
+}
+a.btn { text-align:center;}
+.btn.disabled {
+	background:#CCCCCC !important;
+}
+.btn.btn-s {
+	font-size:12px;
+	width:100px;
+	height: 24px;
+	line-height: 22px;
+}
+.btn.btn-s-auto {
+  width: auto;
+  padding: 0 20px;
+}
+.btn.btn-s .icon {
+	position: absolute;
+	left:6px;
+	top:4px;
+}
+.btn.btn-s .vline-inline {
+	position: absolute;
+	left:30px;
+	top:8px;
+	border-right: 1px solid #4E658E;
+	height: 10px;
+}
+.btn.btn-s span {
+	display: block;
+	margin-left: 24px;
+}
+.btn.btn-m {
+	font-size:16px;
+	width:160px;
+	height: 34px;
+	line-height: 34px;
+}
+.btn.btn-m .icon {
+	position: absolute;
+	left:10px;
+	top:10px;
+}
+.btn.btn-m .vline-inline {
+	position: absolute;
+	left:34px;
+	top:12px;
+	border-right: 1px solid #4E658E;
+	height: 14px;
+}
+.btn.btn-m span {
+	display: block;
+	margin-left: 28px;
+}
+.btn.btn-l {
+	font-size:16px;
+	width: 160px;
+	height: 46px;
+	line-height: 46px;
+}
+
+.btn.btn-blue {
+	color:#FFFFFF;
+	background:#425C88;
+}
+.btn.btn-blue:hover {
+	color:#FFFFFF;
+	background: #2C406A;
+}
+.btn.btn-blue:active {
+	color:#FFFFFF;
+	background: #1A2E53;
+}
+
+.btn.btn-red {
+	background: #EF6750;
+	color:#ffffff;
+}
+.btn.btn-red .vline-inline { border-right:1px solid #F58E7F !important;}
+.btn.btn-red:hover {
+	background: #EF4F34;
+	color:#ffffff;
+}
+.btn.btn-red:active {
+	background:#EF3A1C;
+	color:#ffffff;
+}
+
+.btn.btn-grey {
+	background:#E2E2E2;
+	color:#555555;
+}
+
+.btn.btn-grey:hover {
+	background: #CDD6E5;
+	color:#555555;
+}
+.btn.btn-grey:active {
+	background:#BAC4D9;
+	color:#555555;
+}
+.btn.btn-oval {
+    width:161px;
+    height:40px;
+    border-radius: 20px;
+    line-height: 40px;
+    font-size:14px;
+    background-color:#6280B3;
+}
+.btn.btn-oval:hover,
+.btn.btn-oval:active {
+    background-color:#6280B3;
+}
+
+.tools {
+	position: absolute;
+	right: 0px;
+	top:0px;
+	vertical-align: middle;
+}
+.tools .icon {
+	vertical-align:baseline !important;
+}
+
+.fileupload {
+    position:relative;
+    display:inline-block;
+    width: 88px;
+    height:88px;
+    line-height: 88px;
+    text-align: center;
+    background:#FFFFFF;
+    vertical-align: top;
+    margin:10px 20px 10px 0px;
+}
+
+.fileupload img {
+    position:relative;
+    max-width: 88px;
+    max-height: 88px;
+    vertical-align: middle;
+    margin-top:-4px;
+}
+.fileupload input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    -ms-filter: 'alpha(opacity=0)';
+    font-size: 200px;
+    direction: ltr;
+    cursor: pointer;
+}
+.fileupload .file-wrap {
+    position:absolute;
+    width:100%;
+    height:100%;
+    left:0px;
+    top:0px;
+    overflow: hidden;
+}
+.fileupload .delete {
+    position:absolute;
+    width:23px;
+    height:23px;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/delete.png) center no-repeat;
+    top: -10px;
+    right: -10px;
+    z-index: 2;
+    display:none;
+    
+}
+.fileuploader {
+    display:none;
+}
+
+.fileupload-demo {
+    position:relative;
+    display:inline-block;
+}
+.fileupload-demo .tips {
+    width: 310px;
+    display:inline-block;
+    margin-top:10px;
+    color:#FF6600;
+    font-size:12px;
+    padding-left: 18px;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/bulb.png) 0px 1px no-repeat;
+}
+
+.mainnav { 
+	position: relative; 
+	font-size: 15px;
+	font-weight: bold;
+	border: 1px solid #C7D3E3;
+	border-top:4px solid #55709B;
+	z-index: 10;
+	padding:2px 50px 2px 0px;
+}
+.mainnav > li {
+	position: relative;
+	display: inline-block;
+	*display: inline;
+	zoom: 1;
+	margin-right: 20px;
+	border: 1px solid transparent;
+}
+.mainnav > li > a .icon {
+	position: absolute;
+	left:10px;
+	top:50%;
+	margin-top:-9px;
+}
+.mainnav > li > a {
+	position: relative;
+	color:#444444;	
+	display: block;
+	*display: inline;
+	zoom: 1;
+	padding: 6px 10px 6px 34px;
+}
+.mainnav > li:last-child { margin-right: auto;}
+
+.mainnav > li:hover {
+	border:1px solid #C0C7E1;
+	z-index: 19;
+}
+.mainnav > li:hover a {
+	background: #ffffff;
+	z-index: 20;
+}
+.mainnav > li:hover > a,
+.mainnav > li.on > a {
+	color:#ee5544;
+}
+.mainnav .subnav {
+	position: absolute;
+	left:-1px;
+	top:100%;
+	margin-top: -4px;
+	width: 480px;
+	padding: 0px 10px 6px;
+	border:1px solid #C0C7E1;
+	display: none;
+	background: #ffffff;
+}
+.mainnav > li:hover .subnav { 
+	display: block; 
+	zoom: 1;
+	z-index:19;
+}
+.mainnav .subnav dl {
+	padding:4px;
+	border-top:1px solid #DEDDEF;
+}
+.mainnav .subnav dl:first-child {
+	border-top: none;
+}
+.mainnav .subnav dl dt {
+	color:#444444;
+	padding:4px 0px;
+}
+.mainnav .subnav dl dt .icon {
+	top:-2px;
+	/* display: none; */
+	background-position: -130px -580px;
+}
+.mainnav .subnav dl dt strong {
+	font-size: 13px;
+}
+.mainnav .subnav dl dd {
+	position: relative;
+	display: inline-block;
+	*display: inline;
+	zoom:1;
+	width: 140px;
+	font-size: 12px;
+	font-weight: normal;
+	padding:4px 0px 4px 16px;
+}
+.mainnav .subnav dl dd:hover {
+	background: #D6DEF1;
+}
+.mainnav .subnav dl a {
+	color:#555555;
+	background: none;
+	display: block;
+	height: 100%;
+}
+.mainnav .subnav dl dt,
+.mainnav .subnav dl dd {
+    vertical-align: top;
+}
+.mainnav > li.not-subnav:hover {
+    border-color:transparent;
+}
+.mainnav > li.not-subnav .subnav {
+    display: none;
+}
+/**
+ * sidenav
+ */
+.sidenav {
+	position:relative;
+	width: 170px;
+	min-height: 430px;
+	border-radius: 2px 2px 0px 0px;
+	border:1px solid #C7D3E3;
+	background: #F9F9F9;
+	float: left;
+
+} 
+.sidenav .sidenav-hd {
+	position: relative;
+	background: #55709B;
+	color: #FDFDFF;
+	padding:6px 10px;
+	margin:-1px;
+	width: 152px;
+	border-radius: 2px 2px 0px 0px;
+}
+.sidenav .sidenav-hd strong {
+	font-size: 14px;
+}
+.sidenav .sidenav-bd {
+	position: relative;
+}
+.sidenav .sidenav-bd dl {
+	padding:4px 10px 10px;
+	border-top:1px solid #DEDDEF;
+}
+.sidenav .sidenav-bd dl:first-child {
+	border-top: none;
+}
+.sidenav .sidenav-bd dl dt {
+	position:relative;
+	color:#222222;
+	padding:4px 0px;
+}
+.sidenav .sidenav-bd dl dt .icon {
+	position:relative;
+	top:6px;
+	*margin-right: 6px;
+	vertical-align:top;
+}
+.sidenav .sidenav-bd dl dt strong {
+	font-size: 13px;
+	word-wrap: break-word; 
+	width:130px;
+}
+.sidenav .sidenav-bd dl dd {
+	font-size: 12px;
+	padding:3px 2px 3px 14px;
+	border-radius: 2px;
+}
+.sidenav .sidenav-bd dl dd:hover {
+	background: #D6DEF1;
+}
+.sidenav .sidenav-bd dl dd a {
+	display: block;
+	color:#555555;
+	background:none;
+}
+.sidenav .sidenav-bd dl dd.on {
+	background: #D6DEF1;
+	border: 1px solid #CBD7F1;
+}
+.sidenav .sidenav-bd dl dd.on a{
+	color:#222222;
+}
+
+/**
+ * .tablelist
+ */
+.tablelist {
+	border:1px solid #C7D3E3;
+	width: 100%;
+	background:#FFFFFF;
+	text-align:center;
+	margin:10px 0px;
+}
+.tablelist tr { width:100%;}
+.tablelist tr th {
+	background:#EDEEF2;
+	color:#4C4C4C;
+    word-wrap: break-word;
+}
+.tablelist tr th.sort {
+    cursor:pointer;
+    background:#EDEEF2 url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/sort_both.png) right center no-repeat;
+}
+.tablelist tr th.asc {
+    background-image:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/sort_asc.png);
+}
+.tablelist tr th.desc {
+    background-image:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/sort_desc.png);
+}
+.tablelist tbody > tr:hover { background: #F9F9F9; }
+.tablelist tr th,
+.tablelist tr td {
+	padding:10px 2px;
+	border-bottom:1px solid #C7D3E3;
+}
+.tablelist tr th.tl,
+.tablelist tr td.tl,
+table.tl tr th,
+table.tl tr td{
+    padding-left: 10px;
+}
+.tablelist tr.nobottomborder td {
+	border-bottom:none !important;
+}
+.tablelist tr td input[type=text] {
+	width: 40px;
+	padding:2px 10px;
+	text-align: right;
+	border:1px solid #C7D3E3;
+}
+.tablelist tr th > .tr ,
+.tablelist tr td > .tr {
+	position:relative;
+	margin-right:10px;
+}
+.tablelist tr th > .tl ,
+.tablelist tr td > .tl {
+	position:relative;
+	margin-left:10px;
+}
+.tablelist tr td .novalid {
+	position:relative;
+	text-align:left;	
+}
+.tablelist tr td div.error {
+	border:2px solid #FFCCBB;
+	background:#FFFFFF;
+	padding:4px 6px;
+	text-align:left;
+	position:absolute;
+	top:-28px;
+	right:0px;
+	color:#EE5543;
+	white-space:nowrap;
+}
+.tablelist tr td .novalid div.error {
+	left:0px;
+	right:auto;
+}
+.tablelist tbody tr td .edit {
+	visibility:hidden;
+}
+.tablelist tbody tr:hover td .edit {
+	visibility: visible;
+}
+.tablelist tbody tr td .text {
+	position:relative;
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+	width:60px;
+	height: 20px;
+	line-height: 20px;
+	vertical-align: middle;
+	margin-right: 4px;
+	text-align: right;
+}
+.tablelist tbody tr td .text input {
+	position: relative;
+	left: 0px;
+	top:0px;
+	width: 100%;
+	height: 100%;
+	padding:0px 4px;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-ms-box-sizing:border-box;
+	-o-box-sizing:border-box;
+	box-sizing:border-box;
+}
+.tablelist tfoot tr td { 
+	position: relative;
+	background:#F5F5F5;
+}
+.tablelist tfoot tr td .showMore {
+	position: relative;	
+	text-align: center;
+	display: block;
+	width: 100%;
+}
+.tablelist.bordered {
+    border:1px solid #C7D3E3;
+}
+.tablelist.bordered td, .tablelist.bordered th {
+    border:1px solid #C7D3E3;
+}
+.tablelist.table-form tr td input[type=text] {
+    width:90%;
+    text-align: left;
+
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+
+.tablelist-inner thead th,
+.tablelist-inner tbody td{
+	padding: 4px 2px;
+}
+
+/**
+ * .tab
+ */
+.tab { 
+	position: relative; 
+	height:30px;
+	top: -1px;
+	margin-bottom: -1px;
+}
+.tab > div {
+	position:absolute;
+	height:32px;
+	line-height:32px;
+	right:0px;
+	bottom:0px;
+}
+.tab > div > a {
+	margin-left: 10px;
+}
+.tab > li,
+.tab > ul > li {
+	position: relative;
+	display: inline-block;
+	*display:inline;
+	zoom: 1;
+	margin:0px 4px 2px;
+	*margin-right:8px;
+	height: 30px;
+	line-height: 31px;
+	font-size: 14px;
+	border-bottom: 1px solid #D7DDE3;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/button_bg.png) 0px -588px repeat-x;
+}
+.tab > li span,
+.tab > ul > li span {
+	position: relative;
+	padding:0px 20px;
+	color:#586171;
+}
+.tab > li i,
+.tab > ul >li i{
+    font-style: normal;
+}
+.tab > li .before,
+.tab > li .after,
+.tab > ul > li .before,
+.tab > ul > li .after {
+	position: absolute;
+	height: 100%;
+	width: 4px;
+	top:0px;
+	border-bottom: 1px solid #D7DDE3;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/button_bg.png) 0px -512px no-repeat;
+}
+.tab > li .before,
+.tab > ul > li .before {
+	left: -4px;
+	background-position: 0px -548px;
+}
+.tab > li .after,
+.tab > ul > li .after {
+	right: -4px;
+	background-position: -4px -548px;
+}
+.tab > li.on,
+.tab > ul > li.on { background-position: 0px -508px; margin-left:8px;*margin-left:4px;}
+.tab > li.on:first-child,
+.tab > ul > li.on:first-child { margin-left:4px;}
+.tab > li.on span,
+.tab > ul > li.on span {
+	color:#2e324f;
+	font-weight: bold;
+}
+.tab > li.on .before,
+.tab > ul > li.on .before {
+	background-position: 0px -468px;
+}
+.tab > li.on .after,
+.tab > ul > li.on .after {
+	background-position: -4px -468px;
+}
+.tab-content {
+	position: relative;
+	padding:10px;
+	border:1px solid #C7D3E3;	
+} 
+ 
+.tab-inner {
+	position:relative;
+	margin-top:10px;
+} 
+.tab-inner ul {
+	position:relative;
+	border-bottom:1px solid #BEC9DF;
+}
+.tab-inner li {
+	position: relative;
+	display: inline-block;
+	*display:inline;
+	zoom: 1;
+	height: 30px;
+	line-height: 30px;
+	font-size: 14px;
+	margin:0px 0px -1px 6px;
+	padding:0px 20px;
+	color:#5181B2;
+	cursor:pointer;
+}
+.tab-inner li.on {
+	border:1px solid #BEC9DF;
+	border-top:2px solid #7798CB;
+	border-bottom:1px solid #FFFFFF;
+	color:#333333;
+	font-weight:bold;
+}
+/*.tab-inner li span {
+	position: relative;
+	padding:0px 20px;
+	color:#586171;
+}*/
+.tab-inner .tab-inner-content {
+	position:relative;
+	border-bottom:1px solid #BEC9DF;
+	padding:10px;
+	margin-bottom:20px;
+}
+ 
+
+/**
+ * tooltip
+ */
+.tooltip {
+	position: absolute;
+	z-index: 1030;
+	display: block;
+	visibility: visible;
+	font-size: 12px;
+	line-height: 1.7;
+	border:2px solid #9EB4D9;
+	background: #ffffff;
+}
+.tooltip.in {
+ 
+}
+.tooltip.top {
+  margin-top: -10px;
+  padding: 8px 0;
+}
+.tooltip.right {
+  margin-left: 10px;
+  padding: 0 8px;
+}
+.tooltip.bottom {
+  margin-top: 10px;
+  padding: 8px 0;
+}
+.tooltip.left {
+  margin-left: -10px;
+  padding: 0 8px;
+}
+.tooltip-inner {
+  max-width: 200px;
+  padding: 8px;
+  color: #576371;
+  text-align: left;
+  background-color: #ffffff;
+  border-radius: 4px;
+}
+.tooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+}
+.tooltip.top .tooltip-arrow {
+  bottom: -10px;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 8px 8px 0;
+  border-top-color: #9eb4d9;
+}
+.tooltip.top-left .tooltip-arrow {
+  bottom: 0;
+  left: 8px;
+  border-width: 8px 8px 0;
+  border-top-color: #9eb4d9;
+}
+.tooltip.top-right .tooltip-arrow {
+  bottom: 0;
+  right: 8px;
+  border-width: 8px 8px 0;
+  border-top-color: #9eb4d9;
+}
+.tooltip.right .tooltip-arrow {
+  top: 50%;
+  left: -8px;
+  margin-top: -8px;
+  border-width: 8px 8px 8px 0;
+  border-right-color: #9eb4d9;
+}
+.tooltip.left .tooltip-arrow {
+  top: 50%;
+  right: -8px;
+  margin-top: -8px;
+  border-width: 8px 0 8px 8px;
+  border-left-color: #9eb4d9;
+}
+.tooltip.bottom .tooltip-arrow {
+  top: -10px;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 0 8px 8px;
+  border-bottom-color: #9eb4d9;
+}
+.tooltip.bottom-left .tooltip-arrow {
+  top: 0;
+  left: 8px;
+  border-width: 0 8px 8px;
+  border-bottom-color: #9eb4d9;
+}
+.tooltip.bottom-right .tooltip-arrow {
+  top: 0;
+  right: 8px;
+  border-width: 0 8px 8px;
+  border-bottom-color: #9eb4d9;
+}
+
+/**
+ * .pagination
+ */
+.pagination {
+	position: relative;
+	/* width: 610px; */
+	vertical-align: middle;
+}
+.pagination span {
+	font-size: 12px;
+	margin:0px 5px;
+	vertical-align: middle;
+}
+.pagination .page-prev-to-first,
+.pagination .page-next-to-last,
+.pagination .page-prev,
+.pagination .page-next {
+	position: relative;
+	display: inline-block;
+	*display:inline;
+	zoom: 1;
+	width: 22px;
+	height: 22px;
+	vertical-align: middle;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) 0px 0px no-repeat;
+}
+.pagination .page-prev-to-first {
+	background-position: 0px -290px;
+	margin-left:20px;
+	margin-right: 5px;
+}
+.pagination .page-prev-to-first:hover {
+	background-position: 0px -320px;
+}
+.pagination .page-prev-to-first:active {
+	background-position: 0px -350px;
+}
+.pagination .page-next-to-last {
+	background-position: -120px -290px;
+	margin-right:8px;
+	margin-left: 5px;
+}
+.pagination .page-next-to-last:hover {
+	background-position: -120px -320px;
+}
+.pagination .page-next-to-last:active {
+	background-position: -120px -350px;
+}
+.pagination .page-prev {
+	background-position: -40px -290px;
+	margin-right:20px;
+	margin-left: 5px;
+}
+.pagination .page-prev:hover {
+	background-position: -40px -320px;
+}
+.pagination .page-prev:active {
+	background-position: -40px -350px;
+}
+.pagination .page-next {
+	background-position: -81px -290px;
+	margin-left:20px;
+	margin-right: 5px;
+}
+.pagination .page-next:hover {
+	background-position: -81px -320px;
+}
+.pagination .page-next:active {
+	background-position: -81px -350px;
+}
+.pagination .page-prev-to-first.disabled,
+.pagination .page-prev.disabled,
+.pagination .page-next.disabled,
+.pagination .page-next-to-last.disabled {
+	cursor: default;
+}
+.pagination .page-prev-to-first.disabled {
+	background-position: 0px -260px;
+}
+.pagination .page-prev.disabled {
+	background-position: -40px -260px;
+}
+.pagination .page-next.disabled {
+	background-position: -81px -260px;
+}
+.pagination .page-next-to-last.disabled {
+	background-position: -120px -260px;
+}
+
+.pagination select {
+	*vertical-align: middle;
+}
+.pagination input {
+	width:50px;
+	height: 18px;
+	line-height: 18px;
+	text-align: center;
+	color:#ee5544;
+	vertical-align: middle;
+}
+.pagination .btn {
+	letter-spacing: 3px;
+	width:52px;
+	line-height: 100%;
+	color:#ffffff;
+}
+
+.pagination-small-wrap {
+	position: relative;
+	height: 20px;
+	margin-bottom: 10px;
+}
+.pagination-small {
+	position: absolute;
+	right: 0px;	
+	top:0px;
+}
+.pagination-small span {
+	position: relative;
+	display: inline-block;
+	*display: inline;
+	zoom: 1;
+	vertical-align: middle;
+	/*margin:0px 10px;*/
+	width:60px;
+	text-align:center;
+}
+.pagination-small .prev,
+.pagination-small .next {
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) no-repeat;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
+}
+.pagination-small .prev {
+	background-position:5px -865px;
+}
+.pagination-small .prev.disabled {
+	background-position:-15px -865px;
+}
+.pagination-small .next {
+	background-position:-53px -865px;
+}
+.pagination-small .next.disabled {
+	background-position:-33px -865px;
+}
+
+.search-area {
+	position:relative;
+	border: 1px solid #C7D3E3;
+	padding:10px 20px;
+	margin-bottom:10px;
+}
+.search-area .form-group {
+	margin-bottom: auto;
+}
+/**
+ * form-group
+ */
+.form-group {
+	position: relative;
+	display: inline-block;
+	*display: inline;
+	zoom: 1;
+	margin-right: 40px;
+	margin-bottom: 10px;
+	vertical-align: top;
+}
+.form-group .control-label {
+	padding-top:3px;
+}
+.form-group .control-label,
+.form-group .control-wrap {
+	position: relative;
+	display: inline-block;
+	*display: inline;
+	zoom:1;
+	margin-right: 10px;
+}
+.form-group .control-label,
+.form-group .control-wrap input[type=radio],
+.form-group .control-wrap input[type=checkbox] {
+	vertical-align: middle;
+	margin-top: 0.3em;
+}
+.form-group .control-label em {
+	color:#FF583D;
+	font-style: normal;
+	font-weight: bold;
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+	width:0.5em;
+}
+.form-group .control-label:first-child {	
+	width: 70px;
+}
+/*.form-group.checkbox .control-label,
+.form-group.radio .control-label  {	
+	width: auto;
+}*/
+.form-group .control-wrap {
+	vertical-align: top;
+	width: 200px;
+	padding-top: 3px;
+}
+.form-group.checkbox .control-wrap:first-child,
+.form-group.radio  .control-wrap:first-child {
+	width: 20px !important;
+	margin-right: 0px;
+}
+.form-group.checkbox .control-wrap input[type=checkbox],
+.form-group.radio  .control-wrap input[type=radio] {
+	width: 20px !important;
+	vertical-align:middle;
+}
+.form-group .control-wrap.date {
+	width: 100px !important;
+}
+.form-group .control-wrap.datetime {
+	width: 130px !important;
+}
+.form-group .control-wrap > * {
+	width: 100%;
+	vertical-align:middle;
+}
+.form-group .control-wrap .text-label {
+    float:left;
+    margin-top: 0.3em;
+}
+.control-wrap#Exporter_input{
+    width: 600px;
+}
+.control-wrap #Exporter_value{
+    width: 200px;
+}
+.control-wrap #ExportFile{
+    width: 200px;
+}
+
+.form-group .control-wrap select { font-size: 14px;}
+.form-group .control-wrap:last-child {
+	margin-right: auto;
+}
+.form-group .control-wrap .form-addon {
+	position: absolute;
+	width: 22px;
+	height: 22px;
+	right: 0px;
+	top:4px;
+	top:6px \9;
+	text-align: center;
+	vertical-align: middle;
+}
+.form-group .control-wrap .icon {
+	vertical-align: middle;
+}
+.valid-error {
+	font-size: 12px;
+	color:#EE5C44;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/error.png) 0px 0px no-repeat;
+	padding-left:20px;
+}
+.form-group p.error,
+.form-group .control-wrap div.error {
+	position: relative;
+	font-size: 12px;
+	color:#EE5C44;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/error.png) 0px 0px no-repeat;
+	padding-left:20px;
+	margin-top: 4px;
+}
+.form-group .control-wrap.auto,
+.form-group .control-wrap.textarea {
+	width:auto !important;
+}
+.form-group .control-wrap.auto > * {
+	width: auto;
+}
+.form-group .control-wrap  textarea {
+	width:460px;
+	height:60px;
+}
+.form-group .control-wrap input[disabled],
+.form-group .control-wrap select[disabled] {
+	background:#EEEEEE;
+}
+.form-group .control-wrap select[disabled] { 
+	border:1px solid #ABADB3;
+}
+.form-group .control-wrap > .view {
+    display:inline-block;
+    padding-top:3px;
+}
+.file-input {
+	position:relative;
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+	border:1px solid #94A5C3;
+	background:#ffffff;
+	width:320px !important;
+	height:30px;
+	line-height:30px;
+	overflow:hidden;
+	margin-right:20px;
+	vertical-align:middle;
+}
+.file-input label,
+.file-input span {
+	position:absolute;
+	height:100%;
+	top:0px;
+}
+.file-input label {
+	width:86px;
+	background:#EFEEFF;
+	color:#4476A9;
+	text-align:center;
+	border-right:1px solid #94A5C3;
+	cursor:pointer;
+}
+.file-input span { 
+	left:86px;
+	width:224px;
+	padding-left:10px;
+	cursor:text;
+}
+.file-input input[type=file] {
+	position:absolute;
+	/* visibility: hidden; */
+	outline: none;	
+	border:none;
+	background: transparent;
+	opacity: 0;
+	filter:alpha(opacity=0);
+	height:34px;
+	left: 0px;
+	top:0px;
+	width: 320px;
+	cursor: pointer;
+	top:-40px \9;
+	*top:0px;
+	*left:-240px;
+}
+.file-input ~ button {
+	height:32px !important;
+	font-size:14px !important;
+}
+.file-input ~ button i {
+	top:8px !important;
+}
+.file-input ~ button .vline-inline {
+	top:10px !important;
+	height:14px !important;
+}
+.file-input-btn {
+	position: relative;
+	overflow: hidden;
+	color:#4477AA;
+	border-bottom: 1px dotted #4477AA;
+	display: inline-block;
+}
+.file-input-btn label { cursor: pointer; z-index: 5;}
+.file-input-btn input[type=file] {
+	position:absolute;
+	opacity: 0;
+	filter:alpha(opacity=0);
+	cursor: pointer;
+	left:-142px;
+	top:0px;
+	top:-40px \9;
+}
+
+.search-input {
+	margin-right: 0px;
+}
+.search-input .control-wrap {
+	width: 550px;
+}
+.search-input .control-wrap input {
+	width: 550px;
+	height: 26px;
+	font-size: 14px;
+	background: #FDFDFF;
+	border:1px solid #9AAACC;
+	padding-left:10px;
+	padding-right: 30px;
+}
+.search-input .control-wrap .form-addon {
+	position: absolute;
+	right: 0px;
+	top:2px;
+	width: 26px;
+	height: 26px;
+	text-align: center;
+	line-height: 26px;
+	cursor: pointer;
+	display: none;
+}
+.search-input .control-wrap .form-addon .icon {
+	position: relative;
+}
+.search-input .control-label {
+	font-size:14px;
+}
+
+
+
+.step-box {
+	position:relative;
+}
+.step-box > li {
+	position: relative;
+	padding:10px;
+	border:4px solid #DDDDDD;
+	margin-bottom: 6px;
+	overflow: hidden;
+}
+.step-box > li > .step-hd {
+	position: relative;
+}
+.step-box > li > .step-hd strong {
+	font-size: 14px;
+	color:#A0A0A0;
+	vertical-align: middle;
+}
+.step-box > li > .step-hd .step-num {
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -120px -50px no-repeat;
+	display: inline-block;
+	*display: inline;
+	zoom: 1;
+	width: 22px;
+	height: 22px;
+	vertical-align: middle;
+	margin-right: 2px;
+	color:#FFFFFF;
+	font-style: normal;
+	font-weight: bold;
+	font-size: 14px; 
+	line-height: 22px;
+	text-align: center;
+}
+.step-box > li > .step-hd .tools {
+	position: absolute;
+	right: 0px;
+	top:50%;
+	margin-top: -8px;
+	display: none;
+}
+.step-box > li.enEdit > .step-hd .tools {
+	display: block;
+}
+.step-box > li > .step-hd .tools .edit,
+.step-box > li > .step-hd .tools .step-edit  {
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -130px -99px no-repeat;
+	padding-left:20px;
+	color:#96A5C2;
+	margin-right: 10px;
+}
+.step-box > li > .step-bd {
+	position: relative;
+	padding-top: 10px;
+	display: none;
+}
+.step-box > li.on {	
+	border:4px solid #BEC8E1;
+	height:auto;
+}
+.step-box > li.on strong {	
+	color:#333333;
+}
+.step-box > li.on > .step-hd .step-num {
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -121px -20px no-repeat;	 
+}
+.step-box > li.on > .step-bd {
+	display: block;
+}
+
+.item { 
+	position:relative;
+}
+
+
+/**
+ * .dialog
+ */
+.overlayer { 
+	position: fixed;
+	left: 0px;
+	top:0px;
+	width: 100%;
+	height: 100%;
+	z-index: 10001;
+	background-color:rgba(0,0,0,0.5); 
+	filter: progid:DXImageTransform.Microsoft.gradient(startcolorstr=#7F000000,endcolorstr=#7F000000);
+}
+.overlayer .dialog {
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+	top:20%;
+	width: 450px;
+	background: #FDFDFF;
+	border:1px solid #D9D9D9;
+	box-shadow: 0px 0px 3px #C3C3C3; 
+}
+.overlayer .dialog .dialog-hd {
+	position: relative;
+	padding:10px;
+	border-bottom: 1px solid #CBCEED;
+	margin:0px 4px;
+	overflow: hidden;
+}
+.overlayer .dialog .dialog-hd strong {
+	font-size: 14px;
+	color:#323232;
+}
+.overlayer .dialog .dialog-hd .close {
+	float: right;
+	top:0px;
+	right: 0px;
+	width: 17px;
+	height: 17px;
+	cursor: pointer;
+	border: 1px solid transparent;
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) 2px -228px no-repeat;
+}
+.overlayer .dialog .dialog-hd .close:hover {
+	border: 1px solid #CBCEED;
+}
+.overlayer .dialog .dialog-bd {
+	position: relative;
+	padding:10px;
+}
+.overlayer .dialog .dialog-ft {
+	position: relative;
+	padding:10px;
+	text-align: right;
+	/* border-top:1px solid #CBCEED; */
+}
+.overlayer .dialog .dialog-ft .btn {
+	margin-right: 0px;
+	margin-left: 10px;
+}
+.overlayer .loading { 
+	position: relative;
+	background: #FDFDFF;
+	border:1px solid #D9D9D9;
+	box-shadow: 0px 0px 3px #C3C3C3; 
+	text-align: center;
+	display: inline-block;
+	*display: inline;
+	zoom: 1;
+	padding:20px 40px;
+	top: 50%;
+	margin-top:-28px;
+}
+.overlayer .dialog.alert .dialog-bd,
+.overlayer .dialog.confirm .dialog-bd,
+.overlayer .dialog.prompt .dialog-bd {
+	position: relative;
+	margin-left:auto;
+	margin-right: auto;
+}
+.overlayer .dialog .dialog-content {
+    overflow-y: auto;
+}
+.overlayer .dialog.alert .dialog-content,
+.overlayer .dialog.confirm .dialog-content,
+.overlayer .dialog.prompt .dialog-content {
+	position: relative;
+	vertical-align: middle;
+	font-size: 14px;
+	padding:30px 0px;
+	text-align:center;
+}
+.overlayer .dialog.alert .dialog-content .text
+.overlayer .dialog.confirm .dialog-content .text,
+.overlayer .dialog.prompt .dialog-content .text {
+	position:relative;
+	max-width:300px;
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+	text-align:left;
+}
+
+
+/**
+  droplist
+*/
+.droplist {
+	position: relative;
+	display:inline-block;
+	vertical-align: middle;
+	*display: inline;
+	zoom:1;
+	text-align: left;
+	top:2px;
+}
+.droplist .bagde {
+	position:absolute;
+	width:20px;
+	height:20px;
+	line-height:20px;
+	text-align:center;
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/bgTips.png) center no-repeat;
+	color:#ffffff;	
+	padding:0 4px !important;
+	right:-10px;
+	top:0px;
+}
+.droplist>.label {
+	position: relative;
+	padding:4px 10px;
+	border:1px solid transparent;
+	box-shadow: 0px 0px 1px transparent;
+	box-shadow-bottom:none;
+	line-height: 16px;
+	height: 20px;
+	cursor: pointer;
+}
+.droplist>.label .icon {
+	vertical-align: middle;
+}
+.droplist>.label>span {
+	padding-left:5px;
+	padding-right: 10px;
+	vertical-align: middle;
+}
+.droplist>.list {
+	position: absolute;
+	margin-top:-1px;
+	top:100%;
+	left:0px;
+	min-width: 100%;
+	*min-width:expression(parseInt(this.parentNode.offsetWidth) - 2);
+	right:auto;
+	bottom:auto;
+	display:none;
+	-webkit-box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-ms-box-sizing:border-box;
+	-o-box-sizing:border-box;
+	box-sizing:border-box;
+}
+.droplist>.list.box-align-right {
+	left:auto;
+	right:0px;
+}
+.droplist>.list.box-valign-top {
+	top:auto;
+	bottom:100%;
+}
+.droplist:hover > .label,
+.droplist > .label:hover {
+	background:#FDFDFF;
+	box-shadow: 0px 0px 1px #EBEEF3;
+	box-shadow-bottom:none;
+	border:1px solid #D6DDE3;
+	border-bottom-color:transparent;
+	*border-bottom-color:#FDFDFF;
+	z-index: 1000;
+}
+.droplist > .label:hover + .list,
+.droplist > .label + .list:hover { 
+	display:block; 
+	background:#FDFDFF;
+	border:1px solid #D6DDE3;
+	box-shadow: 0px 0px 1px #EBEEF3;
+	z-index: 999;
+}
+.droplist>.list.box-align-right .droplist-head {
+	border-bottom:1px solid #D6DDE3;
+	margin:0px 10px 4px;
+	font-weight:bold;
+}
+.droplist>.list.box-align-right .droplist-top {
+	border-top:1px solid #D6DDE3;
+	margin:0px 10px 4px;
+	font-weight:bold;
+	text-align:center;
+}
+
+/**
+  .list
+*/
+.list {}
+.list > li {
+	line-height: 32px;
+	background:#FDFDFF;
+	white-space:nowrap;
+	vertical-align:middle;
+	padding:0px 10px;
+}
+.list.hover > li:hover {
+	background:#F3F3F3;
+}
+.list.border > li {
+	border-bottom: 1px solid #EBEEF3;
+}
+.list.border > li:last-child {
+	border-bottom: none;
+}
+.list .vline-inline { 
+	display: inline-block;
+	*display: inline; 
+	zoom: 1;
+	border-left:1px solid #EBEBED; 
+	border-right:1px solid #F2F2F4;
+	margin-left:8px;
+	margin-right:8px;
+	height: 10px;
+}
+
+.list-dot {
+    position:relative;
+}
+.list-dot > li {
+    padding-left:10px;
+    background-color: #FFFFFF;
+    background-image: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/square_dot.png);
+    background-position: 0px 11px;
+    background-repeat: no-repeat;
+}
+.sublist {
+    margin-left:20px;
+}
+.sublist > li{
+    line-height: 28px;
+}
+
+.list-line {
+    position:relative;
+}
+.list-line dt {
+    position:relative;
+    font-weight: bold;
+    font-size:13px;
+    color:#555555;
+    margin-top: 10px;
+}
+.list-line dd {
+    position:relative;
+    padding:5px 0px 5px 26px;
+    color:#555555;
+}
+.list-line dd .line {
+    position:absolute;
+    left:0px;
+    top:50%;
+    width:15px;
+    height:100%;
+    border-left: 1px solid #DBDBDB;
+    border-top: 1px solid #DBDBDB;
+}
+.list-line dd:last-child .line {
+    border-left:none;
+}
+
+.block { 
+	position:relative;
+	margin-top: 10px;
+}
+.block:first-child {
+	margin-top: auto;
+}
+.block .block-hd { 
+	position: relative;
+}
+.block .block-hd .icon {
+	top:1px;
+	vertical-align: middle;
+}
+.block .block-hd strong {
+	font-size: 14px;
+	font-weight: normal;
+	margin-left: 10px;
+	vertical-align: middle;
+	color:#333333;
+	padding:10px 0px;
+}
+.block .block-bd { 
+	position: relative;
+	padding:10px 0px;
+}
+.block-indent {
+	padding:10px 30px;
+}
+
+.block-box {
+	position:relative;
+	border:1px solid #BEC8E1;	
+	border-top:2px solid #9AAACC;
+}
+.block-box .block-box-hd {
+	position:relative;
+	background:#F8F8F8;
+	padding:8px 10px;
+}
+.block-box .block-box-hd > .icon {
+	margin-right:4px;
+	vertical-align:middle;
+}
+.block-box .block-box-hd strong { 
+	font-size:14px;
+	vertical-align:middle;
+}
+.block-box .block-box-hd .tools {
+	position: absolute;
+	right: 0px;
+	top:9px;	
+}
+.block-box .block-box-hd .tools a {
+	margin-right: 10px;
+}
+.block-box .block-box-bd {
+	position:relative;
+	padding:10px;	
+}
+.block-box .block-box-bd table {
+	width:100%;
+	background:#ffffff;
+}
+.block-box .block-box-bd table thead th {
+	background:#F7F8FA;
+	text-align: left;
+	font-weight:normal;
+	color:#333333;
+}
+.block-box .block-box-bd table th,
+.block-box .block-box-bd table td {
+	border:1px solid #DCE5F6;
+	padding:8px;
+}
+.block-box .block-box-bd table table {
+	border:none;
+}
+
+.block-outer {
+	position:relative;
+	background:#ffffff;
+	border-top:2px solid #9AABC7;
+	margin-bottom:10px;
+}
+.block-outer .block-outer-hd {
+	background:#F7F8FA;
+	font-size:12px;
+	color:#555555;
+	padding:8px 20px;
+}
+.block-outer .block-outer-hd strong {
+	font-size:14px;
+	margin-right:20px;
+}
+.block-outer .block-outer-hd .tools {
+	position: absolute;
+	right: 0px;
+	top:8px;	
+}
+.block-outer .block-outer-hd .tools > * {
+	margin-right: 10px;
+}
+.block-outer .block-outer-hd .tools a i {
+	top:1px;
+}
+.block-outer .block-outer-bd {
+	position:relative;
+	padding:10px 20px;
+}
+
+
+.block-inner {
+	position:relative;
+	background:#ffffff;
+	margin:10px 0px;
+	width: 80%;
+}
+.block-inner .block-inner-hd {
+	position:relative;
+	font-size:12px;
+	border-bottom:3px solid #D3D9E5;
+	padding-bottom:5px;
+	
+}
+.block-inner .block-inner-hd strong {
+	padding-bottom:5px;
+	font-size:14px;
+	font-weight: normal;
+	border-bottom:3px solid #7899CE;
+}
+.block-inner .block-inner-bd {
+	position:relative;
+	padding:10px;
+}
+.block-inner .block-inner-bd.bg {
+	background-color:#F9F9F9;
+	padding:10px 20px;
+}
+
+.sub-block {
+	position:relative;
+	padding:10px;
+	border:2px solid #9EB4D9;
+}
+
+.block-inner-2 {
+	position: relative;
+	margin:4px;
+}
+.block-inner-2 .block-inner-hd {
+	position: relative;
+	padding: 10px 0px;
+	border-bottom:1px solid #DDDDDD;
+}
+.block-inner-2 .block-inner-bd {
+	padding:4px 0px;
+}
+
+.tablelist .sub-table-wrap:hover {
+	background: none;
+}
+.tablelist .sub-table-wrap > td { border-top:none; padding-top:0px;}
+.tablelist .sub-table-wrap > td > div {
+	position: relative;
+	margin:0px 10px;
+	padding: 10px;
+	border:2px solid #9FB5DA;
+}
+.tablelist .sub-table-wrap > td > div > .icon {
+	position: absolute;
+    top:-8px;
+}
+.tablelist .sub-table-wrap .tablelist {
+	margin:0px;
+}
+
+.clear { clear:both;}
+.clearfix { zoom:1;}
+.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}
+
+.record-charts {
+    position:relative;
+    margin:10px 0px 20px;
+}
+.record-charts .record-charts-option {
+    position:relative;
+    padding:10px;
+    border-bottom: 1px solid #C7D3E3;
+}
+.record-charts .record-charts-option .record-item-label {
+    font-weight: bolder;
+}
+.record-charts .record-charts-option .record-item {
+    display:inline-block;
+    *zoom:1;
+    *display:inline;
+    padding:4px 10px;
+}
+.record-charts .record-charts-option .record-item.active {
+    background:#D6DEF1;
+    color:#555555;
+}
+.record-charts .record-charts-option .record-item:hover {
+    background:#F3F3F3;
+}
+.record-charts .record-charts-option .record-item-divider {
+    display:inline-block;
+    *zoom:1;
+    *display:inline;
+    height:17px;
+    font-size:0px;
+    width:0px;
+    border-right:1px solid #D7DDE3;
+    margin:0px 20px;
+    vertical-align: middle;
+}
+.record-charts .actions {
+    position:absolute;
+    top:10px;
+    right:10px;
+    line-height: 24px;
+}
+.record-charts .record-charts-content {
+    position:relative;
+    overflow: hidden;
+    padding:20px;
+}
+.record-charts .record-charts-content .record-total {
+    position:relative;
+    float:left;
+    width:326px;
+}
+.record-charts .record-charts-content .charts {
+    margin-left:326px;
+    padding-left:20px;
+}
+
+.inbound-faq {
+    position:relative;
+}
+.inbound-faq .faq-title {
+    position:relative;
+    font-size:15px;
+    font-weight: bolder;
+    color:#333333;
+    padding-left:24px;
+}
+.inbound-faq .faq-title .icon {
+    position:absolute;
+    left:0px;
+    top:1px;
+}
+.inbound-faq .faq-content {
+    position:relative;
+    padding: 10px 24px;
+}
+
+.grid-large-menu {
+    position:relative;
+    display:inline-table;
+    width:188px;
+    height:144px;
+    border: 3px solid #E6ECF2;
+    background:#FAFBFC;
+    color:#2E324F;
+    font-size:16px;
+    text-align: center;
+    vertical-align: middle;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    
+}
+.grid-large-menu:hover {
+    color:#2E324F;
+}
+.grid-large-menu span {
+    position:relative;
+    display:table-cell;
+    vertical-align: middle;
+}
+.grid-large-menu.on {
+    border-color: #82ABD9;
+    background-color:#F2F8FF;
+    color:#2E324F;
+}
+/*=============================== page =====================================*/
+.container { 
+	position: relative; 
+	min-width: 1174px; 
+}
+.area { 
+	position: relative;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+.header { position:relative;}
+.header .top { 
+	/* background:#f6f6f6; */ 
+	height:50px; 
+	line-height: 34px; 
+	/* border-bottom: 1px solid #EEEEEE;  */
+}
+.header .top .logo { 
+	position: absolute; 
+	left:20px; 
+	top:14px; 
+	display: inline-block; 
+	*display: inline; 
+	zoom: 1; 
+	vertical-align: middle;
+}
+.header .top .logo img {
+	height: 30px;
+}
+.header .top { text-align: right; }
+.header .top .droplist {
+	z-index:100;
+}
+.header .nav { position: relative; margin-top:10px; margin-bottom: 14px; }
+.header .nav .mainnav { position: relative; }
+.header .nav a.help {
+	position: absolute;
+	right: 10px;
+	top:25px;
+	margin-top: -9px;
+	z-index: 11;
+	padding-left: 16px;
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -127px -984px no-repeat;
+}
+.header .crumbs {
+	position: relative;
+	height: 38px;
+	line-height: 38px;
+	border-bottom: 1px solid #D3D9E5;	
+}
+
+.content { 
+	position: relative;
+	margin-left:184px;
+}
+.content .crumbs {
+	padding-bottom: 5px;
+	margin-bottom: 10px;
+	border-bottom:1px solid #DEDDEF;
+}
+.content .crumbs .icon { 
+	margin-right:5px;
+	vertical-align: middle;
+	margin-top: -4px;
+	*margin-top:0px;
+}
+
+.main {
+	position: relative;
+	min-height: 430px;
+}
+
+.main .layout-left {
+	position: relative;
+	margin-right: 400px;
+}
+.main .layout-right {
+	position: absolute;
+	width:386px;
+	top:0px;
+	right: 0px;
+}
+
+.main .block-box { margin-bottom:14px;}
+
+.box {
+	border: 1px solid #C7D3E3;
+}
+
+.banner {
+	position: relative;
+	background: #CFDCED;
+	text-align: center;
+	margin-bottom: 14px;
+}
+.notify { min-height: 280px;}
+.notify li {
+	position: relative;
+	margin:12px 0px;
+	padding-left:20px;
+	height:14px;
+}
+.notify .notify-item {
+	padding-left: 20px;
+}
+.notify li.stick,
+.notify .notify-item.stick {
+	background:url(imgs/icons.png) -127px -498px no-repeat;
+}
+.star_nav {
+	width:20px;
+	height:10px;
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -130px 2px no-repeat;
+	padding-right:20px;
+}
+.notify .notify-item.star {
+	background:url(imgs/icons.png) -130px 2px no-repeat;
+}
+.notify li a,
+.notify .notify-item a {
+	color:#565656;
+}
+.notify li a:hover,
+.notify .notify-item a:hover {
+	color:#ee5544;
+}
+.notify .datetime {
+	position: absolute;
+	right: 10px;
+}
+
+.news { position: relative; margin:20px;}
+.news .news-hd .title {
+	position: relative;
+	font-size: 16px;
+	color:#333333;	
+}
+.news .news-hd p {
+	margin:10px 0px;
+	color:#878787;
+}
+.news .news-bd {
+	padding:10px 0px;
+}
+
+
+.footer {
+	margin-top: 10px;
+	border-top: 1px solid #D3D3D3;
+	height: 60px;
+	color:#888888;
+	line-height: 60px;
+	text-align: center;
+}
+
+.agreement {
+    padding:0 10px;
+    color:#555555;
+    max-height: 380px;
+    overflow-y:auto;
+}
+.agreement h3 {
+    color:#555555;
+    font-size:12px;
+    font-weight: normal;
+}
+.agreement p {
+    text-indent: 2em;
+    line-height:24px;
+}
+.agreement a {
+}
+.agreement .thank {
+    text-indent: 0;
+}
+
+.item {
+	position: relative;
+}
+
+.batch-page {position: relative;}
+
+.dialog-large-btns {
+	position: absolute;
+	padding:20px 0px;
+	border-top: 1px solid #CBCEED;
+	bottom: 0px;
+	width: 1116px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.column-setting{
+    overflow: hidden;
+    border-bottom: 1px solid #CBCEED;
+    padding-bottom: 10px;
+}
+.column-setting .column-select{
+    float: left;
+}
+.column-setting .column-sort{
+    float: right;
+    position: relative;
+}
+.column-setting .column-sort .column-sort-list{
+    border: 1px solid #D6DADD;
+    width: 200px;
+    height: 200px;
+    margin-right: 40px;
+    padding: 5px;
+}
+.column-setting .column-sort .column-sort-list li:hover,
+.column-setting .column-sort .column-sort-list li:focus,
+.column-setting .column-sort .column-sort-list li:active,
+.column-setting .column-sort .column-sort-list li.active{
+    background-color: cornflowerblue;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+.column-setting .column-sort .column-sort-btns{
+    position: absolute;
+    right: 10px;
+    width: 20px;
+    top: 43px;
+}
+
+.column-settting-area .sep{
+    padding: 0 10px;
+}
+
+.column-display-list {
+	width:300px;
+	padding:0px 10px;
+	overflow:hidden;
+}
+.column-display-list li {
+	float:left;
+	width:50%;
+}
+.TableAdvanced, .AdvancedSearch { 
+	position: relative; 
+	vertical-align: middle;
+}
+.TableAdvanced span, .AdvancedSearch span{
+	position: relative;
+	padding-right:20px;
+	color:#5C88B5;
+	/* font-weight: bold; */
+}
+.TableAdvanced .icon, .AdvancedSearch .icon {
+	position: absolute;
+	right: 0px;
+	top:0px;
+	width: 16px;
+	height: 16px;
+	background-position: 0px -379px;
+}
+.TableAdvanced.on .icon, .AdvancedSearch.on .icon {
+	background-position: 0px -399px;
+}
+.AdvancedSearchContent .form-group {
+	margin-top:10px;
+}
+.AdvancedSearchContent .form-group .control-label:first-child {	
+	width: auto !important;
+}
+
+.item.btns {
+	margin-top:20px;
+}
+
+.gallery-wrap {
+	position: relative;
+	width: 350px;
+	height: 250px;
+	overflow: hidden;
+	margin-left:auto;
+	margin-right:auto;
+}
+.gallery-wrap .gallery, .gallery-wrap .gallery * {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	left: 0px;
+	top:0px;
+}
+
+.gallery-wrap .gallery, .gallery-wrap .gallery li {
+	display: none;
+} 
+.gallery-wrap .gallery, .gallery-wrap .gallery li:first-child {
+	display: block;
+}
+.gallery-wrap .controls {
+	position: absolute;
+	right: 10px;
+	bottom:6px;
+}
+.gallery-wrap .controls li {
+	position: relative;
+	margin: 0px 2px;
+	width: 20px;
+	height: 20px;
+	display: inline-block;
+	*display: inline;
+	zoom: 1;
+}
+.gallery-wrap .controls li span {
+	position: absolute;
+	left: 0px;
+	top:0px;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	line-height: 20px;
+	color:#FFFFFF;
+	background: #55709B;
+	cursor: pointer;
+	border-radius: 2px;
+}
+.gallery-wrap .controls li span.on {
+	background: #EF6644;
+}
+
+.tips-block {
+	position:relative;
+	border:1px solid #F1F1F1;
+	background:#FCFCFC;
+	padding:10px;
+	color:#666666;
+	box-sizing:border-box;
+	line-height:18px;
+}
+.tips-block .indent {
+    text-indent: 2em;
+}
+.tips-block strong,
+.tips-block em {
+    position:relative;
+    font-size:14px;
+    display:block;
+    padding-bottom:10px;
+    margin-bottom:10px;
+    border-bottom:1px solid #F1F1F1;
+    color:#ff6600;
+}
+.tips-block strong {
+    padding-left:24px;
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/tips_icon.gif) 0px 1px no-repeat;
+}
+.tips-block em {
+    font-style: normal;
+    font-weight: bolder;
+}
+.tips-block strong .close,
+.tips-block em .close {
+    position:absolute;
+    top:0px;
+    right: 0px;
+    width: 17px;
+    height: 17px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) 2px -228px no-repeat;
+}
+.tips-block .arrow,
+.tips-block .arrow i {
+    position:absolute;
+    display:block;
+    width:0px;
+    height:0px;
+    border:10px solid transparent;
+    border-right-color:#F1F1F1;
+}
+.tips-block .arrow {
+    left:-21px;
+    top: 8px;
+}
+.tips-block .arrow i {
+    left: -8px;
+    top: -10px;
+    border-right-color:#FCFCFC;
+}
+.tips-block ul {}
+.tips-block ul li {
+	padding-left:20px;
+	margin-bottom:10px;
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/dot.gif) 7px 7px no-repeat;
+}
+
+#Index .highcharts { position: relative;}
+#Index .productWhere {
+	position: absolute;
+	left: 0px;
+	top:0px;
+	width:50%;
+}
+#Index .qtyProduct {
+	position: relative;
+	margin-left: 50%;
+	padding-left:10px;
+}
+#Index .productWhere .block-box-bd,
+#Index .qtyProduct .block-box-bd {
+	position: relative;
+	height: 280px;
+}
+
+#Index #MyProduct {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+#Index #DeliveryQuantity {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+#Index .phone-num {
+	color:#EE5545;
+	font-size: 16px;
+	font-weight: bold;
+}
+#Index .email {
+	font-size: 14px;
+}
+
+#batchImportContent {
+	height: 500px;
+	position: relative;
+}
+
+#QuickQuote .block-indent,  #QuoteTools .block-indent{
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+}
+#QuickQuote .block-indent .item.btns ,#QuoteTools .block-indent .item.btns {
+	text-align:center;
+	margin-top:20px;
+}
+#QuickQuote .tips-content, #QuoteTools .tips-content {
+	position:absolute;
+	right:-10px;
+	top:30px;
+	color:#565656;
+	width:290px;
+}
+#QuickQuote .tips-content .tips-title, #QuoteTools .tips-content .tips-title { position:relative; font-size:30px; margin-bottom:30px; color:#5382B6; font-weight:bold;}
+#QuickQuote .tips-content img, #QuoteTools .tips-content img { position:absolute; right:30px; top:-40px;}
+#QuickQuote .tips-content p, #QuoteTools .tips-content p { position:relative; margin-left:16px; line-height:18px; }
+#QuickQuote .tips-content p span, #QuoteTools .tips-content p span { position:absolute; left:-16px; }
+#QuickQuote #caluculateForm .form-group .control-wrap,
+#QuoteTools #caluculateForm .form-group .control-wrap { width:150px;}
+#QuickQuote #caluculateForm, #QuoteTools #caluculateForm { margin-right:260px;}
+
+#Category .block {
+	margin-right: 60px;
+}
+#Category .block select {
+	width:230px;
+}
+
+.addressDialog { margin:24px 0px 0px 30px;}
+
+#ProductInfo .BaseInfo .block-outer-hd strong {
+	position: relative;
+	margin-left: -180px;
+}
+#ProductInfo .product-upload-wrap {
+	position: relative;
+	float:left;
+	clear: right;
+	z-index: 2;
+	margin:50px 10px 20px 10px;
+	width: 180px;
+	min-height: 200px;
+}
+#ProductInfo .product-upload-wrap .item {
+	position: absolute;
+	bottom: 0px;
+	width: 100%;
+	margin-top:10px;
+}
+#ProductInfo .product-upload-wrap input[type=file] {
+	position: absolute;
+}
+#ProductInfo .product-upload-wrap img {
+	width: 180px;
+	height: 180px;
+}
+#ProductInfo .view-product-upload-wrap {
+	position: relative;
+	float:left;
+	clear: right;
+	z-index: 2;
+}
+#ProductInfo .view-product-upload-wrap img {
+	width: 180px;
+	height: 180px;
+	display: block;
+}
+#ProductInfo .BaseInfo .block-outer-bd {
+	min-height: 210px;
+}
+
+#EbayAccount div.item { margin-bottom: 10px;}
+
+#InboundOntime .chart, #OutboundOnTime .chart { 
+	position: relative;
+	min-height:334px;
+	zoom:1;
+}
+#InboundOntime .chart .highcharts-container, #OutboundOnTime .chart .highcharts-container {
+	position:relative;
+	zoom:1;
+}
+
+.quickRegIframe .dialog-bd {
+	border-bottom: 1px solid #CBCEED;
+}
+
+#quickRegIframe {
+	position: relative;
+	left: 0px;
+	top:0px;
+	width: 580px;
+	height: 410px;
+}
+
+
+#StrogeSafelyChart {
+    position: relative;
+    margin:10px 50px 50px;
+}
+#leftButton,#rightButton {
+    position:absolute; 
+    top:50%;
+    margin-top:0px;
+    width:38px;
+    height:100px;
+    border-radius: 4px;
+    z-index:5;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) left top no-repeat;
+    cursor: pointer;
+    display: none;
+}   
+#leftButton {
+    left:0px;
+    background-position: 0px -750px;
+}
+#leftButton:hover {
+    background-position: -40px -750px;
+}
+#leftButton:active {
+    background-position: -80px -750px;
+}
+#rightButton {
+    right: 0px;
+    background-position: 0px -630px;
+}
+#rightButton:hover {
+    background-position: -40px -630px;
+}
+#rightButton:active {
+    background-position: -80px -630px;
+}
+#StrogeSafelyRemind {
+    position: relative;
+    height: 157px;
+    margin-bottom: -40px;
+    z-index: 1;
+}
+#StrogeSafelyRemind .before,#StrogeSafelyRemind .after {    
+    position: absolute;
+    width: 46px;
+    height: 25px;
+    top:33px;
+}
+#StrogeSafelyRemind .before {
+    left:5px;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/arrow_left.gif) center no-repeat;
+    display: none;
+}
+#StrogeSafelyRemind .after {
+    right:5px;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/arrow_right.gif) center no-repeat;
+    display: none;
+}
+.remind {
+    position:absolute;
+    top:0px;
+    left:650px;
+    width: 120px;
+    height: 157px;
+    z-index: 4;
+    text-align: center;
+    padding-top: 1px;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/fly.png) top left no-repeat;
+}
+.remind.fly {
+    background: url(imgs/fly.png) top left no-repeat;
+}
+.remind.sea {
+    background: url(imgs/sea.png) top left no-repeat;
+}
+.remind .after {
+    content: " ";
+    position: absolute;
+}
+.remind span {
+    position: relative;
+    display: block;
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 26px;
+    color:#FFFFFF;
+    text-align: center;
+}
+.remind strong {
+    font-size: 20px;
+}
+
+.remind.fly.left, .remind.fly.right {
+    background: url(imgs/fly_circle.png) center no-repeat;
+}
+.remind.sea.left, .remind.sea.right {
+    background: url(imgs/sea_circle.png) center no-repeat;
+}
+.remind.left,
+.remind.right {
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+}
+.remind.left { left: 0px;}
+.remind.right { left: 800px; }
+
+.remind.left span,
+.remind.right span {
+    font-size: 12px;
+    line-height: 16px;
+}
+.remind.left span strong,
+.remind.right span strong {
+    font-size: 14px;
+}
+
+.tracking { position:relative;}
+.tracking li { 
+    position:relative; 
+    padding: 10px 0px;
+    
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+.tracking li .time { 
+    display:inline-block; 
+    width:140px; 
+    margin-right:30px; 
+    vertical-align: top;
+}
+.tracking li .description {
+    display:inline-block;
+    *display:inline;
+    *zoom:1;
+    vertical-align: top;
+    width:160px;
+    word-break:break-all;
+    word-wrap:break-word;
+}
+.tracking li .address {
+    display:inline-block;
+    *display:inline;
+    *zoom:1;
+    vertical-align: top;
+    color:#555555;
+}
+.tracking li .node {
+    position:absolute;
+    width:9px;
+    height:100%;
+    left:142px;
+    top:13.5px;
+    background-image: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/tracking_dot.png);
+    background-position:-18px 0px;
+    background-repeat: no-repeat;
+}
+.tracking li .node .line {
+    position:absolute;
+    height:100%;
+    border-left:1px solid #bababa;
+    left:50%;
+    top:9px;
+    margin-left: -0.5px;
+}
+.tracking li:last-child .node .line {
+    display:none;
+}
+.tracking li.on {
+    color:#FE690F;
+}
+.tracking li.on .node {
+    background-position: 0px 0px;
+}
+/*.tracking li.on .node .line {
+    border-left:1px solid #FE690F;
+}*/
+
+.fieldset {
+    border:none;
+    padding:0px;
+    margin-bottom: 20px;
+}
+.fieldset legend,
+.fieldset .legend {
+    position: relative;
+    padding-left: 20px;
+    font-size:14px;
+    font-weight: bolder;
+    background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/info.png) 0px center no-repeat;
+    
+}
+
+.poptips-wrap { 
+	position:absolute;
+	padding:10px;
+	width:400px;
+	border:1px solid #B8C9D3; 
+	z-index: 1000; 
+	background:#FFFFFF;
+}
+.poptips-wrap .arrow {
+	position:absolute;
+	width: 0px;
+	height: 0px;
+	font-size: 0;
+	border:10px solid transparent;
+	border-bottom:10px solid #B8C9D3;
+	top:-20px
+}
+.poptips-wrap .arrow i {
+	position:absolute;
+	width: 0px;
+	height: 0px;
+	font-size: 0;
+	border:10px solid transparent;
+	border-bottom:10px solid #FFFFFF;
+	top:-9px;
+	left:-10px;
+}
+.poptips-wrap .poptips-content .loading-2 {
+	min-height: 80px;
+}
+
+.address-list {
+    position:relative;
+}
+.address-list .address-item {
+    position:relative;
+    border-bottom: 1px solid #DDDDDD;
+    padding:6px 0px 6px 40px;
+    margin-bottom: 10px;
+}
+.address-list .address-item label {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width:40px;
+    height:100%;
+    text-align: center;
+    padding:22px 12px;
+
+    -webkit-box-sizing: border-box;
+       -moz-box-sizing: border-box;
+            box-sizing: border-box;
+}
+.address-list .last {
+    border-bottom: none;
+}
+address {
+    position:relative;
+    font-style: normal;
+}
+address p {
+    margin: 4px 0px;
+}
+address .name {
+    display:inline-block;
+    margin-right:10px;
+}
+
+.simple-list {
+    position:relative;
+    margin:10px 0px;
+}
+.simple-list > li {
+    margin:8px 0;    
+}
+
+.panel {
+    position:relative;
+}
+.panel > .panel-hd {
+    background-color:#D7DEF1;
+    border-radius: 2px 2px 0px 0px;
+    padding: 8px 10px;
+}
+.panel > .panel-hd > .caption {
+    font-size: 14px;
+    font-weight: bolder;
+} 
+.panel > .panel-bd {
+    border:1px solid #EEEEEE;
+    background-color:#FDFDFF;
+}
+.panel.default > .panel-hd  {
+    background-color:#D7DEF1;
+}
+.panel.default > .panel-bd {
+    background-color:#FCFCFC;
+}
+.panel.pink > .panel-hd  {
+    background-color:#FAA296;
+    color: #FFFFFF;
+}
+.panel.pink > .panel-bd {
+    background-color:#FFFFFF;
+}
+
+.checker {
+    position:relative;
+    padding-left:15px;
+    margin-right:10px;
+	display:inline-block;
+	*display:inline;
+	*zoom:1;
+}
+.checker input[type=checkbox],
+.checker input[type=radio] {
+    position:absolute;
+    left:0px;
+    top:2px;
+    margin-top:auto !important;
+}
+.group,
+.checker-group {
+    padding:5px 10px;
+    background:#F9F9F9;
+    border:1px solid #EAEAEA;
+}
+.checker-group .checker {
+    display:inline-block;
+    margin:5px 0px;
+}
+.checker div.error {
+	position: relative;
+	font-size: 12px;
+	color:#EE5C44;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/error.png) 0px 0px no-repeat;
+	padding-left:20px;
+	margin-top: 4px;
+}
+
+.list-rule li {
+    padding: 8px 10px;
+    white-space: normal;
+    line-height: normal;
+}
+
+.schedule {
+    position:relative;
+    display:inline-block;
+    *display:inline;
+    margin-bottom: 4px;
+}
+.schedule ul {
+    position:relative;
+    padding:0px;
+    margin:10px 0px 0px;
+}
+.schedule ul li {
+    position:relative;
+    float:left;
+    padding-top:10px;
+    width:75px;
+}
+.schedule ul li .schedule-line {
+    position:absolute;
+    top:0px;
+    left:-50%;
+    width:100%;
+    border-top:1px solid #E6E6E6;
+}
+.schedule ul li .schedule-line .node {
+    position:absolute;
+    right: -6px;
+    top:-5.5px;
+    width: 12px;
+    height: 12px;
+    z-index: 1;
+    background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -57px -892px no-repeat;
+}
+.schedule ul li .schedule-text {
+    display:block;
+    text-align: center;
+}
+.schedule ul li:first-child .schedule-line {
+    border-top:none;
+}
+.schedule ul li.pass .schedule-line {
+    border-top-color:#60983D;
+}
+.schedule ul li.pass .schedule-line .node {
+    background-position: -18px -892px;
+}
+.schedule ul li.pass .schedule-text {
+    color:#60983D;
+}
+.schedule ul li.nopass .schedule-line {
+    border-top-color:#EE5544;
+}
+.schedule ul li.nopass .schedule-line .node {
+    background-position: -37px -892px;
+}
+.schedule ul li.nopass .schedule-text {
+    color:#EE5544;
+    font-weight: bolder;
+}
+
+#ChangePassword {
+	position:relative;
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+}
+
+#myaddressDialog .form-group input { 
+	width:124px; 
+}
+:root #myaddressDialog .form-group input {
+	width:132px; 
+}
+#myaddressDialog .form-group .control-label:first-child { 
+	width:110px;
+}
+#myaddressDialog .AddressEditSelect select {
+	width:106px;
+}
+#myaddressDialog #myAddressEditAddress1 { width:436px;}
+
+#ProductInfo .EditOtherInfo  .form-group .control-wrap,
+#ProductInfo .ViewEditOtherInfo .form-group .control-wrap { width:462px; } 
+
+#ProductInfo .EditOtherInfo .MyItem .form-group .control-wrap { width:170px; }
+#ProductInfo .EditOtherInfo .MyItem .form-group .mycontrol-wrap .form-control { width:130px; }
+#ProductInfo .ViewEditOtherInfo .MyItem .form-group .control-wrap { width:170px; }
+#ProductInfo .ViewEditOtherInfo .MyItem .form-group .mycontrol-wrap .form-control { width:130px; }
+
+#BillLadingInfo .EditData .icon { top:3px; margin-right: 2px; } 
+
+.WarehouseOrderDetailAddProduct .table-wrap { height: 320px;overflow: auto;}
+
+#guide .guide-content { 
+	position: relative;
+	background: #595959;
+}
+#guide .guide-content .gallery-wrap {
+	position: relative;
+	width: 800px;
+	height: 560px;
+}
+#guide .guide-content .gallery-wrap .gallery {position: relative;}
+#guide .guide-content .controls {
+	position: relative;
+	text-align: center;
+	z-index: 10;
+}
+#guide .guide-content .gallery-wrap .btns {
+	position: absolute;
+	left:404px;
+	top:340px;
+}
+#guide .guide-content .controls {
+	margin-top:10px;
+}
+#guide .guide-content .controls li {
+	position: relative;
+	margin: 0px 2px;
+	width: 10px;
+	height: 10px;
+	display: inline-block;
+	*display: inline;
+	zoom: 1;
+}
+#guide .guide-content .controls li span {
+	position: absolute;
+	left: 0px;
+	top:0px;
+	width: 100%;
+	height: 100%;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/guide.png) -20px 0px no-repeat;
+	cursor: pointer;
+}
+#guide .guide-content .controls li span.on {
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/guide.png) 0px 0px no-repeat;
+}
+#guide .guide-content .prev {
+	position: absolute;
+	width: 40px;
+	height: 80px;
+	top:210px;
+	left:50%;
+	margin-left:-460px;
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/guide.png) -60px -10px no-repeat;
+	cursor: pointer;
+	display: none;
+}
+#guide .guide-content .prev:hover {
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/guide.png) 10px -10px no-repeat;
+}
+#guide .guide-content .next {
+	position: absolute;
+	width: 40px;
+	height: 80px;
+	top:210px;
+	right:50%;
+	margin-right:-460px;
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/guide.png) 10px -80px no-repeat;
+	cursor: pointer;
+}
+#guide .guide-content .next:hover {
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/guide.png) -60px -80px no-repeat;
+}
+#guide .close {
+	position: absolute;
+	top:10px;
+	right: 10px;
+	width: 48px;
+	height: 48px;
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/guide.png) 0px -164px no-repeat;
+	z-index:11;
+
+}
+#guide .close:hover {
+	background-color:#757575;
+}
+
+#guide .go {
+	position: absolute;
+	width: 150px;
+	height: 172px;
+	top:210px;
+	right:50%;
+	margin-right:-560px;
+	display: none;
+}
+#guide .zh-cn {
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/guide.png) 0px -369px no-repeat;
+}
+#guide .zh-tw {
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/guide.png) 0px -576px no-repeat;
+}
+#guide .en-us {
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/guide.png) 0px -791px no-repeat;
+}
+
+
+#WinitRebateOrder #image {
+	display:none;
+}
+#WinitRebateOrder #image.isIE {
+	position: absolute;
+	top: 4px;
+	left:88px;
+	width: 100px;
+	cursor: pointer;
+	outline: none;
+	border-left-width:20px;
+	border-right-width:20px;
+	z-index:100;
+	display:inline-block !important;
+	zoom:1;
+	filter: alpha(opacity=0);
+	opacity: 0;
+}
+
+#WarehouseOutbound .viewBillingCheckStatus .form-group .control-wrap { width: 350px; }
+
+#Help .helplist { width:100%; text-align: left; margin:10px 0;}
+#Help .helplist td { padding:6px 4px;}
+#Help .helplist tr:hover { background:#F9F9F9;}
+#Help .tab-content { min-height: 360px;}
+
+#WarehouseOutbound #stepTwoTableList tr td {
+	border-bottom:none;
+	border-top:1px solid #C7D3E3;
+}
+#WarehouseOutbound #stepTwoTableList tr .text,
+#WarehouseOutbound #stepTwoTableList tr input  {
+	color:#555555;
+}
+#WarehouseOutbound #stepTwoTableList .light-grey td {
+	border-top:none;
+}
+#WarehouseOutbound .form-group .control-label:first-child{
+    width: 80px;
+}
+.viewBaseShareOrder .form-group .control-label:first-child { width: 100px; }
+.addShareOrder .form-group .control-label:first-child { width: 110px; }
+
+#InboundOntime .search-area  .form-group .control-label:first-child {
+	width:auto;
+}
+
+#UserCenter #Changeunit .control-label{font-size:11px;}
+
+
+#GlobalTransfer .notice-all{
+    border: 1px dashed #CCCCCC;background-color: #FFFFCC;padding: 20px 20px;color:#FF6600;
+}
+#GlobalTransfer .addresses{
+    border: none;
+}
+#GlobalTransfer .address-list{
+    border-top: 1px solid #e8e8e8;
+      display:block;
+  zoom: 1;
+  height: auto;
+  line-height: 20px;
+  font-size: 1em;
+  margin: auto;
+  padding: auto;
+  color: #555;
+  cursor: default;
+  /*margin-bottom: 10px;*/
+}
+#GlobalTransfer .address-list > .address-list-content{
+    display: table;
+}
+#GlobalTransfer .address-list .address-list-radio{
+    display: table-cell;width: 40px;text-align: center;vertical-align: middle;
+}
+#GlobalTransfer .address-list .address-list-detail{
+    display: table-cell;
+}
+#GlobalTransfer .address-list .address-list-detail .receiver{
+    display:inline-block ;min-width: 80px;
+}
+#GlobalTransfer .address-list .address-list-detail > label > div{
+    margin: 5px 0px;
+}
+#GlobalTransfer .address-list .address-list-detail .address-list-paid{
+    display: inline-block;
+    width: 62px;
+    height: 22px;
+    line-height: 22px;
+    text-align: center;
+    color: #FFFFFF;
+    background-image: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/address.png);
+    margin-right: 5px;
+}
+
+#GlobalTransfer .box-order .step-hd {
+  position: relative;
+}
+#GlobalTransfer .box-order .step-hd .step-num {
+  background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icons.png) -121px -20px no-repeat;
+  display: inline-block;
+  zoom: 1;
+  width: 22px;
+  height: 22px;
+  vertical-align: middle;
+  margin-right: 2px;
+  color: #FFF;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+}
+#GlobalTransfer .box-order .step-bd {
+  position: relative;
+  padding-top: 10px;
+}
+#GlobalTransfer .margin-left-100{
+    margin-left: 100px;
+}
+#GlobalTransfer .tab-style{
+    display: inline-block;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/button_bg.png) 0px -508px repeat-x;
+    padding: 3px 10px;
+    height: 30px;line-height: 31px;
+}
+
+#GlobalTransfer .tooltip-inner{
+    max-width:none !important;
+}
+#GlobalTransfer .form-group .control-label{
+    width: 100px;
+}
+
+#GlobalTransfer .forSelf .form-group .control-label{
+    width: 120px;
+}
+#GlobalTransfer .width-120{
+    width: 120px !important;
+}
+
+#GlobalTransfer .hidden{
+    display: none!important;
+}
+#GlobalTransfer .total-fee{
+    font-size: 20px;
+}
+/**
+ * UploadEbayOutboundOrder  <===
+ */
+
+/*#UploadEbayOutboundOrder*/ .edit-icon{
+    display: inline-block;
+    height: 18px;
+    padding-right: 20px;
+	padding-left: 5px;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icon-edit.png) center right  no-repeat;
+}
+/*#UploadEbayOutboundOrder */.bold{
+    font-weight: bold;
+}
+
+#accountList-title{
+    width:100px;
+    float: left;
+}
+#synchroEbay{
+    padding: 2px 10px 20px 10px;
+}
+#synchroEbay #accountList{
+  border: 1px solid #eaeaea;
+  padding: 5px;
+  background-color: #f9f9f9;
+}
+
+#synchroEbay #accountList #accountListDetail{
+    overflow-y: auto;
+    margin-left: 100px;
+	max-height:70px;
+}
+/*#UploadEbayOutboundOrder */#synchroEbay #accountList #accountListDetail span{
+    display: inline-block;
+    float:left;
+}
+
+#synchroEbay table thead th,
+#synchroEbay table tbody td{
+    padding: 10px 10px;
+}
+
+
+#synchroRecordTitle{
+    display: inline-block;
+    padding: 5px 10px;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/button_bg.png) 0px -508px repeat-x;
+    font-weight: bold;
+    color:#2E324F;
+}
+#synchroRecordList{
+    max-height: 250px;
+    overflow: auto;
+}
+#synchroRecordList table{
+    margin:0px;
+}
+
+/**
+ * ===> UploadEbayOutboundOrder 
+ */
+
+#ISPOrder ul.detailLines li{
+	position: relative;
+	line-height: 40px;
+}
+#ISPOrder ul.detailLines li:first-child{
+	color: #FF9900;
+	font-weight: bold;
+}
+#ISPOrder ul.detailLines li:first-child span{
+	color: #FF9900;
+}
+#ISPOrder ul.detailLines li>div{
+	display: inline-block;
+	min-width: 150px;
+}
+#ISPOrder ul.detailLines li>div{
+	display: inline-block;
+	min-width: 150px;
+}
+#ISPOrder ul.detailLines li>span{
+	position: absolute;
+	display: inline-block;
+	color: #CCCCCC;
+	font-weight: normal;
+	font-size: 72px;
+  	top: -25px;
+  	left: 146px;
+}
+
+#ISPOrder ul.detailLines li>div.border_left{
+	padding-left: 20px;
+	border-left:1px solid #CCCCCC;
+	width: 220px;
+}
+/*#DownloadStatement */.btn-blue-loading{
+    background-color: #425C88;
+    background-image:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/loading_3.gif);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+/*#DownloadStatement */.dialog .arrow-down{
+    position: absolute;
+    width:0px;
+    height: 0px;
+    border: 10px solid;
+    border-left-color: transparent;
+    border-top-color: #FFFFCC;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    bottom:-18px;
+    left:83px;
+}
+.btn.btn-auto{
+	width:auto !important;
+	padding:3px 8px;
+}
+
+#addrManage .form-group .control-label:first-child{
+    width: 75px;
+}
+#ReturnOfGoods .edit-icon{
+    /*display: inline-block;*/
+    height: 18px;
+    padding-right: 20px;
+	padding-left: 5px;
+    background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/icon-edit.png) center right  no-repeat;
+}
+
+#OnlineRecharge .payOverlayer{
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 10001;
+    background-color: rgba(255, 255, 255,0.5);
+    filter: progid:DXImageTransform.Microsoft.gradient(startcolorstr=#22000000,endcolorstr=#22000000);
+}
+#OnlineRecharge .payOverlayer > .layer-content{
+    width: 440px;
+    height: 200px;
+    border: 1px solid #CCC3C3;
+    position: absolute;
+    top:50%;
+    left:50%;
+    margin-left: -220px;
+    margin-top: -100px;
+    background-color: white;
+}
+
+#OnlineRecharge .payOverlayer > .layer-content > div{
+    position: absolute;
+    height:40px;
+    top: 50%;
+    margin-top:-20px;
+    width: 100%;
+    padding-left: 100px;
+}
+#OnlineRecharge .payOverlayer > .layer-content > div > .loading{
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-image: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/loading_2.gif);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+#OnlineRecharge .payOverlayer > .layer-content > div > .tip-msg{
+    display: inline-block;
+    font-weight: bold;
+    margin-left: 20px;
+}
+#OnlineRecharge .payOverlayer > .layer-content > div > .tip-msg >div:first-child{
+    height: 28px;
+}
+.condition li { 
+    line-height: 24px;
+}
+.condition li a {
+    white-space: normal;
+    line-height: 20px;
+}
+.condition .sublist {
+    display:inline-block;
+}
+.condition .sublist > li {
+    position:relative;
+    padding-right:70px;
+}
+.condition .sublist > li .action {
+    position:absolute;
+    right:0px;
+	top:0px;
+    display: none;
+}
+.condition .sublist > li .action .icon {
+    margin:0px 2px;
+}
+.condition .sublist > li:hover .action {
+    display:inline;
+}
+
+#GFSOrdersManage .form-group .control-label:first-child{
+    width: 127px;
+}
+#GFSOrdersManage .light-grey{
+    font-size: 12px;
+}
+#GFSOrdersManage .trajectory{
+    position: absolute;
+    top: 50%;
+    margin-top: -20px;
+    right: 30px;
+    width: 400px;
+}
+#GFSOrdersManage .trajectory > ol > li{
+    display: inline-block;
+    text-align: center;
+    width: 80px;
+    position: relative;
+}
+#GFSOrdersManage .trajectory > ol > li.fixed{
+    top: -32px;
+}
+
+#GFSOrdersManage .trajectory > ol > li > div {
+    position: absolute;
+    width: 80px;
+    left: 40px;
+    top: -10px;
+    height: 0px;
+    border-top: 1px solid green;
+}
+#GFSOrdersManage .trajectory > ol > li > div.success {
+    border-color: #5E963B;
+}
+#GFSOrdersManage .trajectory > ol > li > div.failed {
+    border-color: #ED5540;
+}
+#GFSOrdersManage .trajectory > ol > li > div.normal {
+    border-color: #E6E6E6;
+}
+
+#GFSOrdersManage .trajectory > ol > li > i.icon {
+    position: absolute;
+    left: 33px;
+    top: -15px;
+}
+
+#GFSOrdersManage .block-inner,
+#StockConfig .block-inner{
+    width: auto;
+}
+
+#GFSOrdersManage .tab > div.actions{
+	right: 15px;
+}
+
+#gfsOrderEdit .em span{
+	display: inline-block;
+	max-width: 400px;
+}
+#gfsOrderEdit .icon.warning-2{
+	vertical-align: top;
+}
+
+#StockConfig .repertory-setting-hd {
+    padding-top: 10px;
+    padding-bottom: 20px;
+    border-bottom:1px solid #DCDCE3;
+}
+#StockConfig .repertory-setting-hd > a {
+    margin-left: 10px;
+}
+#StockConfig .repertory-setting-hd > .notice-s {
+    margin-left: 20px;
+}
+
+#StockConfig .block-inner-bd{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+#editRepertoryDialog .form-group .control-label:first-child {
+    width: 100px;
+}
+
+#AutoRulesSetting .tab > div {
+    right: 15px;
+}
+
+/*#editRepertoryDialog*/ .tab-table{
+    padding-right: 1px;
+}
+.dialog-large-btns.w-auto{
+    width:auto !important;
+}
+
+table.dataTable .editer-group{
+    position: relative;
+}
+
+table.dataTable .editer-group .edit-icon{
+    position: absolute;
+    padding-left: 0px;
+}
+
+table.dataTable .tr .editer-group{
+    padding-right: 20px;
+}
+table.dataTable thead tr th,
+table.dataTable tbody tr td{
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+table.dataTable .editer-group ~ .edit-code{
+    height: 16px;
+    padding: 0px 10px;
+}
+
+.table-attach .table-attach-item{
+    display: inline-block;
+    position: relative;
+    top: 0px;
+    right: 0px;
+    height: 100%;
+    line-height: 1;
+    margin-left: 10px;
+}
+.total-records{
+    font-size: 12px;
+    color: #425C88;
+}
+#ISPImport .form-group .control-label:first-child{
+    width:90px;
+}
+
+#ISPImport ul.detailLines li{
+    position: relative;
+    line-height: 40px;
+}
+#ISPImport ul.detailLines li:first-child{
+    color: #FF9900;
+    font-weight: bold;
+}
+#ISPImport ul.detailLines li:first-child span{
+    color: #FF9900;
+}
+#ISPImport ul.detailLines li>div{
+    display: inline-block;
+    min-width: 150px;
+}
+#ISPImport ul.detailLines li>div{
+    display: inline-block;
+    min-width: 150px;
+}
+#ISPImport ul.detailLines li>span{
+    position: absolute;
+    display: inline-block;
+    color: #CCCCCC;
+    font-weight: normal;
+    font-size: 72px;
+    top: -25px;
+    left: 146px;
+}
+
+#ISPImport ul.detailLines li>div.border_left{
+    padding-left: 20px;
+    border-left:1px solid #CCCCCC;
+    width: 100px;
+}
+
+table > tbody > tr >td:last-child  a{
+	display: inline-block;
+}
+
+/*
+#UserCenter .fileupload{
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+    overflow: hidden;
+}
+#UserCenter .fileupload input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    -ms-filter: 'alpha(opacity=0)';
+    direction: ltr;
+    cursor: pointer;
+}*/
+
+#UserCenter .step-box {
+	position:relative;
+}
+#UserCenter .step-box > .menu {
+	position:relative;
+	margin:0px 0px 40px;
+	overflow: hidden;
+}
+#UserCenter .step-box > .menu li {
+	float:left;
+	width: 29.3%;
+	text-align: center;
+	border-bottom: 1px solid #D9D7D8;
+	padding:10px 0px;
+}
+#UserCenter .step-box > .menu li i {
+	display:inline-block;
+	zoom:1;
+	width: 28px;
+	height: 28px;
+	background:url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/step_bg.png) 0px -35px no-repeat;
+	font-size:18px;
+	font-style: initial;
+	line-height: 28px;
+	text-align: center;
+	color:#FFFFFF;
+	margin-right:6px;
+}
+#UserCenter .step-box > .menu li span {
+	color:#666666;
+	font-size:16px;
+	font-weight: bolder;
+}
+#UserCenter .step-box > .menu li.active {
+	border-bottom-color:#FF6600;
+}
+#UserCenter .step-box > .menu li.active i {
+	background-position:0px 1px;
+}
+#UserCenter .step-box > .menu li.active span {
+	color:#EE5544;
+}
+#UserCenter .step-box > .step-content {
+	position:relative;
+	margin:0px 140px;
+}
+
+#UserCenter .item_tit{
+	padding:10px 0px;
+	border-bottom:1px solid #d9d7d8;
+	font-weight: bold;
+	width:720px;
+	margin:0px auto 20px;
+}
+
+#UserCenter .item >p.error {
+	position: relative;
+	font-size: 12px;
+	color:#EE5C44;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/error.png) 0px 0px no-repeat;
+	padding-left:20px;
+	margin-top: 4px;
+}
+
+#UserCenter .notice-light {
+	position: relative;
+	padding-left: 18px;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/bulb.png) 0px 1px no-repeat;
+	color: #FF6501;
+}
+#UserCenter .fileupload {
+	position:relative;
+	display:inline-block;
+	width: 88px;
+	height:88px;
+	line-height: 88px;
+	text-align: center;
+	background:#FFFFFF;
+	vertical-align: top;
+	margin:10px 20px 10px 0px;
+}
+
+#UserCenter .fileupload img {
+	position:relative;
+	max-width: 88px;
+	max-height: 88px;
+	vertical-align: middle;
+	margin-top:-4px;
+}
+#UserCenter .fileupload input[type=file] {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	opacity: 0;
+	-ms-filter: 'alpha(opacity=0)';
+	font-size: 200px;
+	direction: ltr;
+	cursor: pointer;
+}
+#UserCenter .fileupload .file-wrap {
+	position:absolute;
+	width:100%;
+	height:100%;
+	left:0px;
+	top:0px;
+	overflow: hidden;
+}
+#UserCenter .fileupload .delete {
+	position:absolute;
+	width:23px;
+	height:23px;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/delete.png) center no-repeat;
+	top: -10px;
+	right: -10px;
+	z-index: 2;
+	display:none;
+
+}
+#UserCenter .fileuploader {
+	display:none;
+}
+
+#UserCenter .fileupload-demo {
+	position:relative;
+	display:inline-block;
+}
+#UserCenter .fileupload-demo .tips {
+	width: 310px;
+	display:inline-block;
+	margin-top:10px;
+	color:#FF6600;
+	font-size:12px;
+	padding-left: 18px;
+	background: url(../../../../../Users/Lenovo/AppData/Local/Microsoft/Windows/INetCache/IE/KNY6Y31W/imgs/bulb.png) 0px 1px no-repeat;
+}
+
+.explain{
+    margin-top: 80px;
+    overflow: hidden;
+}
+
+.explain h3{
+    margin-bottom: 0px;
+}
+.explain-item{
+    margin-bottom: 35px;
+    border-top: 1px dotted #8C8787;
+    width: 45%;
+}
+.explain-item.odd{
+    float: left;
+}
+.explain-item.even{
+    float: right;
+}
+.explain-item.auto{
+    /*width: auto !important;*/
+    float: none; 
+}
+
+#WHInbound .tooltip .tooltip-inner{
+    max-width:400px;	
+}
+#WHInbound .clock{
+	position: absolute;
+	right: 14px;
+	top: 7px;
+}
+	
+	
