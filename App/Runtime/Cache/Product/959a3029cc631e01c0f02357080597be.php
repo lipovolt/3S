@@ -1,4 +1,4 @@
-<!doctype html>
+<?php if (!defined('THINK_PATH')) exit();?><!doctype html>
 <html lang="en">
 <head>
 	<title>3S 管理平台</title>
@@ -12,28 +12,28 @@
 	<![endif]-->
 </head>
 <body>
-<div class="container">
-
-	
-
-<div class="header">
-	<div class="top">
-		<div class="area">
-			<span>
-				<i class="icon user"></i>
-				<span class="blue"><?= I('session.username',0);  ?></span>
-				<a class="blue" style="margin:0px 10px;" href="{:U('Index/Index/logout')}">退出</a>
-			</span>
-		</div>
-	</div>
-
-	
+	<div class="container">
+		<div class="header">
+			<div class="top">
+				<div class="area">
+					<span>
+	<i class="icon user"></i>
+	<span class="blue"><?= I('session.username',0); ?></span>
+	<a class="blue" style="margin:0px 10px;" href="<?php echo U('Index/Index/logout');?>">退出</a>
+</span>
+				</div>
+			</div>	
 		<div class="nav">
 			<div class="area">
-				<!-- 头部菜单 -->
-				<ul class="mainnav">
+				<html>
+<head>
+	<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+	<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+</head>
+<body>
+<ul class="mainnav">
 					<li>
-						<a href="{:U('Index/Manage/productInfo');}" mark=""><i class="icon MPD"></i><span>产品管理</span></a>
+						<a href="<?php echo U('Product/Product/productInfo');?>" mark=""><i class="icon MPD"></i><span>产品管理</span></a>
 						<div class="subnav">
 							<dl>
 								<dt>
@@ -43,7 +43,7 @@
 							<dl>
 								<dt>
 									<i class="icon dropdown-s"></i><strong>产品信息管理</strong>								</dt>
-								<dd><a href="/Manage/index.php?s=/ProductInfo/index" >产品信息</a></dd>
+								<dd><a href="<?php echo U('Product/Product/productInfo',array('country'=>'us'));;?>" >产品信息</a></dd>
 								<dd><a href="#" >批量打印单品条码</a></dd>
 							</dl>
 						</div>
@@ -107,7 +107,7 @@
 							<dl>
 								<dt>
 									<i class="icon dropdown-s"></i><strong>用户管理</strong>								</dt>
-								<dd><a href="{:U('Index/Rbac/addRole')}" >添加用户</a></dd>
+								<dd><a href="<?php echo U('Index/Rbac/addRole');?>" >添加用户</a></dd>
 								<dd><a href="#" >删除用户</a></dd>
 								<dd><a href="#" >锁定用户</a></dd>
 							</dl>
@@ -127,18 +127,14 @@
 						</div>
 					</li>
 				</ul>
-				
-
+</body>
+</html>
 			</div>
 		</div>
-		<input type="hidden" name="agreements" id="agreements"	data-title="您暂时未开通{service}服务，请联系客服开通此服务!"
-		value="Outbound ">
-        
-        <input type="hidden" id="supplierProtocal" data-title='暂未签署更新后的供应链管理协议，无法使用该功能。<br/>请点击<a  href="/Manage/index.php?s=/UserCenter/userinfo">这里</a>签署。' value="Y" />
 	</div>
 	<div class="area footer">
-		Powered by 3S 2015 Shangsi CORPORATION. All Rights Reserved.
-	</div>
-</div>
+		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.
+
+	</div> 
 </body>
 </html>

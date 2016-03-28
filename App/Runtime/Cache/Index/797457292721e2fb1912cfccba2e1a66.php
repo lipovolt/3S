@@ -314,6 +314,9 @@
 	</div>
 	</div>
 	<!-- InstanceEndEditable -->
-	<div class="area footer">Powered by 3S 2015 Shangsi CORPORATION. All Rights Reserved.</div>
+	<div class="area footer">
+		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.
+
+	</div> 
 </body>
 <!-- InstanceEnd --></html>

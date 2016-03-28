@@ -45,7 +45,7 @@ function change_code(obj){
           </tr>
           <tr>
             <td width="172" height="22" align="right">验证码:&nbsp;</td>
-            <td width="50" height="22"><input name="code" type="code" class="wenbenkuang" onKeyPress="Myenter(form1.add)"/>&nbsp;<img src="index.php/Index/Index/verify" id="code">&nbsp;<a href="javascript:void(change_code(this));">看不清</a></td>
+            <td width="50" height="22"><input name="code" type="code" class="wenbenkuang" onKeyPress="Myenter(form1.add)"/>&nbsp;<img src="<?php echo U('Index/Index/verify');?>" id="code">&nbsp;<a href="javascript:void(change_code(this));">看不清</a></td>
           </tr>
           <tr><td>&nbsp;</td></tr>
           <tr>

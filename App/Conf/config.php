@@ -3,11 +3,11 @@ return array(
 	//定义URL格式
 	'URL_NODEL' => 2,
 
-	//
+	//开启调试模式
 	'APP_DEBUG' => True,
 
 	//开启应用分组
-	'APP_GROUP_LIST' => 'Index, Admin',
+	'APP_GROUP_LIST' => 'Index,Admin,Product,Storage,Ussw,Winit',
 	'DEFAULT_GROUP' => 'Index',
 
 	//定义数据库连接参数

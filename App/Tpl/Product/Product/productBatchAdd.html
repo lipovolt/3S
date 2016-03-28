@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="product.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Untitled Document</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	
+		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<include file="./App/Tpl/Product/Product/Public/productInfoLeft.html" />
+		<div class="content">
+			<script>
+			var GlobalData = {
+				_COMMON_DATA_PROCESSING_ : "数据处理中...",
+				_PRODUCTINFO_BATCHADD_PRODUCTIMPORT_ERROR_FILE_TYPE_NOT_MATCH_:"产品信息导入只支持XLS格式文件!",
+				_COMMON_PLEASE_SELECT_FILE_:"请选择文件！"
+			}
+			</script>
+			
+			<!-- 主页面开始  -->
+				<div id="ProductInfo" class="main">
+					<ul class="tab">
+						<li class="on">
+						<i class="before"></i>
+							<span>导入产品信息</span>
+						<i class="after"></i>
+						</li>					
+					</ul>
+					<div class="tab-content">
+						<div class="tab-inner-content" style="">
+							<div class="block">
+								<div class="block-hd">
+									<i class="icon import"></i>
+									<strong>导入出口产品</strong>
+								</div>
+								<div class="block-bd">
+									<div class="block-indent" style="overflow:hidden;">
+										<div style="float:left;width:456px;">
+											<p>请<a href="/Manage/index.php?s=/ProductInfo/DownloadProductTemplate/" style="color: #6495ED">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
+											<div>
+												<!-- <form id="upload" method="POST" action="{:U('Index/Manage/batchAdd')}" enctype="multipart/form-data">
+												<div class="file-input">
+													<label for="importFile">选择文件</label>
+													<span id="importFileText">未选择文件</span>
+													<input id="importFile" name="image" accept=".xls" type="file" onchange="document.getElementById('importFileText').innerHTML = (this.value.replace(/^.*\\([^\.]*\..*)$/,'$1') || '未选择文件')" >
+												</div>
+												<button class="btn btn-s btn-blue" id="uploadSubmit">
+												<i class="icon uparrow-m"></i>
+												<i class="vline-inline"></i>
+												<span>提交</span>
+												</button>
+												 <input type="hidden" name="__hash__" value="205ce8867ed6985ec41e823e939e67b5_e5fd8695ceb4b3bebb3f1b2a5bbce9a5" /></form> -->
+												 <form action="{:U('Product/Product/batchAdd')}" method="post" enctype="multipart/form-data">
+										            <input type="file" name="import"/>
+								          			<input type="hidden" name="table" value="tablename"/>
+									             	<input type="submit" value="导入"/>
+									         	</form>
+
+											</div>
+											<p>
+												<span class="notice-s">产品信息导入只支持XLS格式文件</span>
+											</p>
+										</div>										
+									</div>															
+								</div>
+							</div>
+						</div>
+					</div>
+			<!-- 主页面结束 -->
+		</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file=".App/Tpl/Index/Manage/footer" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

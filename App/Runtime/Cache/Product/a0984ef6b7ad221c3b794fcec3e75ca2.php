@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -15,28 +15,34 @@
 		<div class="top">
 			<div class="area">
 				<span>
-					<i class="icon user"></i>
-					<span class="blue">账户名</span>
-					<a class="blue" style="margin:0px 10px;" href="#">退出</a>				</span>			</div>
-		</div>
-	
-		
+					<span>
+	<i class="icon user"></i>
+	<span class="blue"><?= I('session.username',0); ?></span>
+	<a class="blue" style="margin:0px 10px;" href="<?php echo U('Index/Index/logout');?>">退出</a>
+</span>
+			</div>
+		</div>		
 		<div class="nav">
 			<div class="area">
-				<!-- 头部菜单 -->
-				<ul class="mainnav">
+				<html>
+<head>
+	<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+	<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+</head>
+<body>
+<ul class="mainnav">
 					<li>
-						<a href="{:U('Index/Manage/productInfo');}" mark=""><i class="icon MPD"></i><span>产品管理</span></a>
+						<a href="<?php echo U('Product/Product/productInfo');?>" mark=""><i class="icon MPD"></i><span>产品管理</span></a>
 						<div class="subnav">
 							<dl>
 								<dt>
 									<i class="icon dropdown-s"></i><strong>导入产品</strong>								</dt>
-								<dd><a href="{:U('Index/Manage/productBatchAdd')}" >导入产品</a></dd>
+								<dd><a href="#" >导入产品</a></dd>
 							</dl>
 							<dl>
 								<dt>
 									<i class="icon dropdown-s"></i><strong>产品信息管理</strong>								</dt>
-								<dd><a href="/Manage/index.php?s=/ProductInfo/index" >产品信息</a></dd>
+								<dd><a href="<?php echo U('Product/Product/productInfo',array('country'=>'us'));;?>" >产品信息</a></dd>
 								<dd><a href="#" >批量打印单品条码</a></dd>
 							</dl>
 						</div>
@@ -100,7 +106,7 @@
 							<dl>
 								<dt>
 									<i class="icon dropdown-s"></i><strong>用户管理</strong>								</dt>
-								<dd><a href="{:U('Index/Rbac/addRole')}" >添加用户</a></dd>
+								<dd><a href="<?php echo U('Index/Rbac/addRole');?>" >添加用户</a></dd>
 								<dd><a href="#" >删除用户</a></dd>
 								<dd><a href="#" >锁定用户</a></dd>
 							</dl>
@@ -120,6 +126,8 @@
 						</div>
 					</li>
 				</ul>
+</body>
+</html>
 			</div>
 		</div>
 	</div>	
@@ -127,106 +135,87 @@
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<!-- 左边栏 -->
-		<div class="sidenav"><div class="sidenav-hd"><strong>产品管理</strong></div>
-			<div class="sidenav-bd">
-				<dl>
-					<dt>
-					<i class="icon dropdown-s"></i>
-					<strong>导入产品</strong>					</dt>
-					<dd ><a href="{:U('Index/Manage/productBatchAdd')}">导入产品</a></dd>
-				</dl>
-				<dl>
-					<dt>
-					<i class="icon dropdown-s"></i>
-					<strong>产品信息管理</strong>					</dt>
-					<dd  class="on" ><a href="#">产品信息</a></dd>
-					<dd ><a href="#">批量打印单品条码</a></dd>
-				</dl>	
-			</div>
-		</div>
-		<div class="content">
-<script type="text/javascript">
-	//给index.js提供全局数据
-	var GlobalData = {
-		url : "/Manage/index.php?s=",
-		option : "请选择"
-	}
-</script>
-
+<div class="sidenav">
+	<div class="sidenav-hd"><strong>产品管理</strong></div>
+	<div class="sidenav-bd">
+		<dl>
+			<dt>
+			<i class="icon dropdown-s"></i>
+			<strong>导入产品</strong>					</dt>
+			<dd ><a href="<?php echo U('Product/Product/productBatchAdd');?>">导入产品</a></dd>
+		</dl>
+		<dl>
+			<dt>
+			<i class="icon dropdown-s"></i>
+			<strong>产品信息管理</strong>	</dt>
+			<dd  class="on" ><a href="<?php echo U('Product/Product/productInfo');?>">产品信息</a></dd>
+			<dd ><a href="#">批量打印单品条码</a></dd>
+		</dl>	
+	</div>
+</div>
+	<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="/Manage/index.php?s=/ProductInfo/index/" method="POST">
-		<div class="search-area">
-			<div class="item">
-				<div class="form-group">
-					<label for="keyword" class="control-label">关键字</label>
-					<div class="control-wrap">
-						<select name="keyword" id="keyword" data-value="">
-							<option value="value">产品编码</option>
-							<option value="name">产品名称</option>
-						</select>
+		<form name="search_product" id="search_product" action="<?php echo U('Product/Product/productInfo');?>" method="POST">
+			<div class="search-area">
+				<div class="item">
+					<div class="form-group">
+						<label for="keyword" class="control-label">关键字</label>
+						<div class="control-wrap">
+							<select name="keyword" id="keyword" data-value="">
+								<option value="sku">产品编码</option>
+								<option value="title-cn">产品名称</option>
+							</select>
+						</div>
+						<div class="control-wrap">
+							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
+						</div>
 					</div>
-					<div class="control-wrap">
-						<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
-					</div>
-				</div>
-				<input type="hidden" name="country" value="122" />
-				<button class="btn btn-s btn-blue" onClick="search_product.submit();">
-					<i class="icon search"></i>
-					<i class="vline-inline"></i>
-					<span>查询</span>
-				</button>
-			</div>			
-		</div>
-		<input type="hidden" name="__hash__" value="ff49ed719b3da9a91e3fa1b682fe6f2c_58292026a894f750e9cf920bd524eb81" /></form>
-		<div>
-			<div class="tab">
-				<ul>
-					<li>
-						<i class="before"></i>
-						<a href="/Manage/index.php?s=/ProductInfo/index/country/100">
-							<span>美国</span>
-						</a>
-						<i class="after"></i>
-					</li>
-					<li>
-						<i class="before"></i>
-						<a href="/Manage/index.php?s=/ProductInfo/index/country/101">
-							<span>德国</span>
-						</a>
-						<i class="after"></i>
-					</li>					
-				</ul>
+					<input type="hidden" name="country" value="122" />
+					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
+						<i class="icon search"></i>
+						<i class="vline-inline"></i>
+						<span>查询</span>
+					</button>
+				</div>			
 			</div>
+			<input type="hidden" name="__hash__" value="ff49ed719b3da9a91e3fa1b682fe6f2c_58292026a894f750e9cf920bd524eb81" />
+		</form>
+		<div>
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
 					<tr>
 						<th width="110">产品编码</th>
-						<th><div class="tl">中文名称</div></th>						
-						<th><div class="tl">英文名称</div></th>
+						<th><div class="tl">中文名称</div></th>
 						<th><div class="tl">重量g</div></th>
 						<th>长cm</th>
 						<th>宽cm</th>
 						<th><div class="tl">高cm</div></th>
 						<th><div>带电</div></th>
-						<th width="60">头程运输方式</th>
+						<th><div>德国</div></th>
+						<th><div>德国头程方式</div></th>
+						<th><div>美国</div></th>
+						<th><div>美国头程方式</div></th>
 						<th width="60">产品经理</th>
 						<th width="230">操作</th>
 					</tr>
-					<tr>
-						<td><a href='/Manage/index.php?s=/ProductInfo/view/ProductID/1030634/CountryID/122'>12v 5a</a></td>
-						<td><div class="tl"></div></td>
-						<td><div class="tl">12v 5a 电源适配器</div></td>						<td><div class="tl"><a href='http://www.ebay.com/itm/AC-220V-TO-DC-12V-5A-60W-Power-Supply-AC-adaptor-EU-US-Line-Office-New-/290873513218?pt=US_Lighting_Parts_and_Accessories&var=&hash=item43b9699502' target='_blank'>12v 5a power supply</a></div></td>
-						<td>&nbsp;</td>
-						<td><div>WINIT承运</td>
-						<td><div class="tl"></div></td>
-						<td><div>CN</div></td>
-						<td><input type='checkbox' class="checkbox" disabled='disabled' checked></td>
-						<td><input type='checkbox' class="checkbox" disabled='disabled' checked></td>      
+					<?php if(is_array($products)): foreach($products as $key=>$vo): ?><tr>
+						<td><a href='#'><?php echo ($vo["sku"]); ?></a></td>
+						<td><div class="tl"><?php echo ($vo["title-cn"]); ?></div></td>						
+						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["length"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["width"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["height"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["battery"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["us"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["way-to-us"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["de"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["way-to-de"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["manager"]); ?></div></td>
 						<td>
-							<a href="/Manage/index.php?s=/ProductInfo/edit/ProductID/1030634/CountryID/122">编辑</a>&nbsp;&nbsp;
+							<a href="<?php echo U('Product/Product/productEdit',array('sku'=>$vo['sku']));?>">编辑</a>&nbsp;&nbsp;
 							<a class="blue PrintSingCode" href="javascript:;" data-title="标签纸打印单品条码" data-href="/Manage/index.php?s=/ProductInfo/printNumberProduct/sku/M010000000000027008/count/">打印单品条码</a>
-						</td>    	
-					</tr>				
+						</td>
+						</tr><?php endforeach; endif; ?>  								
 				</table>
 				<div class="tr">
 					<!-- 分页开始  -->
@@ -314,6 +303,9 @@
 	</div>
 	</div>
 	<!-- InstanceEndEditable -->
-	<div class="area footer">Powered by 3S 2015 Shangsi CORPORATION. All Rights Reserved.</div>
+	<div class="area footer">
+		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.
+
+	</div> 
 </body>
 <!-- InstanceEnd --></html>
