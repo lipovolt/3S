@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>库存信息</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	<div class="area clearfix">
+		<include file="./App/Tpl/Storage/Storage/Public/storageLeft.html" />
+	<div class="content">
+	<div id="Australia" class="main">
+		<form name="search_outbound" id="search_outbound" action="{:U('Storage/Storage/usstorage')}" method="POST">			
+		<div class="block-indent search-area">
+			<div class="form-group">
+				<label for="" class="control-label">关键字</label>
+				<div class="control-wrap">
+					<select name="keyword" id="keyword" data-value="">
+						<option value="sku">产品编码</option>
+						<option value="cname">产品中文名称</option>
+						<option value="ename">产品英文名称</option>
+					</select>
+				</div>
+				<div class="control-wrap">
+					<input type="text" name="keywordValue" id="keywordValue" value="">
+				</div>
+			</div>
+			<button class="btn btn-s btn-blue" onclick="search_outbound.submit();">
+				<i class="icon search"></i>
+				<i class="vline-inline"></i>
+				<span>查询</span>
+			</button>
+        </div>
+		<input type="hidden" name="__hash__" value="4aa8bc909dc4e7c9f1bf19868849db32_0a5f96e955ccfaec6ab83bbc99a7516f" /></form>
+		<div>
+			<div class="tab-content data-list">				
+							
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th>货位</th>
+					    <th>产品编码</th>					    
+					    <th><div class="tl">中文名称</div></th>	                          
+					    <th><div class="tl">英文名称</div></th>
+						<th><div class="tl">属性</div></th>
+						<th><div class="tr">历史入库</div></th>
+						<th><div class="tr">可用库存</div></th>
+						<th><div class="tr">待出库</div></th>
+						<th><div class="tr">在途库存</div></th>
+						<th><div class="tr">历史销量</div></th>
+						<th><div class="t1">备注</div></th>
+					</tr>    
+					<tr>
+						<volist name="usstorage" id="vo">
+						<tr>
+						<td>{$vo.position}</td>
+						<td>{$vo.sku}</td>						
+						<td><div class="tl">{$vo.cname}</div></td>
+						<td><div class="tl">{$vo.ename}</div></td>
+						<td><div class="tl">{$vo.attribute}</div></td>
+						<td><div class="tr">{$vo.cinventory}</div></td>
+						<td><div class="tr">{$vo.ainventory}</div></td>
+						<td><div class="tr">{$vo.oinventory}</div></td>
+						<td><div class="tr">{$vo.iinventory}</div></td>
+						<td><div class="tr">{$vo.csales}</div></td>
+						<td><div class="tl">{$vo.remark}</div></td>
+						</tr>	
+					</volist> 		
+					</tr>						
+				</table>
+				<div class="result page" align="center">{$page}</div>
+				<div class="tr">
+								
+					<!-- 分页开始  --> 
+										<!-- 分页 结束 -->	
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+		</div>
+	</div>
+		
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

@@ -3,18 +3,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>修改产品信息</title>
+<title>Untitled Document</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
-<script type="text/javascript">
-function checkboxValue(tinyintValue){
-	if(tinyintValue==1){
-		echo "checked";
-	}
-}
-</script>
 </head>
 <body>
 
@@ -44,7 +37,7 @@ function checkboxValue(tinyintValue){
 							<dl>
 								<dt>
 									<i class="icon dropdown-s"></i><strong>导入产品</strong>								</dt>
-								<dd><a href="<?php echo U('Product/Product/productBatchAdd');?>" >导入产品</a></dd>
+								<dd><a href="#" >导入产品</a></dd>
 							</dl>
 							<dl>
 								<dt>
@@ -136,156 +129,110 @@ function checkboxValue(tinyintValue){
 			</div>
 		</div>
 	</div>	
-	
-    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<!-- 左边栏 -->
 <div class="sidenav">
-	<div class="sidenav-hd"><strong>产品管理</strong></div>
+	<div class="sidenav-hd"><strong>美国库存管理</strong></div>
 	<div class="sidenav-bd">
 		<dl>
-			<dt>
-			<i class="icon dropdown-s"></i>
-			<strong>导入产品</strong>					</dt>
-			<dd ><a href="<?php echo U('Product/Product/productBatchAdd');?>">导入产品</a></dd>
+			<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
+			<dd><a href="<?php echo U('Ussw/Ussw/ussw');?>">单品入库操作</a></dd>
+			<dd ><a href="<?php echo U('Ussw/Ussw/storageFileBatchAdd');?>">批量导入入库单</a></dd>
 		</dl>
 		<dl>
-			<dt>
-			<i class="icon dropdown-s"></i>
-			<strong>产品信息管理</strong>	</dt>
-			<dd  class="on" ><a href="<?php echo U('Product/Product/productInfo');?>">产品信息</a></dd>
-			<dd ><a href="#">批量打印单品条码</a></dd>
-		</dl>	
+			<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
+			<dd ><a href="<?php echo U('Ussw/Ussw/usswOutbound');?>">单品出库操作</a></dd>
+		</dl>
+		<dl>
+			<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
+			<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
+		</dl>
 	</div>
 </div>
 	<div class="content">
 	<div id="ProductInfo" class="main">
-		<form method="POST" id="edit_productImg" action="<?php echo U(Product/Product/update);?>" enctype="multipart/form-data">
+		<form method="POST" id="edit_productImg" action="<?php echo U(Ussw/Ussw/update);?>" enctype="multipart/form-data">
 		
 		<div class="product-upload-wrap">
 			<input type="hidden" name="ProductID" value="1030634"> 
 			<input type="hidden" name="CountryID" value="122">
 		</div>
 		<input type="hidden" name="__hash__" value="48007adec5871053582d206bccb8d2ac_c6d32f4df480a79e2054461b3dc60b86" /></form>
-		<form method="POST" id="edit_productInfo" action="<?php echo U('Product/Product/update');?>">
+		<form method="POST" id="edit_productInfo" action="<?php echo U('Ussw/Ussw/update');?>">
 		<div class="block-outer BaseInfo">
 			<div class="block-outer-hd"><strong>基本信息</strong></div>
 			<div class="block-outer-bd">
 				<div class="inline-block block-indent">
 					<div class="item">
 						<div class="form-group">
-							<label for="sku" class="control-label">产品编码（不能修改）</label>
+							<label for="position" class="control-label">货位(不能修改)</label>
 							<div class="control-wrap">
-								<input type="text" name="skuValue" value="<?php echo ($product[0]['sku']); ?>" id="skuValue" readonly="true"/>
-								<input type="hidden" name="ProductCode" value="<?php echo ($product[0]['id']); ?>" id="ProductCode"  />
+								<input type="text"  id="positionValue" name="positionValue" value="<?php echo ($usstorage[0]['position']); ?>" readonly="true"/>
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="manager" class="control-label">产品经理</label>
+							<label for="sku" class="control-label">产品编码</label>
 							<div class="control-wrap">
-								<input type="text"  id="managerValue" name="managerValue" value="<?php echo ($product[0]['manager']); ?>" />
+								<input type="text" name="skuValue" value="<?php echo ($usstorage[0]['sku']); ?>" id="skuValue" />
 							</div>
 						</div>
 					</div>
 					<div class="item">
 						<div class="form-group">
-							<label for="Name" class="control-label">中文名称</label>
+							<label for="cname" class="control-label">中文名称</label>
 							<div class="control-wrap">
-								<input type="text" name="Name" id="Name" value="<?php echo ($product[0]['title-cn']); ?>" />
+								<input type="text" name="cnameValue" id="cnameValue" value="<?php echo ($usstorage[0]['cname']); ?>" />
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="EName" class="control-label">英文名称</label>
+							<label for="ename" class="control-label">英文名称</label>
 							<div class="control-wrap">
-								<input type="text" name="EName" id="EName" value="<?php echo ($product[0]['title-en']); ?>" />
+								<input type="text" name="enameValue" id="enameValue" value="<?php echo ($usstorage[0]['ename']); ?>" />
 							</div>
 						</div>
 					</div>
 					<div class="item">
                         <div class="form-group">
-							<label for="weight" class="control-label">重量g</label>
+							<label for="attribute" class="control-label">属性</label>
 							<div class="control-wrap">
-								<input type="text"  id="weightValue" name="weightValue" value="<?php echo ($product[0]['weight']); ?>" />
+								<input type="text"  id="attributeValue" name="attributeValue" value="<?php echo ($usstorage[0]['attribute']); ?>" />
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="length" class="control-label">长cm</label>
+							<label for="csales" class="control-label">累计销量</label>
 							<div class="control-wrap">
-								<input type="text"  id="lengthValue" name="lengthValue" value="<?php echo ($product[0]['length']); ?>" />
+								<input type="text"  id="csalesValue" name="csalesValue" value="<?php echo ($usstorage[0]['csales']); ?>" />
 							</div>
 						</div>
 					</div>
                     <div class="item">
                         <div class="form-group">
-							<label for="width" class="control-label">宽cm</label>
+							<label for="cinventory" class="control-label">累计入库</label>
 							<div class="control-wrap">
-								<input type="text"  id="widthValue" name="widthValue" value="<?php echo ($product[0]['width']); ?>" />
+								<input type="text"  id="cinventoryValue" name="cinventoryValue" value="<?php echo ($usstorage[0]['cinventory']); ?>" />
 							</div>
 						</div>
                         <div class="form-group">
-							<label for="height" class="control-label">高cm</label>
+							<label for="ainventory" class="control-label">可用数量</label>
 							<div class="control-wrap">
-								<input type="text"  id="heightValue" name="heightValue" value="<?php echo ($product[0]['height']); ?>" />
+								<input type="text"  id="ainventoryValue" name="ainventoryValue" value="<?php echo ($usstorage[0]['ainventory']); ?>" />
 							</div>
 						</div>
                     </div>
                     <div class="item">
-                    	<div class="form-group checkbox">
+                        <div class="form-group">
+							<label for="oinventory" class="control-label">待出库</label>
 							<div class="control-wrap">
-								<?php
- if($product[0]['de']==0){ echo '<input type="checkbox" id="de" name="de" />'; } else{ echo '<input type="checkbox" id="de" name="de" checked />'; } ?>
+								<input type="text"  id="oinventoryValue" name="oinventoryValue" value="<?php echo ($usstorage[0]['oinventory']); ?>" />
 							</div>
-							<label for="de" class="control-label">德国</label>
 						</div>
                         <div class="form-group">
-							<label for="way-to-de" class="control-label">德国头程方式</label>
+							<label for="iinventory" class="control-label">在途数量</label>
 							<div class="control-wrap">
-								<input type="text"  value="<?php echo ($product[0]['way-to-de']); ?>" id="way-to-de-value" name="way-to-de-value" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="width" class="control-label">德国关税率</label>
-							<div class="control-wrap">
-								<input type="text"  id="de-rate-value" name="de-rate-value" value="<?php echo ($product[0]['de-rate']); ?>" />
+								<input type="text"  id="iinventoryValue" name="iinventoryValue" value="<?php echo ($usstorage[0]['iinventory']); ?>" />
 							</div>
 						</div>
                     </div>
-                    <div class="item">
-                    	<div class="form-group checkbox">	
-							<div class="control-wrap">
-								<?php
- if($product[0]['us']==0){ echo '<input type="checkbox" id="us" name="us" />'; } else{ echo '<input type="checkbox" id="us" name="us" checked />'; } ?>
-							</div>
-							<label for="us" class="control-label">美国</label>
-						</div>
-                        <div class="form-group">
-							<label for="way-to-us" class="control-label">美国头程方式</label>
-							<div class="control-wrap">
-								<input type="text"  value="<?php echo ($product[0]['way-to-us']); ?>" id="way-to-us-value" name="way-to-us-value" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="height" class="control-label">美国关税率</label>
-							<div class="control-wrap">
-								<input type="text"  id="us-rate-value" name="us-rate-value" value="<?php echo ($product[0]['us-rate']); ?>" />
-							</div>
-						</div>
-                    </div>
-					<div class="item">						
-						<div class="form-group checkbox">
-							<div class="control-wrap">
-								<?php
- if($product[0]['battery']==0){ echo '<input type="checkbox" id="battery" name="battery" />'; } else{ echo '<input type="checkbox" id="battery" name="battery" checked />'; } ?>							
-							</div>
-							<label for="IsBattery" class="control-label">有电池</label>
-						</div> 
-						<div class="form-group">
-							<label for="height" class="control-label">供货商信息</label>
-							<div class="control-wrap">
-								<input type="text"  id="supplierValue" name="supplierValue" value="<?php echo ($product[0]['supplier']); ?>" />
-							</div>
-						</div>                      
-					</div>
 				</div>
 			</div>
 		</div>
@@ -300,7 +247,7 @@ function checkboxValue(tinyintValue){
 
 		</div>
 	</div>
-	</div>
+		
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.

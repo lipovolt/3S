@@ -2,20 +2,22 @@
 
 class ProductAction extends CommonAction{
 
-    public function index(){   
-        $this->display();
-    }
-
     public function productInfo(){
         if($_POST['keyword']==""){
-            $this->products = M('products')->select();
-            $this->display();
+            $Data = M('products');
+            import('ORG.Util.Page');
+            $count = $Data->count();
+            $Page = new Page($count,20);            
+            $Page->setConfig('header', '条数据');
+            $show = $Page->show();
+            $products = $Data->limit($Page->firstRow.','.$Page->listRows)->select();
+            $this->assign('products',$products);
+            $this->assign('page',$show);
         }
         else{
             $this->products = M('products')->where(array($_POST['keyword']=>$_POST['keywordValue']))->select();
-            $this->display();
         }
-        
+        $this->display();
     }
 
     public function productBatchAdd(){

@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>Untitled Document</title>
+<title>修改产品信息</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -51,9 +51,9 @@ function checkboxValue(tinyintValue){
 				<div class="inline-block block-indent">
 					<div class="item">
 						<div class="form-group">
-							<label for="sku" class="control-label">产品编码</label>
+							<label for="sku" class="control-label">产品编码（不能修改）</label>
 							<div class="control-wrap">
-								<input type="text" name="skuValue" value="{$product[0]['sku']}" id="skuValue" />
+								<input type="text" name="skuValue" value="{$product[0]['sku']}" id="skuValue" readonly="true"/>
 								<input type="hidden" name="ProductCode" value="{$product[0]['id']}" id="ProductCode"  />
 							</div>
 						</div>
@@ -152,7 +152,7 @@ function checkboxValue(tinyintValue){
                         <div class="form-group">
 							<label for="way-to-us" class="control-label">美国头程方式</label>
 							<div class="control-wrap">
-								<input type="text"  value="{$product[0]['way-to-us-value']}" id="way-to-us-value" name="way-to-us-value" />
+								<input type="text"  value="{$product[0]['way-to-us']}" id="way-to-us-value" name="way-to-us-value" />
 							</div>
 						</div>
 						<div class="form-group">

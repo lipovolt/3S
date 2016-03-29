@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>Untitled Document</title>
+<title>产品信息</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -37,24 +37,22 @@
 							<dl>
 								<dt>
 									<i class="icon dropdown-s"></i><strong>导入产品</strong>								</dt>
-								<dd><a href="#" >导入产品</a></dd>
+								<dd><a href="<?php echo U('Product/Product/productBatchAdd');?>" >导入产品</a></dd>
 							</dl>
 							<dl>
 								<dt>
 									<i class="icon dropdown-s"></i><strong>产品信息管理</strong>								</dt>
 								<dd><a href="<?php echo U('Product/Product/productInfo',array('country'=>'us'));;?>" >产品信息</a></dd>
-								<dd><a href="#" >批量打印单品条码</a></dd>
 							</dl>
 						</div>
 					</li>
 					<li>
-						<a href="#" mark="Outbound"><i class="icon MWO"></i><span>库存</span></a>
+						<a href="<?php echo U('Storage/Storage/usstorage');?>" mark="Outbound"><i class="icon MWO"></i><span>库存</span></a>
 						<div class="subnav">
 							<dl>
 								<dt>
 									<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								</dt>
-								<dd><a href="#"  mark="Outbound">万邑通库存</a></dd>
-								<dd><a href="#"  mark="Outbound">自建仓库存</a></dd>
+								<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
 							</dl>
 							<dl>
 								<dt>
@@ -82,21 +80,20 @@
 						</div>
 					</li>
 					<li>
-						<a href="#" mark="Outbound"><i class="icon GlobalTransfer"></i><span>美国自建仓</span></a>
+						<a href="<?php echo U('Ussw/Ussw/ussw');?>" mark="Outbound"><i class="icon GlobalTransfer"></i><span>美国自建仓</span></a>
 						<div class="subnav">
 							<dl>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>入库</strong>								</dt>
-								<dd><a href="#"  mark="Outbound">新增入库单</a></dd>
-								<dd><a href="#"  mark="Outbound">全部订单</a></dd>
+								<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
+								<dd><a href="<?php echo U('Ussw/Ussw/ussw');?>">单品入库操作</a></dd>
+								<dd ><a href="<?php echo U('Ussw/Ussw/storageFileBatchAdd');?>">批量导入入库单</a></dd>
 							</dl>
 							<dl>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>出库</strong>								</dt>
-								<dd><a href="#"  mark="Outbound">单个录入</a></dd>
-								<dd><a href="#"  mark="Outbound">批量上传</a></dd>
-								<dd><a href="#"  mark="Outbound">全部订单</a></dd>
-								<dd><a href="#"  mark="Outbound">未提交订单</a></dd>
+								<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
+								<dd ><a href="<?php echo U('Ussw/Ussw/usswOutbound');?>">单品出库</a></dd>
+							</dl>
+							<dl>
+								<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
+								<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
 							</dl>
 						</div>
 					</li>
@@ -149,7 +146,6 @@
 			<i class="icon dropdown-s"></i>
 			<strong>产品信息管理</strong>	</dt>
 			<dd  class="on" ><a href="<?php echo U('Product/Product/productInfo');?>">产品信息</a></dd>
-			<dd ><a href="#">批量打印单品条码</a></dd>
 		</dl>	
 	</div>
 </div>
@@ -198,108 +194,31 @@
 						<th width="60">产品经理</th>
 						<th width="230">操作</th>
 					</tr>
-					<?php if(is_array($products)): foreach($products as $key=>$vo): ?><tr>
-						<td><a href='#'><?php echo ($vo["sku"]); ?></a></td>
+					<?php if(is_array($products)): $i = 0; $__LIST__ = $products;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><div class="tl"><?php echo ($vo["sku"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["title-cn"]); ?></div></td>						
 						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["length"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["width"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["height"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["battery"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["us"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["way-to-us"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["de"]); ?></div></td>
+						<?php echo $vo['battery']==0?'<td><div class="tl">否</div></td>':'<td><div class="tl">是</div></td>';?>
+						<?php echo $vo['de']==0?'<td><div class="tl">否</div></td>':'<td><div class="tl">是</div></td>';?>
 						<td><div class="tl"><?php echo ($vo["way-to-de"]); ?></div></td>
+						<?php echo $vo['us']==0?'<td><div class="tl">否</div></td>':'<td><div class="tl">是</div></td>';?>
+						<td><div class="tl"><?php echo ($vo["way-to-us"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["manager"]); ?></div></td>
 						<td>
-							<a href="<?php echo U('Product/Product/productEdit',array('sku'=>$vo['sku']));?>">编辑</a>&nbsp;&nbsp;
-							<a class="blue PrintSingCode" href="javascript:;" data-title="标签纸打印单品条码" data-href="/Manage/index.php?s=/ProductInfo/printNumberProduct/sku/M010000000000027008/count/">打印单品条码</a>
+							<a href="<?php echo U('Product/Product/productEdit',array('sku'=>$vo['sku']));?>">编辑</a>
 						</td>
-						</tr><?php endforeach; endif; ?>  								
+						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
-				<div class="tr">
-					<!-- 分页开始  -->
-					<div id="pagination" class="pagination">
-						<span>共1条记录</span>
-						<span>
-							<!--每页-->
-							<select class="page-count-select" onchange='changePageCount(1,this.value);'>
-                                                                        <option value='10'>10</option><option value='20' selected>20</option>
-                                                                           <option value='50'>50</option>                                        <option value='100'>100</option>                                        <option value='200'>200</option>                            </select>
-							条&nbsp;每页						</span>
-						<a href="javascript:;" class="page-prev-to-first disabled" title="第一页"></a>
-												
-						<a href="javascript:;" class="page-prev disabled" title="上一页"></a>
-												
-						<span>1 / 1</span>
-						
-						<a href="javascript:;" class="page-next disabled" title="下一页"></a>
-												
-						<a href="javascript:;" class="page-next-to-last disabled" title="最后一页"></a>	
-														
-						<input type="text" maxlength="5"  id='goPage' value="1">
-						
-						<input type='button' class='btn btn-s btn-blue' onClick="listChangePage(1,document.getElementById('goPage').value)" value=' 跳转 '>
-					</div>
-				
-					<script language="JavaScript">
-					//指定当前组模块URL地址  
-					var URL = '/Manage/index.php?s=/ProductInfo';
-					var APP	 =	 '/Manage/index.php?s=';
-					var PUBLIC = '/Public';
-					
-					function isInteger(str) {
-						var regu = /^[-]{0,1}[0-9]{1,}$/;
-						return regu.test(str);
-					}
-
-
-					//分页类
-					function listChangePageKeydown(max,page,e) {
-						e = e ? e : window.event;
-						var keyCode = e.which ? e.which : e.keyCode;
-							
-						if ( keyCode == 13 ){
-							if (!isInteger(page)){
-								page = 1;
-							}								
-							if (page > max){
-								page = max;
-							}								
-							if (page < 1){
-								page = 1;
-							}
-							location.href='/Manage/index.php?s=/ProductInfo/index/pageCount/20/page/'+page;
-						}
-					}
-
-					function listChangePage(max,page) {
-						if (!isInteger(page)){
-							page = 1;
-						}								
-						if (page > max){
-							page = max;
-						}								
-						if (page < 1){
-							page = 1;
-						}
-						location.href='/Manage/index.php?s=/ProductInfo/index/pageCount/20/page/'+page;
-					}
-
-					function changePageCount(page,pageCount) {
-						location.href='/Manage/index.php?s=/ProductInfo/index/page/1' + "/pageCount/" + pageCount;	
-					}
-					</script>					<!-- 分页 结束 -->
-				</div>
+				<div class="result page" align="center"><?php echo ($page); ?></div>
 			</div>
 		</div>
+	</div>>
+
+
 	</div>
-        <script type="text/javascript">
-            var isUsUser = ""; 
-        </script>
-
-
-		</div>
 	</div>
 	</div>
 	<!-- InstanceEndEditable -->

@@ -31,7 +31,7 @@ class IndexAction extends Action {
         session('username', $user['username']);
         session('logintime', date('Y-m-d H:i:s', $user['logintime']));
         session('loginip', $user['loginip']);
-        $this->redirect(U('Product/Product/index','','',1));
+        $this->redirect(U('Product/Product/productInfo','','',1));
 
     }
 

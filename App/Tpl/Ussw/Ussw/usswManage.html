@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>产品信息</title>
+<title>美国仓库存信息管理</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -24,13 +24,11 @@
 			</div>
 		</div>
 	</div>	
-	
-    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
-		<include file="./App/Tpl/Product/Product/Public/productInfoLeft.html" />
+		<include file="./App/Tpl/Ussw/Ussw/Public/usswLeft.html" />
 	<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="{:U('Product/Product/productInfo')}" method="POST">
+		<form name="search_product" id="search_product" action="{:U('Ussw/Ussw/usswManage')}" method="POST">
 			<div class="search-area">
 				<div class="item">
 					<div class="form-group">
@@ -59,49 +57,49 @@
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th width="110">产品编码</th>
-						<th><div class="tl">中文名称</div></th>
-						<th><div class="tl">重量g</div></th>
-						<th>长cm</th>
-						<th>宽cm</th>
-						<th><div class="tl">高cm</div></th>
-						<th><div>带电</div></th>
-						<th><div>德国</div></th>
-						<th><div>德国头程方式</div></th>
-						<th><div>美国</div></th>
-						<th><div>美国头程方式</div></th>
-						<th width="60">产品经理</th>
+						<th><div class="t1">货位</div></th>
+					    <th><div class="t1">产品编码</div></th>					    
+					    <th><div class="tl">中文名称</div></th>	                          
+					    <th><div class="tl">英文名称</div></th>
+						<th><div class="tl">属性</div></th>
+						<th><div class="tr">历史入库</div></th>
+						<th><div class="tr">可用库存</div></th>
+						<th><div class="tr">待出库</div></th>
+						<th><div class="tr">在途库存</div></th>
+						<th><div class="tr">历史销量</div></th>
+						<th><div class="t1">备注</div></th>
 						<th width="230">操作</th>
-					</tr>
-					<volist name="products" id="vo">
+					</tr>    
+					<tr>
+						<volist name="usstorage" id="vo">
 						<tr>
-						<td><div class="tl">{$vo.sku}</div></td>
-						<td><div class="tl">{$vo.title-cn}</div></td>						
-						<td><div class="tl">{$vo.weight}</div></td>
-						<td><div class="tl">{$vo.length}</div></td>
-						<td><div class="tl">{$vo.width}</div></td>
-						<td><div class="tl">{$vo.height}</div></td>
-						<?php echo $vo['battery']==0?'<td><div class="tl">否</div></td>':'<td><div class="tl">是</div></td>';?>
-						<?php echo $vo['de']==0?'<td><div class="tl">否</div></td>':'<td><div class="tl">是</div></td>';?>
-						<td><div class="tl">{$vo.way-to-de}</div></td>
-						<?php echo $vo['us']==0?'<td><div class="tl">否</div></td>':'<td><div class="tl">是</div></td>';?>
-						<td><div class="tl">{$vo.way-to-us}</div></td>
-						<td><div class="tl">{$vo.manager}</div></td>
+						<td><div class="tl">{$vo.position}</div></td>
+						<td><div class="tl">{$vo.sku}</div></td>						
+						<td><div class="tl">{$vo.cname}</div></td>
+						<td><div class="tl">{$vo.ename}</div></td>
+						<td><div class="tl">{$vo.attribute}</div></td>
+						<td><div class="tr">{$vo.cinventory}</div></td>
+						<td><div class="tr">{$vo.ainventory}</div></td>
+						<td><div class="tr">{$vo.oinventory}</div></td>
+						<td><div class="tr">{$vo.iinventory}</div></td>
+						<td><div class="tr">{$vo.csales}</div></td>
+						<td><div class="tl">{$vo.remark}</div></td>
 						<td>
-							<a href="{:U('Product/Product/productEdit',array('sku'=>$vo['sku']))}">编辑</a>
+							<a href="{:U('Ussw/Ussw/usswEdit',array('sku'=>$vo['sku']))}">编辑</a>
 						</td>
 						</tr>	
-					</volist> 								
+					</volist> 		
+					</tr>								
 				</table>
 				<div class="result page" align="center">{$page}</div>
 			</div>
 		</div>
-	</div>>
+	</div>
 
 
 	</div>
 	</div>
-	</div>
+		
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		<include file="./Public/Tpl/footer.html" />
