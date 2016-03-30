@@ -25,7 +25,13 @@
 		</div>
 	</div>	
 	<div class="area clearfix">
-		<include file="./App/Tpl/Storage/Storage/Public/storageLeft.html" />
+		<!-- 左边栏 -->
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>库存</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/storageMenu.html" />
+			</div>
+		</div>
 	<div class="content">
 	<div id="Australia" class="main">
 		<form name="search_outbound" id="search_outbound" action="{:U('Storage/Storage/usstorage')}" method="POST">			

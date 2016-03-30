@@ -1,101 +1,32 @@
-<html>
-<head>
-	<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
-	<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
-</head>
-<body>
 <ul class="mainnav">
-					<li>
-						<a href="{:U('Product/Product/productInfo')}" mark=""><i class="icon MPD"></i><span>产品管理</span></a>
-						<div class="subnav">
-							<dl>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>导入产品</strong>								</dt>
-								<dd><a href="{:U('Product/Product/productBatchAdd')}" >导入产品</a></dd>
-							</dl>
-							<dl>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>产品信息管理</strong>								</dt>
-								<dd><a href="{:U('Product/Product/productInfo',array('country'=>'us'));}" >产品信息</a></dd>
-							</dl>
-						</div>
-					</li>
-					<li>
-						<a href="{:U('Storage/Storage/usstorage')}" mark="Outbound"><i class="icon MWO"></i><span>库存</span></a>
-						<div class="subnav">
-							<dl>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								</dt>
-								<dd><a href="{:U('Storage/Storage/usstorage')}"  mark="Outbound">自建仓库存</a></dd>
-							</dl>
-							<dl>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								</dt>
-								<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-							</dl>
-						</div>
-					</li>
-					<li>
-						<a href="#" mark="Outbound"><i class="icon MWI"></i><span>万邑通</span></a>
-						<div class="subnav">
-							<dl>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>入库</strong>								</dt>
-								<dd><a href="/Manage/index.php?s=/WarehouseOrder/stepOne"  mark="Outbound">新增入库单</a></dd>
-								<dd><a href="#"  mark="Outbound">全部订单</a></dd><dd><a href="#"  mark="Outbound">已合并订单</a></dd>
-							</dl>
-							<dl>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>出库</strong>								</dt>
-								<dd><a href="#"  mark="Outbound">单个录入</a></dd>
-								<dd><a href="#"  mark="Outbound">批量上传</a></dd>
-								<dd><a href="#"  mark="Outbound">全部订单</a></dd>
-							</dl>
-						</div>
-					</li>
-					<li>
-						<a href="{:U('Ussw/Ussw/ussw')}" mark="Outbound"><i class="icon GlobalTransfer"></i><span>美国自建仓</span></a>
-						<div class="subnav">
-							<dl>
-								<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
-								<dd><a href="{:U('Ussw/Ussw/ussw')}">单品入库操作</a></dd>
-								<dd ><a href="{:U('Ussw/Ussw/storageFileBatchAdd')}">批量导入入库单</a></dd>
-							</dl>
-							<dl>
-								<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
-								<dd ><a href="{:U('Ussw/Ussw/usswOutbound')}">单品出库</a></dd>
-							</dl>
-							<dl>
-								<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-								<dd ><a href="{:U('Ussw/Ussw/usswManage')}">库存信息</a></dd>
-							</dl>
-						</div>
-					</li>
-					<li  >
-						<a href="#" mark="Outbound"><i class="icon GlobalTransfer"></i><span>系统管理</span></a>
-						<div class="subnav">
-							<dl>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>用户管理</strong>								</dt>
-								<dd><a href="{:U('Index/Rbac/addRole')}" >添加用户</a></dd>
-								<dd><a href="#" >删除用户</a></dd>
-								<dd><a href="#" >锁定用户</a></dd>
-							</dl>
-							<dl>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>角色管理</strong>								</dt>
-								<dd><a href="#" >添加角色</a></dd>
-							</dl>
-							<dl>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>节点管理</strong>								</dt>
-								<dd><a href="#" >添加节点</a></dd>
-								<dt>
-									<i class="icon dropdown-s"></i><strong>权限分配</strong>								</dt>
-								<dd><a href="#" >权限分配</a></dd>
-							</dl>
-						</div>
-					</li>
-				</ul>
-</body>
-</html>
+	<li>
+		<a href="{:U('Product/Product/productInfo')}" mark=""><span>产品管理</span></a>
+		<div class="subnav">
+			<include file="./Public/Tpl/productMenu.html" />
+		</div>
+	</li>
+	<li>
+		<a href="{:U('Storage/Storage/usstorage')}" mark="Outbound"><span>库存</span></a>
+		<div class="subnav">
+			<include file="./Public/Tpl/storageMenu.html" />
+		</div>
+	</li>
+	<li>
+		<a href="{:U('Shenzhen/Shenzhen/shenzhen')}" mark="shenzhen"><span>深圳</span></a>
+		<div class="subnav">
+			<include file="./Public/Tpl/shenzhenMenu.html" />
+		</div>
+	</li>
+	<li>
+		<a href="#" mark="USSW"><span>美国自建仓</span></a>
+		<div class="subnav">
+			<include file="./Public/Tpl/usswMenu.html" />
+		<div>
+	</li>
+	<li>
+		<a href="#" mark="Admin"><span>系统管理</span></a>
+		<div class="subnav">
+			<include file="./Public/Tpl/adminMenu.html" />
+		</div>
+	</li>
+</ul>

@@ -34,7 +34,12 @@ function checkboxValue(tinyintValue){
 	
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
-		<include file="./App/Tpl/Product/Product/Public/productInfoLeft.html" />
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>产品管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/productMenu.html" />	
+			</div>
+		</div>
 	<div class="content">
 	<div id="ProductInfo" class="main">
 		<form method="POST" id="edit_productImg" action="{:U(Product/Product/update)}" enctype="multipart/form-data">

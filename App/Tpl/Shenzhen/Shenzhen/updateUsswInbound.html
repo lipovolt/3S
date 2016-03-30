@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>更新美国自建仓入库单</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	<div class="area clearfix">
+		<!-- 左边栏 -->
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>深圳</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/shenzhenMenu.html" />
+			</div>
+		</div>
+		<div class="content">
+			<script>
+			var GlobalData = {
+				_COMMON_DATA_PROCESSING_ : "数据处理中...",
+				_PRODUCTINFO_BATCHADD_PRODUCTIMPORT_ERROR_FILE_TYPE_NOT_MATCH_:"产品信息导入只支持XLS格式文件!",
+				_COMMON_PLEASE_SELECT_FILE_:"请选择文件！"
+			}
+			</script>
+			
+			<!-- 主页面开始  -->
+				<div id="ProductInfo" class="main">
+					<ul class="tab">
+						<li class="on">
+						<i class="before"></i>
+							<span>美国自建仓</span>
+						<i class="after"></i>
+						</li>					
+					</ul>
+					<div class="tab-content">
+						<div class="tab-inner-content" style="">
+							<div class="block">
+								<div class="block-hd">
+									<i class="icon import"></i>
+									<strong>更新美国自建仓入库单</strong>
+								</div>
+								<div class="block-bd">
+									<div class="block-indent" style="overflow:hidden;">
+										<div style="float:left;width:456px;">
+											<p>请<a href="#" style="color: #6495ED">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
+											<div>
+												 <form action="{:U('Shenzhen/Shenzhen/update')}" method="post" enctype="multipart/form-data">
+												 	<div class="form-group">
+														<label for="tableName" class="control-label">表格名称</label>
+														<div class="control-wrap">
+															<input type="text"  id="tableNameValue" name="tableNameValue" value="usswYYYYMMDD" />
+														</div>
+													</div>
+										            <input type="file" name="import"/>
+								          			<input type="hidden" name="table" value="tablename"/>
+									             	<input type="submit" value="导入"/>
+									         	</form>
+
+											</div>
+											<p>
+												<span class="notice-s">产品信息导入只支持XLS格式文件，文件名格式 usswYYYYMMDD, 例如ussw20160330。</span>
+											</p>
+										</div>										
+									</div>															
+								</div>
+							</div>
+						</div>
+					</div>
+			<!-- 主页面结束 -->
+		</div>
+	</div>
+	</div>
+		
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

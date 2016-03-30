@@ -7,7 +7,7 @@ return array(
 	'APP_DEBUG' => True,
 
 	//开启应用分组
-	'APP_GROUP_LIST' => 'Index,Admin,Product,Storage,Ussw,Winit',
+	'APP_GROUP_LIST' => 'Index,Admin,Product,Storage,Ussw,Shenzhen',
 	'DEFAULT_GROUP' => 'Index',
 
 	//定义数据库连接参数

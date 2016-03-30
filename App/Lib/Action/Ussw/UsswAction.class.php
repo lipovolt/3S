@@ -6,6 +6,26 @@ class UsswAction extends CommonAction{
 		$this->display();
 	}
 
+    /*创建usswInbound表
+
+    CREATE TABLE IF NOT EXISTS `3s_usswInbound`(
+    `id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
+    `date` date default null,
+    `way` varchar(10) default null,
+    `pQuantity` smallint(6) default 0,
+    `weight` decimal(5,2) default 0,
+    `volume` decimal(8,5) default 0,
+    `volumeWeight` decimal(5,2) default 0,
+    `iQuantity` smallint(6) default 0,
+    `status` varchar(10) default null
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+        
+    */
+
+    public function usswInbound(){
+        $this->display();
+    }
+
 	public function itemInbound(){
 		$where['sku'] = I('post.sku','','htmlspecialchars');
 		$where['position'] = I('post.position','','htmlspecialchars');
