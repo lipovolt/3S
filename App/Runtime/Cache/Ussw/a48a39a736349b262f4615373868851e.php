@@ -86,6 +86,7 @@
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
 	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
 	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Ussw/ussw');?>">入库验货</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Inbound/fileImport');?>">批量导入入库单</a></dd>
 </dl>
 <dl>
@@ -137,6 +138,7 @@
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
 	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
 	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Ussw/ussw');?>">入库验货</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Inbound/fileImport');?>">批量导入入库单</a></dd>
 </dl>
 <dl>
@@ -164,7 +166,7 @@
 					<ul class="tab">
 						<li class="on">
 						<i class="before"></i>
-							<span>美国库存信息</span>
+							<span>入库单号 <?php echo ($orderID); ?></span>
 						<i class="after"></i>
 						</li>					
 					</ul>
@@ -180,7 +182,7 @@
 										<div style="float:left;width:456px;">
 											<p>请<a href="#">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
 											<div>
-												 <form action="<?php echo U('Ussw/Ussw/batchAdd');?>" method="post" enctype="multipart/form-data">
+												 <form action="<?php echo U('Ussw/Inbound/addItems');?>" method="post" enctype="multipart/form-data">
 										            <input type="file" name="import"/>
 								          			<input type="hidden" name="table" value="tablename"/>
 									             	<input type="submit" value="导入"/>

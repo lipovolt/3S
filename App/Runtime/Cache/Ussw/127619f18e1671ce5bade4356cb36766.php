@@ -86,8 +86,6 @@
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
 	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
 	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
-	<dd><a href="<?php echo U('Ussw/Ussw/ussw');?>">入库验货</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Inbound/fileImport');?>">批量导入入库单</a></dd>
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
@@ -139,8 +137,6 @@
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
 	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
 	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
-	<dd><a href="<?php echo U('Ussw/Ussw/ussw');?>">入库验货</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Inbound/fileImport');?>">批量导入入库单</a></dd>
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
@@ -181,7 +177,9 @@
 						<td><div class="tl"><?php echo ($vo["iQuantity"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["status"]); ?></div></td>
 						<td>
-							<a href="<?php echo U('Ussw/Inbound/showItems',array('id'=>$vo['id']));?>">产品详情</a>
+							<a href="<?php echo U('Ussw/Inbound/importItems',array('orderID'=>$vo['id']));?>">导入产品</a>
+							<a href="<?php echo U('Ussw/Inbound/inboundOrderItems',array('orderID'=>$vo['id']));?>">产品明细</a>
+							<a href="<?php echo U('Ussw/Inbound/updateStorage',array('ioid'=>$vo['id']));?>">入库</a>
 						</td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>

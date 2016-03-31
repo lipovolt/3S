@@ -67,7 +67,6 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>美国自建仓</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Shenzhen/Shenzhen/importUsswInbound');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
 	<dd><a href="<?php echo U('Shenzhen/Shenzhen/updateUsswInbound');?>"  mark="Outbound">更新美国自建仓入库单</a></dd>
 	<dd><a href="#"  mark="Outbound">导出美国自建仓补货表</a></dd>
 </dl>
@@ -85,8 +84,8 @@
 		<div class="subnav">
 			<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
-	<dd><a href="<?php echo U('Ussw/Ussw/ussw');?>">入库验货</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Ussw/storageFileBatchAdd');?>">批量导入入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
@@ -137,7 +136,6 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>美国自建仓</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Shenzhen/Shenzhen/importUsswInbound');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
 	<dd><a href="<?php echo U('Shenzhen/Shenzhen/updateUsswInbound');?>"  mark="Outbound">更新美国自建仓入库单</a></dd>
 	<dd><a href="#"  mark="Outbound">导出美国自建仓补货表</a></dd>
 </dl>

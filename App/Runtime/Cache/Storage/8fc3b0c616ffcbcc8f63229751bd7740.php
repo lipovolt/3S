@@ -50,24 +50,24 @@
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl>
+</dl><!-- 
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
 	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl>
+</dl> -->
 
 		</div>
 	</li>
-	<li>
+	<!-- <li>
 		<a href="<?php echo U('Shenzhen/Shenzhen/shenzhen');?>" mark="shenzhen"><span>深圳</span></a>
 		<div class="subnav">
 			<dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>美国自建仓</strong>								
 	</dt>
-	<dd><a href="#"  mark="Outbound">新增美国自建仓入库单</a></dd>
+	<dd><a href="<?php echo U('Shenzhen/Shenzhen/updateUsswInbound');?>"  mark="Outbound">更新美国自建仓入库单</a></dd>
 	<dd><a href="#"  mark="Outbound">导出美国自建仓补货表</a></dd>
 </dl>
 <dl>
@@ -78,14 +78,14 @@
 	<dd><a href="#"  mark="Outbound">导出万邑通德国仓补货表</a></dd>
 </dl>
 		</div>
-	</li>
+	</li> -->
 	<li>
 		<a href="#" mark="USSW"><span>美国自建仓</span></a>
 		<div class="subnav">
 			<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
-	<dd><a href="<?php echo U('Ussw/Ussw/ussw');?>">入库验货</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Ussw/storageFileBatchAdd');?>">批量导入入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
@@ -97,7 +97,7 @@
 </dl>
 
 		<div>
-	</li>
+	</li><!-- 
 	<li>
 		<a href="#" mark="Admin"><span>系统管理</span></a>
 		<div class="subnav">
@@ -123,7 +123,7 @@
 </dl>
 		</div>
 	</li>
-</ul>
+</ul> -->
 			</div>
 		</div>
 	</div>	
@@ -137,13 +137,13 @@
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl>
+</dl><!-- 
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
 	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl>
+</dl> -->
 
 			</div>
 		</div>

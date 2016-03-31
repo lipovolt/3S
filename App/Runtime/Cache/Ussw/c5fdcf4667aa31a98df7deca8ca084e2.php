@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>Untitled Document</title>
+<title>美国自建仓入库单</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -86,6 +86,7 @@
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
 	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
 	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/checkInboundOrder');?>">入库验货</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Inbound/fileImport');?>">批量导入入库单</a></dd>
 </dl>
 <dl>
@@ -128,8 +129,9 @@
 			</div>
 		</div>
 	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
-		<!-- 左边栏 -->
 		<div class="sidenav">
 			<div class="sidenav-hd"><strong>美国自建仓</strong></div>
 			<div class="sidenav-bd">
@@ -137,6 +139,7 @@
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
 	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
 	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/checkInboundOrder');?>">入库验货</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Inbound/fileImport');?>">批量导入入库单</a></dd>
 </dl>
 <dl>
@@ -151,56 +154,30 @@
 			</div>
 		</div>
 	<div class="content">
-			<script>
-			var GlobalData = {
-				_COMMON_DATA_PROCESSING_ : "数据处理中...",
-				_PRODUCTINFO_BATCHADD_PRODUCTIMPORT_ERROR_FILE_TYPE_NOT_MATCH_:"产品信息导入只支持XLS格式文件!",
-				_COMMON_PLEASE_SELECT_FILE_:"请选择文件！"
-			}
-			</script>
-			
-			<!-- 主页面开始  -->
-				<div id="ProductInfo" class="main">
-					<ul class="tab">
-						<li class="on">
-						<i class="before"></i>
-							<span>美国库存信息</span>
-						<i class="after"></i>
-						</li>					
-					</ul>
-					<div class="tab-content">
-						<div class="tab-inner-content" style="">
-							<div class="block">
-								<div class="block-hd">
-									<i class="icon import"></i>
-									<strong>批量导入入库文件</strong>
-								</div>
-								<div class="block-bd">
-									<div class="block-indent" style="overflow:hidden;">
-										<div style="float:left;width:456px;">
-											<p>请<a href="#">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
-											<div>
-												 <form action="<?php echo U('Ussw/Ussw/batchAdd');?>" method="post" enctype="multipart/form-data">
-										            <input type="file" name="import"/>
-								          			<input type="hidden" name="table" value="tablename"/>
-									             	<input type="submit" value="导入"/>
-									         	</form>
-
-											</div>
-											<p>
-												<span class="notice-s">产品信息导入只支持XLS格式文件</span>
-											</p>
-										</div>										
-									</div>															
-								</div>
-							</div>
-						</div>
-					</div>
-			<!-- 主页面结束 -->
+	<div id="inbounds" class="main">
+		<div>
+			<div class="tab-content">	
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th width="110">产品编号</th>
+						<th><div class="tl">预报数量</div></th>
+						<th><div class="tl">确认数量</div></th>
+					</tr>
+					<?php if(is_array($inbounds)): $i = 0; $__LIST__ = $inbounds;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><div class="tl"><?php echo ($vo["id"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["date"]); ?></div></td>						
+						<td><div class="tl"><?php echo ($vo["way"]); ?></div></td>
+						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
+				</table>
+				<div class="result page" align="center"><?php echo ($page); ?></div>
+			</div>
 		</div>
 	</div>
+
+
 	</div>
-		
+	</div>
+	</div>
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.
