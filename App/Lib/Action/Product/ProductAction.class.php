@@ -15,7 +15,8 @@ class ProductAction extends CommonAction{
             $this->assign('page',$show);
         }
         else{
-            $this->products = M('products')->where(array($_POST['keyword']=>$_POST['keywordValue']))->select();
+            $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+            $this->products = M('products')->where($where)->select();
         }
         $this->display();
     }
@@ -41,12 +42,13 @@ class ProductAction extends CommonAction{
              }
          
              vendor("PHPExcel.PHPExcel");
-                 $file_name=$info[0]['savepath'].$info[0]['savename'];
-                 $objReader = PHPExcel_IOFactory::createReader('Excel5');
-                 $objPHPExcel = $objReader->load($file_name,$encode='utf-8');
-                 $sheet = $objPHPExcel->getSheet(0);
-                 $highestRow = $sheet->getHighestRow(); // 取得总行数
+                $file_name=$info[0]['savepath'].$info[0]['savename'];
+                $objReader = PHPExcel_IOFactory::createReader('Excel5');
+                $objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+                $sheet = $objPHPExcel->getSheet(0);
+                $highestRow = $sheet->getHighestRow(); // 取得总行数
                 $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
                 for($i=2;$i<=$highestRow;$i++)
                  {   
                      $data['sku']= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();  
@@ -56,7 +58,7 @@ class ProductAction extends CommonAction{
                      $data['length'] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
                      $data['width']= $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
                      $data['height']= $objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
-                     $data['battery']= $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue()=='Y' ?1:0;
+                     $data['battery']= $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
                      $data['de']= $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue()=='None' ?0:1;
                      $data['way-to-de']= $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
                      $data['us']= $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue()=='None' ?0:1;
@@ -64,7 +66,8 @@ class ProductAction extends CommonAction{
                      $data['de-rate']= $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
                      $data['us-rate']= $objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
                      $data['manager']= $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
-                     $data['supplier']=$objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();   
+                     $data['supplier']=$objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
+                     
                      M('products')->add($data);
                  } 
 

@@ -50,17 +50,17 @@
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl>
+</dl><!-- 
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
 	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl>
+</dl> -->
 
 		</div>
 	</li>
-	<li>
+	<!-- <li>
 		<a href="<?php echo U('Shenzhen/Shenzhen/shenzhen');?>" mark="shenzhen"><span>深圳</span></a>
 		<div class="subnav">
 			<dl>
@@ -78,7 +78,7 @@
 	<dd><a href="#"  mark="Outbound">导出万邑通德国仓补货表</a></dd>
 </dl>
 		</div>
-	</li>
+	</li> -->
 	<li>
 		<a href="#" mark="USSW"><span>美国自建仓</span></a>
 		<div class="subnav">
@@ -97,7 +97,7 @@
 </dl>
 
 		<div>
-	</li>
+	</li><!-- 
 	<li>
 		<a href="#" mark="Admin"><span>系统管理</span></a>
 		<div class="subnav">
@@ -123,7 +123,7 @@
 </dl>
 		</div>
 	</li>
-</ul>
+</ul> -->
 			</div>
 		</div>
 	</div>	

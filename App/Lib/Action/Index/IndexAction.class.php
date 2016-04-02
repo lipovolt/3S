@@ -7,7 +7,7 @@ class IndexAction extends Action {
 
     public function login(){
     	if(!IS_POST) _404('页面不存在', U('index'));
-    	
+
         if(I('code','','md5') != session('verify')){
             $this->error('验证码错误');
         }

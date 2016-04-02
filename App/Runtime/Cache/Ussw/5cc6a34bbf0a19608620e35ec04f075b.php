@@ -184,14 +184,6 @@
 							</div>
 						</div>
 					</div>
-					<div class="item">
-                        <div class="form-group">
-							<label for="status" class="control-label">状态</label>
-							<div class="control-wrap">
-								<input type="text"  id="statusValue" name="statusValue" value="" />
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>

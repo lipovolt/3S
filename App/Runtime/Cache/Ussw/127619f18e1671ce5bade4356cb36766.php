@@ -8,6 +8,19 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script>
+function del()
+{
+    if(confirm("确定要删除吗？"))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+</script>
 </head>
 <body>
 
@@ -50,17 +63,17 @@
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl>
+</dl><!-- 
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
 	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl>
+</dl> -->
 
 		</div>
 	</li>
-	<li>
+	<!-- <li>
 		<a href="<?php echo U('Shenzhen/Shenzhen/shenzhen');?>" mark="shenzhen"><span>深圳</span></a>
 		<div class="subnav">
 			<dl>
@@ -78,7 +91,7 @@
 	<dd><a href="#"  mark="Outbound">导出万邑通德国仓补货表</a></dd>
 </dl>
 		</div>
-	</li>
+	</li> -->
 	<li>
 		<a href="#" mark="USSW"><span>美国自建仓</span></a>
 		<div class="subnav">
@@ -97,7 +110,7 @@
 </dl>
 
 		<div>
-	</li>
+	</li><!-- 
 	<li>
 		<a href="#" mark="Admin"><span>系统管理</span></a>
 		<div class="subnav">
@@ -123,7 +136,7 @@
 </dl>
 		</div>
 	</li>
-</ul>
+</ul> -->
 			</div>
 		</div>
 	</div>	
@@ -180,6 +193,7 @@
 							<a href="<?php echo U('Ussw/Inbound/importItems',array('orderID'=>$vo['id']));?>">导入产品</a>
 							<a href="<?php echo U('Ussw/Inbound/inboundOrderItems',array('orderID'=>$vo['id']));?>">产品明细</a>
 							<a href="<?php echo U('Ussw/Inbound/updateStorage',array('ioid'=>$vo['id']));?>">入库</a>
+							<a href="<?php echo U('Ussw/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']));?>" onclick='return del()'>删除</a>
 						</td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>

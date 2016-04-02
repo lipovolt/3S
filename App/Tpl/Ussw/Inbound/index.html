@@ -8,6 +8,19 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script>
+function del()
+{
+    if(confirm("确定要删除吗？"))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+</script>
 </head>
 <body>
 
@@ -65,6 +78,7 @@
 							<a href="{:U('Ussw/Inbound/importItems',array('orderID'=>$vo['id']))}">导入产品</a>
 							<a href="{:U('Ussw/Inbound/inboundOrderItems',array('orderID'=>$vo['id']))}">产品明细</a>
 							<a href="{:U('Ussw/Inbound/updateStorage',array('ioid'=>$vo['id']))}">入库</a>
+							<a href="{:U('Ussw/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']))}" onclick='return del()'>删除</a>
 						</td>
 						</tr>	
 					</volist> 								

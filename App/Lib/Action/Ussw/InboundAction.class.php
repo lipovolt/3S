@@ -25,8 +25,7 @@ class InboundAction extends CommonAction{
         $data['pQuantity'] = I('post.pQuantityValue','','htmlspecialchars');
         $data['weight'] = I('post.weightValue','','htmlspecialchars');
         $data['volume'] = I('post.volumeValue','','htmlspecialchars');
-        $data['volumeWeight'] = (I('post.volumeValue','','htmlspecialchars')*1000000/5000)>I('post.weightValue','','htmlspecialchars')? I('post.volumeValue','','htmlspecialchars')/5000:I('post.weightValue','','htmlspecialchars');
-        $data['status'] = I('post.statusValue','','htmlspecialchars');
+        $data['volumeWeight'] = (I('post.volumeValue','','htmlspecialchars')*1000000/5000)>I('post.weightValue','','htmlspecialchars')? I('post.volumeValue','','htmlspecialchars')*1000000/5000:I('post.weightValue','','htmlspecialchars');
         $usswInbound = M('ussw_inbound');
         $result =  $usswInbound->add($data);
 		 if($result) {
@@ -69,7 +68,7 @@ class InboundAction extends CommonAction{
                 $sheet = $objPHPExcel->getSheet(0);
                 $highestRow = $sheet->getHighestRow(); // 取得总行数
                 $highestColumn = $sheet->getHighestColumn(); // 取得总列数
-                $sqlCreate = 'create table 3s_ussw_inbound_'.$orderID.' (`id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT, `sku` varchar(10) default null, `quantity` smallint(6) default 0, `cquantity` smallint(6) default 0) ENGINE=MyISAM  DEFAULT CHARSET=utf8;';
+                $sqlCreate = 'create table '.C('DB_PREFIX' ).'ussw_inbound_'.$orderID.' (`id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT, `sku` varchar(10) default null, `quantity` smallint(6) default 0, `cquantity` smallint(6) default 0) ENGINE=MyISAM  DEFAULT CHARSET=utf8;';
                 M()->execute($sqlCreate,true);
                 $result = false;
                 for($i=2;$i<=$highestRow;$i++)
@@ -159,16 +158,46 @@ class InboundAction extends CommonAction{
             foreach ($items as $value) {
                $a = M('usstorage')->where('sku='.$value['sku'])->getField('ainventory');
                $c = M('usstorage')->where('sku='.$value['sku'])->getField('cinventory');
+               $q['sku'] = $value['sku'];
                $q['ainventory'] = $a+$value['cquantity'];
                $q['cinventory'] = $c+$value['cquantity'];
-               M('usstorage')->where('sku='.$value['sku'])->save($q);
+               if($this->isInStorage($value['sku'])!=0){
+                    $r = M('usstorage')->where('id='.$this->isInStorage($value['sku']))->save($q);
+               }
+               else{
+
+                    $r = M('usstorage')->add($q);
+               }
+               
             }
-            $data['status'] = '已入库';
-            M('ussw_inbound')->where('id='.$ioid)->save($data);
+            if($r){
+                $data['status'] = '已入库';
+                M('ussw_inbound')->where('id='.$ioid)->save($data);
+                $this->success('入库成功！');
+            }
+            else{
+                $this->error('入库失败！');
+            }
         }
         else{
             $this->error('该单已入库！');
         }
+    }
+
+    private function isInStorage($sku){
+        $row = M('usstorage')->where('sku='.$sku)->find();
+        if( $row == null){
+            return 0;
+        } 
+        else{
+            return $row['id'];
+        }
+    }
+
+    public function deleteInboundOrder($orderIDToDelete){
+        M()->execute('drop table'.C('DB_PREFIX').'ussw_inbound_'.$orderIDToDelete,true);
+        M('ussw_inbound')->where('id='.$orderIDToDelete)->delete();
+        $this->success('操作成功！');        
     }
 
 }

@@ -1,13 +1,13 @@
 <?php
 return array(
 	//定义URL格式
-	'URL_NODEL' => 2,
+	'URL_MODEL' => 1,
 
 	//开启调试模式
-	'APP_DEBUG' => True,
+	//'APP_DEBUG' => True,
 
 	//开启应用分组
-	'APP_GROUP_LIST' => 'Index,Admin,Product,Storage,Ussw,Shenzhen',
+	'APP_GROUP_LIST' => 'Index,Product,Storage,Ussw',
 	'DEFAULT_GROUP' => 'Index',
 
 	//定义数据库连接参数
@@ -16,6 +16,11 @@ return array(
 	'DB_PWD' => '',
 	'DB_NAME' => '3S',
 	'DB_PREFIX' => '3S_',
+	/*'DB_HOST' => 'localhost',
+	'DB_USER' => 'lipovolt_3s',
+	'DB_PWD' => '@ShenYangOber12',
+	'DB_NAME' => 'lipovolt_3s',
+	'DB_PREFIX' => 'lipovolt_3s_',*/
 
 	//点语法默认解析
 	//'TMPL_VAR_IDENTIFY' => 'array',
