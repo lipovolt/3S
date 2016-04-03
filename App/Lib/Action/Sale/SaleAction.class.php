@@ -495,8 +495,8 @@ class SaleAction extends CommonAction{
 	}
 
 	private function getUsswCost($data){
-			//$exchange = M('metadata')->where('id=1')->getField('usdtormb');
-			$c = ($data['price']+0.5)/6.35+$data['us-rate']+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee']+$data['ggs-ussw-sp']*0.144+0.35;
+			$exchange = M('metadata')->where('id=1')->getField('usdtormb');
+			$c = ($data['price']+0.5)/$exchange+$data['us-rate']+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee']+$data['ggs-ussw-sp']*0.144+0.35;
 			return $c;
 		}
 }
