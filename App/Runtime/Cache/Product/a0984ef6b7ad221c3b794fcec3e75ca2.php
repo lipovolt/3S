@@ -77,6 +77,7 @@
 		<i class="icon dropdown-s"></i><strong>greatgoodshop</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'usswSale'));?>" >美国自建仓销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/Sale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
 <dl>
 	<dt>

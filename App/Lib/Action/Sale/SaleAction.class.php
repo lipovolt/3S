@@ -11,6 +11,62 @@ class SaleAction extends CommonAction{
 		}
 	}
 
+	public function ggsUsswItemTest(){
+		if($this->isPost()){
+			$p = I('post.price','','htmlspecialchars');
+			$usRate = I('post.saleprice','','htmlspecialchars')*0.05;
+			$usswFee = $this->calUsswSIOFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
+			$wayToUs = I('post.keyword','','htmlspecialchars');
+			$wayToUsFee = $wayToUs=="air"?$this->getUsswAirFirstTransportFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars')):$this->getUsswSeaFirstTransportFee(I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
+			$localShippingWay = $this->getUsswLocalShippingWay(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
+			$localShippingFee = $this->getUsswLocalShippingFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
+			$salePrice = I('post.saleprice','','htmlspecialchars');
+			$testCost = ($p+0.5)/6.35+$salePrice*0.05+$usswFee+$wayToUsFee+$localShippingFee+$salePrice*0.144+0.35;
+			$testData = array(
+						'price'=>$p,
+						'us-rate'=>$usRate,
+						'ussw-fee'=>$usswFee,
+						'way-to-us'=>$wayToUs,
+						'way-to-us-fee'=>$wayToUsFee,
+						'local-shipping-way'=>$localShippingWay,
+						'local-shipping-fee'=>$localShippingFee,
+						'saleprice'=> $salePrice,						
+						'cost'=>round(($testCost),2),
+						'gprofit'=>round($salePrice-$testCost,2),
+						'grate'=>round(($salePrice-$testCost)/$salePrice*100,2).'%',
+						'weight'=>I('post.weight','','htmlspecialchars'),
+						'length'=>I('post.length','','htmlspecialchars'),
+						'width'=>I('post.width','','htmlspecialchars'),
+						'height'=>I('post.height','','htmlspecialchars')
+					);
+			$this->testData=$testData;
+			$this->display();
+
+		}else{
+			$initData = array(
+						'price'=>0,
+						'us-rate'=>0,
+						'ussw-fee'=>0,
+						'way-to-us'=>'空运',
+						'way-to-us-fee'=>0,
+						'local-shipping-way'=>'',
+						'local-shipping-fee'=>0,
+						'saleprice'=>0,
+						'cost'=>0,
+						'gprofit'=>0,
+						'grate'=>'0.0%',
+						'weight'=>0,
+						'length'=>0,
+						'width'=>0,
+						'height'=>0
+					);
+			$this->testData=$initData;
+			$this->display();
+		}
+		
+
+	}
+
 	private function getUsswSaleInfo(){
 		$products = M('products');
         import('ORG.Util.Page');
@@ -27,7 +83,7 @@ class SaleAction extends CommonAction{
         	$data[$key]['us-rate']=round($value['us-rate']/100*$value['ggs-ussw-sp'],2);
         	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value['weight'],$value['length'],$value['width'],$value['height']);
         	$data[$key]['way-to-us']=$value['way-to-us'];
-        	$data[$key]['way-to-us-fee']=$data[$key]['way-to-us']=="空运"?$this->getUsswAirFirstTransportFee($value['weight'],$value['length'],$value['width'],$value['height']):$this->getUsswSeaFirstTransportFee($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['way-to-us-fee']=$data[$key]['way-to-us']=="空运"?$this->getUsswAirFirstTransportFee($value['weight'],$value['length'],$value['width'],$value['height']):$this->getUsswSeaFirstTransportFee($value['length'],$value['width'],$value['height']);
         	$data[$key]['local-shipping-way']=$this->getUsswLocalShippingWay($value['weight'],$value['length'],$value['width'],$value['height']);
         	$data[$key]['local-shipping-fee']=$this->getUsswLocalShippingFee($value['weight'],$value['length'],$value['width'],$value['height']);
         	$data[$key]['ggs-ussw-sp']=$value['ggs-ussw-sp'];
@@ -77,15 +133,15 @@ class SaleAction extends CommonAction{
 
 	private function getUsswAirFirstTransportFee($weight,$l,$w,$h){
 		if(($weight/1000)>=(l * w * h / 6000)){
-			return $weight / 1000 * 5.8;
+			return round($weight / 1000 * 5.8,2);
 		}
 		else{
-			return l * w * h / 6000 * 5.8;
+			return round(($l * $w * $h) / 6000 * 5.8,2);
 		}
 	}
 
-	private function getUsswSeaFirstTransportFee($weight,$l,$w,$h){
-		return (l * w * h) / 1000000 * 220;
+	private function getUsswSeaFirstTransportFee($l,$w,$h){
+		return round(($l * $w * $h) / 1000000 * 220,2);
 	}
 
 	private function getUsswLocalShippingWay($weight,$l,$w,$h){
