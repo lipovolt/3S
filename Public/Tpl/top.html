@@ -1,32 +1,26 @@
 <ul class="mainnav">
 	<li>
-		<a href="{:U('Product/Product/productInfo')}" mark=""><span>产品管理</span></a>
+		<a href="{:U('Product/Product/productInfo')}" mark="products"><span>产品管理</span></a>
 		<div class="subnav">
 			<include file="./Public/Tpl/productMenu.html" />
 		</div>
 	</li>
 	<li>
-		<a href="{:U('Storage/Storage/usstorage')}" mark="Outbound"><span>库存</span></a>
+		<a href="{:U('Storage/Storage/usstorage')}" mark="storage"><span>库存</span></a>
 		<div class="subnav">
 			<include file="./Public/Tpl/storageMenu.html" />
 		</div>
 	</li>
-	<!-- <li>
-		<a href="{:U('Shenzhen/Shenzhen/shenzhen')}" mark="shenzhen"><span>深圳</span></a>
+	<li>
+		<a href="{:U('Sale/Sale/index',array('table'=>'usswSale'))}" mark="sale"><span>销售</span></a>
 		<div class="subnav">
-			<include file="./Public/Tpl/shenzhenMenu.html" />
+			<include file="./Public/Tpl/saleMenu.html" />
 		</div>
-	</li> -->
+	</li>
 	<li>
 		<a href="#" mark="USSW"><span>美国自建仓</span></a>
 		<div class="subnav">
 			<include file="./Public/Tpl/usswMenu.html" />
 		<div>
-	</li><!-- 
-	<li>
-		<a href="#" mark="Admin"><span>系统管理</span></a>
-		<div class="subnav">
-			<include file="./Public/Tpl/adminMenu.html" />
-		</div>
 	</li>
-</ul> -->
+</ul>

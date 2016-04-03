@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>美国仓库存信息管理</title>
+<title>销售信息</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -110,30 +110,36 @@
 			</div>
 		</div>
 	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
-		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>美国库存管理</strong></div>
+			<div class="sidenav-hd"><strong>销售</strong></div>
 			<div class="sidenav-bd">
 				<dl>
-	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
-	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
-	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>基本信息</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'metadata'));?>" >基本信息</a></dd>
 </dl>
 <dl>
-	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Ussw/usswOutbound');?>">单品出库</a></dd>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>greatgoodshop</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'usswSale'));?>" >美国自建仓销售表</a></dd>
 </dl>
 <dl>
-	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
-</dl>
-	
+	<dt>
+		<i class="icon dropdown-s"></i><strong>rc-helcar</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'usWinitSale'));?>" >美国万邑通销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'deWinitSale'));?>" >德国万邑通销售表</a></dd>
+</dl>	
 			</div>
 		</div>
-	<div class="content">
+		<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Ussw/Ussw/usswManage');?>" method="POST">
+		<form name="search_product" id="search_product" action="<?php echo U('Product/Product/productInfo');?>" method="POST">
 			<div class="search-area">
 				<div class="item">
 					<div class="form-group">
@@ -162,37 +168,43 @@
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th><div class="t1">货位</div></th>
-					    <th><div class="t1">产品编码</div></th>					    
-					    <th><div class="tl">中文名称</div></th>	                          
-					    <th><div class="tl">英文名称</div></th>
-						<th><div class="tl">属性</div></th>
-						<th><div class="tr">历史入库</div></th>
-						<th><div class="tr">可用库存</div></th>
-						<th><div class="tr">待出库</div></th>
-						<th><div class="tr">在途库存</div></th>
-						<th><div class="tr">历史销量</div></th>
-						<th><div class="t1">备注</div></th>
-						<th width="230">操作</th>
-					</tr>    
-					<tr>
-						<?php if(is_array($usstorage)): $i = 0; $__LIST__ = $usstorage;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo["position"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["sku"]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo["cname"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["ename"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["attribute"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["cinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["ainventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["oinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["iinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["csales"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["remark"]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Ussw/Ussw/usswEdit',array('sku'=>$vo['sku']));?>">编辑</a>
-						</td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
-					</tr>								
+						<th width="66">产品编码</th>
+						<th><div class="tl">中文名称</div></th>
+						<th><div class="tl">采购价￥</div></th>
+						<th><div class="tl">关税$</div></th>
+						<th><div class="tl">仓出入费$</div></th>
+						<th><div class="tl">头程方式</div></th>
+						<th><div class="tl">头程$</div></th>
+						<th><div class="tl">本地方式</div></th>
+						<th><div class="tl">本地运费$</div></th>
+						<th><div class="tl">成本$</div></th>
+						<th><div class="tl">售价$</div></th>
+						<th><div class="tl">毛利润$</div></th>
+						<th><div class="tl">毛利率</div></th>
+						<th><div class="tl">重量oz</div></th>
+						<th>长in.</th>
+						<th>宽in.</th>
+						<th><div class="tl">高in.</div></th>
+					</tr>
+					<?php if(is_array($data)): $i = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><div class="tl"><?php echo ($vo["sku"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["title-cn"]); ?></div></td>						
+						<td><div class="tl"><?php echo ($vo["price"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["us-rate"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["ussw-fee"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["way-to-us"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["way-to-us-fee"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["local-shipping-way"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["local-shipping-fee"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["cost"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["ggs-ussw-sp"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["gprofit"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["grate"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["length"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["width"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["height"]); ?></div></td>
+						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
 				<div class="result page" align="center"><?php echo ($page); ?></div>
 			</div>
@@ -202,7 +214,7 @@
 
 	</div>
 	</div>
-		
+	</div>
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.

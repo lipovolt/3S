@@ -4,23 +4,23 @@ return array(
 	'URL_MODEL' => 1,
 
 	//开启调试模式
-	'APP_DEBUG' => True,
+	//'APP_DEBUG' => True,
 
 	//开启应用分组
-	'APP_GROUP_LIST' => 'Index,Product,Sale,Storage,Ussw',
+	'APP_GROUP_LIST' => 'Index,Product,Storage,Ussw,Sale',
 	'DEFAULT_GROUP' => 'Index',
 
 	//定义数据库连接参数
-	'DB_HOST' => '127.0.0.1',
+	/*'DB_HOST' => '127.0.0.1',
 	'DB_USER' => 'root',
 	'DB_PWD' => '',
 	'DB_NAME' => '3S',
-	'DB_PREFIX' => '3S_',
-	/*'DB_HOST' => 'localhost',
+	'DB_PREFIX' => '3S_',*/
+	'DB_HOST' => 'localhost',
 	'DB_USER' => 'lipovolt_3s',
 	'DB_PWD' => '@ShenYangOber12',
 	'DB_NAME' => 'lipovolt_3s',
-	'DB_PREFIX' => 'lipovolt_3s_',*/
+	'DB_PREFIX' => 'lipovolt_3s_',
 
 	//点语法默认解析
 	//'TMPL_VAR_IDENTIFY' => 'array',

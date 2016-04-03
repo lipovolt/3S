@@ -72,6 +72,7 @@ class UsswAction extends CommonAction{
     }
 
     public function update(){
+        $data['id'] = I('post.idValue','','htmlspecialchars');
         $data['position'] = I('post.positionValue','','htmlspecialchars');
         $data['sku'] = I('post.skuValue','','htmlspecialchars');
         $data['cname'] = I('post.cnameValue','','htmlspecialchars');

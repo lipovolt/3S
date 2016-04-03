@@ -15,7 +15,10 @@
 		<div class="top">
 			<div class="area">
 				<span>
-					<span>
+					<a class="logo" href="__PUBLIC__/index.php">
+				<img src="__PUBLIC__/Images/logo.png" alt="">
+			</a>
+<span>
 	<i class="icon user"></i>
 	<span class="blue"><?= I('session.username',0); ?></span>
 	<a class="blue" style="margin:0px 10px;" href="<?php echo U('Index/Index/logout');?>">退出</a>
@@ -26,7 +29,7 @@
 			<div class="area">
 				<ul class="mainnav">
 	<li>
-		<a href="<?php echo U('Product/Product/productInfo');?>" mark=""><span>产品管理</span></a>
+		<a href="<?php echo U('Product/Product/productInfo');?>" mark="products"><span>产品管理</span></a>
 		<div class="subnav">
 			<dl>
 	<dt>
@@ -38,44 +41,49 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>产品信息管理</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Product/Product/productInfo',array('country'=>'us'));;?>" >产品信息</a></dd>
+	<dd><a href="<?php echo U('Product/Product/productInfo');?>" >产品信息</a></dd>
 </dl>
 		</div>
 	</li>
 	<li>
-		<a href="<?php echo U('Storage/Storage/usstorage');?>" mark="Outbound"><span>库存</span></a>
+		<a href="<?php echo U('Storage/Storage/usstorage');?>" mark="storage"><span>库存</span></a>
 		<div class="subnav">
 			<dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl>
+</dl><!-- 
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
 	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl>
+</dl> -->
 
 		</div>
 	</li>
 	<li>
-		<a href="<?php echo U('Shenzhen/Shenzhen/shenzhen');?>" mark="shenzhen"><span>深圳</span></a>
+		<a href="<?php echo U('Sale/Sale/index',array('table'=>'usswSale'));?>" mark="sale"><span>销售</span></a>
 		<div class="subnav">
 			<dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>美国自建仓</strong>								
+		<i class="icon dropdown-s"></i><strong>基本信息</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Shenzhen/Shenzhen/updateUsswInbound');?>"  mark="Outbound">更新美国自建仓入库单</a></dd>
-	<dd><a href="#"  mark="Outbound">导出美国自建仓补货表</a></dd>
+	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'metadata'));?>" >基本信息</a></dd>
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>万邑通</strong>								
+		<i class="icon dropdown-s"></i><strong>greatgoodshop</strong>								
 	</dt>
-	<dd><a href="#"  mark="Outbound">导出万邑通美国仓补货表</a></dd>
-	<dd><a href="#"  mark="Outbound">导出万邑通德国仓补货表</a></dd>
+	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'usswSale'));?>" >美国自建仓销售表</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>rc-helcar</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'usWinitSale'));?>" >美国万邑通销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'deWinitSale'));?>" >德国万邑通销售表</a></dd>
 </dl>
 		</div>
 	</li>
@@ -97,31 +105,6 @@
 </dl>
 
 		<div>
-	</li>
-	<li>
-		<a href="#" mark="Admin"><span>系统管理</span></a>
-		<div class="subnav">
-			<dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>用户管理</strong>								</dt>
-	<dd><a href="<?php echo U('Index/Rbac/addRole');?>" >添加用户</a></dd>
-	<dd><a href="#" >删除用户</a></dd>
-	<dd><a href="#" >锁定用户</a></dd>
-</dl>
-<dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>角色管理</strong>								</dt>
-	<dd><a href="#" >添加角色</a></dd>
-</dl>
-<dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>节点管理</strong>								</dt>
-	<dd><a href="#" >添加节点</a></dd>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>权限分配</strong>								</dt>
-	<dd><a href="#" >权限分配</a></dd>
-</dl>
-		</div>
 	</li>
 </ul>
 			</div>
@@ -164,9 +147,10 @@
 				<div class="inline-block block-indent">
 					<div class="item">
 						<div class="form-group">
-							<label for="position" class="control-label">货位(不能修改)</label>
+							<label for="position" class="control-label">货位</label>
+							<input type="hidden"  id="idValue" name="idValue" value="<?php echo ($usstorage[0]['id']); ?>"/>
 							<div class="control-wrap">
-								<input type="text"  id="positionValue" name="positionValue" value="<?php echo ($usstorage[0]['position']); ?>" readonly="true"/>
+								<input type="text"  id="positionValue" name="positionValue" value="<?php echo ($usstorage[0]['position']); ?>"/>
 							</div>
 						</div>
 						<div class="form-group">

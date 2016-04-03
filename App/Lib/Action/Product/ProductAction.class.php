@@ -89,7 +89,7 @@ class ProductAction extends CommonAction{
         $data['sku'] = I('post.skuValue','','htmlspecialchars');
         $data['title-cn'] = I('post.Name','','htmlspecialchars');
         $data['title-en'] = I('post.EName','','htmlspecialchars');
-        $data['price'] = I('post.priceValue','','htmlspecialchars');
+        $data['price'] = I('post.price','','htmlspecialchars');
         $data['weight'] = I('post.weightValue','','htmlspecialchars');
         $data['length'] = I('post.lengthValue','','htmlspecialchars');
         $data['width'] = I('post.widthValue','','htmlspecialchars');
@@ -118,6 +118,13 @@ class ProductAction extends CommonAction{
         $data['us-rate'] = I('post.us-rate-value','','htmlspecialchars');
         $data['manager'] = I('post.managerValue','','htmlspecialchars');
         $data['supplier'] = I('post.supplierValue','','htmlspecialchars');
+        $data['ggs-ussw-sp'] = I('post.ggs-ussw-sp','','htmlspecialchars');
+        $data['rc-winit-us-sp'] = I('post.rc-winit-us-sp','','htmlspecialchars');
+        $data['rc-winit-de-sp'] = I('post.rc-winit-de-sp','','htmlspecialchars');
+        $data['ebaycombest'] = I('post.ebaycombest','','htmlspecialchars');
+        $data['ebaycomcheapest'] = I('post.ebaycomcheapest','','htmlspecialchars');
+        $data['ebaydebest'] = I('post.ebaydebest','','htmlspecialchars');
+        $data['ebaydecheapest'] = I('post.ebaydecheapest','','htmlspecialchars');
         $product = M('products');
         $result =  $product->save($data);
              if($result) {
