@@ -3,17 +3,39 @@
 class InboundAction extends CommonAction{
 
 	public function index(){
-		$Data = M('ussw_inbound');
+		$usswInOrders = M('ussw_inbound')->select();
         import('ORG.Util.Page');
-        $count = $Data->count();
+        foreach ($usswInOrders as $key => $value) {
+            $Data[$key]=array(
+                        'id'=>$value['id'],
+                        'date'=>$value['date'],
+                        'way'=>$value['way'],
+                        'weight'=>$value['weight'],
+                        'volume'=>$value['volume'],
+                        'volumeweight'=>$value['volumeweight'],
+                        'status'=>$value['status'],
+                        'declare-item-quantity'=>$this->getInboundOrderItemQuantity($value['id'],'declare-quantity'),
+                        'confirmed-item-quantity'=>$this->getInboundOrderItemQuantity($value['id'],'confirmed-quantity'),
+                        );
+        }
+        $count = count($Data);
         $Page = new Page($count,20);            
         $Page->setConfig('header', '条数据');
         $show = $Page->show();
-        $inbounds = $Data->limit($Page->firstRow.','.$Page->listRows)->select();
+        $inbounds = array_slice($Data, $Page->firstRow,$Page->listRows);
         $this->assign('inbounds',$inbounds);
         $this->assign('page',$show);
-		$this->display();
+        $this->display();
 	}
+
+    public function getInboundOrderItemQuantity($orderID,$column){
+        $quantityArray = M('ussw_inbound_items')->where('`inbound-order-id`='.$orderID)->getField($column,true);
+        $quantity=0;
+        foreach ($quantityArray as $key => $value) {
+            $quantity = $quantity + $value;
+        }
+        return $quantity;
+    }
 
 	public function fileImport(){
 		$this->display();

@@ -149,8 +149,9 @@
 						<th><div class="tl">操作</div></th>
 					</tr>
 						
-					<?php if(is_array($items)): $i = 0; $__LIST__ = $items;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><form method="POST" id="edit_productInfo" action="<?php echo U('Ussw/Inbound/addConfirmedQuantity');?>">
+					<?php if(is_array($items)): $i = 0; $__LIST__ = $items;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><form method="POST" id="edit_productInfo" action="<?php echo U('Ussw/Inbound/addConfirmedQuantity',array('oid'=>$orderID));?>">
 						<input type="hidden"  id="id" name="id" value="<?php echo ($vo["id"]); ?>" />
+						<input type="hidden"  id="oid" name="oid" value="<?php echo ($orderID); ?>" />
 						<tr>
 						<td><div class="tl"><input type="text"  id="sku" name="sku" value="<?php echo ($vo["sku"]); ?>" style="width:80px;"/></div></td>
 						<td><div class="tl"><?php echo ($vo["declare-quantity"]); ?></div></td>				
