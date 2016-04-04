@@ -50,7 +50,7 @@ class ProductAction extends CommonAction{
                 $highestColumn = $sheet->getHighestColumn(); // 取得总列数
 
                 for($i=2;$i<=$highestRow;$i++)
-                 {   
+                {   
                      $data['sku']= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();  
                      $data['title-cn']= $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
                      $data['price'] = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();  
@@ -69,9 +69,9 @@ class ProductAction extends CommonAction{
                      $data['supplier']=$objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
                      
                      M('products')->add($data);
-                 } 
+                } 
 
-                  $this->success('导入成功！');
+                $this->success('导入成功！');
          }else
              {
                  $this->error("请选择上传的文件");

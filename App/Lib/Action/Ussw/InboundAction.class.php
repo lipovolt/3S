@@ -22,7 +22,7 @@ class InboundAction extends CommonAction{
     public function addInbound(){
     	$data['date'] = date('Y-m-d');
         $data['way'] = I('post.wayValue','','htmlspecialchars');
-        $data['pQuantity'] = I('post.pQuantityValue','','htmlspecialchars');
+        $data['declare-package-quantity'] = I('post.pQuantityValue','','htmlspecialchars');
         $data['weight'] = I('post.weightValue','','htmlspecialchars');
         $data['volume'] = I('post.volumeValue','','htmlspecialchars');
         $data['volumeWeight'] = (I('post.volumeValue','','htmlspecialchars')*1000000/5000)>I('post.weightValue','','htmlspecialchars')? I('post.volumeValue','','htmlspecialchars')*1000000/5000:I('post.weightValue','','htmlspecialchars');
@@ -41,6 +41,16 @@ class InboundAction extends CommonAction{
         $this->display();
     }
 
+    /*创建美国自建仓入库产品明细表
+    create table if not exists `3s_ussw_inbound_items` (
+    `id` smallint(6) unsigned primary key not null auto_increment,
+    `inbound-order-id` smallint(6),
+    `sku` varchar(10),
+    `declare-quantity` smallint(6),
+    `confirmed-quantity` smallint(6)
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+    
+    */
 
 
     Public function addItems($orderID){
@@ -68,21 +78,21 @@ class InboundAction extends CommonAction{
                 $sheet = $objPHPExcel->getSheet(0);
                 $highestRow = $sheet->getHighestRow(); // 取得总行数
                 $highestColumn = $sheet->getHighestColumn(); // 取得总列数
-                $sqlCreate = 'create table '.C('DB_PREFIX' ).'ussw_inbound_'.$orderID.' (`id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT, `sku` varchar(10) default null, `quantity` smallint(6) default 0, `cquantity` smallint(6) default 0) ENGINE=MyISAM  DEFAULT CHARSET=utf8;';
-                M()->execute($sqlCreate,true);
-                $result = false;
                 for($i=2;$i<=$highestRow;$i++)
                  {   
+                     $data['inbound-order-id'] = $orderID;
                      $data['sku']= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();  
-                     $data['quantity']= $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
-                     $result = M('ussw_inbound_'.$orderID)->add($data);
-                 } 
-                if($result){
-                      $this->success('导入成功！');
-                  }
-                else{
-                    $this->success('导入失败！');
-                }
+                     $data['declare-quantity']= $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+                     $totalQuantity = $totalQuantity+$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+                     M('ussw_inbound_items')->add($data);                     
+                 }
+                $updateInboundOrder=array(
+                                    'declare-item-quantity'=>$totalQuantity,
+                                    'status'=>'已入库'
+                    );
+                
+                M('ussw_inbound')->where('id='.$orderID)->save($updateInboundOrder);
+                $this->success('导入成功！');
              }else
                  {
                      $this->error("请选择上传的文件");
@@ -95,13 +105,14 @@ class InboundAction extends CommonAction{
     }
 
     public function inboundOrderItems($orderID){
-        $Data = M('ussw_inbound_'.$orderID);
+        $Data = M('ussw_inbound_items');
+        $where=array('inbound-order-id'=>$orderID);
         import('ORG.Util.Page');
-        $count = $Data->count();
+        $count = $Data->where('`inbound-order-id`='.$orderID)->count();
         $Page = new Page($count,20);            
         $Page->setConfig('header', '条数据');
         $show = $Page->show();
-        $items = $Data->limit($Page->firstRow.','.$Page->listRows)->select();
+        $items = $Data->limit($Page->firstRow.','.$Page->listRows)->where('`inbound-order-id`='.$orderID)->select();
         $this->assign('items',$items);
         $this->assign('page',$show);
         $this->assign('orderID',$orderID);
@@ -132,12 +143,12 @@ class InboundAction extends CommonAction{
         }
     }
 
-    public function addConfirmedQuantity($oid,$rid){
+    public function addConfirmedQuantity(){
         if($this->skuVerify(I('post.sku','','htmlspecialchars'))){
             $data['sku'] = I('post.sku','','htmlspecialchars');
-            $data['cquantity'] = I('post.cQuantity','','htmlspecialchars');
-            $usswInboundOrder = M('ussw_inbound_'.$oid);
-            $where = 'id='.$rid;
+            $data['confirmed-quantity'] = I('post.confirmed-quantity','','htmlspecialchars');
+            $usswInboundOrder = M('ussw_inbound_items');
+            $where = 'id='.I('post.id','','htmlspecialchars');
             $result =  $usswInboundOrder->where($where)->save($data);
              if(false !== $result || 0 !== $result) {
                  $this->success('操作成功！');

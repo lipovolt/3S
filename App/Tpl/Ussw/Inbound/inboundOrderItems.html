@@ -43,7 +43,6 @@
 				
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th width="110">行号</th>
 						<th><div class="tl">产品编号</div></th>
 						<th><div class="tl">预报数量</div></th>
 						<th><div class="tl">确认数量</div></th>
@@ -51,13 +50,13 @@
 					</tr>
 						
 					<volist name="items" id="vo">
-						<form method="POST" id="edit_productInfo" action="{:U('Ussw/Inbound/addConfirmedQuantity', array('oid'=>$orderID,'rid'=>$vo['id']))}">
+						<form method="POST" id="edit_productInfo" action="{:U('Ussw/Inbound/addConfirmedQuantity')}">
+						<input type="hidden"  id="id" name="id" value="{$vo.id}" />
 						<tr>
-						<td><div class="tl">{$vo.id}</div></td>	
 						<td><div class="tl"><input type="text"  id="sku" name="sku" value="{$vo.sku}" style="width:80px;"/></div></td>
-						<td><div class="tl">{$vo.quantity}</div></td>				
+						<td><div class="tl">{$vo.declare-quantity}</div></td>				
 						<td><div class="tl">
-							<input type="text"  id="cQuantity" name="cQuantity" value="{$vo.cquantity}" /></div></td>
+							<input type="text"  id="confirmed-quantity" name="confirmed-quantity" value="{$vo.confirmed-quantity}" /></div></td>
 						<td><div class="tl">
 								<button class="btn btn-blue btn-s" id="saveCQuantity">保存</button>
 								</div></td>

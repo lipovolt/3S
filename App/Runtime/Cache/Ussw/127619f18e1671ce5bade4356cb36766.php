@@ -77,26 +77,27 @@ function del()
 		</div>
 	</li>
 	<li>
-		<a href="<?php echo U('Sale/Sale/index',array('table'=>'usswSale'));?>" mark="sale"><span>销售</span></a>
+		<a href="<?php echo U('Sale/GgsUsswSale/index');?>" mark="sale"><span>销售</span></a>
 		<div class="subnav">
 			<dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>基本信息</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'metadata'));?>" >基本信息</a></dd>
+	<dd><a href="#" >基本信息</a></dd>
 </dl>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>greatgoodshop</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'usswSale'));?>" >美国自建仓销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>rc-helcar</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'usWinitSale'));?>" >美国万邑通销售表</a></dd>
-	<dd><a href="<?php echo U('Sale/Sale/index',array('table'=>'deWinitSale'));?>" >德国万邑通销售表</a></dd>
+	<dd><a href="#" >美国万邑通销售表</a></dd>
+	<dd><a href="#" >德国万邑通销售表</a></dd>
 </dl>
 		</div>
 	</li>
@@ -166,11 +167,11 @@ function del()
 						<td><div class="tl"><?php echo ($vo["id"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["date"]); ?></div></td>						
 						<td><div class="tl"><?php echo ($vo["way"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["pQuantity"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["declare-package-quantity"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["volume"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["volumeWeight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["iQuantity"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["declare-item-quantity"]); ?>/<?php echo ($vo["confirmed-item-quantity"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["status"]); ?></div></td>
 						<td>
 							<a href="<?php echo U('Ussw/Inbound/importItems',array('orderID'=>$vo['id']));?>">导入产品</a>

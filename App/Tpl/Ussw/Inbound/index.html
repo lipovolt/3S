@@ -68,11 +68,11 @@ function del()
 						<td><div class="tl">{$vo.id}</div></td>
 						<td><div class="tl">{$vo.date}</div></td>						
 						<td><div class="tl">{$vo.way}</div></td>
-						<td><div class="tl">{$vo.pQuantity}</div></td>
+						<td><div class="tl">{$vo.declare-package-quantity}</div></td>
 						<td><div class="tl">{$vo.weight}</div></td>
 						<td><div class="tl">{$vo.volume}</div></td>
 						<td><div class="tl">{$vo.volumeWeight}</div></td>
-						<td><div class="tl">{$vo.iQuantity}</div></td>
+						<td><div class="tl">{$vo.declare-item-quantity}/{$vo.confirmed-item-quantity}</div></td>
 						<td><div class="tl">{$vo.status}</div></td>
 						<td>
 							<a href="{:U('Ussw/Inbound/importItems',array('orderID'=>$vo['id']))}">导入产品</a>
