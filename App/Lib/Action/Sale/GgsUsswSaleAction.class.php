@@ -1,14 +1,14 @@
 <?php
 
-class SaleAction extends CommonAction{
+class GgsUsswSaleAction extends CommonAction{
 
-	public function index($table){
-		if($table=='usswSale'){
+	public function index(){
+		if($_POST['keyword']==""){
 			$this->getUsswSaleInfo();
-		}
-		else{
-			$this->display();
-		}
+        }
+        else{           
+            $this->getUsswKeywordSaleInfo();
+        }
 	}
 
 	public function ggsUsswItemTest(){
@@ -75,6 +75,40 @@ class SaleAction extends CommonAction{
         $Page->setConfig('header', '条数据');
         $show = $Page->show();
         $tpl = $products->limit($Page->firstRow.','.$Page->listRows)->select();
+        foreach ($tpl as $key=>$value) {
+
+        	$data[$key]['sku']=$value['sku'];
+        	$data[$key]['title-cn']=$value['title-cn'];
+        	$data[$key]['price']=$value['price'];
+        	$data[$key]['us-rate']=round($value['us-rate']/100*$value['ggs-ussw-sp'],2);
+        	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['way-to-us']=$value['way-to-us'];
+        	$data[$key]['way-to-us-fee']=$data[$key]['way-to-us']=="空运"?$this->getUsswAirFirstTransportFee($value['weight'],$value['length'],$value['width'],$value['height']):$this->getUsswSeaFirstTransportFee($value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way']=$this->getUsswLocalShippingWay($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-fee']=$this->getUsswLocalShippingFee($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['ggs-ussw-sp']=$value['ggs-ussw-sp'];
+        	$data[$key]['cost']=round($this->getUsswCost($data[$key]),2);
+        	$data[$key]['gprofit']=$data[$key]['ggs-ussw-sp']-$data[$key]['cost'];
+        	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key]['ggs-ussw-sp']*100,2).'%';
+        	$data[$key]['weight']=round($value['weight']*0.0352740,2);
+        	$data[$key]['length']=round($value['length']*0.3937008,2);
+        	$data[$key]['width']=round($value['width']*0.3937008,2);
+        	$data[$key]['height']=round($value['height']*0.3937008,2);
+        }
+        $this->assign('data',$data);
+        $this->assign('page',$show);
+        $this->display();
+	}
+
+	private function getUsswKeywordSaleInfo(){
+		$products = M('products');
+        import('ORG.Util.Page');
+        $count = $products->count();
+        $Page = new Page($count);            
+        $Page->setConfig('header', '条数据');
+        $show = $Page->show();
+        $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+        $tpl = $products->limit($Page->firstRow.','.$Page->listRows)->where($where)->select();
         foreach ($tpl as $key=>$value) {
 
         	$data[$key]['sku']=$value['sku'];

@@ -31,7 +31,7 @@ function change_code(obj){
 </head>
 <body style="font-size:12px">
 <table width="532" border="0" align="center" cellpadding="0" cellspacing="0">
-        <form action="index.php/Index/Index/login" method="post" name="form1">
+        <form action="<?php echo U('Index/Index/login');?>" method="post" name="form1">
           <tr>
             <td height="27" colspan="2" align="center" class="font_white"><span class="style1">用户登陆</span></td>
           </tr>
