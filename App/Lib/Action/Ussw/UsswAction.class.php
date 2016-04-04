@@ -6,43 +6,6 @@ class UsswAction extends CommonAction{
 		$this->display();
 	}
 
-    /*创建usswInbound表
-
-    CREATE TABLE IF NOT EXISTS `3s_ussw_inbound`(
-    `id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
-    `date` date default null,
-    `way` varchar(10) default null,
-    `pQuantity` smallint(6) default 0,
-    `weight` decimal(5,2) default 0,
-    `volume` decimal(8,5) default 0,
-    `volumeWeight` decimal(5,2) default 0,
-    `iQuantity` smallint(6) default 0,
-    `status` varchar(10) default null
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
-        
-    */
-
-    public function usswInbound(){
-        $this->display();
-    }
-
-	public function itemInbound(){
-		$where['sku'] = I('post.sku','','htmlspecialchars');
-		$where['position'] = I('post.position','','htmlspecialchars');
-		$row = M('usstorage')->where($where)->find();
-		$data['cinventory'] = $row['cinventory']+1;
-		$data['ainventory'] = $row['ainventory']+1;
-
-		$result = M('usstorage')->where($where)->save($data);
-		
-		if($result){
-			$this->success('入库成功！');
-		}
-		else{
-			$this->error("入库失败！");
-		}
-	}
-
 	public function storageFileBatchAdd(){
         $this->display();
      }
@@ -91,40 +54,6 @@ class UsswAction extends CommonAction{
 	    else{
 	        $this->error('写入错误！');
 	     }
-    }
-
-    public function itemOutbound(){
-    	$where['sku'] = I('post.sku','','htmlspecialchars');
-		$where['position'] = I('post.position','','htmlspecialchars');
-		$row = M('usstorage')->where($where)->find();
-		$data['csales'] = $row['csales']+1;
-		$data['ainventory'] = $row['ainventory']-1;
-
-		$result = M('usstorage')->where($where)->save($data);
-		
-		if($result){
-			$this->success('出库成功！');
-		}
-		else{
-			$this->error("出库失败！");
-		}
-    }
-
-    public function itemBatchOutbound(){
-    	$where['sku'] = I('post.sku','','htmlspecialchars');
-		$where['position'] = I('post.position','','htmlspecialchars');
-		$row = M('usstorage')->where($where)->find();
-		$data['csales'] = $row['csales']+I('post.quantity','','htmlspecialchars');
-		$data['ainventory'] = $row['ainventory']-I('post.quantity','','htmlspecialchars');
-
-		$result = M('usstorage')->where($where)->save($data);
-		
-		if($result){
-			$this->success('出库成功！');
-		}
-		else{
-			$this->error("出库失败！");
-		}
     }
 }
 

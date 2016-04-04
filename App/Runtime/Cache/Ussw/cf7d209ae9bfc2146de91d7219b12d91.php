@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>美国自建仓入库单</title>
+<title>美国出库单</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -154,32 +154,22 @@ function del()
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th width="110">入库单编号</th>
-						<th><div class="tl">下单日期</div></th>
-						<th><div class="tl">运输方式</div></th>
-						<th><div class="tl">包裹数</div></th>
-						<th><div class="tl">重量</div></th>
-						<th><div class="tl">体积</div></th>
-						<th><div class="tl">计费重</div></th>
-						<th><div class="tl">单品数</div></th>
-						<th><div class="tl">状态</div></th>
+						<th width="110">出库单编号</th>
+						<th><div class="tl">ebay订单号</div></th>						
+						<th><div class="tl">发货状态</div></th>
+						<th><div class="tl">发货方式</div></th>
+						<th><div class="tl">追踪号</div></th>
+						<th><div class="tl">下单时间</div></th>
 						<th width="230">操作</th>
 					</tr>
 					<?php if(is_array($inbounds)): $i = 0; $__LIST__ = $inbounds;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
 						<td><div class="tl"><?php echo ($vo["id"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["date"]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo["way"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["declare-package-quantity"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["volume"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["volumeWeight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["declare-item-quantity"]); ?>/<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'<font style="color:#F00;">':'' ; echo ($vo["confirmed-item-quantity"]); echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'</font>':'';?></div></td>
+						<td><div class="tl"><?php echo ($vo["ebaysaleno"]); ?></div></td>						
 						<td><div class="tl"><?php echo ($vo["status"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["shippingway"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["trackingnumber"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["time"]); ?></div></td>
 						<td>
-							<a href="<?php echo U('Ussw/Inbound/importItems',array('orderID'=>$vo['id']));?>">导入产品</a>
-							<a href="<?php echo U('Ussw/Inbound/inboundOrderItems',array('orderID'=>$vo['id']));?>">产品明细</a>
-							<a href="<?php echo U('Ussw/Inbound/updateStorage',array('ioid'=>$vo['id']));?>">入库</a>
-							<a href="<?php echo U('Ussw/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']));?>" onclick='return del()'>删除</a>
 						</td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>

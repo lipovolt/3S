@@ -1,5 +1,31 @@
 <?php
 
+/*创建usswInbound表
+
+    CREATE TABLE IF NOT EXISTS `3s_ussw_inbound`(
+    `id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
+    `date` date default null,
+    `way` varchar(10) default null,
+    `pQuantity` smallint(6) default 0,
+    `weight` decimal(5,2) default 0,
+    `volume` decimal(8,5) default 0,
+    `volumeWeight` decimal(5,2) default 0,
+    `iQuantity` smallint(6) default 0,
+    `status` varchar(10) default null
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+        
+    */
+/*创建美国自建仓入库产品明细表
+    create table if not exists `3s_ussw_inbound_items` (
+    `id` smallint(6) unsigned primary key not null auto_increment,
+    `inbound-order-id` smallint(6),
+    `sku` varchar(10),
+    `declare-quantity` smallint(6),
+    `confirmed-quantity` smallint(6)
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+
+*/
+
 class InboundAction extends CommonAction{
 
 	public function index(){
@@ -62,18 +88,6 @@ class InboundAction extends CommonAction{
         $this->assign('orderID',$orderID);
         $this->display();
     }
-
-    /*创建美国自建仓入库产品明细表
-    create table if not exists `3s_ussw_inbound_items` (
-    `id` smallint(6) unsigned primary key not null auto_increment,
-    `inbound-order-id` smallint(6),
-    `sku` varchar(10),
-    `declare-quantity` smallint(6),
-    `confirmed-quantity` smallint(6)
-    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
-    
-    */
-
 
     Public function addItems($orderID){
         $status = M('ussw_inbound')->where('id='.$orderID)->getField('status');
