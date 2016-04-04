@@ -171,7 +171,7 @@ function del()
 						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["volume"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["volumeWeight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["declare-item-quantity"]); ?>/<?php echo ($vo["confirmed-item-quantity"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["declare-item-quantity"]); ?>/<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'<font style="color:#F00;">':'' ; echo ($vo["confirmed-item-quantity"]); echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'</font>':'';?></div></td>
 						<td><div class="tl"><?php echo ($vo["status"]); ?></div></td>
 						<td>
 							<a href="<?php echo U('Ussw/Inbound/importItems',array('orderID'=>$vo['id']));?>">导入产品</a>
