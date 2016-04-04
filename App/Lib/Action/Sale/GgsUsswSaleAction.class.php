@@ -103,11 +103,11 @@ class GgsUsswSaleAction extends CommonAction{
 	private function getUsswKeywordSaleInfo(){
 		$products = M('products');
         import('ORG.Util.Page');
-        $count = $products->count();
+        $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+        $count = $products->where($where)->count();
         $Page = new Page($count);            
         $Page->setConfig('header', '条数据');
-        $show = $Page->show();
-        $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+        $show = $Page->show();        
         $tpl = $products->limit($Page->firstRow.','.$Page->listRows)->where($where)->select();
         foreach ($tpl as $key=>$value) {
 
