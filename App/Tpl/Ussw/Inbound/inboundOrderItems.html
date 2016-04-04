@@ -55,8 +55,9 @@
 						<tr>
 						<td><div class="tl"><input type="text"  id="sku" name="sku" value="{$vo.sku}" style="width:80px;"/></div></td>
 						<td><div class="tl">{$vo.declare-quantity}</div></td>				
-						<td><div class="tl">
-							<input type="text"  id="confirmed-quantity" name="confirmed-quantity" value="{$vo.confirmed-quantity}" /></div></td>
+						<td><div class="tl"><?php echo $vo['declare-quantity']!=$vo['confirmed-quantity']?'<font style="color:#F00;">':'' ;?>
+							<input type="text"  id="confirmed-quantity" name="confirmed-quantity" value="{$vo.confirmed-quantity}" /><?php echo $vo['declare-quantity']!=$vo['confirmed-quantity']?'</font>':'';?></div>
+						</td>
 						<td><div class="tl">
 								<button class="btn btn-blue btn-s" id="saveCQuantity">保存</button>
 								</div></td>

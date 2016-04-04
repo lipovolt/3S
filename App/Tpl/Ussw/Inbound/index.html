@@ -72,7 +72,7 @@ function del()
 						<td><div class="tl">{$vo.weight}</div></td>
 						<td><div class="tl">{$vo.volume}</div></td>
 						<td><div class="tl">{$vo.volumeWeight}</div></td>
-						<td><div class="tl">{$vo.declare-item-quantity}/{$vo.confirmed-item-quantity}</div></td>
+						<td><div class="tl">{$vo.declare-item-quantity}/<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'<font style="color:#F00;">':'' ;?>{$vo.confirmed-item-quantity}<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'</font>':'';?></div></td>
 						<td><div class="tl">{$vo.status}</div></td>
 						<td>
 							<a href="{:U('Ussw/Inbound/importItems',array('orderID'=>$vo['id']))}">导入产品</a>
