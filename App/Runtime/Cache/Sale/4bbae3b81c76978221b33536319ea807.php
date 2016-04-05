@@ -164,7 +164,7 @@
 						<th><div class="tl">操作</div></th>
 					</tr>
 					<tr>
-						<form method="POST" id="ggs-ussw-item-test" action="<?php echo U('Sale/Sale/ggsUsswItemTest');?>">		
+						<form method="POST" id="ggs-ussw-item-test" action="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>">		
 						<td><div class="tl"><input type="text" style="width:50px;" name="price" value="<?php echo ($testData['price']); ?>" id="price"q/></div></td>
 						<td><div class="tl"><?php echo ($testData['us-rate']); ?></div></td>
 						<td><div class="tl"><?php echo ($testData['ussw-fee']); ?></div></td>
