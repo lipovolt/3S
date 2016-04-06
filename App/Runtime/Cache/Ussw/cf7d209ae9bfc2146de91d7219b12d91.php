@@ -112,6 +112,7 @@ function del()
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/importOutboundFile');?>">导入ebay订单</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
 </dl>
 <dl>
@@ -139,6 +140,7 @@ function del()
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/importOutboundFile');?>">导入ebay订单</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
 </dl>
 <dl>
@@ -150,21 +152,46 @@ function del()
 		</div>
 	<div class="content">
 	<div id="inbounds" class="main">
+		<form name="search_product" id="search_product" action="<?php echo U('Ussw/Outbound/index');?>" method="POST">
+			<div class="search-area">
+				<div class="item">
+					<div class="form-group">
+						<label for="keyword" class="control-label">关键字</label>
+						<div class="control-wrap">
+							<select name="keyword" id="keyword" data-value="">
+								<option value="id">出库单号</option>
+								<option value="saleno">平台订单号</option>
+							</select>
+						</div>
+						<div class="control-wrap">
+							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
+						</div>
+					</div>
+					<input type="hidden" name="country" value="122" />
+					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
+						<i class="icon search"></i>
+						<i class="vline-inline"></i>
+						<span>查询</span>
+					</button>
+				</div>			
+			</div>
+			<input type="hidden" name="__hash__" value="ff49ed719b3da9a91e3fa1b682fe6f2c_58292026a894f750e9cf920bd524eb81" />
+		</form>
 		<div>
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th width="110">出库单编号</th>
-						<th><div class="tl">ebay订单号</div></th>						
+						<th><div class="tl">出库单编号</div></th>
+						<th><div class="tl">平台订单号</div></th>						
 						<th><div class="tl">发货状态</div></th>
 						<th><div class="tl">发货方式</div></th>
 						<th><div class="tl">追踪号</div></th>
 						<th><div class="tl">下单时间</div></th>
 						<th width="230">操作</th>
 					</tr>
-					<?php if(is_array($inbounds)): $i = 0; $__LIST__ = $inbounds;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo["id"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["ebaysaleno"]); ?></div></td>						
+					<?php if(is_array($outboundOrders)): $i = 0; $__LIST__ = $outboundOrders;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><div class="tl"><a href="<?php echo U('Ussw/Outbound/outboundOrderDetails',array('id'=>$vo['id']));?>"><?php echo ($vo["id"]); ?></a></div></td>
+						<td><div class="tl"><?php echo ($vo["saleno"]); ?></div></td>						
 						<td><div class="tl"><?php echo ($vo["status"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["shippingway"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["trackingnumber"]); ?></div></td>

@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>产品信息</title>
+<title>批量导入出库文件</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -113,98 +113,73 @@
 			</div>
 		</div>
 	</div>	
-	
-    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
+		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>产品管理</strong></div>
+			<div class="sidenav-hd"><strong>美国自建仓批量出库</strong></div>
 			<div class="sidenav-bd">
 				<dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>导入产品</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Product/Product/productBatchAdd');?>" >导入产品</a></dd>
+	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
+	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
 </dl>
 <dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>产品信息管理</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Product/Product/productInfo');?>" >产品信息</a></dd>
-</dl>	
+	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/importOutboundFile');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
+</dl>
+	
 			</div>
 		</div>
 	<div class="content">
-	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Product/Product/productInfo');?>" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">关键字</label>
-						<div class="control-wrap">
-							<select name="keyword" id="keyword" data-value="">
-								<option value="sku">产品编码</option>
-								<option value="title-cn">产品名称</option>
-							</select>
-						</div>
-						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
+			<script>
+			var GlobalData = {
+				_COMMON_DATA_PROCESSING_ : "数据处理中...",
+				_PRODUCTINFO_BATCHADD_PRODUCTIMPORT_ERROR_FILE_TYPE_NOT_MATCH_:"产品信息导入只支持XLS格式文件!",
+				_COMMON_PLEASE_SELECT_FILE_:"请选择文件！"
+			}
+			</script>
+			
+			<!-- 主页面开始  -->
+				<div id="ProductInfo" class="main">
+					<div class="tab-content">
+						<div class="tab-inner-content" style="">
+							<div class="block">
+								<div class="block-hd">
+									<i class="icon import"></i>
+									<strong>批量导入出库文件</strong>
+								</div>
+								<div class="block-bd">
+									<div class="block-indent" style="overflow:hidden;">
+										<div style="float:left;width:456px;">
+											<p>请<a href="#">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
+											<div>
+												 <form action="<?php echo U('Ussw/Outbound/importEbaySaleRecordFile');?>" method="post" enctype="multipart/form-data">
+										            <input type="file" name="import"/>
+								          			<input type="hidden" name="table" value="tablename"/>
+									             	<input type="submit" value="导入"/>
+									         	</form>
+
+											</div>
+											<p>
+												<span class="notice-s">产品信息导入只支持XLS格式文件</span>
+											</p>
+										</div>										
+									</div>															
+								</div>
+							</div>
 						</div>
 					</div>
-					<input type="hidden" name="country" value="122" />
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
-						<i class="icon search"></i>
-						<i class="vline-inline"></i>
-						<span>查询</span>
-					</button>
-				</div>			
-			</div>
-			<input type="hidden" name="__hash__" value="ff49ed719b3da9a91e3fa1b682fe6f2c_58292026a894f750e9cf920bd524eb81" />
-		</form>
-		<div>
-			<div class="tab-content">	
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th width="110">产品编码</th>
-						<th><div class="tl">中文名称</div></th>
-						<th><div class="tl">重量g</div></th>
-						<th>长cm</th>
-						<th>宽cm</th>
-						<th><div class="tl">高cm</div></th>
-						<th><div>带电</div></th>
-						<th><div>德国</div></th>
-						<th><div>德国头程方式</div></th>
-						<th><div>美国</div></th>
-						<th><div>美国头程方式</div></th>
-						<th width="60">产品经理</th>
-						<th width="230">操作</th>
-					</tr>
-					<?php if(is_array($products)): $i = 0; $__LIST__ = $products;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo["sku"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["title-cn"]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["length"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["width"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["height"]); ?></div></td>
-						<?php echo $vo['battery']==0?'<td><div class="tl">否</div></td>':'<td><div class="tl">是</div></td>';?>
-						<?php echo $vo['de']==0?'<td><div class="tl">否</div></td>':'<td><div class="tl">是</div></td>';?>
-						<td><div class="tl"><?php echo ($vo["way-to-de"]); ?></div></td>
-						<?php echo $vo['us']==0?'<td><div class="tl">否</div></td>':'<td><div class="tl">是</div></td>';?>
-						<td><div class="tl"><?php echo ($vo["way-to-us"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["manager"]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Product/Product/productEdit',array('sku'=>$vo['sku']));?>">编辑</a>
-						</td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
-			</div>
+			<!-- 主页面结束 -->
 		</div>
 	</div>
-
-
 	</div>
-	</div>
-	</div>
+		
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.
