@@ -157,14 +157,13 @@
 								<div class="block-bd">
 									<div class="block-indent" style="overflow:hidden;">
 										<div style="float:left;width:456px;">
-											<p>请<a href="#">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
+											<p>导出的ebay未发货订单是CVS文件，需要转换成XLS文件，文件内容无需修改</p>
 											<div>
 												 <form action="<?php echo U('Ussw/Outbound/importEbaySaleRecordFile');?>" method="post" enctype="multipart/form-data">
 										            <input type="file" name="import"/>
 								          			<input type="hidden" name="table" value="tablename"/>
 									             	<input type="submit" value="导入"/>
 									         	</form>
-
 											</div>
 											<p>
 												<span class="notice-s">产品信息导入只支持XLS格式文件</span>
@@ -174,6 +173,16 @@
 								</div>
 							</div>
 						</div>
+						<table id="tablelist" class="tablelist">
+							<tr>
+								<th colspan='3'><?php echo $errorInFile==null?'':'错误信息'?></th>
+							</tr>
+							<?php if(is_array($errorInFile)): $i = 0; $__LIST__ = $errorInFile;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+								<td><div class="tl"><?php echo ($vo["saleno"]); ?></div></td>
+								<td><div class="tl"><?php echo ($vo["sku"]); ?></div></td>
+								<td><div class="tl"><?php echo ($vo["error"]); ?></div></td>
+								</tr><?php endforeach; endif; else: echo "" ;endif; ?> 	 								
+						</table>
 					</div>
 			<!-- 主页面结束 -->
 		</div>

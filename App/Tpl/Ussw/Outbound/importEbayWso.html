@@ -48,7 +48,7 @@
 							<div class="block">
 								<div class="block-hd">
 									<i class="icon import"></i>
-									<strong>批量导入出库文件</strong>
+									<strong>批量导入ebay订单</strong>
 								</div>
 								<div class="block-bd">
 									<div class="block-indent" style="overflow:hidden;">
@@ -60,7 +60,6 @@
 								          			<input type="hidden" name="table" value="tablename"/>
 									             	<input type="submit" value="导入"/>
 									         	</form>
-
 											</div>
 											<p>
 												<span class="notice-s">产品信息导入只支持XLS格式文件</span>
@@ -70,6 +69,18 @@
 								</div>
 							</div>
 						</div>
+						<table id="tablelist" class="tablelist">
+							<tr>
+								<th colspan='3'><?php echo $errorInFile==null?'':'上传不成功，错误信息'?></th>
+							</tr>
+							<volist name="errorInFile" id="vo">
+								<tr>
+								<td><div class="tl">{$vo.saleno}</div></td>
+								<td><div class="tl">{$vo.sku}</div></td>
+								<td><div class="tl">{$vo.error}</div></td>
+								</tr>	
+							</volist> 	 								
+						</table>
 					</div>
 			<!-- 主页面结束 -->
 		</div>

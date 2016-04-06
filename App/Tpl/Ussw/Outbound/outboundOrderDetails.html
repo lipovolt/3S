@@ -215,6 +215,7 @@ function del()
 	<table  id="warehouseProduct" class="tablelist">              
 		
 			<tr>
+				<th>货位</th>
 				<th>商品编码</th>
 				<th>商品名称</th>				
 				<th>英文名称</th>
@@ -225,6 +226,7 @@ function del()
 
 			<volist name="outboundOrderItems" id="vo">
 				<tr>
+				<td>{$vo.position}</td>
 				<td>{$vo.sku}</td>
 				<td>{$vo.cname}</td>
 				<td>{$vo.ename}</td>						

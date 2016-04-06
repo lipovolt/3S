@@ -319,6 +319,7 @@ function del()
 	<table  id="warehouseProduct" class="tablelist">              
 		
 			<tr>
+				<th>货位</th>
 				<th>商品编码</th>
 				<th>商品名称</th>				
 				<th>英文名称</th>
@@ -328,6 +329,7 @@ function del()
 			</tr> 
 
 			<?php if(is_array($outboundOrderItems)): $i = 0; $__LIST__ = $outboundOrderItems;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+				<td><?php echo ($vo["position"]); ?></td>
 				<td><?php echo ($vo["sku"]); ?></td>
 				<td><?php echo ($vo["cname"]); ?></td>
 				<td><?php echo ($vo["ename"]); ?></td>						

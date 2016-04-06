@@ -113,12 +113,19 @@ class OutboundAction extends CommonAction{
             $highestColumn = $sheet->getHighestColumn(); // 取得总列数
             $j = 0;
             $k = 0;
+            $indexForErrorOfFile = 0;
             for($i=4;$i<=$highestRow-3;$i++){
                 $saleNo =  $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
                 $buyerID =  $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
                 $sku = $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
-                if($saleNo!=$objPHPExcel->getActiveSheet()->getCell("A".($i-1))->getValue()){
+                if($this->duplicateSaleNo($saleNo)){
+                    $errorInFile[$indexForErrorOfFile]['saleno'] = $saleNo;
+                    $errorInFile[$indexForErrorOfFile]['error'] = '该ebay订单号已存在';
+                    $indexForErrorOfFile = $indexForErrorOfFile+1;
+                }else{
+                    if($saleNo!=$objPHPExcel->getActiveSheet()->getCell("A".($i-1))->getValue()){
                     $outboundOrder[$j]['saleno'] = $saleNo;
+                    $outboundOrder[$j]['status'] = '待出库';
                     $outboundOrder[$j]['time']= Date('Y-m-d H:i:s');
                     $outboundOrder[$j]['platform'] = 'ebay.com';
                     $outboundOrder[$j]['buyerid'] = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
@@ -134,44 +141,70 @@ class OutboundAction extends CommonAction{
                     $j=$j+1;
                     if($sku!=''){
                         $outboundOrderItems[$k]['orderid']=$saleNo;
+                        $position = M('usstorage')->where(array('sku='.$sku,'ainventory!=0'))->getField('position');
+                        if($position != null){
+                            $outboundOrderItems[$k]['position'] = $position;
+                        }else{
+                            $errorInFile[$indexForErrorOfFile]['saleno']=$saleNo;
+                            $errorInFile[$indexForErrorOfFile]['sku']=$sku;
+                            $errorInFile[$indexForErrorOfFile]['error']='库存不足';
+                            $indexForErrorOfFile = $indexForErrorOfFile+1;
+                        }
                         $outboundOrderItems[$k]['sku']=$sku;
                         $outboundOrderItems[$k]['quantity']=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
                         $outboundOrderItems[$k]['itemno']=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
                         $outboundOrderItems[$k]['transactionno']=$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
                         $k=$k+1;
                     }
-                }elseif($saleNo==$objPHPExcel->getActiveSheet()->getCell("A".($i-1))->getValue() and $sku!=''){
-                    $outboundOrderItems[$k]['orderid']=$saleNo;
-                    $outboundOrderItems[$k]['sku']=$sku;
-                    $outboundOrderItems[$k]['quantity']=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
-                    $outboundOrderItems[$k]['itemno']=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-                    $outboundOrderItems[$k]['transactionno']=$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
-                    $k=$k+1;
-                }                                    
+                    }elseif($saleNo==$objPHPExcel->getActiveSheet()->getCell("A".($i-1))->getValue() and $sku!=''){
+                        $outboundOrderItems[$k]['orderid']=$saleNo;
+                        $position = M('usstorage')->where(array('sku='.$sku,'ainventory!=0'))->getField('position');
+                        if($position != null){
+                            $outboundOrderItems[$k]['position'] = $position;
+                        }else{
+                                $errorInFile[$indexForErrorOfFile]['saleno']=$saleNo;
+                                $errorInFile[$indexForErrorOfFile]['sku']=$sku;
+                                $errorInFile[$indexForErrorOfFile]['error']='库存不足';
+                                $indexForErrorOfFile = $indexForErrorOfFile+1;
+                        }
+                        $outboundOrderItems[$k]['sku']=$sku;
+                        $outboundOrderItems[$k]['quantity']=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
+                        $outboundOrderItems[$k]['itemno']=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
+                        $outboundOrderItems[$k]['transactionno']=$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
+                        $k=$k+1;
+                    }
+
+                }
+                                                    
             }
 
-            foreach ($outboundOrder as $key => $order) {
-                if ($this->buyerExists($order,$filteredOutboundOrder)==-1){
-                    $filteredOutboundOrder[$key]=$order;
+            if($errorInFile != null){
+                $this->assign('errorInFile',$errorInFile);             
+                $this->display('importEbayWso');
+            }else{
+                foreach ($outboundOrder as $key => $order) {
+                    if ($this->buyerExists($order,$filteredOutboundOrder)==-1){
+                        $filteredOutboundOrder[$key]=$order;
 
-                }else{
-                    $changedToSaleNo = $this->buyerExists($order,$filteredOutboundOrder);
-                    foreach ($outboundOrderItems as $key => $item) {
-                        if($item['orderid']==$order['saleno']){
-                            $outboundOrderItems[$key]['orderid']=$changedToSaleNo;
+                    }else{
+                        $changedToSaleNo = $this->buyerExists($order,$filteredOutboundOrder);
+                        foreach ($outboundOrderItems as $key => $item) {
+                            if($item['orderid']==$order['saleno']){
+                                $outboundOrderItems[$key]['orderid']=$changedToSaleNo;
+                            }
                         }
                     }
                 }
+                foreach ($filteredOutboundOrder as $key => $value) {
+                    M('ussw_outbound')->add($value);
+                }
+                foreach ($outboundOrderItems as $key => $value) {
+                    $oid=M('ussw_outbound')->where('saleno='.$value['orderid'])->getField('id');
+                    $value['orderid']=$oid;
+                    M('ussw_outbound_items')->add($value);
+                }
+                $this->success('导入成功！');
             }
-            foreach ($filteredOutboundOrder as $key => $value) {
-                M('ussw_outbound')->add($value);
-            }
-            foreach ($outboundOrderItems as $key => $value) {
-                $oid=M('ussw_outbound')->where('saleno='.$value['orderid'])->getField('id');
-                $value['orderid']=$oid;
-                M('ussw_outbound_items')->add($value);
-            }
-            $this->success('导入成功！');
 
         }else{
          $this->error("请选择上传的文件");
@@ -190,6 +223,14 @@ class OutboundAction extends CommonAction{
                     return -1;
             }
         }
+    }
+
+    private function duplicateSaleNo($saleNo){
+        if(M('ussw_outbound')->where('saleno='.saleNo)->find()!=null)
+            return true;
+        else
+            return false;
+        
     }
 
     private function existsSaleNo($saleNo){

@@ -156,11 +156,14 @@ function del()
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th width="110">重复订单号</th>
+						<th width="110">错误信息</th>
 					</tr>
-					<tr>
-						<td><div class="tl"><?php echo ($existsOrder); ?></div></td>
-					</tr> 								
+					<?php if(is_array($errorInFile)): $i = 0; $__LIST__ = $errorInFile;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+							<?php echo ($_GET['errorInFile']); ?>
+						<td><div class="tl"><?php echo ($vo['saleno']); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["sku"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["error"]); ?></div></td>
+						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 	 								
 				</table>
 			</div>
 		</div>
