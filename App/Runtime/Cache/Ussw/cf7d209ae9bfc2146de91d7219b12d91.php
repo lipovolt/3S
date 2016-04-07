@@ -112,7 +112,7 @@ function del()
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Outbound/importOutboundFile');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/importEbayWso');?>">导入ebay订单</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
 </dl>
 <dl>
@@ -140,7 +140,7 @@ function del()
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Outbound/importOutboundFile');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/importEbayWso');?>">导入ebay订单</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
 </dl>
 <dl>
@@ -196,7 +196,7 @@ function del()
 						<td><div class="tl"><?php echo ($vo["shippingway"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["trackingnumber"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["time"]); ?></div></td>
-						<td><a href="<?php echo U('Ussw/Ussw/usswEdit',array('sku'=>$vo['sku']));?>">确认出库</a></td>
+						<td><a href="#">确认出库</a></td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
 				<div class="result page" align="center"><?php echo ($page); ?></div>

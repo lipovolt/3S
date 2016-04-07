@@ -112,7 +112,7 @@ function del()
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Outbound/importOutboundFile');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/importEbayWso');?>">导入ebay订单</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
 </dl>
 <dl>
@@ -140,7 +140,7 @@ function del()
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Outbound/importOutboundFile');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/importEbayWso');?>">导入ebay订单</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
 </dl>
 <dl>

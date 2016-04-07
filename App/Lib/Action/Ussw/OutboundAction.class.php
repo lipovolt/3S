@@ -111,67 +111,91 @@ class OutboundAction extends CommonAction{
             $sheet = $objPHPExcel->getSheet(0);
             $highestRow = $sheet->getHighestRow(); // 取得总行数
             $highestColumn = $sheet->getHighestColumn(); // 取得总列数
-            $j = 0;
-            $k = 0;
-            $indexForErrorOfFile = 0;
+            $j = 0; //索引：辅助数组，首先合并相同ebay订单号的订单
+            $k = 0; //索引： 产品明细辅助数组
+            $indexForErrorOfFile = 0; //索引：错误信息数组
             for($i=4;$i<=$highestRow-3;$i++){
                 $saleNo =  $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
                 $buyerID =  $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
                 $sku = $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
-                if($this->duplicateSaleNo($saleNo)){
+                //判断ebay订单号是否已存在
+                if($this->duplicateSaleNo($saleNo)){ 
+                //ebay订单号在出库表中，添加错误信息
                     $errorInFile[$indexForErrorOfFile]['saleno'] = $saleNo;
                     $errorInFile[$indexForErrorOfFile]['error'] = '该ebay订单号已存在';
                     $indexForErrorOfFile = $indexForErrorOfFile+1;
-                }else{
-                    if($saleNo!=$objPHPExcel->getActiveSheet()->getCell("A".($i-1))->getValue()){
-                    $outboundOrder[$j]['saleno'] = $saleNo;
-                    $outboundOrder[$j]['status'] = '待出库';
-                    $outboundOrder[$j]['time']= Date('Y-m-d H:i:s');
-                    $outboundOrder[$j]['platform'] = 'ebay.com';
-                    $outboundOrder[$j]['buyerid'] = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
-                    $outboundOrder[$j]['buyername'] = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
-                    $outboundOrder[$j]['buyertel'] = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
-                    $outboundOrder[$j]['buyeremail'] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
-                    $outboundOrder[$j]['buyeraddress1'] = $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
-                    $outboundOrder[$j]['buyeraddress2'] = $objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
-                    $outboundOrder[$j]['buyercity'] = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
-                    $outboundOrder[$j]['buyerstate'] = $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
-                    $outboundOrder[$j]['buyerzip'] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
-                    $outboundOrder[$j]['buyercountry'] = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
-                    $j=$j+1;
-                    if($sku!=''){
+                }else{ 
+                //ebay订单号不在出库表中。
+                    if($saleNo!=$objPHPExcel->getActiveSheet()->getCell("A".($i-1))->getValue()){ 
+                    //判断是否跟上一行订单号相同，不相同的话，需要创建新出库单
+                        $outboundOrder[$j]['saleno'] = $saleNo;
+                        $outboundOrder[$j]['status'] = '待出库';
+                        $outboundOrder[$j]['time']= Date('Y-m-d H:i:s');
+                        $outboundOrder[$j]['platform'] = 'ebay.com';
+                        $outboundOrder[$j]['buyerid'] = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+                        $outboundOrder[$j]['buyername'] = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+                        $outboundOrder[$j]['buyertel'] = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+                        $outboundOrder[$j]['buyeremail'] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
+                        $outboundOrder[$j]['buyeraddress1'] = $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+                        $outboundOrder[$j]['buyeraddress2'] = $objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+                        $outboundOrder[$j]['buyercity'] = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+                        $outboundOrder[$j]['buyerstate'] = $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+                        $outboundOrder[$j]['buyerzip'] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+                        $outboundOrder[$j]['buyercountry'] = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+                        $j=$j+1;
+                        if($sku!=''){
+                            $outboundOrderItems[$k]['orderid']=$saleNo;
+                            $rows = M('usstorage')->where(array('sku='.$sku,'ainventory!=0'))->select();
+                            $totalQuantity = 0;
+                            $positions = null;
+                            foreach ($rows as $key => $row) {
+                                //查看该SKU总库存。收集该SKU的货位
+                                $totalQuantity = $row['ainventory'] + $totalQuantity;
+                                $positions = $positions==null?$row['position']:$positions.'/'.$row['position'];
+
+                            }
+                            if($totalQuantity >= $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue()){
+                                //总库存大于等于订单数量，给ussw_outbound_item各字段赋值
+                                $outboundOrderItems[$k]['position'] = $positions;
+                                $outboundOrderItems[$k]['sku']=$sku;
+                                $outboundOrderItems[$k]['quantity']=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
+                                $outboundOrderItems[$k]['itemno']=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
+                                $outboundOrderItems[$k]['transactionno']=$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
+                                $k=$k+1;
+                            }else{
+                                //总库存小于订单数量，添加错误信息
+                                $errorInFile[$indexForErrorOfFile]['saleno']=$saleNo;
+                                $errorInFile[$indexForErrorOfFile]['sku']=$sku;
+                                $errorInFile[$indexForErrorOfFile]['error']='库存不足';
+                                $indexForErrorOfFile = $indexForErrorOfFile+1;
+                            }                            
+                        }
+                    }elseif($saleNo==$objPHPExcel->getActiveSheet()->getCell("A".($i-1))->getValue() and $sku!=''){
+                        //订单号与上一行的订单号相同并且sku列不为空，把当前行的产品分配到上一行的出库单里
                         $outboundOrderItems[$k]['orderid']=$saleNo;
-                        $position = M('usstorage')->where(array('sku='.$sku,'ainventory!=0'))->getField('position');
-                        if($position != null){
-                            $outboundOrderItems[$k]['position'] = $position;
+                        $rows = M('usstorage')->where(array('sku='.$sku,'ainventory!=0'))->select();
+                        $totalQuantity = 0;
+                        $positions = null;
+                        foreach ($rows as $key => $row) {
+                            //查看该SKU总库存。收集该SKU的货位
+                            $totalQuantity = $row['ainventory'] + $totalQuantity;
+                            $positions = $positions==null?$row['position']:$positions.'/'.$row['position'];
+                        }
+                        if($totalQuantity >= $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue()){
+                            //总库存大于等于订单数量，给ussw_outbound_item个字段赋值
+                            $outboundOrderItems[$k]['position'] = $positions;
+                            $outboundOrderItems[$k]['sku']=$sku;
+                            $outboundOrderItems[$k]['quantity']=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
+                            $outboundOrderItems[$k]['itemno']=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
+                            $outboundOrderItems[$k]['transactionno']=$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
+                            $k=$k+1;
                         }else{
+                            //总库存小于订单数量，添加错误信息
                             $errorInFile[$indexForErrorOfFile]['saleno']=$saleNo;
                             $errorInFile[$indexForErrorOfFile]['sku']=$sku;
                             $errorInFile[$indexForErrorOfFile]['error']='库存不足';
                             $indexForErrorOfFile = $indexForErrorOfFile+1;
                         }
-                        $outboundOrderItems[$k]['sku']=$sku;
-                        $outboundOrderItems[$k]['quantity']=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
-                        $outboundOrderItems[$k]['itemno']=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-                        $outboundOrderItems[$k]['transactionno']=$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
-                        $k=$k+1;
-                    }
-                    }elseif($saleNo==$objPHPExcel->getActiveSheet()->getCell("A".($i-1))->getValue() and $sku!=''){
-                        $outboundOrderItems[$k]['orderid']=$saleNo;
-                        $position = M('usstorage')->where(array('sku='.$sku,'ainventory!=0'))->getField('position');
-                        if($position != null){
-                            $outboundOrderItems[$k]['position'] = $position;
-                        }else{
-                                $errorInFile[$indexForErrorOfFile]['saleno']=$saleNo;
-                                $errorInFile[$indexForErrorOfFile]['sku']=$sku;
-                                $errorInFile[$indexForErrorOfFile]['error']='库存不足';
-                                $indexForErrorOfFile = $indexForErrorOfFile+1;
-                        }
-                        $outboundOrderItems[$k]['sku']=$sku;
-                        $outboundOrderItems[$k]['quantity']=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
-                        $outboundOrderItems[$k]['itemno']=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-                        $outboundOrderItems[$k]['transactionno']=$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
-                        $k=$k+1;
                     }
 
                 }
@@ -179,14 +203,19 @@ class OutboundAction extends CommonAction{
             }
 
             if($errorInFile != null){
+                //有错误信息，输出错误信息，不做数据库操作。
                 $this->assign('errorInFile',$errorInFile);             
                 $this->display('importEbayWso');
             }else{
+                //无错误信息
                 foreach ($outboundOrder as $key => $order) {
+                    //循环第一次整理的ebay订单。查找是否有相同buyerid和地址信息的订单
                     if ($this->buyerExists($order,$filteredOutboundOrder)==-1){
+                        //如果buyerid和第一栏地址信息不相同，添加到已过滤的数组。
                         $filteredOutboundOrder[$key]=$order;
 
                     }else{
+                        //如果buyerid和第一栏地址重复，不添加该单到已过滤的数组。与该单相对应的产品列表的订单号更新为已存在的订单号。
                         $changedToSaleNo = $this->buyerExists($order,$filteredOutboundOrder);
                         foreach ($outboundOrderItems as $key => $item) {
                             if($item['orderid']==$order['saleno']){
@@ -195,13 +224,29 @@ class OutboundAction extends CommonAction{
                         }
                     }
                 }
+                //更新已过滤的订单数组到ussw_outbound
                 foreach ($filteredOutboundOrder as $key => $value) {
                     M('ussw_outbound')->add($value);
                 }
+                //更新订单产品数组到ussw_outbound_item
                 foreach ($outboundOrderItems as $key => $value) {
                     $oid=M('ussw_outbound')->where('saleno='.$value['orderid'])->getField('id');
                     $value['orderid']=$oid;
                     M('ussw_outbound_items')->add($value);
+                    $rows = M('usstorage')->where(array('sku='.$sku,'ainventory!=0'))->find();
+                    $difference = $value['quantity'];
+                    //更新库存信息
+                    foreach ($rows as $key => $row) {
+                        if($row['ainventory']>=$difference){
+                            $row['ainventory'] = $row['ainventory'] - $difference;
+                            $row['oinventory'] = $row['oinventory'] + $difference;
+                            break;
+                        }else{
+                            $row['ainventory'] = 0;
+                            $row['oinventory'] = $difference- $row['ainventory'];
+                            $difference = $difference- $row['ainventory'];
+                        }
+                    }
                 }
                 $this->success('导入成功！');
             }
@@ -219,9 +264,8 @@ class OutboundAction extends CommonAction{
                 if($order['buyerid'] == $value['buyerid'] and $order['buyeraddress1'] == $value['buyeraddress1']){
                     return $value['saleno'];
                 }
-                else
-                    return -1;
             }
+            return -1;
         }
     }
 
@@ -247,6 +291,18 @@ class OutboundAction extends CommonAction{
         $this->assign('outboundOrderItems',$outboundOrderItems);
         $this->display();
     }
+
+    /*public function confirmOutboundOrder($outboundOrderId){
+        $items = M('ussw_outbound_items')->where('orderid='.$outboundOrderId)->select();
+        $usstorage = M('usstorage');
+        foreach ($items as $key => $item) {
+            $row=$usstorage->where(array('sku'=>$item['sku'],'position'=>$item['position']))->select();
+            $row['oinventory'] = $row['oinventory']-$item['quantity'];
+            $row['csales'] = $row['csales']+$item['quantity'];
+            $usstorage->where
+        }
+        M('ussw_outbound')->where('id='.$outboundOrderId)->setField(array('status'=>'已出库'));
+    }*/
 }
 
 ?>
