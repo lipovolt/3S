@@ -233,20 +233,25 @@ class OutboundAction extends CommonAction{
                     $oid=M('ussw_outbound')->where('saleno='.$value['orderid'])->getField('id');
                     $value['orderid']=$oid;
                     M('ussw_outbound_items')->add($value);
-                    $rows = M('usstorage')->where(array('sku='.$sku,'ainventory!=0'))->find();
+                    $usstorage = M('usstorage');
+                    $rows = $usstorage->where(array('sku='.$value['sku'],'ainventory!=0'))->select();
                     $difference = $value['quantity'];
                     //更新库存信息
                     foreach ($rows as $key => $row) {
                         if($row['ainventory']>=$difference){
-                            $row['ainventory'] = $row['ainventory'] - $difference;
-                            $row['oinventory'] = $row['oinventory'] + $difference;
+                            $data['ainventory'] = $row['ainventory'] - $difference;
+                            $data['oinventory'] = $row['oinventory'] + $difference;
+                            $usstorage->where('id='.$row['id'])->save($data);
                             break;
                         }else{
-                            $row['ainventory'] = 0;
-                            $row['oinventory'] = $difference- $row['ainventory'];
+                            $data['oinventory'] = $difference- $row['ainventory'];
+                            $data['ainventory'] = 0;                            
                             $difference = $difference- $row['ainventory'];
+                            $usstorage->where('id='.$row['id'])->save($data);
                         }
+
                     }
+
                 }
                 $this->success('导入成功！');
             }
