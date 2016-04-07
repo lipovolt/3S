@@ -175,7 +175,9 @@
 						</div>
 						<table id="tablelist" class="tablelist">
 							<tr>
-								<th colspan='3'><?php echo $errorInFile==null?'':'上传不成功，错误信息'?></th>
+								<th><div class="tl"><?php echo $errorInFile==null?'':'平台订单号'?></div></th>
+								<th><div class="tl"><?php echo $errorInFile==null?'':'货号'?></div></th>
+								<th><div class="tl"><?php echo $errorInFile==null?'':'错误信息'?></div></th>
 							</tr>
 							<?php if(is_array($errorInFile)): $i = 0; $__LIST__ = $errorInFile;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
 								<td><div class="tl"><?php echo ($vo["saleno"]); ?></div></td>

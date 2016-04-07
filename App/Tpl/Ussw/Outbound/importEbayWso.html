@@ -71,7 +71,9 @@
 						</div>
 						<table id="tablelist" class="tablelist">
 							<tr>
-								<th colspan='3'><?php echo $errorInFile==null?'':'上传不成功，错误信息'?></th>
+								<th><div class="tl"><?php echo $errorInFile==null?'':'平台订单号'?></div></th>
+								<th><div class="tl"><?php echo $errorInFile==null?'':'货号'?></div></th>
+								<th><div class="tl"><?php echo $errorInFile==null?'':'错误信息'?></div></th>
 							</tr>
 							<volist name="errorInFile" id="vo">
 								<tr>
