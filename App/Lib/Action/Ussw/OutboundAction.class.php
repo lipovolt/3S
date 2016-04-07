@@ -179,7 +179,7 @@ class OutboundAction extends CommonAction{
                         foreach ($rows as $key => $row) {
                             //查看该SKU总库存。收集该SKU的货位
                             $totalQuantity = $row['ainventory'] + $totalQuantity;
-                            $positions = $positions==null?$row['position']:$positions.'/'.$row['position'];
+                            $positions = $positions==null?$row['position']:$positions.'|'.$row['position'];
                         }
                         if($totalQuantity >= $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue()){
                             //总库存大于等于订单数量，给ussw_outbound_item个字段赋值
@@ -297,17 +297,35 @@ class OutboundAction extends CommonAction{
         $this->display();
     }
 
-    /*public function confirmOutboundOrder($outboundOrderId){
-        $items = M('ussw_outbound_items')->where('orderid='.$outboundOrderId)->select();
-        $usstorage = M('usstorage');
-        foreach ($items as $key => $item) {
-            $row=$usstorage->where(array('sku'=>$item['sku'],'position'=>$item['position']))->select();
-            $row['oinventory'] = $row['oinventory']-$item['quantity'];
-            $row['csales'] = $row['csales']+$item['quantity'];
-            $usstorage->where
+    public function confirmOutboundOrder($id){
+        if(M('ussw_outbound')->where('id='.$id)->getField('status')=='已出库'){
+            $this->error('该订单已经出库，请勿重复操作！');
+        }else{
+            $items = M('ussw_outbound_items')->where('orderid='.$id)->select();
+            $usstorage = M('usstorage');
+            foreach ($items as $key => $item) {
+                $positions = explode("/",$item['position']);
+                $quantity = $item['quantity'];
+                foreach ($positions as $key => $position) {
+                    $row=$usstorage->where(array('sku'=>$item['sku'],'position'=>$position))->find();
+                    if($row['oinventory']>=$quantity){
+                        $data['oinventory'] = $row['oinventory']-$quantity;
+                        $data['csales'] = $row['csales']+$quantity;
+                        $usstorage->where('id='.$row['id'])->save($data);
+                        break;
+                    }else{
+                        $data['oinventory'] = 0;
+                        $data['csales'] = $row['csales']+$row['oinventory'];
+                        $usstorage->where('id='.$row['id'])->save($data);
+                        $quantity = $quantity - $row['oinventory'];
+                    }                
+                }
+                
+            }
+            M('ussw_outbound')->where('id='.$id)->setField(array('status'=>'已出库'));
+            $this->success('出库成功！');
         }
-        M('ussw_outbound')->where('id='.$outboundOrderId)->setField(array('status'=>'已出库'));
-    }*/
+    }
 }
 
 ?>

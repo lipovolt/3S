@@ -195,7 +195,7 @@ function del()
 						<td><div class="tl"><?php echo ($vo["shippingway"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["trackingnumber"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["time"]); ?></div></td>
-						<td><a href="#">确认出库</a></td>
+						<td><a href="<?php echo U('Ussw/Outbound/confirmOutboundOrder',array('id'=>$vo['id']));?>">确认出库</a></td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
 				<div class="result page" align="center"><?php echo ($page); ?></div>

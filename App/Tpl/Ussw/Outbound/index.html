@@ -92,7 +92,7 @@ function del()
 						<td><div class="tl">{$vo.shippingway}</div></td>
 						<td><div class="tl">{$vo.trackingnumber}</div></td>
 						<td><div class="tl">{$vo.time}</div></td>
-						<td><a href="#">确认出库</a></td>
+						<td><a href="{:U('Ussw/Outbound/confirmOutboundOrder',array('id'=>$vo['id']))}">确认出库</a></td>
 						</tr>	
 					</volist> 								
 				</table>
