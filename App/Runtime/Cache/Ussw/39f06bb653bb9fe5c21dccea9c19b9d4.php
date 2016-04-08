@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>库存信息</title>
+<title>Untitled Document</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -116,93 +116,28 @@
 	<div class="area clearfix">
 		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>库存</strong></div>
+			<div class="sidenav-hd"><strong>美国库存管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl><!-- 
+	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
+	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+</dl>
 <dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
-	</dt>
-	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl> -->
-
+	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/importEbayWso');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
+</dl>
+	
 			</div>
 		</div>
 	<div class="content">
-	<div id="Australia" class="main">
-		<form name="search_outbound" id="search_outbound" action="<?php echo U('Storage/Storage/usstorage');?>" method="POST">			
-		<div class="block-indent search-area">
-			<div class="form-group">
-				<label for="" class="control-label">关键字</label>
-				<div class="control-wrap">
-					<select name="keyword" id="keyword" data-value="">
-						<option value="sku">产品编码</option>
-						<option value="cname">产品中文名称</option>
-						<option value="ename">产品英文名称</option>
-					</select>
-				</div>
-				<div class="control-wrap">
-					<input type="text" name="keywordValue" id="keywordValue" value="">
-				</div>
-			</div>
-			<button class="btn btn-s btn-blue" onclick="search_outbound.submit();">
-				<i class="icon search"></i>
-				<i class="vline-inline"></i>
-				<span>查询</span>
-			</button>
-        </div>
-		<input type="hidden" name="__hash__" value="4aa8bc909dc4e7c9f1bf19868849db32_0a5f96e955ccfaec6ab83bbc99a7516f" /></form>
-		<div>
-			<div class="tab-content data-list">				
-							
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th>货位</th>
-					    <th>产品编码</th>					    
-					    <th><div class="tl">中文名称</div></th>	                          
-					    <th><div class="tl">英文名称</div></th>
-						<th><div class="tl">属性</div></th>
-						<th><div class="tr">历史入库</div></th>
-						<th><div class="tr">可用库存</div></th>
-						<th><div class="tr">待出库</div></th>
-						<th><div class="tr">在途库存</div></th>
-						<th><div class="tr">历史销量</div></th>
-						<th><div class="t1">备注</div></th>
-					</tr>    
-					<tr>
-						<?php if(is_array($usstorage)): $i = 0; $__LIST__ = $usstorage;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><?php echo ($vo["position"]); ?></td>
-						<td><?php echo ($vo["sku"]); ?></td>						
-						<td><div class="tl"><?php echo ($vo["cname"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["ename"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["attribute"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["cinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["ainventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["oinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["iinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["csales"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["remark"]); ?></div></td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
-					</tr>						
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
-				<div class="tr">
-								
-					<!-- 分页开始  --> 
-										<!-- 分页 结束 -->	
-				</div>
-			</div>
-		</div>
-	</div>
-
-
-
-
+		 <?php echo ($error); ?>
 		</div>
 	</div>
 		

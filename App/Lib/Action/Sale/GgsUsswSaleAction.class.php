@@ -76,7 +76,6 @@ class GgsUsswSaleAction extends CommonAction{
         $show = $Page->show();
         $tpl = $products->limit($Page->firstRow.','.$Page->listRows)->select();
         foreach ($tpl as $key=>$value) {
-
         	$data[$key]['sku']=$value['sku'];
         	$data[$key]['title-cn']=$value['title-cn'];
         	$data[$key]['price']=$value['price'];
