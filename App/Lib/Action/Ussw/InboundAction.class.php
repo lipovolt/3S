@@ -114,14 +114,13 @@ class InboundAction extends CommonAction{
                 $sheet = $objPHPExcel->getSheet(0);
                 $highestRow = $sheet->getHighestRow(); // 取得总行数
                 $highestColumn = $sheet->getHighestColumn(); // 取得总列数
-                for($i=2;$i<=$highestRow;$i++)
-                 {   
+                for($i=2;$i<=$highestRow;$i++){   
                      $data['inbound-order-id'] = $orderID;
                      $data['sku']= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();  
                      $data['declare-quantity']= $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
                      $totalQuantity = $totalQuantity+$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
                      M('ussw_inbound_items')->add($data);                     
-                 }
+                }
                 $updateInboundOrder=array(
                                     'declare-item-quantity'=>$totalQuantity,
                                     'status'=>'已入库'

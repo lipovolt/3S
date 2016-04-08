@@ -160,7 +160,7 @@
 											<p>导出的ebay未发货订单是CVS文件，需要转换成XLS文件，文件内容无需修改</p>
 											<div>
 												 <form action="<?php echo U('Ussw/Outbound/importEbaySaleRecordFile');?>" method="post" enctype="multipart/form-data">
-										            <input type="file" name="import"/>
+										            <input type="file" name="import" value=""/>
 								          			<input type="hidden" name="table" value="tablename"/>
 									             	<input type="submit" value="导入"/>
 									         	</form>

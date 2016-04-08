@@ -320,7 +320,7 @@ class OutboundAction extends CommonAction{
     }
 
     private function duplicateSaleNo($saleNo){
-        if(M('ussw_outbound')->where('saleno='.saleNo)->find()!=null)
+        if(M('ussw_outbound')->where('saleno='.$saleNo)->find()!=null)
             return true;
         else
             return false;
