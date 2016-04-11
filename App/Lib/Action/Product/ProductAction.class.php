@@ -4,7 +4,7 @@ class ProductAction extends CommonAction{
 
     public function productInfo(){
         if($_POST['keyword']==""){
-            $Data = M('products');
+            $Data = M(C('db_product'));
             import('ORG.Util.Page');
             $count = $Data->count();
             $Page = new Page($count,20);            
@@ -16,7 +16,7 @@ class ProductAction extends CommonAction{
         }
         else{
             $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
-            $this->products = M('products')->where($where)->select();
+            $this->products = M(C('db_product'))->where($where)->select();
         }
         $this->display();
     }
@@ -48,42 +48,68 @@ class ProductAction extends CommonAction{
                 $sheet = $objPHPExcel->getSheet(0);
                 $highestRow = $sheet->getHighestRow(); // 取得总行数
                 $highestColumn = $sheet->getHighestColumn(); // 取得总列数
-                
-                $products = M('products');
-                $products-> startTrans();
-                for($i=2;$i<=$highestRow;$i++)
-                {   
-                    if($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()==''){
-                        break;
-                    }else{
-                        $data=null;
-                         $data['sku']= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-                         $data['title-cn']= $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
-                         $data['price'] = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();  
-                         $data['weight'] = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
-                         $data['length'] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
-                         $data['width']= $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
-                         $data['height']= $objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
-                         $data['battery']= $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
-                         $data['de']= $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue()=='None' ?0:1;
-                         $data['way-to-de']= $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
-                         $data['us']= $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue()=='None' ?0:1;
-                         $data['way-to-us']= $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
-                         $data['de-rate']= $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
-                         $data['us-rate']= $objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-                         $data['manager']= $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
-                         $data['supplier']=$objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
-                         $data['ebaycombest']=$objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
-                         $data['ebaycomcheapest']=$objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue();
-                         $data['ebaydebest']=$objPHPExcel->getActiveSheet()->getCell("S".$i)->getValue();
-                         $data['ebaydecheapest']=$objPHPExcel->getActiveSheet()->getCell("T".$i)->getValue();
+
+                //excel firt column name verify
+                for($c='A';$c<=$highestColumn;$c++){
+                    $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+                }
+                if($this->verifyImportedProductTemplateColumnName($firstRow)){    
+                    $products = M(C('db_product'));
+                    $products-> startTrans();
+                    for($i=2;$i<=$highestRow;$i++)
+                    {   
+                        if($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()==''){
+                            break;
+                        }else{
+                            $data=null;
+                            $data[C('db_product_sku')]= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+                            $data[C('db_product_cname')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue(),"utf-8","auto");
+                            $data[C('db_product_ename')]= $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+                            $data[C('db_product_price')] = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();  
+                            $data[C('db_product_weight')] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
+                            $data[C('db_product_length')] = $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+                            $data[C('db_product_width')]= $objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+                            $data[C('db_product_height')]= $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+                            $data[C('db_product_battery')]= $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+                            $data[C('db_product_tode')]= $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+                            $data[C('db_product_tous')]= $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+                            $data[C('db_product_ustariff')]= $objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
+                            $data[C('db_product_detariff')]= $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();                             
+                            $data[C('db_product_incoming_day')]= $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
+                            $data[C('db_product_manager')]= $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
+                            $data[C('db_product_supplier')]=$objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
+                            $data[C('db_product_ggs_ussw_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
+                            $data[C('de_product_rc_winit_us_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue();
+                            $data[C('de_product_rc_winit_de_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("S".$i)->getValue();
+                            $data[C('db_product_ebay_com_best_match')]=$objPHPExcel->getActiveSheet()->getCell("T".$i)->getValue();
+                            $data[C('db_product_ebay_com_price_lowest')]=$objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
+                            $data[C('db_product_ebay_de-best_match')]=$objPHPExcel->getActiveSheet()->getCell("V".$i)->getValue();
+                            $data[C('db_product_ebay_de_price_lowest')]=$objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue();
+                            
+                            $verifyError = $this->verifyProduct($data);
+                            if($verifyError != null){
+                                $this->error($verifyError);
+                            }else{
+                                if($products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->find() != null){
+                                    $result = $products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->save($data);
+                                }else{
+                                    $result = $products->add($data);
+                                }
+                            }
+                        }
                          
-                        $products->add($data);
+                    } 
+                    $products->commit();
+                    if(false !== $result || 0 !== $result){
+                        $this->success('导入成功！');
+                    }else{
+                        $this->error("导入不成功！请重新上传。");
                     }
-                     
-                } 
-                $products->commit();
-                $this->success('导入成功！');
+                }else{
+                    $this->error("模板错误，请检查模板！");
+                }
+                
+                
          }else
              {
                  $this->error("请选择上传的文件");
@@ -91,60 +117,91 @@ class ProductAction extends CommonAction{
     }
 
     Public function productEdit($sku){
-        $this->product = M('products')->where(array('sku'=>$sku))->select();
+        $this->product = M(C('db_product'))->where(array(C('db_product_sku')=>$sku))->select();
         $this->display();
 
     }
 
     public function update(){
-        $data['id'] = I('post.ProductCode','','htmlspecialchars');
-        $data['sku'] = I('post.skuValue','','htmlspecialchars');
-        $data['title-cn'] = I('post.Name','','htmlspecialchars');
-        $data['title-en'] = I('post.EName','','htmlspecialchars');
-        $data['price'] = I('post.price','','htmlspecialchars');
-        $data['weight'] = I('post.weightValue','','htmlspecialchars');
-        $data['length'] = I('post.lengthValue','','htmlspecialchars');
-        $data['width'] = I('post.widthValue','','htmlspecialchars');
-        $data['height'] = I('post.heightValue','','htmlspecialchars');
-        if (I('post.battery','','htmlspecialchars')=='on'){
-            $data['battery'] = 1;
-        }
-        else{
-           $data['battery'] = 0; 
-        }
-        if (I('post.de','','htmlspecialchars')=='on'){
-            $data['de'] = 1;
-        }
-        else{
-           $data['de'] = 0; 
-        }
-        $data['way-to-de'] = I('post.way-to-de-value','','htmlspecialchars');
-        if (I('post.us','','htmlspecialchars')=='on'){
-            $data['us'] = 1;
-        }
-        else{
-           $data['us'] = 0; 
-        }
-        $data['way-to-us'] = I('post.way-to-us-value','','htmlspecialchars');
-        $data['de-rate'] = I('post.de-rate-value','','htmlspecialchars');
-        $data['us-rate'] = I('post.us-rate-value','','htmlspecialchars');
-        $data['manager'] = I('post.managerValue','','htmlspecialchars');
-        $data['supplier'] = I('post.supplierValue','','htmlspecialchars');
-        $data['ggs-ussw-sp'] = I('post.ggs-ussw-sp','','htmlspecialchars');
-        $data['rc-winit-us-sp'] = I('post.rc-winit-us-sp','','htmlspecialchars');
-        $data['rc-winit-de-sp'] = I('post.rc-winit-de-sp','','htmlspecialchars');
-        $data['ebaycombest'] = I('post.ebaycombest','','htmlspecialchars');
-        $data['ebaycomcheapest'] = I('post.ebaycomcheapest','','htmlspecialchars');
-        $data['ebaydebest'] = I('post.ebaydebest','','htmlspecialchars');
-        $data['ebaydecheapest'] = I('post.ebaydecheapest','','htmlspecialchars');
-        $product = M('products');
-        $result =  $product->save($data);
-             if($result) {
-                 $this->success('操作成功！');
-             }else{
-                 $this->error('写入错误！');
-             }
+        $data = null;
+        $data[C('db_product_id')] = I('post.'.C('db_product_id'),'','htmlspecialchars');
+        $data[C('db_product_sku')] = I('post.'.C('db_product_sku'),'','htmlspecialchars');
+        $data[C('db_product_cname')] = I('post.'.C('db_product_cname'),'','htmlspecialchars');
+        $data[C('db_product_ename')] = I('post.'.C('db_product_ename'),'','htmlspecialchars');
+        $data[C('db_product_price')] = I('post.'.C('db_product_price'),'','htmlspecialchars');
+        $data[C('db_product_weight')] = I('post.'.C('db_product_weight'),'','htmlspecialchars');
+        $data[C('db_product_length')] = I('post.'.C('db_product_length'),'','htmlspecialchars');
+        $data[C('db_product_width')] = I('post.'.C('db_product_width'),'','htmlspecialchars');
+        $data[C('db_product_height')] = I('post.'.C('db_product_height'),'','htmlspecialchars');
+        $data[C('db_product_battery')] = I('post.'.C('db_product_battery'),'','htmlspecialchars');
+        $data[C('db_product_tode')] = I('post.'.C('db_product_tode'),'','htmlspecialchars');
+        $data[C('db_product_tous')] = I('post.'.C('db_product_tous'),'','htmlspecialchars');
+        $data[C('db_product_detariff')] = I('post.'.C('db_product_detariff'),'','htmlspecialchars');
+        $data[C('db_product_ustariff')] = I('post.'.C('db_product_ustariff'),'','htmlspecialchars');
+        $data[C('db_product_manager')] = I('post.'.C('db_product_manager'),'','htmlspecialchars');
+        $data[C('db_product_supplier')] = I('post.'.C('db_product_supplier'),'','htmlspecialchars');
+        $data[C('db_product_ggs_ussw_sale_price')] = I('post.'.C('db_product_ggs_ussw_sale_price'),'','htmlspecialchars');
+        $data[C('db_product_rc_winit_us_sale_price')] = I('post.'.C('db_product_rc_winit_us_sale_price'),'','htmlspecialchars');
+        $data[C('db_product_rc_winit_de_sale_price')] = I('post.'.C('db_product_rc_winit_de_sale_price'),'','htmlspecialchars');
+        $data[C('db_product_ebay_com_best_match')] = I('post.'.C('db_product_ebay_com_best_match'),'','htmlspecialchars');
+        $data[C('db_product_ebay_com_price_lowest')] = I('post.'.C('db_product_ebay_com_price_lowest'),'','htmlspecialchars');
+        $data[C('db_product_ebay_de_best_match')] = I('post.'.C('db_product_ebay_de_best_match'),'','htmlspecialchars');
+        $data[C('db_product_ebay_de_price_lowest')] = I('post.'.C('db_product_ebay_de_price_lowest'),'','htmlspecialchars');
+        
+        $verifyError = $this->verifyProduct($data);
+        if($verifyError != null){
+            $this->error($verifyError);
+        }else{
+            $product = M(C('db_product'));
+            $product-> startTrans();
+            $result =  $product->save($data);
+            $product->commit();
+            if(false !== $result || 0 !== $result) {
+                $this->success('操作成功！');
+            }else{
+                $this->error('写入错误！');
+            }
 
+        }        
+    }
+
+    private function verifyImportedProductTemplateColumnName($firstRow){
+        for($c='A';$c<=max(array_keys(C('IMPORT_PRODUCT')));$c++){
+            if($firstRow[$c] != C('IMPORT_PRODUCT')[$c])
+                return false;
+        }
+        return true;
+    }
+
+    private function verifyProduct($productToVerify){
+        if($productToVerify[C('db_product_sku')] == null or $productToVerify[C('db_product_sku')] == '')
+            return '产品编码是必填项！';
+        elseif($productToVerify[C('db_product_cname')] == null or $productToVerify[C('db_product_cname')] == '')
+            return '中文名称是必填项！';
+        elseif($productToVerify[C('db_product_ename')] == null or $productToVerify[C('db_product_ename')] == '')
+            return '英文名称是必填项！';
+        elseif($productToVerify[C('db_product_price')] == null or $productToVerify[C('db_product_price')] == '')
+            return '采购价是必填项！';
+        elseif($productToVerify[C('db_product_weight')] == null or $productToVerify[C('db_product_weight')] == '')
+            return '重量是必填项！';
+        elseif($productToVerify[C('db_product_length')] == null or $productToVerify[C('db_product_length')] == '')
+            return '长度是必填项！';
+        elseif($productToVerify[C('db_product_width')] == null or $productToVerify[C('db_product_width')] == '')
+            return '宽度是必填项！';
+        elseif($productToVerify[C('db_product_height')] == null or $productToVerify[C('db_product_height')] == '')
+            return '高度是必填项！';
+        elseif($productToVerify[C('db_product_battery')] == null or $productToVerify[C('db_product_battery')] == '')
+            return '电池属性是必填项！';
+        elseif($productToVerify[C('db_product_tode')] == null or $productToVerify[C('db_product_tode')] == '')
+            return '德国头程是必填项！';
+        elseif($productToVerify[C('db_product_tous')] == null or $productToVerify[C('db_product_tous')] == '')
+            return '美国头程是必填项！';
+        elseif($productToVerify[C('db_product_manager')] == null or $productToVerify[C('db_product_manager')] == '')
+            return '产品经理是必填项！';
+        elseif($productToVerify[C('db_product_supplier')] == null or $productToVerify[C('db_product_supplier')] == '')
+            return '供货商信息是必填项！';
+        else
+            return null;
     }
 }
 

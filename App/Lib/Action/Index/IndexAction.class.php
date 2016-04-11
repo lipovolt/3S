@@ -15,23 +15,23 @@ class IndexAction extends Action {
 
         $username = I('username');
         $pwd = I('password','','md5');
-        $user = M('user')->where(array('username'=>$username))->find();
-        if (!$user || $user['password'] != $pwd){
+        $user = M(C('db_3s_user'))->where(array(C('db_3s_user_username')=>$username))->find();
+        if (!$user || $user[C('db_3s_user_password')] != $pwd){
             $this->error('账号或密码错误');
         }
-        if($user['lock']) $this->error('用户被锁定');
+        if($user[C('db_3s_user_lock')]) $this->error('用户被锁定');
 
         $data = array(
-                'id' => $user['id'],
-                'logintime' => time(),
-                'loginip' => get_client_ip(),
+                C('db_3s_user_id') => $user[C('db_3s_user_id')],
+                C('db_3s_user_logintime') => time(),
+                C('db_3s_user_loginip') => get_client_ip(),
             );
-        M('user')->save($data);
+        M(C('db_3s_user'))->save($data);
 
-        session('uid', $user['id']);
-        session('username', $user['username']);
-        session('logintime', date('Y-m-d H:i:s', $user['logintime']));
-        session('loginip', $user['loginip']);
+        session('uid', $user[C('db_3s_user_id')]);
+        session('username', $user[C('db_3s_user_username')]);
+        session('logintime', date('Y-m-d H:i:s', $user[C('db_3s_user_logintime')]));
+        session('loginip', $user[C('db_3s_user_loginip')]);
         $this->redirect(U('Product/Product/productInfo','','',1));
 
     }

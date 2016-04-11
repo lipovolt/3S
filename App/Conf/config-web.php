@@ -21,14 +21,18 @@ return array(
 	'DB_PWD' => '@ShenYangOber12',
 	'DB_NAME' => 'lipovolt_3s',
 	'DB_PREFIX' => 'lipovolt_3s_',
+	// 开启字段类型验证
+	'DB_FIELDTYPE_CHECK'=>True, 
 
 	//点语法默认解析
-	//'TMPL_VAR_IDENTIFY' => 'array',
+	'TMPL_VAR_IDENTIFY' => 'array',
 
 	//默认过滤函数
 	'DEFAUL_FILTER' => 'htmlspecialchars',
 
 	//自定义SESSION 数据库存储
 	'SESSION_TYPE' => 'Db',
+	// 加载扩展配置文件
+	'LOAD_EXT_CONFIG' => 'db,ui,importTemplate', 
 );
 ?>
