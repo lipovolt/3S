@@ -68,7 +68,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function getUsswSaleInfo(){
-		$products = M('products');
+		$products = M(C('DB_PRODUCT'));
         import('ORG.Util.Page');
         $count = $products->count();
         $Page = new Page($count);            
@@ -76,23 +76,23 @@ class GgsUsswSaleAction extends CommonAction{
         $show = $Page->show();
         $tpl = $products->limit($Page->firstRow.','.$Page->listRows)->select();
         foreach ($tpl as $key=>$value) {
-        	$data[$key]['sku']=$value['sku'];
-        	$data[$key]['title-cn']=$value['title-cn'];
-        	$data[$key]['price']=$value['price'];
-        	$data[$key]['us-rate']=round($value['us-rate']/100*$value['ggs-ussw-sp'],2);
-        	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value['weight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key]['way-to-us']=$value['way-to-us'];
-        	$data[$key]['way-to-us-fee']=$data[$key]['way-to-us']=="空运"?$this->getUsswAirFirstTransportFee($value['weight'],$value['length'],$value['width'],$value['height']):$this->getUsswSeaFirstTransportFee($value['length'],$value['width'],$value['height']);
-        	$data[$key]['local-shipping-way']=$this->getUsswLocalShippingWay($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
+        	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
+        	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
+        	$data[$key][C('DB_PRODUCT_USTARIFF')]=round($value[C('DB_PRODUCT_USTARIFF')]/100*$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')],2);
+        	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key][C('DB_PRODUCT_TOUS')]=$value[C('DB_PRODUCT_TOUS')];
+        	$data[$key]['way-to-us-fee']=$data[$key][C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-way']=$this->getUsswLocalShippingWay($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key]['local-shipping-fee']=$this->getUsswLocalShippingFee($value['weight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key]['ggs-ussw-sp']=$value['ggs-ussw-sp'];
+        	$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]=$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')];
         	$data[$key]['cost']=round($this->getUsswCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key]['ggs-ussw-sp']-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key]['ggs-ussw-sp']*100,2).'%';
-        	$data[$key]['weight']=round($value['weight']*0.0352740,2);
-        	$data[$key]['length']=round($value['length']*0.3937008,2);
-        	$data[$key]['width']=round($value['width']*0.3937008,2);
-        	$data[$key]['height']=round($value['height']*0.3937008,2);
+        	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')]*0.0352740,2);
+        	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')]*0.3937008,2);
+        	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')]*0.3937008,2);
+        	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')]*0.3937008,2);
         }
         $this->assign('data',$data);
         $this->assign('page',$show);
@@ -100,7 +100,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function getUsswKeywordSaleInfo(){
-		$products = M('products');
+		$products = M(C('DB_PRODUCT'));
         import('ORG.Util.Page');
         $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
         $count = $products->where($where)->count();
@@ -109,24 +109,23 @@ class GgsUsswSaleAction extends CommonAction{
         $show = $Page->show();        
         $tpl = $products->limit($Page->firstRow.','.$Page->listRows)->where($where)->select();
         foreach ($tpl as $key=>$value) {
-
-        	$data[$key]['sku']=$value['sku'];
-        	$data[$key]['title-cn']=$value['title-cn'];
-        	$data[$key]['price']=$value['price'];
-        	$data[$key]['us-rate']=round($value['us-rate']/100*$value['ggs-ussw-sp'],2);
-        	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value['weight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key]['way-to-us']=$value['way-to-us'];
-        	$data[$key]['way-to-us-fee']=$data[$key]['way-to-us']=="空运"?$this->getUsswAirFirstTransportFee($value['weight'],$value['length'],$value['width'],$value['height']):$this->getUsswSeaFirstTransportFee($value['length'],$value['width'],$value['height']);
-        	$data[$key]['local-shipping-way']=$this->getUsswLocalShippingWay($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
+        	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
+        	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
+        	$data[$key][C('DB_PRODUCT_USTARIFF')]=round($value[C('DB_PRODUCT_USTARIFF')]/100*$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')],2);
+        	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key][C('DB_PRODUCT_TOUS')]=$value[C('DB_PRODUCT_TOUS')];
+        	$data[$key]['way-to-us-fee']=$data[$key][C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-way']=$this->getUsswLocalShippingWay($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key]['local-shipping-fee']=$this->getUsswLocalShippingFee($value['weight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key]['ggs-ussw-sp']=$value['ggs-ussw-sp'];
+        	$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]=$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')];
         	$data[$key]['cost']=round($this->getUsswCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key]['ggs-ussw-sp']-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key]['ggs-ussw-sp']*100,2).'%';
-        	$data[$key]['weight']=round($value['weight']*0.0352740,2);
-        	$data[$key]['length']=round($value['length']*0.3937008,2);
-        	$data[$key]['width']=round($value['width']*0.3937008,2);
-        	$data[$key]['height']=round($value['height']*0.3937008,2);
+        	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')]*0.0352740,2);
+        	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')]*0.3937008,2);
+        	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')]*0.3937008,2);
+        	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')]*0.3937008,2);
         }
         $this->assign('data',$data);
         $this->assign('page',$show);

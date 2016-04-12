@@ -42,8 +42,8 @@
 						<label for="keyword" class="control-label">关键字</label>
 						<div class="control-wrap">
 							<select name="keyword" id="keyword" data-value="">
-								<option value="sku">产品编码</option>
-								<option value="title-cn">产品名称</option>
+								<option value="{:C('DB_PRODUCT_SKU')}">产品编码</option>
+								<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
 							</select>
 						</div>
 						<div class="control-wrap">
@@ -58,7 +58,6 @@
 					</button>
 				</div>			
 			</div>
-			<input type="hidden" name="__hash__" value="ff49ed719b3da9a91e3fa1b682fe6f2c_58292026a894f750e9cf920bd524eb81" />
 		</form>
 		<div>
 			<div class="tab-content">	
@@ -84,17 +83,17 @@
 					</tr>
 					<volist name="data" id="vo">
 						<tr>
-						<td><div class="tl">{$vo.sku}</div></td>
-						<td><div class="tl">{$vo.title-cn}</div></td>						
-						<td><div class="tl">{$vo.price}</div></td>
-						<td><div class="tl">{$vo.us-rate}</div></td>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_SKU')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_CNAME')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_PRODUCT_PRICE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_USTARIFF')]}</div></td>
 						<td><div class="tl">{$vo.ussw-fee}</div></td>
-						<td><div class="tl">{$vo.way-to-us}</div></td>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_TOUS')]}</div></td>
 						<td><div class="tl">{$vo.way-to-us-fee}</div></td>
 						<td><div class="tl">{$vo.local-shipping-way}</div></td>
 						<td><div class="tl">{$vo.local-shipping-fee}</div></td>
 						<td><div class="tl">{$vo.cost}</div></td>
-						<td><div class="tl">{$vo.ggs-ussw-sp}</div></td>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]}</div></td>
 						<td><div class="tl">{$vo.gprofit}</div></td>
 						<td><div class="tl">{$vo.grate}</div></td>
 						<td><div class="tl">{$vo.weight}</div></td>

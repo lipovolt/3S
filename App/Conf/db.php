@@ -2,11 +2,11 @@
 return array(
 	//meta_data
 	'DB_METADATA' => 'metadata',
-	'DB_METADATA_ID' => 'metadata_id',
-	'DB_METADATA_EURTOUSD' => 'metadata_eur_usd',
-	'DB_METADATA_USDTORMB' => 'metadata_usd_rmb',
-	'DB_METADATA_EURTORMB' => 'metadata_eur_rmb',
-	'DB_METADATA_DEMWST' => 'metadata_de_mwst',
+	'DB_METADATA_ID' => 'id',
+	'DB_METADATA_EURTOUSD' => 'eur_usd',
+	'DB_METADATA_USDTORMB' => 'usd_rmb',
+	'DB_METADATA_EURTORMB' => 'eur_rmb',
+	'DB_METADATA_DEMWST' => 'de_mwst',
 
 	//product
 	'DB_PRODUCT' => 'product',
