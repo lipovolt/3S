@@ -79,11 +79,11 @@ class ProductAction extends CommonAction{
                             $data[C('db_product_manager')]= $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
                             $data[C('db_product_supplier')]=$objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
                             $data[C('db_product_ggs_ussw_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
-                            $data[C('de_product_rc_winit_us_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue();
-                            $data[C('de_product_rc_winit_de_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("S".$i)->getValue();
+                            $data[C('db_product_rc_winit_us_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue();
+                            $data[C('db_product_rc_winit_de_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("S".$i)->getValue();
                             $data[C('db_product_ebay_com_best_match')]=$objPHPExcel->getActiveSheet()->getCell("T".$i)->getValue();
                             $data[C('db_product_ebay_com_price_lowest')]=$objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
-                            $data[C('db_product_ebay_de-best_match')]=$objPHPExcel->getActiveSheet()->getCell("V".$i)->getValue();
+                            $data[C('db_product_ebay_de_best_match')]=$objPHPExcel->getActiveSheet()->getCell("V".$i)->getValue();
                             $data[C('db_product_ebay_de_price_lowest')]=$objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue();
                             
                             $verifyError = $this->verifyProduct($data);

@@ -24,6 +24,7 @@ return array(
 	'DB_PRODUCT_TOUS' => 'tous',
 	'DB_PRODUCT_DETARIFF' => 'detariff',
 	'DB_PRODUCT_USTARIFF' => 'ustariff',
+	'DB_PRODUCT_INCOMING_DAY' => 'incoming_day',
 	'DB_PRODUCT_MANAGER' => 'manager',
 	'DB_PRODUCT_SUPPLIER' => 'supplier',
 	'DB_PRODUCT_GGS_USSW_SALE_PRICE' => 'ggs_ussw_sale_price',
@@ -31,7 +32,7 @@ return array(
 	'DB_PRODUCT_RC_WINIT_DE_SALE_PRICE' => 'rc_winit_de_sale_price',
 	'DB_PRODUCT_EBAY_COM_BEST_MATCH' => 'ebay_com_best',
 	'DB_PRODUCT_EBAY_COM_PRICE_LOWEST' => 'ebay_com_cheapest',
-	'DB_PRODUCT_EBAY_DE_BEST_MATCH' => 'ebay-de_best',
+	'DB_PRODUCT_EBAY_DE_BEST_MATCH' => 'ebay_de_best',
 	'DB_PRODUCT_EBAY_DE_PRICE_LOWEST' => 'ebay_de_cheapest',
 
 	//session
@@ -65,13 +66,25 @@ return array(
 	'DB_USSW_INBOUND_ID' => 'ussw_inbound_id',
 	'DB_USSW_INBOUND_DATE' => 'ussw_inbound_date',
 	'DB_USSW_INBOUND_SHIPPING_WAY' => 'ussw_inbound_shipping_way',
-	'DB_USSW_INBOUND_DPQ' => 'ussw_inbound_dpq',
+	'DB_USSW_INBOUND_DPQ' => 'ussw_inbound_dpq', //DPQ=declared package quantity
+	'DB_USSW_INBOUND_CPQ' => 'ussw_inbound_cpq',//DPQ=confirmed package quantity
 	'DB_USSW_INBOUND_PACKAGE_WEIGHT' => 'ussw_inbound_package_weight',
 	'DB_USSW_INBOUND_STATUS' => 'ussw_inbound_status',
-	'DB_USSW_INBOUND_CPQ' => 'ussw_inbound_cpq',
+
+	//ussw_inbound_package
+	'DB_USSW_INBOUND_PACKAGE' => 'ussw_inbound_package',
+	'DB_USSW_INBOUND_PACKAGE_ID' => 'ussw_inbound_package_id',
+	'DB_USSW_INBOUND_PACKAGE_IOID' => 'ussw_inbound_package_ioid',
+	'DB_USSW_INBOUND_PACKAGE_WEIGHT' => 'ussw_inbound_package_weight',
+	'DB_USSW_INBOUND_PACKAGE_LENGTH' => 'ussw_inbound_package_length',
+	'DB_USSW_INBOUND_PACKAGE_WIDTH' => 'ussw_inbound_package_width',
+	'DB_USSW_INBOUND_PACKAGE_HEIGHT' => 'ussw_inbound_package_height',
+	'DB_USSW_INBOUND_SHIPPING_WAY' => 'ussw_inbound_shipping_way',
+	
 
 	//ussw_inbound_item
 	'DB_USSW_INBOUND_ITEM' => 'ussw_inbound_item',
+	'DB_USSW_INBOUND_ITEM_ID' => 'ussw_inbound_item_id',
 	'DB_USSW_INBOUND_ITEM_IOID' => 'ussw_inbound_item_ioid',
 	'DB_USSW_INBOUND_ITEM_SKU' => 'ussw_inbound_item_sku',
 	'DB_USSW_INBOUND_ITEM_DQUANTIY' => 'ussw_inbound_item_dquantity',
