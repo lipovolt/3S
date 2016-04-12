@@ -3,24 +3,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>美国自建仓入库单</title>
+<title>Untitled Document</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
-<script>
-function del()
-{
-    if(confirm("确定要删除吗？"))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-</script>
 </head>
 <body>
 
@@ -126,11 +113,10 @@ function del()
 			</div>
 		</div>
 	</div>	
-	
-    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
+		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>美国自建仓</strong></div>
+			<div class="sidenav-hd"><strong>美国库存管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
@@ -151,51 +137,105 @@ function del()
 			</div>
 		</div>
 	<div class="content">
-	<div id="inbounds" class="main">
-		<div>
-			<div class="tab-content">	
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th width="110">入库单编号</th>
-						<th><div class="tl">下单日期</div></th>
-						<th><div class="tl">运输方式</div></th>
-						<th><div class="tl">包裹数</div></th>
-						<th><div class="tl">体积</div></th>
-						<th><div class="tl">体积重</div></th>
-						<th><div class="tl">重量</div></th>
-						<th><div class="tl">单品数</div></th>
-						<th><div class="tl">状态</div></th>
-						<th width="230">操作</th>
-					</tr>
-					<?php if(is_array($inbounds)): $i = 0; $__LIST__ = $inbounds;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_INBOUND_ID')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_INBOUND_DATE')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_INBOUND_Shipping_WAY')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["declare-package-quantity"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["volume"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["volumeWeight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["declare-item-quantity"]); ?>/<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'<font style="color:#F00;">':'' ; echo ($vo["confirmed-item-quantity"]); echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'</font>':'';?></div></td>
-						<td><div class="tl"><?php echo ($vo["status"]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Ussw/Inbound/importPackage',array('orderID'=>$vo['id']));?>">导入包裹</a>
-							<a href="<?php echo U('Ussw/Inbound/inboundOrderPackage',array('orderID'=>$vo['id']));?>">包裹明细</a>
-							<a href="<?php echo U('Ussw/Inbound/importItem',array('orderID'=>$vo['id']));?>">导入产品</a>
-							<a href="<?php echo U('Ussw/Inbound/inboundOrderItems',array('orderID'=>$vo['id']));?>">产品明细</a>
-							<a href="<?php echo U('Ussw/Inbound/updateStorage',array('ioid'=>$vo['id']));?>">入库</a>
-							<a href="<?php echo U('Ussw/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']));?>" onclick='return del()'>删除</a>
-						</td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
+	<div id="ProductInfo" class="main">
+		<form method="POST" id="edit_productImg" action="<?php echo U(Ussw/Ussw/update);?>" enctype="multipart/form-data">
+		
+		<div class="product-upload-wrap">
+			<input type="hidden" name="ProductID" value="1030634"> 
+			<input type="hidden" name="CountryID" value="122">
+		</div>
+		<input type="hidden" name="__hash__" value="48007adec5871053582d206bccb8d2ac_c6d32f4df480a79e2054461b3dc60b86" /></form>
+		<form method="POST" id="edit_productInfo" action="<?php echo U('Ussw/Ussw/update');?>">
+		<div class="block-outer BaseInfo">
+			<div class="block-outer-hd"><strong>基本信息</strong></div>
+			<div class="block-outer-bd">
+				<div class="inline-block block-indent">
+					<div class="item">
+						<div class="form-group">
+							<label for="position" class="control-label">货位</label>
+							<input type="hidden"  id="idValue" name="idValue" value="<?php echo ($usstorage[0]['id']); ?>"/>
+							<div class="control-wrap">
+								<input type="text"  id="positionValue" name="positionValue" value="<?php echo ($usstorage[0]['position']); ?>"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="sku" class="control-label">产品编码</label>
+							<div class="control-wrap">
+								<input type="text" name="skuValue" value="<?php echo ($usstorage[0]['sku']); ?>" id="skuValue" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="cname" class="control-label">中文名称</label>
+							<div class="control-wrap">
+								<input type="text" name="cnameValue" id="cnameValue" value="<?php echo ($usstorage[0]['cname']); ?>" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="ename" class="control-label">英文名称</label>
+							<div class="control-wrap">
+								<input type="text" name="enameValue" id="enameValue" value="<?php echo ($usstorage[0]['ename']); ?>" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+                        <div class="form-group">
+							<label for="attribute" class="control-label">属性</label>
+							<div class="control-wrap">
+								<input type="text"  id="attributeValue" name="attributeValue" value="<?php echo ($usstorage[0]['attribute']); ?>" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="csales" class="control-label">累计销量</label>
+							<div class="control-wrap">
+								<input type="text"  id="csalesValue" name="csalesValue" value="<?php echo ($usstorage[0]['csales']); ?>" />
+							</div>
+						</div>
+					</div>
+                    <div class="item">
+                        <div class="form-group">
+							<label for="cinventory" class="control-label">累计入库</label>
+							<div class="control-wrap">
+								<input type="text"  id="cinventoryValue" name="cinventoryValue" value="<?php echo ($usstorage[0]['cinventory']); ?>" />
+							</div>
+						</div>
+                        <div class="form-group">
+							<label for="ainventory" class="control-label">可用数量</label>
+							<div class="control-wrap">
+								<input type="text"  id="ainventoryValue" name="ainventoryValue" value="<?php echo ($usstorage[0]['ainventory']); ?>" />
+							</div>
+						</div>
+                    </div>
+                    <div class="item">
+                        <div class="form-group">
+							<label for="oinventory" class="control-label">待出库</label>
+							<div class="control-wrap">
+								<input type="text"  id="oinventoryValue" name="oinventoryValue" value="<?php echo ($usstorage[0]['oinventory']); ?>" />
+							</div>
+						</div>
+                        <div class="form-group">
+							<label for="iinventory" class="control-label">在途数量</label>
+							<div class="control-wrap">
+								<input type="text"  id="iinventoryValue" name="iinventoryValue" value="<?php echo ($usstorage[0]['iinventory']); ?>" />
+							</div>
+						</div>
+                    </div>
+				</div>
 			</div>
 		</div>
+		<div class="item tc"><input type='hidden' name='ProductID' value='1030634'>
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+			<button class="btn btn-blue btn-s" id="saveProductInfo">
+				保存			</button>
+		</div>
+		<input type="hidden" name="__hash__" value="48007adec5871053582d206bccb8d2ac_c6d32f4df480a79e2054461b3dc60b86" /></form> 
 	</div>
 
 
+		</div>
 	</div>
-	</div>
-	</div>
+		
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.

@@ -86,6 +86,8 @@ return array(
 	CREATE TABLE IF NOT EXISTS `3s_ussw_inbound_package` (
 	`id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
 	`inbound_id` smallint(6) default 0,
+	`package_number` varchar(10) default null,
+	`confirme` tiniint(1) defualt 0,
 	`weight` decimal(10,2) default 0,
 	`length` decimal(10,2) default 0,
 	`width`  decimal(10,2) default 0,
@@ -95,7 +97,8 @@ return array(
 	'DB_USSW_INBOUND_PACKAGE' => 'ussw_inbound_package',
 	'DB_USSW_INBOUND_PACKAGE_ID' => 'id',
 	'DB_USSW_INBOUND_PACKAGE_IOID' => 'inbound_id',
-	'DB_USSW_INBOUND_PACKAGE_PACKAGE_NO' => 'package_no',
+	'DB_USSW_INBOUND_PACKAGE_NUMBER' => 'package_number',
+	'DB_USSW_INBOUND_PACKAGE_CONFIRM' => 'confirme',
 	'DB_USSW_INBOUND_PACKAGE_WEIGHT' => 'weight',
 	'DB_USSW_INBOUND_PACKAGE_LENGTH' => 'length',
 	'DB_USSW_INBOUND_PACKAGE_WIDTH' => 'width',
@@ -107,6 +110,7 @@ return array(
     create table if not exists `3s_ussw_inbound_item` (
     `id` smallint(6) unsigned primary key not null auto_increment,
     `inbound_id` smallint(6),
+    `package_number` varchar(10) default null,
     `sku` varchar(10),
     `declare_quantity` smallint(6),
     `confirmed_quantity` smallint(6)
@@ -115,6 +119,7 @@ return array(
 	'DB_USSW_INBOUND_ITEM' => 'ussw_inbound_item',
 	'DB_USSW_INBOUND_ITEM_ID' => 'id',
 	'DB_USSW_INBOUND_ITEM_IOID' => 'inbound_id',
+	'DB_USSW_INBOUND_ITEM_PACKAGE_NUMBER' => 'package_number',
 	'DB_USSW_INBOUND_ITEM_SKU' => 'sku',
 	'DB_USSW_INBOUND_ITEM_DQUANTITY' => 'declare_quantity',
 	'DB_USSW_INBOUND_ITEM_CQUANTITY' => 'confirmed_quantity',

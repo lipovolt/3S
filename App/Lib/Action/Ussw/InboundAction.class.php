@@ -14,8 +14,13 @@ class InboundAction extends CommonAction{
                         C('DB_USSW_INBOUND_DATE')=>$value[C('DB_USSW_INBOUND_DATE')],
                         C('DB_USSW_INBOUND_SHIPPING_WAY')=>$value[C('DB_USSW_INBOUND_SHIPPING_WAY')],
                         C('DB_USSW_INBOUND_STATUS')=>$value[C('DB_USSW_INBOUND_STATUS')],
-                        'declare-item-quantity'=>$this->getInboundOrderItemQuantity($value['id'],'declare-quantity'),
-                        'confirmed-item-quantity'=>$this->getInboundOrderItemQuantity($value['id'],'confirmed-quantity'),
+                        'declare-package-quantity'=>$this->getInboundOrderPackageQuantity($value[C('DB_USSW_INBOUND_ID')]),
+                        'weight'=>$this->getInboundOrderPackageWeight($value[C('DB_USSW_INBOUND_ID')]),
+                        $volume = $this->getInboundOrderPackageVolume($value[C('DB_USSW_INBOUND_ID')]),
+                        'volume'=>$volume/1000000,
+                        'volumeWeight'=>$volume/5000,
+                        'declare-item-quantity'=>$this->getInboundOrderItemQuantity($value[C('DB_USSW_INBOUND_ID')],C('DB_USSW_INBOUND_ITEM_DQUANTITY')),
+                        'confirmed-item-quantity'=>$this->getInboundOrderItemQuantity($value[C('DB_USSW_INBOUND_ID')],C('DB_USSW_INBOUND_ITEM_CQUANTITY')),
                         );
         }
         $count = count($Data);
@@ -28,13 +33,36 @@ class InboundAction extends CommonAction{
         $this->display();
 	}
 
-    public function getInboundOrderItemQuantity($orderID,$column){
+    private function getInboundOrderItemQuantity($orderID,$column){
         $quantityArray = M(C('DB_USSW_INBOUND_ITEM'))->where(array(C('DB_USSW_INBOUND_ITEM_IOID')=>$orderID))->getField($column,true);
         $quantity=0;
         foreach ($quantityArray as $key => $value) {
             $quantity = $quantity + $value;
         }
         return $quantity;
+    }
+
+    private function getInboundOrderPackageQuantity($orderID){
+        $resultArray = M(C('DB_USSW_INBOUND_PACKAGE'))->where(array(C('DB_USSW_INBOUND_PACKAGE_IOID')=>$orderID))->getField(C('DB_USSW_INBOUND_PACKAGE_NUMBER'),true);
+        return count($total);
+    }
+
+    private function getInboundOrderPackageWeight($orderID){
+        $weightArray = M(C('DB_USSW_INBOUND_PACKAGE'))->where(array(C('DB_USSW_INBOUND_PACKAGE_IOID')=>$orderID))->getField(C('DB_USSW_INBOUND_PACKAGE_WEIGHT'),true);
+        $total=0;
+        foreach ($weightArray as $key => $value) {
+            $total = $total + $value;
+        }
+        return $total;
+    }
+
+    private function getInboundOrderPackageVolume($orderID){
+        $resultArray = M(C('DB_USSW_INBOUND_PACKAGE'))->where(array(C('DB_USSW_INBOUND_PACKAGE_IOID')=>$orderID))->select();
+        $total=0;
+        foreach ($resultArray as $key => $value) {
+            $total = $total + $value[C('DB_USSW_INBOUND_PACKAGE_LENGTH')]*$value[C('DB_USSW_INBOUND_PACKAGE_WIDTH')]*$value[C('DB_USSW_INBOUND_PACKAGE_HEIGHT')];
+        }
+        return $total;
     }
 
 	public function fileImport(){
