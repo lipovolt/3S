@@ -70,7 +70,7 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>基本信息</strong>								
 	</dt>
-	<dd><a href="#" >基本信息</a></dd>
+	<dd><a href="<?php echo U('Sale/Metadata/index');?>" >基本信息</a></dd>
 </dl>
 <dl>
 	<dt>

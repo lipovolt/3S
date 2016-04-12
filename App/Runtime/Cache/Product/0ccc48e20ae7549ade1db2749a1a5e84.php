@@ -1,34 +1,20 @@
 <?php if (!defined('THINK_PATH')) exit();?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="product.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>美国自建仓入库单</title>
+<title>批量导入产品信息</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
-<script>
-function del()
-{
-    if(confirm("确定要删除吗？"))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-</script>
 </head>
 <body>
 
 	<div class="header">
 		<div class="top">
 			<div class="area">
-				<span>
-					<a class="logo" href="__PUBLIC__/index.php">
+				<a class="logo" href="__PUBLIC__/index.php">
 				<img src="__PUBLIC__/Images/logo.png" alt="">
 			</a>
 <span>
@@ -37,7 +23,9 @@ function del()
 	<a class="blue" style="margin:0px 10px;" href="<?php echo U('Index/Index/logout');?>">退出</a>
 </span>
 			</div>
-		</div>		
+		</div>
+	
+		
 		<div class="nav">
 			<div class="area">
 				<ul class="mainnav">
@@ -130,74 +118,74 @@ function del()
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>美国自建仓</strong></div>
+			<div class="sidenav-hd"><strong>产品管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
-	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
-	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
-	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>导入产品</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Product/Product/productBatchAdd');?>" >导入产品</a></dd>
 </dl>
 <dl>
-	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Outbound/importEbayWso');?>">导入ebay订单</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
-</dl>
-<dl>
-	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
-</dl>
-	
+	<dt>
+		<i class="icon dropdown-s"></i><strong>产品信息管理</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Product/Product/productInfo');?>" >产品信息</a></dd>
+</dl>	
 			</div>
 		</div>
-	<div class="content">
-	<div id="inbounds" class="main">
-		<div>
-			<div class="tab-content">	
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th width="110">入库单编号</th>
-						<th><div class="tl">下单日期</div></th>
-						<th><div class="tl">运输方式</div></th>
-						<th><div class="tl">包裹数</div></th>
-						<th><div class="tl">重量</div></th>
-						<th><div class="tl">体积</div></th>
-						<th><div class="tl">计费重</div></th>
-						<th><div class="tl">单品数</div></th>
-						<th><div class="tl">状态</div></th>
-						<th width="230">操作</th>
-					</tr>
-					<?php if(is_array($inbounds)): $i = 0; $__LIST__ = $inbounds;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo["id"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["date"]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo["way"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["declare-package-quantity"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["volume"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["volumeWeight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["declare-item-quantity"]); ?>/<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'<font style="color:#F00;">':'' ; echo ($vo["confirmed-item-quantity"]); echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'</font>':'';?></div></td>
-						<td><div class="tl"><?php echo ($vo["status"]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Ussw/Inbound/importItems',array('orderID'=>$vo['id']));?>">导入产品</a>
-							<a href="<?php echo U('Ussw/Inbound/inboundOrderItems',array('orderID'=>$vo['id']));?>">产品明细</a>
-							<a href="<?php echo U('Ussw/Inbound/updateStorage',array('ioid'=>$vo['id']));?>">入库</a>
-							<a href="<?php echo U('Ussw/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']));?>" onclick='return del()'>删除</a>
-						</td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
-			</div>
+		<div class="content">
+			<script>
+			var GlobalData = {
+				_COMMON_DATA_PROCESSING_ : "数据处理中...",
+				_PRODUCTINFO_BATCHADD_PRODUCTIMPORT_ERROR_FILE_TYPE_NOT_MATCH_:"产品信息导入只支持XLS格式文件!",
+				_COMMON_PLEASE_SELECT_FILE_:"请选择文件！"
+			}
+			</script>
+			
+			<!-- 主页面开始  -->
+				<div id="ProductInfo" class="main">
+					<ul class="tab">
+						<li class="on">
+						<i class="before"></i>
+							<span>导入产品信息</span>
+						<i class="after"></i>
+						</li>					
+					</ul>
+					<div class="tab-content">
+						<div class="tab-inner-content" style="">
+							<div class="block">
+								<div class="block-hd">
+									<i class="icon import"></i>
+									<strong>导入新产品</strong>
+								</div>
+								<div class="block-bd">
+									<div class="block-indent" style="overflow:hidden;">
+										<div style="float:left;width:456px;">
+											<p>请<a href="http://www.lipovolt.com/3s/Download/Download_Products_Template.xls" style="color: #6495ED">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
+											<div>
+												 <form action="<?php echo U('Product/Product/batchAdd');?>" method="post" enctype="multipart/form-data">
+										            <input type="file" name="import"/>
+								          			<input type="hidden" name="table" value="tablename"/>
+									             	<input type="submit" value="导入"/>
+									         	</form>
+
+											</div>
+											<p>
+												<span class="notice-s">产品信息导入只支持XLS格式文件</span>
+											</p>
+										</div>										
+									</div>															
+								</div>
+							</div>
+						</div>
+					</div>
+			<!-- 主页面结束 -->
 		</div>
-	</div>
-
-
-	</div>
-	</div>
 	</div>
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
-		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.
-
+		
 	</div> 
 </body>
 <!-- InstanceEnd --></html>
