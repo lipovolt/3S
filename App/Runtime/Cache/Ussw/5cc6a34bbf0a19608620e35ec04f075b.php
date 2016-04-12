@@ -8,19 +8,6 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
-<script>
-function del()
-{
-    if(confirm("确定要删除吗？"))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-</script>
 </head>
 <body>
 
@@ -107,7 +94,7 @@ function del()
 			<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
 	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
-	<dd><a href="<?php echo U('Ussw/Inbound/createInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
@@ -135,7 +122,7 @@ function del()
 				<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
 	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
-	<dd><a href="<?php echo U('Ussw/Inbound/createInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
@@ -150,50 +137,54 @@ function del()
 	
 			</div>
 		</div>
-	<div class="content">
-	<div id="inbounds" class="main">
-		<div>
-			<div class="tab-content">	
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th width="110">入库单编号</th>
-						<th><div class="tl">下单日期</div></th>
-						<th><div class="tl">运输方式</div></th>
-						<th><div class="tl">包裹数</div></th>
-						<th><div class="tl">体积</div></th>
-						<th><div class="tl">计费重</div></th>
-						<th><div class="tl">重量</div></th>
-						<th><div class="tl">单品数</div></th>
-						<th><div class="tl">状态</div></th>
-						<th width="230">操作</th>
-					</tr>
-					<?php if(is_array($inbounds)): $i = 0; $__LIST__ = $inbounds;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_INBOUND_ID')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_INBOUND_DATE')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_INBOUND_Shipping_WAY')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["declare-package-quantity"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["volume"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["volumeWeight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["declare-item-quantity"]); ?>/<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'<font style="color:#F00;">':'' ; echo ($vo["confirmed-item-quantity"]); echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'</font>':'';?></div></td>
-						<td><div class="tl"><?php echo ($vo["status"]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Ussw/Inbound/importPackage',array('orderID'=>$vo['id']));?>">导入包裹</a>
-							<a href="<?php echo U('Ussw/Inbound/inboundOrderPackage',array('orderID'=>$vo['id']));?>">包裹明细</a>
-							<a href="<?php echo U('Ussw/Inbound/importItem',array('orderID'=>$vo['id']));?>">导入产品</a>
-							<a href="<?php echo U('Ussw/Inbound/inboundOrderItems',array('orderID'=>$vo['id']));?>">产品明细</a>
-							<a href="<?php echo U('Ussw/Inbound/updateStorage',array('ioid'=>$vo['id']));?>">入库</a>
-							<a href="<?php echo U('Ussw/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']));?>" onclick='return del()'>删除</a>
-						</td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
+
+		<div class="content">
+	<div id="ProductInfo" class="main">
+		<form method="POST" id="edit_productInfo" action="<?php echo U('Ussw/Inbound/addInbound');?>">
+		<div class="block-outer BaseInfo">
+			<div class="block-outer-bd">
+				<div class="inline-block block-indent">
+					<div class="item">
+						<div class="form-group">
+							<label for="way" class="control-label">运输方式</label>
+							<div class="control-wrap">
+								<input type="text" name="wayValue" value="" id="wayValue"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="pQuantity" class="control-label">包裹数</label>
+							<div class="control-wrap">
+								<input type="text"  id="pQuantityValue" name="pQuantityValue" value="" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="weight" class="control-label">重量</label>
+							<div class="control-wrap">
+								<input type="text" name="weightValue" id="weightValue" value="" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="volume" class="control-label">体积</label>
+							<div class="control-wrap">
+								<input type="text" name="volumeValue" id="volumeValue" value="" />
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
+		<div class="item tc"><input type='hidden' name='ProductID' value='1030634'>
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+			<button class="btn btn-blue btn-s" id="saveProductInfo">
+				保存			</button>
+		</div></form> 
 	</div>
 
 
-	</div>
+		</div>
+
 	</div>
 	</div>
 	<!-- InstanceEndEditable -->

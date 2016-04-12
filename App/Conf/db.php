@@ -62,33 +62,62 @@ return array(
 	'DB_US_INVENTORY_CSALES' => 'us_inventory_csales',
 
 	//ussw_inbound
+	/*创建usswInbound表
+    CREATE TABLE IF NOT EXISTS `3s_ussw_inbound`(
+    `id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
+    `date` date default null,
+    `way` varchar(10) default null,
+    `pQuantity` smallint(6) default 0,
+    `weight` decimal(5,2) default 0,
+    `volume` decimal(8,5) default 0,
+    `volumeWeight` decimal(5,2) default 0,
+    `iQuantity` smallint(6) default 0,
+    `status` varchar(10) default null
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;        
+    */
 	'DB_USSW_INBOUND' => 'ussw_inbound',
-	'DB_USSW_INBOUND_ID' => 'ussw_inbound_id',
-	'DB_USSW_INBOUND_DATE' => 'ussw_inbound_date',
-	'DB_USSW_INBOUND_SHIPPING_WAY' => 'ussw_inbound_shipping_way',
-	'DB_USSW_INBOUND_DPQ' => 'ussw_inbound_dpq', //DPQ=declared package quantity
-	'DB_USSW_INBOUND_CPQ' => 'ussw_inbound_cpq',//DPQ=confirmed package quantity
-	'DB_USSW_INBOUND_PACKAGE_WEIGHT' => 'ussw_inbound_package_weight',
-	'DB_USSW_INBOUND_STATUS' => 'ussw_inbound_status',
+	'DB_USSW_INBOUND_ID' => 'id',
+	'DB_USSW_INBOUND_DATE' => 'date',
+	'DB_USSW_INBOUND_SHIPPING_WAY' => 'shipping_way',
+	'DB_USSW_INBOUND_STATUS' => 'status',
 
 	//ussw_inbound_package
+	/*
+	CREATE TABLE IF NOT EXISTS `3s_ussw_inbound_package` (
+	`id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
+	`inbound_id` smallint(6) default 0,
+	`weight` decimal(10,2) default 0,
+	`length` decimal(10,2) default 0,
+	`width`  decimal(10,2) default 0,
+	`height`  decimal(10,2) default 0
+	)ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
 	'DB_USSW_INBOUND_PACKAGE' => 'ussw_inbound_package',
-	'DB_USSW_INBOUND_PACKAGE_ID' => 'ussw_inbound_package_id',
-	'DB_USSW_INBOUND_PACKAGE_IOID' => 'ussw_inbound_package_ioid',
-	'DB_USSW_INBOUND_PACKAGE_WEIGHT' => 'ussw_inbound_package_weight',
-	'DB_USSW_INBOUND_PACKAGE_LENGTH' => 'ussw_inbound_package_length',
-	'DB_USSW_INBOUND_PACKAGE_WIDTH' => 'ussw_inbound_package_width',
-	'DB_USSW_INBOUND_PACKAGE_HEIGHT' => 'ussw_inbound_package_height',
-	'DB_USSW_INBOUND_SHIPPING_WAY' => 'ussw_inbound_shipping_way',
+	'DB_USSW_INBOUND_PACKAGE_ID' => 'id',
+	'DB_USSW_INBOUND_PACKAGE_IOID' => 'inbound_id',
+	'DB_USSW_INBOUND_PACKAGE_PACKAGE_NO' => 'package_no',
+	'DB_USSW_INBOUND_PACKAGE_WEIGHT' => 'weight',
+	'DB_USSW_INBOUND_PACKAGE_LENGTH' => 'length',
+	'DB_USSW_INBOUND_PACKAGE_WIDTH' => 'width',
+	'DB_USSW_INBOUND_PACKAGE_HEIGHT' => 'height',
 	
 
 	//ussw_inbound_item
+	/*创建美国自建仓入库产品明细表
+    create table if not exists `3s_ussw_inbound_item` (
+    `id` smallint(6) unsigned primary key not null auto_increment,
+    `inbound_id` smallint(6),
+    `sku` varchar(10),
+    `declare_quantity` smallint(6),
+    `confirmed_quantity` smallint(6)
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
 	'DB_USSW_INBOUND_ITEM' => 'ussw_inbound_item',
-	'DB_USSW_INBOUND_ITEM_ID' => 'ussw_inbound_item_id',
-	'DB_USSW_INBOUND_ITEM_IOID' => 'ussw_inbound_item_ioid',
-	'DB_USSW_INBOUND_ITEM_SKU' => 'ussw_inbound_item_sku',
-	'DB_USSW_INBOUND_ITEM_DQUANTIY' => 'ussw_inbound_item_dquantity',
-	'DB_USSW_INBOUND_ITEM_CQUANTIY' => 'ussw_inbound_item_cquantity',
+	'DB_USSW_INBOUND_ITEM_ID' => 'id',
+	'DB_USSW_INBOUND_ITEM_IOID' => 'inbound_id',
+	'DB_USSW_INBOUND_ITEM_SKU' => 'sku',
+	'DB_USSW_INBOUND_ITEM_DQUANTITY' => 'declare_quantity',
+	'DB_USSW_INBOUND_ITEM_CQUANTITY' => 'confirmed_quantity',
 
 	//ussw_outbound
 	'DB_USSW_OUTBOUND' => 'ussw_outbound',
@@ -119,5 +148,20 @@ return array(
 	'DB_USSW_OUTBOUND_ITEM_QUANTITY' => 'ussw_outbound_item_quantity',
 	'DB_USSW_OUTBOUND_ITEM_MARKET_NO' => 'ussw_outbound_item_market_no',
 	'DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO' => 'ussw_outbound_item_transaction_no',
+
+	//usstorage
+	'DB_USSTORAGE' => 'usstorage',
+	'DB_USSTORAGE_ID' => 'id',
+	'DB_USSTORAGE_POSITION' => 'position',
+	'DB_USSTORAGE_SKU' => 'sku',
+	'DB_USSTORAGE_CNAME' => 'cname',
+	'DB_USSTORAGE_ENAME' => 'ename',
+	'DB_USSTORAGE_ATTRIBUTE' => 'attribute',
+	'DB_USSTORAGE_CINVENTORY' => 'cinventory',
+	'DB_USSTORAGE_AINVENTORY' => 'ainventory',
+	'DB_USSTORAGE_OINVENTORY' => 'oinventory',
+	'DB_USSTORAGE_IINVENTORY' => 'iinventory',
+	'DB_USSTORAGE_CSALES' => 'csales',
+	'DB_USSTORAGE_REMARK' => 'remark',
 	);
 ?>

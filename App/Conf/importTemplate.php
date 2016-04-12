@@ -28,6 +28,20 @@ return array(
 		'V' => 'ebay.de销量链接',
 		'W' => 'ebay.de最低价链接',
 		),
-	);
 
+	//Inbound_item import template
+	'IMPORT_INBOUND_ITEM' => array(
+		'A' => '产品编码',
+		'B' => '数量',
+		),
+
+	//Inbound_item import template
+	'IMPORT_INBOUND_PACKAGE' => array(
+		'A' => '编号',
+		'B' => '重量kg',
+		'C' => '长度cm',
+		'D' => '宽度cm',
+		'E' => '高度cm',
+		),
+	);
 ?>

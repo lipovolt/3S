@@ -3,24 +3,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>美国自建仓入库单</title>
+<title>Untitled Document</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
-<script>
-function del()
-{
-    if(confirm("确定要删除吗？"))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-</script>
 </head>
 <body>
 
@@ -126,9 +113,8 @@ function del()
 			</div>
 		</div>
 	</div>	
-	
-    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
+		<!-- 左边栏 -->
 		<div class="sidenav">
 			<div class="sidenav-hd"><strong>美国自建仓</strong></div>
 			<div class="sidenav-bd">
@@ -151,51 +137,56 @@ function del()
 			</div>
 		</div>
 	<div class="content">
-	<div id="inbounds" class="main">
-		<div>
-			<div class="tab-content">	
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th width="110">入库单编号</th>
-						<th><div class="tl">下单日期</div></th>
-						<th><div class="tl">运输方式</div></th>
-						<th><div class="tl">包裹数</div></th>
-						<th><div class="tl">体积</div></th>
-						<th><div class="tl">计费重</div></th>
-						<th><div class="tl">重量</div></th>
-						<th><div class="tl">单品数</div></th>
-						<th><div class="tl">状态</div></th>
-						<th width="230">操作</th>
-					</tr>
-					<?php if(is_array($inbounds)): $i = 0; $__LIST__ = $inbounds;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_INBOUND_ID')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_INBOUND_DATE')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_INBOUND_Shipping_WAY')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["declare-package-quantity"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["volume"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["volumeWeight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["declare-item-quantity"]); ?>/<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'<font style="color:#F00;">':'' ; echo ($vo["confirmed-item-quantity"]); echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'</font>':'';?></div></td>
-						<td><div class="tl"><?php echo ($vo["status"]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Ussw/Inbound/importPackage',array('orderID'=>$vo['id']));?>">导入包裹</a>
-							<a href="<?php echo U('Ussw/Inbound/inboundOrderPackage',array('orderID'=>$vo['id']));?>">包裹明细</a>
-							<a href="<?php echo U('Ussw/Inbound/importItem',array('orderID'=>$vo['id']));?>">导入产品</a>
-							<a href="<?php echo U('Ussw/Inbound/inboundOrderItems',array('orderID'=>$vo['id']));?>">产品明细</a>
-							<a href="<?php echo U('Ussw/Inbound/updateStorage',array('ioid'=>$vo['id']));?>">入库</a>
-							<a href="<?php echo U('Ussw/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']));?>" onclick='return del()'>删除</a>
-						</td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
-			</div>
+			<script>
+			var GlobalData = {
+				_COMMON_DATA_PROCESSING_ : "数据处理中...",
+				_PRODUCTINFO_BATCHADD_PRODUCTIMPORT_ERROR_FILE_TYPE_NOT_MATCH_:"产品信息导入只支持XLS格式文件!",
+				_COMMON_PLEASE_SELECT_FILE_:"请选择文件！"
+			}
+			</script>
+			
+			<!-- 主页面开始  -->
+				<div id="ProductInfo" class="main">
+					<ul class="tab">
+						<li class="on">
+						<i class="before"></i>
+							<span>入库单号 <?php echo ($orderID); ?></span>
+						<i class="after"></i>
+						</li>					
+					</ul>
+					<div class="tab-content">
+						<div class="tab-inner-content" style="">
+							<div class="block">
+								<div class="block-hd">
+									<i class="icon import"></i>
+									<strong>批量导入入库文件</strong>
+								</div>
+								<div class="block-bd">
+									<div class="block-indent" style="overflow:hidden;">
+										<div style="float:left;width:456px;">
+											<p>请<a href="http://www.lipovolt.com/3s/Download/Download_Inbound_Items_Template.xls">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
+											<div>
+												 <form action="<?php echo U('Ussw/Inbound/addItem',array('orderID'=>$orderID));?>" method="post" enctype="multipart/form-data">
+										            <input type="file" name="import"/>
+								          			<input type="hidden" name="table" value="tablename"/>
+									             	<input type="submit" value="导入"/>
+									         	</form>
+
+											</div>
+											<p>
+												<span class="notice-s">产品信息导入只支持XLS格式文件</span>
+											</p>
+										</div>										
+									</div>															
+								</div>
+							</div>
+						</div>
+					</div>
+			<!-- 主页面结束 -->
 		</div>
 	</div>
-
-
 	</div>
-	</div>
-	</div>
+		
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.

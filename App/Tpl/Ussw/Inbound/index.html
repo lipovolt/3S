@@ -56,26 +56,28 @@ function del()
 						<th><div class="tl">下单日期</div></th>
 						<th><div class="tl">运输方式</div></th>
 						<th><div class="tl">包裹数</div></th>
-						<th><div class="tl">重量</div></th>
 						<th><div class="tl">体积</div></th>
 						<th><div class="tl">计费重</div></th>
+						<th><div class="tl">重量</div></th>
 						<th><div class="tl">单品数</div></th>
 						<th><div class="tl">状态</div></th>
 						<th width="230">操作</th>
 					</tr>
 					<volist name="inbounds" id="vo">
 						<tr>
-						<td><div class="tl">{$vo.id}</div></td>
-						<td><div class="tl">{$vo.date}</div></td>						
-						<td><div class="tl">{$vo.way}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_INBOUND_ID')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_INBOUND_DATE')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_USSW_INBOUND_Shipping_WAY')]}</div></td>
 						<td><div class="tl">{$vo.declare-package-quantity}</div></td>
-						<td><div class="tl">{$vo.weight}</div></td>
 						<td><div class="tl">{$vo.volume}</div></td>
 						<td><div class="tl">{$vo.volumeWeight}</div></td>
+						<td><div class="tl">{$vo.weight}</div></td>
 						<td><div class="tl">{$vo.declare-item-quantity}/<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'<font style="color:#F00;">':'' ;?>{$vo.confirmed-item-quantity}<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'</font>':'';?></div></td>
 						<td><div class="tl">{$vo.status}</div></td>
 						<td>
-							<a href="{:U('Ussw/Inbound/importItems',array('orderID'=>$vo['id']))}">导入产品</a>
+							<a href="{:U('Ussw/Inbound/importPackage',array('orderID'=>$vo['id']))}">导入包裹</a>
+							<a href="{:U('Ussw/Inbound/inboundOrderPackage',array('orderID'=>$vo['id']))}">包裹明细</a>
+							<a href="{:U('Ussw/Inbound/importItem',array('orderID'=>$vo['id']))}">导入产品</a>
 							<a href="{:U('Ussw/Inbound/inboundOrderItems',array('orderID'=>$vo['id']))}">产品明细</a>
 							<a href="{:U('Ussw/Inbound/updateStorage',array('ioid'=>$vo['id']))}">入库</a>
 							<a href="{:U('Ussw/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']))}" onclick='return del()'>删除</a>
