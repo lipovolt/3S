@@ -59,13 +59,13 @@ function del()
             <div class="form-group">
                 <label for="" class="control-label">出库单编号</label>
                 <div class="control-wrap">
-                	<span>{$order[0]['id']}</span>
+                	<span>{$order[0][C('DB_USSW_OUTBOUND_ID')]}</span>
                	</div>
             </div>
             <div class="form-group">
                 <label for="" class="control-label">状态：</label>
                 <div class="control-wrap">
-                	<span>{$order[0]['status']}</span>
+                	<span>{$order[0][C('DB_USSW_OUTBOUND_STATUS')]}</span>
                 </div>
             </div>
         </div>
@@ -74,13 +74,13 @@ function del()
             <div class="form-group">
                 <label for="" class="control-label">ebay卖家ID：</label>
                 <div class="control-wrap">
-                	<span>greatgoodshop</span>
+                	<span>{$order[0][C('DB_USSW_OUTBOUND_SELLER_ID')]}</span>
                 </div>
             </div>
             <div class="form-group">
                 <label for="" class="control-label">ebay买家ID：</label>
                 <div class="control-wrap">
-                	<span>{$order[0]['buyerid']}</span>
+                	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_ID')]}</span>
                 </div>
             </div>
         </div>        
@@ -89,13 +89,13 @@ function del()
             <div class="form-group">
                 <label for="" class="control-label">卖家订单号：</label>
                 <div class="control-wrap">
-                	<span>{$order[0]['saleno']}</span>
+                	<span>{$order[0][C('DB_USSW_OUTBOUND_MARKET_NO')]}</span>
                 </div>
             </div>
             <div class="form-group">
                 <label for="" class="control-label">派送供应商：</label>
                 <div class="control-wrap">
-                	<span>{$order[0]['shippingcompany']}</span>
+                	<span>{$order[0][C('DB_USSW_OUTBOUND_SHIPPING_COMPANY')]}</span>
                 </div>
             </div>
         </div>
@@ -103,13 +103,13 @@ function del()
             <div class="form-group">
                 <label for="" class="control-label">发货方式：</label>
                 <div class="control-wrap">
-                	<span>{$order[0]['shippingway']}</span>
+                	<span>{$order[0][C('DB_USSW_OUTBOUND_SHIPPING_WAY')]}</span>
                 </div>
             </div>
             <div class="form-group">
                 <label for="" class="control-label">快递单号：</label>
                 <div class="control-wrap">
-                	<span>{$order[0]['trackingnumber']}</span>
+                	<span>{$order[0][C('DB_USSW_OUTBOUND_TRACKING_NUMBER')]}</span>
                 </div>
             </div>
         </div>
@@ -141,14 +141,14 @@ function del()
 		     <div class="form-group">
 		         <label for="" class="control-label">收件人姓名：</label>
 		         <div class="control-wrap">
-		         	<span>{$order[0]['buyername']}</span>
+		         	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_NAME')]}</span>
 		         </div>
 		     </div>
 		     
 		     <div class="form-group">
 		         <label for="" class="control-label">收件人国家：</label>
 		         <div class="control-wrap">
-		         	<span>{$order[0]['buyercountry']}</span>
+		         	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_COUNTRY')]}</span>
 		         </div>
 		     </div>
 		</div>
@@ -157,13 +157,13 @@ function del()
 		     <div class="form-group">
 		         <label for="" class="control-label">收件人电话：</label>
 		         <div class="control-wrap">
-		         	<span>{$order[0]['buyertel']}</span>
+		         	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_TEL')]}</span>
 		         </div>
 		     </div>
 		     <div class="form-group">
 		         <label for="" class="control-label">收件人邮编：</label>
 		         <div class="control-wrap">
-		         	<span>{$order[0]['buyerzip']}</span>
+		         	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_ZIP')]}</span>
 		         </div>
 		     </div>
 		</div>
@@ -171,13 +171,13 @@ function del()
 		     <div class="form-group">
 		         <label for="" class="control-label">收件人州：</label>
 		         <div class="control-wrap">
-		         	<span>{$order[0]['buyerstate']}</span>
+		         	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_STATE')]}</span>
 		         </div>
 		     </div>
 		     <div class="form-group">
 		         <label for="" class="control-label">收件人城市：</label>
 		         <div class="control-wrap">
-		         	<span>{$order[0]['buyercity']}</span>
+		         	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_CITY')]}</span>
 		         </div>
 		     </div>
 		</div>
@@ -185,7 +185,7 @@ function del()
 		     <div class="form-group">
 		         <label for="" class="control-label">收件人Email：</label>
 		         <div class="control-wrap">
-		         	<span>{$order[0]['buyeremail']}</span>
+		         	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_EMAIL')]}</span>
 		         </div>
 		     </div>
 		</div>
@@ -193,7 +193,7 @@ function del()
 		     <div class="form-group">
 		         <label for="" class="control-label">收件人街道1：</label>
 		         <div class="control-wrap">
-		         	<span>{$order[0]['buyeraddress1']}</span>
+		         	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')]}</span>
 		         </div>
 		     </div>
 		</div>
@@ -201,7 +201,7 @@ function del()
 		     <div class="form-group">
 		         <label for="" class="control-label">收件人街道2：</label>
 		         <div class="control-wrap">
-		         	<span>{$order[0]['address2']}</span>
+		         	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_ADDRESS2')]}</span>
 		         </div>
 		     </div>
 		</div>
@@ -226,13 +226,13 @@ function del()
 
 			<volist name="outboundOrderItems" id="vo">
 				<tr>
-				<td>{$vo.position}</td>
-				<td>{$vo.sku}</td>
-				<td>{$vo.cname}</td>
-				<td>{$vo.ename}</td>						
-				<td class="num">{$vo.quantity}</td>
-				<td>{$vo.itemno}</td>
-				<td>{$vo.transactionno}</td>
+				<td>{$vo[c('DB_USSW_OUTBOUND_ITEM_POSITION')]}</td>
+				<td>{$vo[c('DB_USSW_OUTBOUND_ITEM_SKU')]}</td>
+				<td>{$vo[c('DB_USSW_OUTBOUND_ITEM_CNAME')]}</td>
+				<td>{$vo[c('DB_USSW_OUTBOUND_ITEM_ENAME')]}</td>						
+				<td class="num">{$vo[c('DB_USSW_OUTBOUND_ITEM_QUANTITY')]}</td>
+				<td>{$vo[c('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]}</td>
+				<td>{$vo[c('DB_USSW_OUTBOUND_ITEM_MARKET_NO')]}</td>
 				<td>
 				</td>
 				</tr>	

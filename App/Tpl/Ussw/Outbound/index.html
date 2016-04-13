@@ -86,12 +86,12 @@ function del()
 					</tr>
 					<volist name="outboundOrders" id="vo">
 						<tr>
-						<td><div class="tl"><a href="{:U('Ussw/Outbound/outboundOrderDetails',array('id'=>$vo['id']))}">{$vo.id}</a></div></td>
-						<td><div class="tl">{$vo.saleno}</div></td>						
-						<td><div class="tl">{$vo.status}</div></td>
-						<td><div class="tl">{$vo.shippingway}</div></td>
-						<td><div class="tl">{$vo.trackingnumber}</div></td>
-						<td><div class="tl">{$vo.time}</div></td>
+						<td><div class="tl"><a href="{:U('Ussw/Outbound/outboundOrderDetails',array('id'=>$vo['id']))}">{$vo[C('DB_USSW_OUTBOUND_ID')]}</a></div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_OUTBOUND_MARKET_NO')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_USSW_OUTBOUND_STATUS')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_OUTBOUND_SHIPPING_WAY')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_OUTBOUND_TRACKING_NUMBER')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_OUTBOUND_CREATE_TIME')]}</div></td>
 						<td><a href="{:U('Ussw/Outbound/confirmOutboundOrder',array('id'=>$vo['id']))}">确认出库</a></td>
 						</tr>	
 					</volist> 								

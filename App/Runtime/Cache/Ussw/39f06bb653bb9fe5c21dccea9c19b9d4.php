@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>批量导入出库文件</title>
+<title>Untitled Document</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -116,7 +116,7 @@
 	<div class="area clearfix">
 		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>美国自建仓批量出库</strong></div>
+			<div class="sidenav-hd"><strong>美国库存管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
@@ -137,52 +137,11 @@
 			</div>
 		</div>
 	<div class="content">
-			<script>
-			var GlobalData = {
-				_COMMON_DATA_PROCESSING_ : "数据处理中...",
-				_PRODUCTINFO_BATCHADD_PRODUCTIMPORT_ERROR_FILE_TYPE_NOT_MATCH_:"产品信息导入只支持XLS格式文件!",
-				_COMMON_PLEASE_SELECT_FILE_:"请选择文件！"
-			}
-			</script>
-			
-			<!-- 主页面开始  -->
-				<div id="ProductInfo" class="main">
-					<div class="tab-content">
-						<div class="tab-inner-content" style="">
-							<div class="block">
-								<div class="block-hd">
-									<i class="icon import"></i>
-									<strong>批量导入ebay订单</strong>
-								</div>
-								<div class="block-bd">
-									<div class="block-indent" style="overflow:hidden;">
-										<div style="float:left;width:456px;">
-											<p>导出的ebay未发货订单是CVS文件，需要转换成XLS文件，文件内容无需修改</p>
-											<div>
-												 <form action="<?php echo U('Ussw/Outbound/importEbaySaleRecordFile');?>" method="post" enctype="multipart/form-data">
-												 	<label for="sellerID" class="control-label">ebay账号</label>
-												 	<select name="sellerID"  id="sellerID">
-														<option value="" >请选择</option>
-														<option value="greatgoodshop" selected>greatgoodshop</option>		
-													</select>
-										            <input type="file" name="import" value=""/>
-								          			<input type="hidden" name="table" value="tablename"/>
-									             	<input type="submit" value="导入"/>
-									         	</form>
-											</div>
-											<p>
-												<span class="notice-s">产品信息导入只支持XLS格式文件</span>
-											</p>
-										</div>										
-									</div>															
-								</div>
-							</div>
-						</div>
-						<table id="tablelist" class="tablelist">
+		 <table id="tablelist" class="tablelist">
 							<tr>
-								<th><div class="tl"><?php echo $errorInFile==null?'':'平台订单号'?></div></th>
-								<th><div class="tl"><?php echo $errorInFile==null?'':'货号'?></div></th>
-								<th><div class="tl"><?php echo $errorInFile==null?'':'错误信息'?></div></th>
+								<th><div class="tl">平台订单号</div></th>
+								<th><div class="tl">产品编码</div></th>
+								<th><div class="tl">错误信息</div></th>
 							</tr>
 							<?php if(is_array($errorInFile)): $i = 0; $__LIST__ = $errorInFile;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
 								<td><div class="tl"><?php echo ($vo["saleno"]); ?></div></td>
@@ -190,10 +149,7 @@
 								<td><div class="tl"><?php echo ($vo["error"]); ?></div></td>
 								</tr><?php endforeach; endif; else: echo "" ;endif; ?> 	 								
 						</table>
-					</div>
-			<!-- 主页面结束 -->
 		</div>
-	</div>
 	</div>
 		
 	<!-- InstanceEndEditable -->

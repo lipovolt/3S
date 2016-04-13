@@ -182,19 +182,19 @@
 					</tr>    
 					<tr>
 						<?php if(is_array($usstorage)): $i = 0; $__LIST__ = $usstorage;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo["position"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["sku"]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo["cname"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["ename"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["attribute"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["cinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["ainventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["oinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["iinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["csales"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["remark"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_POSITION')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_SKU')]); ?></div></td>						
+						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_CNAME')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_ENAME')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_ATTRIBUTE')]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_CINVENTORY')]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_AINVENTORY')]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_OINVENTORY')]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_IINVENTORY')]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_CSALE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_REMARK')]); ?></div></td>
 						<td>
-							<a href="<?php echo U('Ussw/Ussw/usswEdit',array('sku'=>$vo['sku']));?>">编辑</a>
+							<a href="<?php echo U('Ussw/Ussw/usswEdit',array(C('DB_USSTORAGE_SKU')=>$vo[C('DB_USSTORAGE_SKU')]));?>">编辑</a>
 						</td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
 					</tr>								
