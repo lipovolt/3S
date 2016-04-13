@@ -117,7 +117,8 @@ function del()
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/add');?>">新增库存</a></dd>
 </dl>
 
 		<div>
@@ -145,7 +146,8 @@ function del()
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/add');?>">新增库存</a></dd>
 </dl>
 	
 			</div>
@@ -329,13 +331,13 @@ function del()
 			</tr> 
 
 			<?php if(is_array($outboundOrderItems)): $i = 0; $__LIST__ = $outboundOrderItems;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-				<td><?php echo ($vo[c('DB_USSW_OUTBOUND_ITEM_POSITION')]); ?></td>
-				<td><?php echo ($vo[c('DB_USSW_OUTBOUND_ITEM_SKU')]); ?></td>
-				<td><?php echo ($vo[c('DB_USSW_OUTBOUND_ITEM_CNAME')]); ?></td>
-				<td><?php echo ($vo[c('DB_USSW_OUTBOUND_ITEM_ENAME')]); ?></td>						
-				<td class="num"><?php echo ($vo[c('DB_USSW_OUTBOUND_ITEM_QUANTITY')]); ?></td>
-				<td><?php echo ($vo[c('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]); ?></td>
-				<td><?php echo ($vo[c('DB_USSW_OUTBOUND_ITEM_MARKET_NO')]); ?></td>
+				<td><?php echo ($vo[C('DB_USSW_OUTBOUND_ITEM_POSITION')]); ?></td>
+				<td><?php echo ($vo[C('DB_USSW_OUTBOUND_ITEM_SKU')]); ?></td>
+				<td><?php echo ($vo[C('DB_USSW_OUTBOUND_ITEM_CNAME')]); ?></td>
+				<td><?php echo ($vo[C('DB_USSW_OUTBOUND_ITEM_ENAME')]); ?></td>						
+				<td class="num"><?php echo ($vo[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')]); ?></td>
+				<td><?php echo ($vo[C('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]); ?></td>
+				<td><?php echo ($vo[C('DB_USSW_OUTBOUND_ITEM_MARKET_NO')]); ?></td>
 				<td>
 				</td>
 				</tr><?php endforeach; endif; else: echo "" ;endif; ?>	

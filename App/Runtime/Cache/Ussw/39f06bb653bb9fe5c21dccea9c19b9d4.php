@@ -104,7 +104,8 @@
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/add');?>">新增库存</a></dd>
 </dl>
 
 		<div>
@@ -131,7 +132,8 @@
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/add');?>">新增库存</a></dd>
 </dl>
 	
 			</div>

@@ -245,8 +245,8 @@ class OutboundAction extends CommonAction{
                         //查看该SKU总库存。收集该SKU的货位
                         $totalAvailableQuantity = $row[C('DB_USSTORAGE_AINVENTORY')] + $totalAvailableQuantity;
                         $positions = $positions==null?$row[C('DB_USSTORAGE_POSITION')]:$positions.'|'.$row[C('DB_USSTORAGE_POSITION')];
-                    }
-                    
+                    } 
+                    $outboundOrderItems[$key-1][C('DB_USSW_OUTBOUND_ITEM_POSITION')] = $positions;
                     foreach ($outboundOrderItems as $key => $value) {
                         if($value[C('DB_USSW_OUTBOUND_ITEM_SKU')] == $outbounditem[C('DB_USSW_OUTBOUND_ITEM_SKU')])
                             $totalNeedQuantity = $totalNeedQuantity+$value[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
@@ -283,16 +283,24 @@ class OutboundAction extends CommonAction{
                         }
                     }
                     //更新已过滤的订单数组到ussw_outbound
+                    $usswOutbound = M(C('DB_USSW_OUTBOUND'));
+                    $usswOutbound->startTrans();
                     foreach ($filteredOutboundOrder as $key => $value) {
-                        M(C('DB_USSW_OUTBOUND'))->add($value);
+                        $usswOutbound->add($value);
                     }
+                    
                     //更新订单产品数组到ussw_outbound_item
+                    $usswOutboundItem = M(C('DB_USSW_OUTBOUND_ITEM'));
+                    $usstorage = M(C('DB_USSTORAGE'));
+                    $usswOutboundItem->startTrans();
+                    $usstorage->startTrans();
                     foreach ($outboundOrderItems as $key => $value) {
-                        $oid=M(C('DB_USSW_OUTBOUND'))->where(array(C('DB_USSW_OUTBOUND_MARKET_NO')=>$value[C('DB_USSW_OUTBOUND_ITEM_OOID')]))->getField('id');
+                        $oid=$usswOutbound->where(array(C('DB_USSW_OUTBOUND_MARKET_NO')=>$value[C('DB_USSW_OUTBOUND_ITEM_OOID')]))->getField('id');
                         $value[C('DB_USSW_OUTBOUND_ITEM_OOID')]=$oid;
-                        M(C('DB_USSW_OUTBOUND_ITEM'))->add($value);
-                        $usstorage = M(C('DB_USSTORAGE'));
-                        $rows = $usstorage->where(array(C('DB_USSTORAGE_SKU')=>$value[C('DB_USSW_OUTBOUND_ITEM_SKU')],$map[C('DB_USSTORAGE_AINVENTORY')]=>array('neq',0)))->select();
+                        $usswOutboundItem->add($value);
+                        $map[C('DB_USSTORAGE_SKU')] = array('eq',$value[C('DB_USSW_OUTBOUND_ITEM_SKU')]); 
+                        $map[C('DB_USSTORAGE_AINVENTORY')]=array('neq',0);                   
+                        $rows = $usstorage->where($map)->select();
                         $difference = $value[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
                         //更新库存信息
                         foreach ($rows as $key => $row) {
@@ -302,7 +310,7 @@ class OutboundAction extends CommonAction{
                                 $usstorage->where(array(C('DB_USSTORAGE_ID')=>$row[C('DB_USSTORAGE_ID')]))->save($data);
                                 break;
                             }else{
-                                $data[C('DB_USSTORAGE_OINVENTORY')] = $difference- $row[C('DB_USSTORAGE_AINVENTORY')];
+                                $data[C('DB_USSTORAGE_OINVENTORY')] = $row[C('DB_USSTORAGE_OINVENTORY')]+$row[C('DB_USSTORAGE_AINVENTORY')];
                                 $data[C('DB_USSTORAGE_AINVENTORY')] = 0;                            
                                 $difference = $difference- $row[C('DB_USSTORAGE_AINVENTORY')];
                                 $usstorage->where(array(C('DB_USSTORAGE_ID')=>$row[C('DB_USSTORAGE_ID')]))->save($data);
@@ -311,6 +319,9 @@ class OutboundAction extends CommonAction{
                         }
 
                     }
+                    $usswOutbound->commit();
+                    $usswOutboundItem->commit();
+                    $usstorage->commit();
                     $this->success('导入成功！');
                 }
             }else{
@@ -375,10 +386,12 @@ class OutboundAction extends CommonAction{
             $items = M(C('DB_USSW_OUTBOUND_ITEM'))->where(array(C('DB_USSW_OUTBOUND_ITEM_OOID')=>$id))->select();
             $usstorage = M(C('DB_USSTORAGE'));
             foreach ($items as $key => $item) {
-                $positions = explode("|",$item[C('DB_USSW_OUTBOUND_ITEM_POSITION')]);
+                //$positions = explode("|",$item[C('DB_USSW_OUTBOUND_ITEM_POSITION')]);
                 $quantity = $item[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
-                if($position==''){
-                    $row=$usstorage->where(array(C('DB_USSTORAGE_SKU')=>$item[C('DB_USSW_OUTBOUND_ITEM_SKU')]))->find();
+                $map[C('DB_USSTORAGE_SKU')] = array('eq',$item[C('DB_USSW_OUTBOUND_ITEM_SKU')]);
+                $map[C('DB_USSTORAGE_OINVENTORY')]=array('neq',0);
+                $rows=$usstorage->where($map)->select();
+                foreach ($rows as $key => $row) {
                     if($row[C('DB_USSTORAGE_OINVENTORY')]>=$quantity){
                         $data[C('DB_USSTORAGE_OINVENTORY')] = $row[C('DB_USSTORAGE_OINVENTORY')]-$quantity;
                         $data[C('DB_USSTORAGE_CSALES')] = $row[C('DB_USSTORAGE_CSALES')]+$quantity;
@@ -387,25 +400,10 @@ class OutboundAction extends CommonAction{
                     }else{
                         $data[C('DB_USSTORAGE_OINVENTORY')] = 0;
                         $data[C('DB_USSTORAGE_CSALES')] = $row['csales']+$row[C('DB_USSTORAGE_OINVENTORY')];
-                        $usstorage->where(array(C('DB_USSTORAGE_ID')=>$row[C('DB_USSTORAGE_ID')]))->save($data);
                         $quantity = $quantity - $row[C('DB_USSTORAGE_OINVENTORY')];
-                    }
-                }else{
-                    foreach ($positions as $key => $position) {
-                        $row=$usstorage->where(array(C('DB_USSTORAGE_SKU')=>$item[C('DB_USSW_OUTBOUND_ITEM_SKU')],C('DB_USSTORAGE_POSITION')=>$position))->find();
-                        if($row[C('DB_USSTORAGE_OINVENTORY')]>=$quantity){
-                            $data[C('DB_USSTORAGE_OINVENTORY')] = $row[C('DB_USSTORAGE_OINVENTORY')]-$quantity;
-                            $data[C('DB_USSTORAGE_CSALES')] = $row[C('DB_USSTORAGE_CSALES')]+$quantity;
-                            $usstorage->where(array(C('DB_USSTORAGE_ID')=>$row[C('DB_USSTORAGE_ID')]))->save($data);
-                            break;
-                        }else{
-                            $data[C('DB_USSTORAGE_OINVENTORY')] = 0;
-                            $data[C('DB_USSTORAGE_CSALES')] = $row['csales']+$row[C('DB_USSTORAGE_OINVENTORY')];
-                            $usstorage->where(array(C('DB_USSTORAGE_ID')=>$row[C('DB_USSTORAGE_ID')]))->save($data);
-                            $quantity = $quantity - $row[C('DB_USSTORAGE_OINVENTORY')];
-                        }                
-                    }
-                }                
+                        $usstorage->where(array(C('DB_USSTORAGE_ID')=>$row[C('DB_USSTORAGE_ID')]))->save($data);
+                    }   
+                }              
             }
             M(C('DB_USSW_OUTBOUND'))->where(array(C('DB_USSW_OUTBOUND_ID')=>$id))->setField(array(C('DB_USSW_OUTBOUND_STATUS')=>'已出库'));
             $this->success('出库成功！');

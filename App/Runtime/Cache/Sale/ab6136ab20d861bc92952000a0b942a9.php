@@ -94,7 +94,7 @@
 			<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
 	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
-	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/createInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
@@ -104,7 +104,8 @@
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/add');?>">新增库存</a></dd>
 </dl>
 
 		<div>
