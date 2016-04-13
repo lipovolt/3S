@@ -15,7 +15,8 @@ class StorageAction extends CommonAction{
             $this->assign('page',$show);
         }
         else{
-            $this->usstorage = M(C('DB_USSTORAGE'))->where(array($_POST['keyword']=>$_POST['keywordValue']))->select();
+            $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+            $this->usstorage = M(C('DB_USSTORAGE'))->where($where)->select();
         }
         $this->display();
     }

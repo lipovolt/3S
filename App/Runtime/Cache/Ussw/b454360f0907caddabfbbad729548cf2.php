@@ -147,8 +147,8 @@
 						<label for="keyword" class="control-label">关键字</label>
 						<div class="control-wrap">
 							<select name="keyword" id="keyword" data-value="">
-								<option value="sku">产品编码</option>
-								<option value="title-cn">产品名称</option>
+								<option value="<?php echo C('DB_USSTORAGE_SKU');?>">产品编码</option>
+								<option value="<?php echo C('DB_USSTORAGE_CNAME');?>">产品名称</option>
 							</select>
 						</div>
 						<div class="control-wrap">
