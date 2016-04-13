@@ -34,7 +34,7 @@
 		</div>
 	<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="{:U('Ussw/Ussw/usswManage')}" method="POST">
+		<form name="search_product" id="search_product" action="{:U('Ussw/Storage/index')}" method="POST">
 			<div class="search-area">
 				<div class="item">
 					<div class="form-group">
@@ -88,10 +88,10 @@
 						<td><div class="tr">{$vo[C('DB_USSTORAGE_AINVENTORY')]}</div></td>
 						<td><div class="tr">{$vo[C('DB_USSTORAGE_OINVENTORY')]}</div></td>
 						<td><div class="tr">{$vo[C('DB_USSTORAGE_IINVENTORY')]}</div></td>
-						<td><div class="tr">{$vo[C('DB_USSTORAGE_CSALE')]}</div></td>
+						<td><div class="tr">{$vo[C('DB_USSTORAGE_CSALES')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_USSTORAGE_REMARK')]}</div></td>
 						<td>
-							<a href="{:U('Ussw/Ussw/usswEdit',array(C('DB_USSTORAGE_SKU')=>$vo[C('DB_USSTORAGE_SKU')]))}">编辑</a>
+							<a href="{:U('Ussw/Storage/edit',array(C('DB_USSTORAGE_SKU')=>$vo[C('DB_USSTORAGE_SKU')]))}">编辑</a>
 						</td>
 						</tr>	
 					</volist> 		

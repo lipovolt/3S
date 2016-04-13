@@ -3,24 +3,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>美国出库单</title>
+<title>Untitled Document</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
-<script>
-function del()
-{
-    if(confirm("确定要删除吗？"))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-</script>
 </head>
 <body>
 
@@ -117,8 +104,8 @@ function del()
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Storage/add');?>">新增库存</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Ussw/index');?>">新增库存</a></dd>
 </dl>
 
 		<div>
@@ -127,9 +114,8 @@ function del()
 			</div>
 		</div>
 	</div>	
-	
-    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
+		<!-- 左边栏 -->
 		<div class="sidenav">
 			<div class="sidenav-hd"><strong>美国自建仓</strong></div>
 			<div class="sidenav-bd">
@@ -146,69 +132,65 @@ function del()
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Storage/add');?>">新增库存</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Ussw/index');?>">新增库存</a></dd>
 </dl>
 	
 			</div>
 		</div>
 	<div class="content">
-	<div id="inbounds" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Ussw/Outbound/index');?>" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">关键字</label>
-						<div class="control-wrap">
-							<select name="keyword" id="keyword" data-value="">
-								<option value="id">出库单号</option>
-								<option value="saleno">平台订单号</option>
-							</select>
-						</div>
-						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
-						</div>
-					</div>
-					<input type="hidden" name="country" value="122" />
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
-						<i class="icon search"></i>
-						<i class="vline-inline"></i>
-						<span>查询</span>
-					</button>
-				</div>			
+	<div id="itemInbound" class="main">
+		
+		<form name="search_inbound" id="search_inbound" action="<?php echo U('Ussw/Ussw/itemInbound');?>" method="POST">			
+		<div class="block-indent search-area">
+			<div><strong>单品入库</strong></div>
+			<div class="form-group">
+				<label for="" class="control-label" name="position" id="position" >货位</label>
+				<div class="control-wrap">
+					<input type="text" name="position" id="position" value="">
+				</div>
+				<label for="" class="control-label" name="sku" id="position" >货号</label>
+				<div class="control-wrap">
+					<input type="text" name="sku" id="sku" value="">
+				</div>
 			</div>
-		</form>
-		<div>
-			<div class="tab-content">	
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th><div class="tl">出库单编号</div></th>
-						<th><div class="tl">平台订单号</div></th>						
-						<th><div class="tl">发货状态</div></th>
-						<th><div class="tl">发货方式</div></th>
-						<th><div class="tl">追踪号</div></th>
-						<th><div class="tl">下单时间</div></th>
-						<th width="230">操作</th>
-					</tr>
-					<?php if(is_array($outboundOrders)): $i = 0; $__LIST__ = $outboundOrders;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><a href="<?php echo U('Ussw/Outbound/outboundOrderDetails',array('id'=>$vo['id']));?>"><?php echo ($vo[C('DB_USSW_OUTBOUND_ID')]); ?></a></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_OUTBOUND_MARKET_NO')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_OUTBOUND_STATUS')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_OUTBOUND_SHIPPING_WAY')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_OUTBOUND_TRACKING_NUMBER')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_OUTBOUND_CREATE_TIME')]); ?></div></td>
-						<td><a href="<?php echo U('Ussw/Outbound/confirmOutboundOrder',array('id'=>$vo['id']));?>">确认出库</a></td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
+			<button class="btn btn-s btn-blue" onclick="search_inbound.submit();">
+				<i class="icon search"></i>
+				<i class="vline-inline"></i>
+				<span>入库</span>
+			</button>
+        </div></form>
+        <br />
+        <br />
+        <br />
+        <br />
+        <form name="search_inbound" id="search_inbound" action="<?php echo U('Ussw/Ussw/itemInbound');?>" method="POST">			
+		<div class="block-indent search-area">
+			<div><strong>批量入库</strong></div>
+			<div class="form-group">
+				<label for="" class="control-label" name="position" id="position" >货位</label>
+				<div class="control-wrap">
+					<input type="text" name="position" id="position" value="">
+				</div>
+				<label for="" class="control-label" name="sku" id="position" >货号</label>
+				<div class="control-wrap">
+					<input type="text" name="sku" id="sku" value="">
+				</div>
+				<label for="" class="control-label" name="quantity" id="position" >数量</label>
+				<div class="control-wrap">
+					<input type="text" name="quantity" id="quantity" value="">
+				</div>
 			</div>
+			<button class="btn btn-s btn-blue" onclick="search_inbound.submit();">
+				<i class="icon search"></i>
+				<i class="vline-inline"></i>
+				<span>入库</span>
+			</button>
+        </div></form>
+	</div>
 		</div>
 	</div>
-
-
-	</div>
-	</div>
-	</div>
+		
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.

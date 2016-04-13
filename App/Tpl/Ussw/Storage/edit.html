@@ -34,14 +34,14 @@
 		</div>
 	<div class="content">
 	<div id="ProductInfo" class="main">
-		<form method="POST" id="edit_productImg" action="{:U(Ussw/Ussw/update)}" enctype="multipart/form-data">
+		<form method="POST" id="edit_productImg" action="{:U(Ussw/Storage/update)}" enctype="multipart/form-data">
 		
 		<div class="product-upload-wrap">
 			<input type="hidden" name="ProductID" value="1030634"> 
 			<input type="hidden" name="CountryID" value="122">
 		</div>
 		<input type="hidden" name="__hash__" value="48007adec5871053582d206bccb8d2ac_c6d32f4df480a79e2054461b3dc60b86" /></form>
-		<form method="POST" id="edit_productInfo" action="{:U('Ussw/Ussw/update')}">
+		<form method="POST" id="edit_productInfo" action="{:U('Ussw/Storage/update')}">
 		<div class="block-outer BaseInfo">
 			<div class="block-outer-hd"><strong>基本信息</strong></div>
 			<div class="block-outer-bd">
@@ -49,15 +49,15 @@
 					<div class="item">
 						<div class="form-group">
 							<label for="position" class="control-label">货位</label>
-							<input type="hidden"  id="idValue" name="idValue" value="{$usstorage[0]['id']}"/>
+							<input type="hidden"  id="{:C('DB_USSTORAGE_ID')}" name="{:C('DB_USSTORAGE_ID')}" value="{$usstorage[0][C('DB_USSTORAGE_ID')]}"/>
 							<div class="control-wrap">
-								<input type="text"  id="positionValue" name="positionValue" value="{$usstorage[0]['position']}"/>
+								<input type="text"  id="{:C('DB_USSTORAGE_POSITION')}" name="{:C('DB_USSTORAGE_POSITION')}" value="{$usstorage[0][C('DB_USSTORAGE_POSITION')]}"/>
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="sku" class="control-label">产品编码</label>
 							<div class="control-wrap">
-								<input type="text" name="skuValue" value="{$usstorage[0]['sku']}" id="skuValue" />
+								<input type="text" name="{:C('DB_USSTORAGE_SKU')}" value="{$usstorage[0][C('DB_USSTORAGE_SKU')]}" id="{:C('DB_USSTORAGE_SKU')}" />
 							</div>
 						</div>
 					</div>
@@ -65,13 +65,13 @@
 						<div class="form-group">
 							<label for="cname" class="control-label">中文名称</label>
 							<div class="control-wrap">
-								<input type="text" name="cnameValue" id="cnameValue" value="{$usstorage[0]['cname']}" />
+								<input type="text" name="{:C('DB_USSTORAGE_CNAME')}" id="{:C('DB_USSTORAGE_CNAME')}" value="{$usstorage[0][C('DB_USSTORAGE_CNAME')]}" />
 							</div>
 						</div>
 						<div class="form-group">
 							<label for="ename" class="control-label">英文名称</label>
 							<div class="control-wrap">
-								<input type="text" name="enameValue" id="enameValue" value="{$usstorage[0]['ename']}" />
+								<input type="text" name="{:C('DB_USSTORAGE_ENAME')}" id="{:C('DB_USSTORAGE_ENAME')}" value="{$usstorage[0][C('DB_USSTORAGE_ENAME')]}" />
 							</div>
 						</div>
 					</div>
@@ -85,7 +85,7 @@
 						<div class="form-group">
 							<label for="csales" class="control-label">累计销量</label>
 							<div class="control-wrap">
-								<input type="text"  id="csalesValue" name="csalesValue" value="{$usstorage[0]['csales']}" />
+								<input type="text"  id="{:C('DB_USSTORAGE_CSALES')}" name="{:C('DB_USSTORAGE_CSALES')}" value="{$usstorage[0][C('DB_USSTORAGE_CSALE')]}" />
 							</div>
 						</div>
 					</div>
@@ -93,13 +93,13 @@
                         <div class="form-group">
 							<label for="cinventory" class="control-label">累计入库</label>
 							<div class="control-wrap">
-								<input type="text"  id="cinventoryValue" name="cinventoryValue" value="{$usstorage[0]['cinventory']}" />
+								<input type="text"  id="{:C('DB_USSTORAGE_CINVENTORY')}" name="{:C('DB_USSTORAGE_CINVENTORY')}" value="{$usstorage[0][C('DB_USSTORAGE_CINVENTORY')]}" />
 							</div>
 						</div>
                         <div class="form-group">
 							<label for="ainventory" class="control-label">可用数量</label>
 							<div class="control-wrap">
-								<input type="text"  id="ainventoryValue" name="ainventoryValue" value="{$usstorage[0]['ainventory']}" />
+								<input type="text"  id="{:C('DB_USSTORAGE_AINVENTORY')}" name="{:C('DB_USSTORAGE_AINVENTORY')}" value="{$usstorage[0][C('DB_USSTORAGE_AINVENTORY')]}" />
 							</div>
 						</div>
                     </div>
@@ -107,13 +107,13 @@
                         <div class="form-group">
 							<label for="oinventory" class="control-label">待出库</label>
 							<div class="control-wrap">
-								<input type="text"  id="oinventoryValue" name="oinventoryValue" value="{$usstorage[0]['oinventory']}" />
+								<input type="text"  id="{:C('DB_USSTORAGE_OINVENTORY')}" name="{:C('DB_USSTORAGE_OINVENTORY')}" value="{$usstorage[0][C('DB_USSTORAGE_OINVENTORY')]}" />
 							</div>
 						</div>
                         <div class="form-group">
 							<label for="iinventory" class="control-label">在途数量</label>
 							<div class="control-wrap">
-								<input type="text"  id="iinventoryValue" name="iinventoryValue" value="{$usstorage[0]['iinventory']}" />
+								<input type="text"  id="{:C('DB_USSTORAGE_IINVENTORY')}" name="{:C('DB_USSTORAGE_IINVENTORY')}" value="{$usstorage[0][C('DB_USSTORAGE_IINVENTORY')]}" />
 							</div>
 						</div>
                     </div>
