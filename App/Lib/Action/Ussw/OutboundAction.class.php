@@ -348,8 +348,8 @@ class OutboundAction extends CommonAction{
             return -1;
         }else{
             foreach ($filteredOutboundOrder as $key => $value) {
-                if($order['buyerid'] == $value['buyerid'] and $order['buyeraddress1'] == $value['buyeraddress1']){
-                    return $value['saleno'];
+                if($order[C('DB_USSW_OUTBOUND_BUYER_ID')] == $value[C('DB_USSW_OUTBOUND_BUYER_ID')] and $order[C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')] == $value[C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')]){
+                    return $value[C('DB_USSW_OUTBOUND_MARKET_NO')];
                 }
             }
             return -1;
