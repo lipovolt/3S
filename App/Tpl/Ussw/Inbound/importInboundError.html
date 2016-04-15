@@ -35,15 +35,13 @@
 		<div class="content">
 			 <table id="tablelist" class="tablelist">
 								<tr>
-									<th><div class="tl">平台订单号</div></th>
-									<th><div class="tl">产品编码</div></th>
+									<th><div class="tl">行号</div></th>
 									<th><div class="tl">错误信息</div></th>
 								</tr>
-								<volist name="errorInFile" id="vo">
+								<volist name="errorInFile" id="vo" key="k">
 									<tr>
-									<td><div class="tl">{$vo.saleno}</div></td>
-									<td><div class="tl">{$vo.sku}</div></td>
-									<td><div class="tl">{$vo.error}</div></td>
+									<td><div class="tl">{$k+1}</div></td>
+									<td><div class="tl">{$vo}</div></td>
 									</tr>	
 								</volist> 	 								
 							</table>

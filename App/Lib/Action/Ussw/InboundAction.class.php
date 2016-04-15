@@ -117,9 +117,18 @@ class InboundAction extends CommonAction{
                 $objReader = PHPExcel_IOFactory::createReader('Excel5');
                 $objPHPExcel = $objReader->load($file_name,$encode='utf-8');
                 $sheet = $objPHPExcel->getSheet(0);
-                $highestRow = $sheet->getHighestRow(); // 取得总行数
-                $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+                $highestRow = $sheet->getHighestDataRow(); // 取得总行数
+                $highestColumn = $sheet->getHighestDataColumn(); // 取得总列数
 
+                for ($i=$highestRow; $i >0 ; $i--) { 
+                    if($sheet->getCell("A".$i) == null or $sheet->getCell("A".$i) =='')
+                        $highestRow = $i;
+                    else{
+                        $highestRow = $i;
+                        break;
+                    }      
+                }
+                
                 for($c='A';$c<=$highestColumn;$c++){
                     $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
                 }
@@ -139,9 +148,10 @@ class InboundAction extends CommonAction{
                         $data[$i][C('DB_USSW_INBOUND_ITEM_DQUANTITY')]= $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();                                        
                     }
                     $product->commit();
-
+                    
                     if($errorInFile != null){
-                        $this->error($errorInFile);
+                        $this->assign('errorInFile',$errorInFile);
+                        $this->display('importInboundError');
                     }else{
                         $usswInboundItem = M(C('DB_USSW_INBOUND_ITEM'));               
                         $usswInboundItem->startTrans();
@@ -165,7 +175,8 @@ class InboundAction extends CommonAction{
                             M(C('DB_USSW_INBOUND'))->where(array(C('DB_USSW_INBOUND_ID')=>$orderID))->save($updateInboundOrder);
                             $this->success('导入成功！');
                         }else{
-                            $this->error($errorDuringInsert);
+                            $this->assign('errorInFile',$errorDuringInsert);
+                            $this->display('importInboundError');
                         }                    
                     }
                 }else{
@@ -216,6 +227,15 @@ class InboundAction extends CommonAction{
                 $highestRow = $sheet->getHighestRow(); // 取得总行数
                 $highestColumn = $sheet->getHighestColumn(); // 取得总列数
 
+                for ($i=$highestRow; $i >0 ; $i--) { 
+                    if($sheet->getCell("A".$i) == null or $sheet->getCell("A".$i) =='')
+                        $highestRow = $i;
+                    else{
+                        $highestRow = $i;
+                        break;
+                    }      
+                }
+
                 for($c='A';$c<=$highestColumn;$c++){
                     $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
                 }
@@ -235,7 +255,8 @@ class InboundAction extends CommonAction{
                     }
 
                     if($errorInFile!=null){
-                        $this->error($errorInFile);
+                        $this->assign('errorInFile',$errorInFile);
+                        $this->display('importInboundError');
                     }else{
                         $usswInboundPackage = M(C('DB_USSW_INBOUND_PACKAGE'));               
                         $usswInboundPackage->startTrans();
@@ -259,7 +280,8 @@ class InboundAction extends CommonAction{
                             M(C('DB_USSW_INBOUND'))->where(array(C('DB_USSW_INBOUND_ID')=>$orderID))->save($updateInboundOrder);
                             $this->success('导入成功！');
                         }else{
-                            $this->error($errorDuringInsert);
+                            $this->assign('errorInFile',$errorDuringInsert);
+                            $this->display('importInboundError');
                         }      
                     }  
                     
