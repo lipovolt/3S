@@ -21,6 +21,25 @@ class StorageAction extends CommonAction{
         $this->display();
     }
 
+    public function sort(){
+        if(IS_POST){
+            $sortword = I('post.sortword','','htmlspecialchars');
+            $sort = I('post.sort','','htmlspecialchars');
+            $Data = M(C('DB_USSTORAGE'));
+            import('ORG.Util.Page');
+            $count = $Data->count();
+            $Page = new Page($count,20);            
+            $Page->setConfig('header', '条数据');
+            $show = $Page->show();
+            $usstorage = $Data->order(array($sortword=>$sort))->limit($Page->firstRow.','.$Page->listRows)->select();
+            $this->assign('selected',$sortword); 
+            $this->assign('sort',$sort); 
+            $this->assign('usstorage',$usstorage);
+            $this->assign('page',$show);
+            $this->display('index');
+        }
+    }
+
     Public function edit($sku){
         $this->usstorage = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$sku))->select();
         $this->display();
