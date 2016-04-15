@@ -18,7 +18,7 @@ class InboundAction extends CommonAction{
                         'weight'=>$this->getInboundOrderPackageWeight($value[C('DB_USSW_INBOUND_ID')]),
                         $volume = $this->getInboundOrderPackageVolume($value[C('DB_USSW_INBOUND_ID')]),
                         'volume'=>$volume/1000000,
-                        'volumeWeight'=>$volume/5000,
+                        'volumeWeight'=>$this->getInboundOrderPackageVolumeWeight($value[C('DB_USSW_INBOUND_ID')]),
                         'declare-item-quantity'=>$this->getInboundOrderItemQuantity($value[C('DB_USSW_INBOUND_ID')],C('DB_USSW_INBOUND_ITEM_DQUANTITY')),
                         'confirmed-item-quantity'=>$this->getInboundOrderItemQuantity($value[C('DB_USSW_INBOUND_ID')],C('DB_USSW_INBOUND_ITEM_CQUANTITY')),
                         );
@@ -43,8 +43,8 @@ class InboundAction extends CommonAction{
     }
 
     private function getInboundOrderPackageQuantity($orderID){
-        $resultArray = M(C('DB_USSW_INBOUND_PACKAGE'))->where(array(C('DB_USSW_INBOUND_PACKAGE_IOID')=>$orderID))->getField(C('DB_USSW_INBOUND_PACKAGE_NUMBER'),true);
-        return count($total);
+        $resultArray = M(C('DB_USSW_INBOUND_PACKAGE'))->where(array(C('DB_USSW_INBOUND_PACKAGE_IOID')=>$orderID))->select();
+        return count($resultArray);
     }
 
     private function getInboundOrderPackageWeight($orderID){
@@ -63,6 +63,15 @@ class InboundAction extends CommonAction{
             $total = $total + $value[C('DB_USSW_INBOUND_PACKAGE_LENGTH')]*$value[C('DB_USSW_INBOUND_PACKAGE_WIDTH')]*$value[C('DB_USSW_INBOUND_PACKAGE_HEIGHT')];
         }
         return $total;
+    }
+
+    private function getInboundOrderPackageVolumeWeight($orderID){
+        $resultArray = M(C('DB_USSW_INBOUND_PACKAGE'))->where(array(C('DB_USSW_INBOUND_PACKAGE_IOID')=>$orderID))->select();
+        $total=0;
+        foreach ($resultArray as $key => $value) {
+            $total = $total + $value[C('DB_USSW_INBOUND_PACKAGE_LENGTH')]*$value[C('DB_USSW_INBOUND_PACKAGE_WIDTH')]*$value[C('DB_USSW_INBOUND_PACKAGE_HEIGHT')]/5000;
+        }
+        return round($total,2);
     }
 
 	public function fileImport(){
@@ -244,7 +253,7 @@ class InboundAction extends CommonAction{
 
                     for($i=2;$i<=$highestRow;$i++){
                         $data[$i][C('DB_USSW_INBOUND_PACKAGE_IOID')] = $orderID;
-                        $data[$i][C('DB_USSW_INBOUND_PACKAGE_PACKAGE_NO')]= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();  
+                        $data[$i][C('DB_USSW_INBOUND_PACKAGE_NUMBER')]= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();  
                         $data[$i][C('DB_USSW_INBOUND_PACKAGE_WEIGHT')]= $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();  
                         $data[$i][C('DB_USSW_INBOUND_PACKAGE_LENGTH')]= $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
                         $data[$i][C('DB_USSW_INBOUND_PACKAGE_WIDTH')]= $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
@@ -316,7 +325,7 @@ class InboundAction extends CommonAction{
             return '宽度是必填项！';
         elseif($packageToVerify[C('DB_USSW_INBOUND_PACKAGE_HEIGHT')] == null or $packageToVerify[C('DB_USSW_INBOUND_PACKAGE_HEIGHT')] == '')
             return '高度是必填项！';
-        elseif($packageToVerify[C('DB_USSW_INBOUND_PACKAGE_PACKAGE_NO')] == null or $packageToVerify[C('DB_USSW_INBOUND_PACKAGE_PACKAGE_NO')] == '')
+        elseif($packageToVerify[C('DB_USSW_INBOUND_PACKAGE_NUMBER')] == null or $packageToVerify[C('DB_USSW_INBOUND_PACKAGE_NUMBER')] == '')
             return '编号是必填项！';
         else
             return null;
@@ -325,7 +334,7 @@ class InboundAction extends CommonAction{
     public function updateInboundPackage(){
         if(IS_POST){
             $data[C('DB_USSW_INBOUND_PACKAGE_ID')] = I('post.'.C('DB_USSW_INBOUND_PACKAGE_ID'),'','htmlspecialchars');
-            $data[C('DB_USSW_INBOUND_PACKAGE_PACKAGE_NO')] = I('post.'.C('DB_USSW_INBOUND_PACKAGE_PACKAGE_NO'),'','htmlspecialchars');
+            $data[C('DB_USSW_INBOUND_PACKAGE_NUMBER')] = I('post.'.C('DB_USSW_INBOUND_PACKAGE_NUMBER'),'','htmlspecialchars');
             $data[C('DB_USSW_INBOUND_PACKAGE_WEIGHT')] = I('post.'.C('DB_USSW_INBOUND_PACKAGE_WEIGHT'),'','htmlspecialchars');
             $data[C('DB_USSW_INBOUND_PACKAGE_LENGTH')] = I('post.'.C('DB_USSW_INBOUND_PACKAGE_LENGTH'),'','htmlspecialchars');
             $data[C('DB_USSW_INBOUND_PACKAGE_WIDTH')] = I('post.'.C('DB_USSW_INBOUND_PACKAGE_WIDTH'),'','htmlspecialchars');
