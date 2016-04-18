@@ -246,16 +246,32 @@ class PurchaseAction extends CommonAction{
                 $data[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')] = I('post.'.C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY'),'','htmlspecialchars');
                 $data[C('DB_PURCHASE_ITEM_WAREHOUSE')] = I('post.'.C('DB_PURCHASE_ITEM_WAREHOUSE'),'','htmlspecialchars');
                 M(C('DB_PURCHASE_ITEM'))->save($data);
+                $this->changeItemReceiveStatus($purchaseID);
                 $this->success('保存成功');
             }elseif($purchaseOrderStatus=="已付款" or $purchaseOrderStatus=="待发货" or $purchaseOrderStatus=="部分到货"){
                 $data[C('DB_PURCHASE_ITEM_ID')] = I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars');
                 $data[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')] = I('post.'.C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY'),'','htmlspecialchars');
                 $data[C('DB_PURCHASE_ITEM_WAREHOUSE')] = I('post.'.C('DB_PURCHASE_ITEM_WAREHOUSE'),'','htmlspecialchars');
                 M(C('DB_PURCHASE_ITEM'))->save($data);
+                $this->changeItemReceiveStatus($purchaseID);
                 $this->success('保存成功');
             }else{
                 $this->error('已完成的采购单，无法修改');
             }
+        }
+    }
+
+    private function changeItemReceiveStatus($purchaseID){
+        $status = '全部到货';
+        $items = M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_PURCHASE_ID')=>$purchaseID))->select();
+        foreach ($items as $key => $value) {
+            if($value[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')] != $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]){
+                $status = '部分到货';
+            }
+        }
+        M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->setField(C('DB_PURCHASE_STATUS'),$status);
+        if($status == '全部到货'){
+            $this->purchasedItemInSzStorage($items);
         }
     }
 
@@ -301,6 +317,30 @@ class PurchaseAction extends CommonAction{
         }else{
             $this->error("状态无法更新");
         }
+    }
+
+    private function purchasedItemInSzStorage($items){
+
+        $szstorage = M(C('DB_SZSTORAGE'));
+        $szstorage->startTrans();
+        foreach ($items as $key => $value) {
+            $row = $szstorage->where(array(C('DB_SZSTORAGE_SKU')=>$value[C('DB_PURCHASE_ITEM_SKU')]))->find();
+
+            if($row != null){
+                $cinventory = $row[C('DB_SZSTORAGE_CINVENTORY')] + $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')];
+                $ainventory = $row[C('DB_SZSTORAGE_AINVENTORY')] + $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')];
+                $data[C('DB_SZSTORAGE_CINVENTORY')] = $cinventory;
+                $data[C('DB_SZSTORAGE_AINVENTORY')] = $ainventory;
+                $szstorage->where(array(C('DB_SZSTORAGE_SKU')=>$value[C('DB_PURCHASE_ITEM_SKU')]))->save($data);
+            }else{
+                $data[C('DB_SZSTORAGE_SKU')] = $value[C('DB_PURCHASE_ITEM_SKU')];
+                $data[C('DB_SZSTORAGE_CINVENTORY')] = $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')];
+                $data[C('DB_SZSTORAGE_AINVENTORY')] = $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')];
+                $szstorage->add($data);
+            }
+            
+        }
+        $szstorage->commit();
     }
 
 }
