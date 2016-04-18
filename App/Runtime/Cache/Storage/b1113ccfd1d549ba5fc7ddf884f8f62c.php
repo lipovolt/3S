@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>美国仓库存信息管理</title>
+<title>库存信息</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -53,14 +53,14 @@
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存发送邮件</a></dd>
-</dl><!-- 
+	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
+</dl>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
-	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl> -->
+	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
+</dl>
 
 		</div>
 	</li>
@@ -139,86 +139,55 @@
 	<div class="area clearfix">
 		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>美国库存管理</strong></div>
+			<div class="sidenav-hd"><strong>库存</strong></div>
 			<div class="sidenav-bd">
 				<dl>
-	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
-	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
-	<dd><a href="<?php echo U('Ussw/Inbound/createInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
+	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
 </dl>
 <dl>
-	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Outbound/importEbayWso');?>">导入ebay订单</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
 </dl>
-<dl>
-	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Storage/add');?>">新增库存</a></dd>
-</dl>
-	
+
 			</div>
 		</div>
 	<div class="content">
-	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Ussw/Storage/index');?>" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">关键字</label>
-						<div class="control-wrap">
-							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_USSTORAGE_SKU');?>">产品编码</option>
-								<option value="<?php echo C('DB_USSTORAGE_CNAME');?>">产品名称</option>
-							</select>
-						</div>
-						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
-						</div>
-					</div>
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
-						<span>查询</span>
-					</button>
-				</div>			
+	<div id="Australia" class="main">
+		<form name="search_outbound" id="search_outbound" action="<?php echo U('Storage/Storage/szstorage');?>" method="POST">			
+		<div class="block-indent search-area">
+			<div class="form-group">
+				<label for="" class="control-label">关键字</label>
+				<div class="control-wrap">
+					<select name="keyword" id="keyword" data-value="">
+						<option value="sku">产品编码</option>
+						<option value="cname">产品中文名称</option>
+						<option value="ename">产品英文名称</option>
+					</select>
+				</div>
+				<div class="control-wrap">
+					<input type="text" name="keywordValue" id="keywordValue" value="">
+				</div>
 			</div>
-		</form>
-		<form name="sort_usstorage" id="sort_usstorage" action="<?php echo U('Ussw/Storage/sort');?>" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">按照</label>
-						<div class="control-wrap">
-						<select name="sortword" id="sortword" first="firstSelect" data-value="">
-							<option value="<?php echo C('DB_USSTORAGE_SKU');?>" <?php echo C('DB_USSTORAGE_SKU')==$selected?selected:'' ?>>产品编码</option>
-							<option value="<?php echo C('DB_USSTORAGE_AINVENTORY');?>" <?php echo C('DB_USSTORAGE_AINVENTORY')==$selected?selected:'' ?>>可用库存</option>
-							<option value="<?php echo C('DB_USSTORAGE_CINVENTORY');?>" <?php echo C('DB_USSTORAGE_CINVENTORY')==$selected?selected:'' ?>>历史入库</option>
-							<option value="<?php echo C('DB_USSTORAGE_CSALES');?>" <?php echo C('DB_USSTORAGE_CSALES')==$selected?selected:'' ?>>历史销量</option>
-							<option value="<?php echo C('DB_USSTORAGE_OINVENTORY');?>" <?php echo C('DB_USSTORAGE_OINVENTORY')==$selected?selected:'' ?>>待出库</option>
-							<option value="<?php echo C('DB_USSTORAGE_IINVENTORY');?>" <?php echo C('DB_USSTORAGE_IINVENTORY')==$selected?selected:'' ?>>在途库存</option>
-						</select>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="control-wrap">
-							<select name="sort" id="sort" data-value="">
-								<option value="asc" <?php echo 'asc'==$sort?selected:'' ?>>正序</option>
-								<option value="desc" <?php echo 'desc'==$sort?selected:'' ?>>倒序</option>
-							</select>
-						</div>
-					</div>
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
-						<span>排序</span>
-					</button>
-				</div>			
-			</div>
-		</form>
+			<button class="btn btn-s btn-blue" onclick="search_outbound.submit();">
+				<i class="icon search"></i>
+				<i class="vline-inline"></i>
+				<span>查询</span>
+			</button>
+        </div>
+    </form>
 		<div>
-			<div class="tab-content">	
+			<div class="tab-content data-list">				
+							
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th><div class="t1">货位</div></th>
-					    <th><div class="t1">产品编码</div></th>					    
+						<th>货位</th>
+					    <th>产品编码</th>					    
 					    <th><div class="tl">中文名称</div></th>	                          
 					    <th><div class="tl">英文名称</div></th>
 						<th><div class="tl">属性</div></th>
@@ -228,34 +197,37 @@
 						<th><div class="tr">在途库存</div></th>
 						<th><div class="tr">历史销量</div></th>
 						<th><div class="t1">备注</div></th>
-						<th width="230">操作</th>
 					</tr>    
 					<tr>
-						<?php if(is_array($usstorage)): $i = 0; $__LIST__ = $usstorage;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_POSITION')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_SKU')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_CNAME')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_ENAME')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_ATTRIBUTE')]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_CINVENTORY')]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_AINVENTORY')]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_OINVENTORY')]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_IINVENTORY')]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_CSALES')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_REMARK')]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Ussw/Storage/edit',array(C('DB_USSTORAGE_SKU')=>$vo[C('DB_USSTORAGE_SKU')]));?>">编辑</a>
-						</td>
+						<?php if(is_array($szstorage)): $i = 0; $__LIST__ = $szstorage;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><?php echo ($vo["position"]); ?></td>
+						<td><?php echo ($vo["sku"]); ?></td>						
+						<td><div class="tl"><?php echo ($vo["cname"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["ename"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["attribute"]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo["cinventory"]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo["ainventory"]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo["oinventory"]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo["iinventory"]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo["csales"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["remark"]); ?></div></td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
-					</tr>								
+					</tr>						
 				</table>
 				<div class="result page" align="center"><?php echo ($page); ?></div>
+				<div class="tr">
+								
+					<!-- 分页开始  --> 
+										<!-- 分页 结束 -->	
+				</div>
 			</div>
 		</div>
 	</div>
 
 
-	</div>
+
+
+		</div>
 	</div>
 		
 	<!-- InstanceEndEditable -->
