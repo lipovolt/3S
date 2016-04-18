@@ -49,6 +49,7 @@ return array(
 	'DB_3S_USER_LOGINIP' => 'loginip',
 	'DB_3S_USER_LOGINTIME' => 'logintime',
 	'DB_3S_USER_LOCK' => 'lock',
+	'DB_3s_USER_EMAIL' => 'email',
 
 	//us_inventory
 	'DB_US_INVENTORY' => 'us_inventory',
@@ -192,6 +193,22 @@ return array(
 	'DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO' => 'transaction_no',
 
 	//usstorage
+	/*
+	CREATE TABLE IF NOT EXISTS `3s_usstorage` (
+	  `id` smallint(6) unsigned primary key NOT NULL,
+	  `position` varchar(10) NOT NULL,
+	  `sku` varchar(10) NOT NULL,
+	  `cname` varchar(255) DEFAULT NULL,
+	  `ename` varchar(255) DEFAULT NULL,
+	  `attribute` varchar(50) DEFAULT NULL,
+	  `cinventory` smallint(6) DEFAULT 0,
+	  `ainventory` smallint(6) DEFAULT 0,
+	  `oinventory` smallint(6) DEFAULT 0,
+	  `iinventory` smallint(6) DEFAULT 0,
+	  `csales` smallint(6) DEFAULT 0,
+	  `remark` varchar(255) DEFAULT NULL
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
 	'DB_USSTORAGE' => 'usstorage',
 	'DB_USSTORAGE_ID' => 'id',
 	'DB_USSTORAGE_POSITION' => 'position',
@@ -205,6 +222,40 @@ return array(
 	'DB_USSTORAGE_IINVENTORY' => 'iinventory',
 	'DB_USSTORAGE_CSALES' => 'csales',
 	'DB_USSTORAGE_REMARK' => 'remark',
+
+
+	//szstorage
+	/*
+	CREATE TABLE IF NOT EXISTS `3s_szstorage` (
+	  `id` smallint(6) unsigned primary key auto_increment,
+	  `position` varchar(10) default NULL,
+	  `sku` varchar(10) NOT NULL,
+	  `cname` varchar(255) DEFAULT NULL,
+	  `ename` varchar(255) DEFAULT NULL,
+	  `attribute` varchar(50) DEFAULT NULL,
+	  `cinventory` smallint(6) DEFAULT 0,
+	  `ainventory` smallint(6) DEFAULT 0,
+	  `oinventory` smallint(6) DEFAULT 0,
+	  `iinventory` smallint(6) DEFAULT 0,
+	  `csales` smallint(6) DEFAULT 0,
+	  `remark` varchar(255) DEFAULT NULL
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
+	'DB_SZSTORAGE' => 'szstorage',
+	'DB_SZSTORAGE_ID' => 'id',
+	'DB_SZSTORAGE_POSITION' => 'position',
+	'DB_SZSTORAGE_SKU' => 'sku',
+	'DB_SZSTORAGE_CNAME' => 'cname',
+	'DB_SZSTORAGE_ENAME' => 'ename',
+	'DB_SZSTORAGE_ATTRIBUTE' => 'attribute',
+	'DB_SZSTORAGE_CINVENTORY' => 'cinventory',
+	'DB_SZSTORAGE_AINVENTORY' => 'ainventory',
+	'DB_SZSTORAGE_OINVENTORY' => 'oinventory',
+	'DB_SZSTORAGE_IINVENTORY' => 'iinventory',
+	'DB_SZSTORAGE_CSALES' => 'csales',
+	'DB_SZSTORAGE_REMARK' => 'remark',
+
+
 
 	//purchase
 	/*创建补货表
