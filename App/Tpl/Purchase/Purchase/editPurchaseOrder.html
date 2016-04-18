@@ -228,12 +228,6 @@ function checkForm()
 				<td><input id="{:C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')}" name="{:C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')}" value="{$vo[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')]}"></input></td>
 				<td><input id="{:C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')}" name="{:C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')}" value="{$vo[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]}"></input></td>
 				<td><input id="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}" name="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}" value="{$vo[C('DB_PURCHASE_ITEM_WAREHOUSE')]}"></input>
-					<select name="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}"  id="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}">
-						<option value="unSelected" >请选择</option>
-						<option value="" <?php echo $purchaseOrder[0][C('DB_PURCHASE_MANAGER')]=="张昱"?selected:'' ?>>张昱</option>
-						<option value="杨杰" <?php echo $purchaseOrder[0][C('DB_PURCHASE_MANAGER')]=="杨杰"?selected:'' ?>>杨杰</option>
-						<option value="王宁" <?php echo $purchaseOrder[0][C('DB_PURCHASE_MANAGER')]=="王宁"?selected:'' ?>>王宁</option>		
-					</select>
 				</td>
 				<td>{$vo[C('DB_PURCHASE_ITEM_TRANSPORT_METHOD')]}</td>
 				<td>
