@@ -7,7 +7,7 @@ return array(
 	'APP_DEBUG' => True,
 
 	//开启应用分组
-	'APP_GROUP_LIST' => 'Index,Product,Sale,Storage,Ussw',
+	'APP_GROUP_LIST' => 'Index,Product,Purchase,Sale,Storage,Ussw',
 	'DEFAULT_GROUP' => 'Index',
 
 	//定义数据库连接参数
@@ -35,7 +35,7 @@ return array(
 	'SESSION_TYPE' => 'Db',
 
 	// 加载扩展配置文件
-	'LOAD_EXT_CONFIG' => 'db,ui,importTemplate', 
+	'LOAD_EXT_CONFIG' => 'db,ui,importTemplate,email', 
 
 );
 ?>

@@ -87,7 +87,7 @@ return array(
 	`id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
 	`inbound_id` smallint(6) default 0,
 	`package_number` varchar(10) default null,
-	`confirme` tiniint(1) defualt 0,
+	`confirme` tinyint(1) default 0,
 	`weight` decimal(10,2) default 0,
 	`length` decimal(10,2) default 0,
 	`width`  decimal(10,2) default 0,
@@ -205,5 +205,83 @@ return array(
 	'DB_USSTORAGE_IINVENTORY' => 'iinventory',
 	'DB_USSTORAGE_CSALES' => 'csales',
 	'DB_USSTORAGE_REMARK' => 'remark',
+
+	//purchase
+	/*创建补货表
+	create table if not exists `3s_purchase`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`manager` varchar(20) default null,
+	`create_date` datetime,
+	`purchase_date` datetime,
+	`shipping_fee` decimal(6,2),
+	`status` varchar(20) default null,
+	`cancel` tinyint(1) default 0,
+	`order_number` varchar(20) default null,
+	`tracking_number` varchar(20) default null,
+	`supplier_id` smallint(6) default null,
+	`remark` varchar(255) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_PURCHASE' => 'purchase',
+	'DB_PURCHASE_ID' => 'id',
+	'DB_PURCHASE_MANAGER' => 'manager',
+	'DB_PURCHASE_CREATE_DATE' => 'create_date',
+	'DB_PURCHASE_PURCHASED_DATE' => 'purchase_date',
+	'DB_PURCHASE_SHIPPING_FEE' => 'shipping_fee',
+	'DB_PURCHASE_STATUS' => 'status',//待确认, 已确认, 待付款, 已付款, 待发货, 部分到货, 全部到货, 
+	'DB_PURCHASE_CANCEL' => 'cancel',
+	'DB_PURCHASE_ORDER_NUMBER' => 'order_number',//purchase order number
+	'DB_PURCHASE_TRACKING_NUMBER' => 'tracking_number',	
+	'DB_PURCHASE_SUPPLIER_ID' => 'supplier_id',	
+	'DB_PURCHASE_REMARK' => 'remark',
+
+	
+	//purchase_item
+	/*创建补货产品表
+	create table if not exists `3s_purchase_item`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`purchase_id` smallint(6) default null,
+	`sku` varchar(10) default null,
+	`price` decimal(6,2) default 0,
+	`purchase_quantity` smallint(6) default 0,
+	`received_quantity` smallint(6) default 0,
+	`warehouse` varchar(20) default null,
+	`transport_method` varchar(10) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_PURCHASE_ITEM' => 'purchase_item',
+	'DB_PURCHASE_ITEM_ID' => 'id',
+	'DB_PURCHASE_ITEM_PURCHASE_ID' => 'purchase_id',
+	'DB_PURCHASE_ITEM_SKU' => 'sku',
+	'DB_PURCHASE_ITEM_PRICE' => 'price',
+	'DB_PURCHASE_ITEM_PURCHASE_QUANTITY' => 'purchase_quantity',
+	'DB_PURCHASE_ITEM_RECEIVED_QUANTITY' => 'received_quantity',
+	'DB_PURCHASE_ITEM_WAREHOUSE' => 'warehouse',
+	'DB_PURCHASE_ITEM_TRANSPORT_METHOD' => 'transport_method',
+
+
+	//supplier
+	/*创建补货产品表
+	create table if not exists `3s_supplier`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`company` varchar(50) default null,
+	`person` varchar(50) default null,
+	`wangwang` varchar(20) default null,
+	`qq` varchar(20) default null,
+	`website` varchar(255) default null,
+	`tel` varchar(20) default null,
+	`address` varchar(50) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_SUPPLIER' => 'supplier',
+	'DB_SUPPLIER_ID' => 'id',
+	'DB_SUPPLIER_COMPANY' => 'company',
+	'DB_SUPPLIER_PERSON' =>'person',
+	'DB_SUPPLIER_WANGWANG' => 'wangwang',
+	'DB_SUPPLIER_QQ' => 'qq',
+	'DB_SUPPLIER_WEBSITE' => 'website',
+	'DB_SUPPLIER_TEL' => 'tel',
+	'DB_SUPPLIER_ADDRESS' => 'address',
+
 	);
 ?>

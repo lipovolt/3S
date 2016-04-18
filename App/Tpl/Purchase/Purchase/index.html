@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>产品信息</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>采购管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/purchaseMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form name="search_product" id="search_product" action="{:U('Purchase/Purchase/index')}" method="POST">
+			<div class="search-area">
+				<div class="item">
+					<div class="form-group">
+						<label for="keyword" class="control-label">关键字</label>
+						<div class="control-wrap">
+							<select name="keyword" id="keyword" data-value="">
+								<option value="{:C('DB_PURCHASE_ID')}">采购单号</option>
+								<option value="{:C('DB_PURCHASE_MANAGER')}">产品经理</option>
+							</select>
+						</div>
+						<div class="control-wrap">
+							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
+						</div>
+					</div>
+					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
+				</div>			
+			</div>
+		</form>
+		<div>
+			<div class="tab-content">	
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th><div class="tl">采购单号</div></th>
+						<th><div class="tl">产品经理</div></th>
+						<th><div class="tl">创建时间</div></th>
+						<th><div class="tl">采购时间</th>
+						<th><div class="tl">状态</div></th>
+						<th><div class="tl">订单号</div></th>
+						<th><div class="tl">追踪号</div></th>
+						<th><div class="tl">备注</div></th>
+						<th width="230">操作</th>
+					</tr>
+					<volist name="purchaseOrder" id="vo">
+						<tr>
+						<td><div class="tl">{$vo[C('DB_PURCHASE_ID')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PURCHASE_MANAGER')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_PURCHASE_CREATE_DATE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PURCHASE_PURCHASED_DATE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PURCHASE_STATUS')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PURCHASE_ORDER_NUMBER')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PURCHASE_TRACKING_NUMBER')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PURCHASE_REMARK')]}</div></td>
+						<td>
+							<a href="{:U('Purchase/Purchase/editPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]))}">编辑</a>
+							<a href="{:U('Purchase/Purchase/confirmPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]))}">确认</a>
+							<a href="{:U('Purchase/Purchase/payPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]))}">付款</a>
+						</td>
+						</tr>	
+					</volist> 								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

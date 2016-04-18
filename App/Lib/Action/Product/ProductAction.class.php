@@ -49,6 +49,15 @@ class ProductAction extends CommonAction{
                 $highestRow = $sheet->getHighestRow(); // 取得总行数
                 $highestColumn = $sheet->getHighestColumn(); // 取得总列数
 
+                for ($i=$highestRow; $i >0 ; $i--) { 
+                    if($sheet->getCell("A".$i) == null or $sheet->getCell("A".$i) =='')
+                        $highestRow = $i;
+                    else{
+                        $highestRow = $i;
+                        break;
+                    }      
+                }
+
                 //excel firt column name verify
                 for($c='A';$c<=$highestColumn;$c++){
                     $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();

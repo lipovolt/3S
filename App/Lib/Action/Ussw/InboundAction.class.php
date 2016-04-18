@@ -10,18 +10,18 @@ class InboundAction extends CommonAction{
         import('ORG.Util.Page');
         foreach ($usswInOrders as $key => $value) {
             $Data[$key]=array(
-                        C('DB_USSW_INBOUND_ID')=>$value[C('DB_USSW_INBOUND_ID')],
-                        C('DB_USSW_INBOUND_DATE')=>$value[C('DB_USSW_INBOUND_DATE')],
-                        C('DB_USSW_INBOUND_SHIPPING_WAY')=>$value[C('DB_USSW_INBOUND_SHIPPING_WAY')],
-                        C('DB_USSW_INBOUND_STATUS')=>$value[C('DB_USSW_INBOUND_STATUS')],
-                        'declare-package-quantity'=>$this->getInboundOrderPackageQuantity($value[C('DB_USSW_INBOUND_ID')]),
-                        'weight'=>$this->getInboundOrderPackageWeight($value[C('DB_USSW_INBOUND_ID')]),
-                        $volume = $this->getInboundOrderPackageVolume($value[C('DB_USSW_INBOUND_ID')]),
-                        'volume'=>$volume/1000000,
-                        'volumeWeight'=>$this->getInboundOrderPackageVolumeWeight($value[C('DB_USSW_INBOUND_ID')]),
-                        'declare-item-quantity'=>$this->getInboundOrderItemQuantity($value[C('DB_USSW_INBOUND_ID')],C('DB_USSW_INBOUND_ITEM_DQUANTITY')),
-                        'confirmed-item-quantity'=>$this->getInboundOrderItemQuantity($value[C('DB_USSW_INBOUND_ID')],C('DB_USSW_INBOUND_ITEM_CQUANTITY')),
-                        );
+                C('DB_USSW_INBOUND_ID')=>$value[C('DB_USSW_INBOUND_ID')],
+                C('DB_USSW_INBOUND_DATE')=>$value[C('DB_USSW_INBOUND_DATE')],
+                C('DB_USSW_INBOUND_SHIPPING_WAY')=>$value[C('DB_USSW_INBOUND_SHIPPING_WAY')],
+                C('DB_USSW_INBOUND_STATUS')=>$value[C('DB_USSW_INBOUND_STATUS')],
+                'declare-package-quantity'=>$this->getInboundOrderPackageQuantity($value[C('DB_USSW_INBOUND_ID')]),
+                'weight'=>$this->getInboundOrderPackageWeight($value[C('DB_USSW_INBOUND_ID')]),
+                $volume = $this->getInboundOrderPackageVolume($value[C('DB_USSW_INBOUND_ID')]),
+                'volume'=>$volume/1000000,
+                'volumeWeight'=>$this->getInboundOrderPackageVolumeWeight($value[C('DB_USSW_INBOUND_ID')]),
+                'declare-item-quantity'=>$this->getInboundOrderItemQuantity($value[C('DB_USSW_INBOUND_ID')],C('DB_USSW_INBOUND_ITEM_DQUANTITY')),
+                'confirmed-item-quantity'=>$this->getInboundOrderItemQuantity($value[C('DB_USSW_INBOUND_ID')],C('DB_USSW_INBOUND_ITEM_CQUANTITY')),
+                );
         }
         $count = count($Data);
         $Page = new Page($count,20);            
@@ -423,17 +423,17 @@ class InboundAction extends CommonAction{
     public function updateStorage($ioid){
         $status = M(C('DB_USSW_INBOUND'))->where(array(C('DB_USSW_INBOUND_ID')=>$ioid))->getField('status');
         if($status != "已入库"){
-            $items = M(C('DB_USSW_INBOUND_ITEM'))->where(array(C('DB_USSW_INBOUND_PACKAGE_IOID')=>$ioid))->select();
+            $items = M(C('DB_USSW_INBOUND_ITEM'))->where(array(C('DB_USSW_INBOUND_ITEM_IOID')=>$ioid))->select();
             $storage = M(C('DB_USSTORAGE'));
             $storage->startTrans();
             foreach ($items as $value) {
-               $a = $storage->where(array(C('DB_USSTORAGE_SKU')=>$value[C('DB_USSW_INBOUND_ITEM_SKU')]))->getField(C('DB_USSTORAGE_CINVENTORY'));
-               $c = $storage->where(array(C('DB_USSTORAGE_SKU')=>$value[C('DB_USSW_INBOUND_ITEM_SKU')]))->getField(C('DB_USSTORAGE_AINVENTORY'));
+               $a = $storage->where(array(C('DB_USSTORAGE_SKU')=>$value[C('DB_USSW_INBOUND_ITEM_SKU')]))->getField(C('DB_USSTORAGE_AINVENTORY'));
+               $c = $storage->where(array(C('DB_USSTORAGE_SKU')=>$value[C('DB_USSW_INBOUND_ITEM_SKU')]))->getField(C('DB_USSTORAGE_CINVENTORY'));
                $q[C('DB_USSTORAGE_SKU')] = $value[C('DB_USSW_INBOUND_ITEM_SKU')];
                $q[C('DB_USSTORAGE_AINVENTORY')] = $a+$value[C('DB_USSW_INBOUND_ITEM_CQUANTITY')];
                $q[C('DB_USSTORAGE_CINVENTORY')] = $c+$value[C('DB_USSW_INBOUND_ITEM_CQUANTITY')];
                if($this->isInStorage($value[C('DB_USSW_INBOUND_ITEM_SKU')])!=0){
-                    $r = $storage->where(array(C('DB_USSTORAGE_SKU')=>$this->isInStorage($value[C('DB_USSW_INBOUND_ITEM_SKU')])))->save($q);
+                    $r = $storage->where(array(C('DB_USSTORAGE_ID')=>$this->isInStorage($value[C('DB_USSW_INBOUND_ITEM_SKU')])))->save($q);
                }
                else{
 
@@ -452,19 +452,17 @@ class InboundAction extends CommonAction{
     }
 
     private function isInStorage($sku){
-        $row = M('usstorage')->where('sku='.$sku)->find();
+        $row = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$sku))->find();
         if( $row == null){
             return 0;
         } 
         else{
-            return $row['id'];
+            return $row[C('DB_USSTORAGE_ID')];
         }
     }
 
     public function deleteInboundOrder($orderIDToDelete){
-        M()->execute('drop table'.C('DB_PREFIX').'ussw_inbound_'.$orderIDToDelete,true);
-        M('ussw_inbound')->where('id='.$orderIDToDelete)->delete();
-        $this->success('操作成功！');        
+        $this->error('该功能尚未完善');       
     }
 
 }
