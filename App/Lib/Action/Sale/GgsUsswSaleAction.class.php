@@ -87,7 +87,7 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['local-shipping-fee']=$this->getUsswLocalShippingFee($value['weight'],$value['length'],$value['width'],$value['height']);
         	$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]=$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')];
         	$data[$key]['cost']=round($this->getUsswCost($data[$key]),2);
-        	$data[$key]['gprofit']=$data[$key]['ggs-ussw-sp']-$data[$key]['cost'];
+        	$data[$key]['gprofit']=$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key]['ggs-ussw-sp']*100,2).'%';
         	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')]*0.0352740,2);
         	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')]*0.3937008,2);
