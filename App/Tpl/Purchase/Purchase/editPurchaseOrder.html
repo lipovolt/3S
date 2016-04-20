@@ -40,12 +40,34 @@
 function checkForm()
 {
 	var status = document.getElementById("status").innerText;
-    if(status.trim()==("待确认") || status.trim()=="已确认" || status.trim()=="待付款"){
+    if(status.trim()==("待确认") || status.trim()=="待付款"){
     	return true;
     }else{
-    	alert("已付款采购单只更新到货数量和目的仓！");
+    	alert("已付款采购单只更新到货数量！");
     	return false;
     }
+}
+
+function checkNewReceived(){
+	var newReceived = document.getElementById("newReceived").value;
+	if(newReceived<0){
+		alert("新到数量不能是负数");
+		return false;
+	}else{
+		return true;
+	}
+}
+
+function addNewReceived(id){
+	var newReceived = prompt('输入到货数量：', '');
+	if(newReceived != null && newReceived != ''){
+		if(newReceived<=0){
+			alert("新到数量不正确");
+		}else{
+			var url="{:U('Purchase/Purchase/receivePurchasedItem')}?id="+id+"&newReceived="+newReceived;
+		    window.location.href=url;
+		}
+	}
 }
 </script>
 
@@ -214,12 +236,11 @@ function checkForm()
 				<th>采购数量</th>
 				<th>到货数量</th>
 				<th>仓库</th>
-				<th>运输方式</th>
 				<th>操作</th>
 			</tr> 
 
 			<volist name="purchaseItem" id="vo">
-				<form method="POST" id="edit_purchaseItem" action="{:U('Purchase/Purchase/updatePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]))}">
+				<form method="POST" id="edit_purchaseItem" name="edit_purchaseItem" action="{:U('Purchase/Purchase/updatePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]))}">
 				<tr>
 				<td><input id="{:C('DB_PURCHASE_ITEM_SKU')}" name="{:C('DB_PURCHASE_ITEM_SKU')}" value="{$vo[C('DB_PURCHASE_ITEM_SKU')]}"></input>
 					<input type="hidden" id="{:C('DB_PURCHASE_ITEM_ID')}" name="{:C('DB_PURCHASE_ITEM_ID')}" value="{$vo[C('DB_PURCHASE_ITEM_ID')]}"></input>
@@ -229,10 +250,10 @@ function checkForm()
 				<td><input id="{:C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')}" name="{:C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')}" value="{$vo[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]}"></input></td>
 				<td><input id="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}" name="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}" value="{$vo[C('DB_PURCHASE_ITEM_WAREHOUSE')]}"></input>
 				</td>
-				<td>{$vo[C('DB_PURCHASE_ITEM_TRANSPORT_METHOD')]}</td>
 				<td>
-					<button class="btn btn-blue btn-s" id="saveProductInfo" onclick="checkForm()">保存</button>
-					<a class="btn btn-blue btn-s" href="{:U('Purchase/Purchase/deletePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]))}" onclick='return checkForm()'>删除</a>
+					<button class="btn btn-blue btn-s-auto " id="saveProductInfo" onclick="return checkForm()">保存</button>
+					<a class="btn btn-blue btn-s-auto " href="{:U('Purchase/Purchase/deletePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]))}" onclick="return checkForm()">删除</a>
+					<a class="btn btn-blue btn-s-auto " onclick="addNewReceived({$vo[C('DB_PURCHASE_ITEM_ID')]})">添加到货</a>
 				</td>
 				</tr>
 				</form>	

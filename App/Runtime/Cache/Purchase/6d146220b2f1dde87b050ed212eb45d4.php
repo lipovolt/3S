@@ -167,12 +167,34 @@
 function checkForm()
 {
 	var status = document.getElementById("status").innerText;
-    if(status.trim()==("待确认") || status.trim()=="已确认" || status.trim()=="待付款"){
+    if(status.trim()==("待确认") || status.trim()=="待付款"){
     	return true;
     }else{
-    	alert("已付款采购单只更新到货数量和目的仓！");
+    	alert("已付款采购单只更新到货数量！");
     	return false;
     }
+}
+
+function checkNewReceived(){
+	var newReceived = document.getElementById("newReceived").value;
+	if(newReceived<0){
+		alert("新到数量不能是负数");
+		return false;
+	}else{
+		return true;
+	}
+}
+
+function addNewReceived(id){
+	var newReceived = prompt('输入到货数量：', '');
+	if(newReceived != null && newReceived != ''){
+		if(newReceived<=0){
+			alert("新到数量不正确");
+		}else{
+			var url="<?php echo U('Purchase/Purchase/receivePurchasedItem');?>?id="+id+"&newReceived="+newReceived;
+		    window.location.href=url;
+		}
+	}
 }
 </script>
 
@@ -341,11 +363,10 @@ function checkForm()
 				<th>采购数量</th>
 				<th>到货数量</th>
 				<th>仓库</th>
-				<th>运输方式</th>
 				<th>操作</th>
 			</tr> 
 
-			<?php if(is_array($purchaseItem)): $i = 0; $__LIST__ = $purchaseItem;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><form method="POST" id="edit_purchaseItem" action="<?php echo U('Purchase/Purchase/updatePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]));?>">
+			<?php if(is_array($purchaseItem)): $i = 0; $__LIST__ = $purchaseItem;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><form method="POST" id="edit_purchaseItem" name="edit_purchaseItem" action="<?php echo U('Purchase/Purchase/updatePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]));?>">
 				<tr>
 				<td><input id="<?php echo C('DB_PURCHASE_ITEM_SKU');?>" name="<?php echo C('DB_PURCHASE_ITEM_SKU');?>" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_SKU')]); ?>"></input>
 					<input type="hidden" id="<?php echo C('DB_PURCHASE_ITEM_ID');?>" name="<?php echo C('DB_PURCHASE_ITEM_ID');?>" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_ID')]); ?>"></input>
@@ -355,10 +376,10 @@ function checkForm()
 				<td><input id="<?php echo C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY');?>" name="<?php echo C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY');?>" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]); ?>"></input></td>
 				<td><input id="<?php echo C('DB_PURCHASE_ITEM_WAREHOUSE');?>" name="<?php echo C('DB_PURCHASE_ITEM_WAREHOUSE');?>" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_WAREHOUSE')]); ?>"></input>
 				</td>
-				<td><?php echo ($vo[C('DB_PURCHASE_ITEM_TRANSPORT_METHOD')]); ?></td>
 				<td>
-					<button class="btn btn-blue btn-s" id="saveProductInfo" onclick="checkForm()">保存</button>
-					<a class="btn btn-blue btn-s" href="<?php echo U('Purchase/Purchase/deletePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]));?>" onclick='return checkForm()'>删除</a>
+					<button class="btn btn-blue btn-s-auto " id="saveProductInfo" onclick="return checkForm()">保存</button>
+					<a class="btn btn-blue btn-s-auto " href="<?php echo U('Purchase/Purchase/deletePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]));?>" onclick="return checkForm()">删除</a>
+					<a class="btn btn-blue btn-s-auto " onclick="addNewReceived(<?php echo ($vo[C('DB_PURCHASE_ITEM_ID')]); ?>)">添加到货</a>
 				</td>
 				</tr>
 				</form><?php endforeach; endif; else: echo "" ;endif; ?>	

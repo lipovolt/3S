@@ -238,7 +238,7 @@ class PurchaseAction extends CommonAction{
         if(IS_POST){
             $purchaseID = M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_ID')=>I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars')))->getField(C('DB_PURCHASE_ITEM_PURCHASE_ID'));
             $purchaseOrderStatus = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->getField(C('DB_PURCHASE_STATUS'));
-            if($purchaseOrderStatus=="待确认" or $purchaseOrderStatus=="已确认" or $purchaseOrderStatus=="待付款"){
+            if($purchaseOrderStatus=="待确认" or $purchaseOrderStatus=="待付款"){
                 $data[C('DB_PURCHASE_ITEM_ID')] = I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars');
                 $data[C('DB_PURCHASE_ITEM_SKU')] = I('post.'.C('DB_PURCHASE_ITEM_SKU'),'','htmlspecialchars');
                 $data[C('DB_PURCHASE_ITEM_PRICE')] = I('post.'.C('DB_PURCHASE_ITEM_PRICE'),'','htmlspecialchars');
@@ -248,10 +248,9 @@ class PurchaseAction extends CommonAction{
                 M(C('DB_PURCHASE_ITEM'))->save($data);
                 $this->changeItemReceiveStatus($purchaseID);
                 $this->success('保存成功');
-            }elseif($purchaseOrderStatus=="已付款" or $purchaseOrderStatus=="待发货" or $purchaseOrderStatus=="部分到货"){
+            }elseif($purchaseOrderStatus=="待发货" or $purchaseOrderStatus=="部分到货"){
                 $data[C('DB_PURCHASE_ITEM_ID')] = I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars');
                 $data[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')] = I('post.'.C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY'),'','htmlspecialchars');
-                $data[C('DB_PURCHASE_ITEM_WAREHOUSE')] = I('post.'.C('DB_PURCHASE_ITEM_WAREHOUSE'),'','htmlspecialchars');
                 M(C('DB_PURCHASE_ITEM'))->save($data);
                 $this->changeItemReceiveStatus($purchaseID);
                 $this->success('保存成功');
@@ -300,7 +299,7 @@ class PurchaseAction extends CommonAction{
     public function confirmPurchaseOrder($purchaseID){
         $status = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->getField(C('DB_PURCHASE_STATUS'));
         if($status == '待确认'){
-            M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->setField(C('DB_PURCHASE_STATUS'),'已确认');
+            M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->setField(C('DB_PURCHASE_STATUS'),'待付款');
             $this->success("采购单已确认");
         }else{
             $this->error("已确认过的采购单，无法再次确认");
@@ -311,36 +310,49 @@ class PurchaseAction extends CommonAction{
         $status = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->getField(C('DB_PURCHASE_STATUS'));
         if($status == '待确认'){
             $this->error("请先确认采购单");
-        }elseif($status == '已确认'){
-            M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->setField(C('DB_PURCHASE_STATUS'),'已付款');
+        }elseif($status == '待付款'){
+            $data[C('DB_PURCHASE_PURCHASED_DATE')] = date("Y-m-d H:i:s" ,time());
+            $data[C('DB_PURCHASE_STATUS')] = '待发货';
+            M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->save($data);
             $this->success("已修改状态");
         }else{
             $this->error("状态无法更新");
         }
     }
 
-    private function purchasedItemInSzStorage($items){
+    public function receivePurchasedItem($id,$newReceived){
+        $purchaseItem = M(C('DB_PURCHASE_ITEM'));        
+        $purchaseItem->startTrans();
+        $receivedQuantity = $purchaseItem->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->getField(C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY'));
+        $receivedQuantity = $receivedQuantity + $newReceived;
+        $purchaseItem->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->setField(C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY'),$receivedQuantity);
+        $purchaseItem->commit();
 
-        $szstorage = M(C('DB_SZSTORAGE'));
-        $szstorage->startTrans();
-        foreach ($items as $key => $value) {
-            $row = $szstorage->where(array(C('DB_SZSTORAGE_SKU')=>$value[C('DB_PURCHASE_ITEM_SKU')]))->find();
-
-            if($row != null){
-                $cinventory = $row[C('DB_SZSTORAGE_CINVENTORY')] + $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')];
-                $ainventory = $row[C('DB_SZSTORAGE_AINVENTORY')] + $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')];
-                $data[C('DB_SZSTORAGE_CINVENTORY')] = $cinventory;
-                $data[C('DB_SZSTORAGE_AINVENTORY')] = $ainventory;
-                $szstorage->where(array(C('DB_SZSTORAGE_SKU')=>$value[C('DB_PURCHASE_ITEM_SKU')]))->save($data);
-            }else{
-                $data[C('DB_SZSTORAGE_SKU')] = $value[C('DB_PURCHASE_ITEM_SKU')];
-                $data[C('DB_SZSTORAGE_CINVENTORY')] = $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')];
-                $data[C('DB_SZSTORAGE_AINVENTORY')] = $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')];
-                $szstorage->add($data);
-            }
-            
+        $restock = M(C('DB_RESTOCK'));
+        $restock->startTrans();
+        $data[C('DB_RESTOCK_CREATE_DATE')] = date("Y-m-d H:i:s" ,time());
+        $data[C('DB_RESTOCK_SKU')] = $purchaseItem->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->getField(C('DB_PURCHASE_ITEM_SKU'));
+        $data[C('DB_RESTOCK_MANAGER')] = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$data[C('DB_RESTOCK_SKU')]))->getField(C('DB_PRODUCT_MANAGER'));
+        $data[C('DB_RESTOCK_WAREHOUSE')] = $purchaseItem->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->getField(C('DB_PURCHASE_ITEM_WAREHOUSE'));
+        if($data[C('DB_RESTOCK_WAREHOUSE')]=='美自建仓' || $data[C('DB_RESTOCK_WAREHOUSE')]=='万邑通美西'){
+            $data[C('DB_RESTOCK_TRANSPORT')] = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$data[C('DB_RESTOCK_SKU')]))->getField(C('DB_PRODUCT_TOUS'));
+        }else{
+            $data[C('DB_RESTOCK_TRANSPORT')] = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$data[C('DB_RESTOCK_SKU')]))->getField(C('DB_PRODUCT_TODE'));
         }
-        $szstorage->commit();
+        $data[C('DB_RESTOCK_STATUS')] = '待发货';
+
+        $isInRestock = $restock->where(array(C('DB_RESTOCK_SKU')=>$data[C('DB_RESTOCK_SKU')],C('DB_RESTOCK_WAREHOUSE')=>$data[C('DB_RESTOCK_WAREHOUSE')],C('DB_RESTOCK_STATUS')=>$data[C('DB_RESTOCK_STATUS')]))->find();
+
+        if($isInRestock !=null || $isInRestock!=false){
+            $data[C('DB_RESTOCK_QUANTITY')] = $isInRestock[C('DB_RESTOCK_QUANTITY')]+$newReceived;
+            $restock->where(array(C('DB_RESTOCK_ID')=>$isInRestock[C('DB_RESTOCK_ID')]))->save($data);
+        }else{
+            $data[C('DB_RESTOCK_QUANTITY')] = $newReceived;
+            $restock->add($data);
+        }     
+        $restock->commit();
+        $this->success("添加成功");
+
     }
 
 }
