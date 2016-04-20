@@ -19,9 +19,9 @@ return array(
 	'DB_PRODUCT_LENGTH' => 'length',
 	'DB_PRODUCT_WIDTH' => 'width',
 	'DB_PRODUCT_HEIGHT' => 'height',
-	'DB_PRODUCT_BATTERY' => 'battery',
-	'DB_PRODUCT_TODE' => 'tode',
-	'DB_PRODUCT_TOUS' => 'tous',
+	'DB_PRODUCT_BATTERY' => 'battery', //不带电，内置电，纯电
+	'DB_PRODUCT_TODE' => 'tode', //空运，海运，无
+	'DB_PRODUCT_TOUS' => 'tous', //空运，海运，无
 	'DB_PRODUCT_DETARIFF' => 'detariff',
 	'DB_PRODUCT_USTARIFF' => 'ustariff',
 	'DB_PRODUCT_INCOMING_DAY' => 'incoming_day',
@@ -79,7 +79,7 @@ return array(
 	'DB_USSW_INBOUND' => 'ussw_inbound',
 	'DB_USSW_INBOUND_ID' => 'id',
 	'DB_USSW_INBOUND_DATE' => 'date',
-	'DB_USSW_INBOUND_SHIPPING_WAY' => 'shipping_way',
+	'DB_USSW_INBOUND_SHIPPING_WAY' => 'shipping_way',  //空运，海运
 	'DB_USSW_INBOUND_STATUS' => 'status',
 
 	//ussw_inbound_package
@@ -153,7 +153,7 @@ return array(
 	'DB_USSW_OUTBOUND_ID' => 'id',
 	'DB_USSW_OUTBOUND_MARKET' => 'market',
 	'DB_USSW_OUTBOUND_MARKET_NO' => 'market_no',
-	'DB_USSW_OUTBOUND_STATUS' => 'status',
+	'DB_USSW_OUTBOUND_STATUS' => 'status', //待出库，已出库
 	'DB_USSW_OUTBOUND_SHIPPING_COMPANY' => 'shipping_company',
 	'DB_USSW_OUTBOUND_SHIPPING_WAY' => 'shipping_way',
 	'DB_USSW_OUTBOUND_TRACKING_NUMBER' => 'tracking_number',
@@ -224,41 +224,37 @@ return array(
 	'DB_USSTORAGE_REMARK' => 'remark',
 
 
-	//szstorage
-	/*
-	CREATE TABLE IF NOT EXISTS `3s_szstorage` (
+	//restock
+	/*创建补货表
+	CREATE TABLE IF NOT EXISTS `3s_restock` (
 	  `id` smallint(6) unsigned primary key auto_increment,
-	  `position` varchar(10) default NULL,
+	  `create_date` datetime default NULL,
+	  `shipping_date` datetime default NULL,
+	  `manager` varchar(20) default null,
 	  `sku` varchar(10) NOT NULL,
-	  `cname` varchar(255) DEFAULT NULL,
-	  `ename` varchar(255) DEFAULT NULL,
-	  `attribute` varchar(50) DEFAULT NULL,
-	  `cinventory` smallint(6) DEFAULT 0,
-	  `ainventory` smallint(6) DEFAULT 0,
-	  `oinventory` smallint(6) DEFAULT 0,
-	  `iinventory` smallint(6) DEFAULT 0,
-	  `csales` smallint(6) DEFAULT 0,
+	  `quantity` smallint(6) DEFAULT 0,
+	  `warehouse` varchar(10) DEFAULT null,
+	  `transport` varchar(10) DEFAULT null,
+	  `status` varchar(10) DEFAULT null,
 	  `remark` varchar(255) DEFAULT NULL
 	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 	*/
-	'DB_SZSTORAGE' => 'szstorage',
-	'DB_SZSTORAGE_ID' => 'id',
-	'DB_SZSTORAGE_POSITION' => 'position',
-	'DB_SZSTORAGE_SKU' => 'sku',
-	'DB_SZSTORAGE_CNAME' => 'cname',
-	'DB_SZSTORAGE_ENAME' => 'ename',
-	'DB_SZSTORAGE_ATTRIBUTE' => 'attribute',
-	'DB_SZSTORAGE_CINVENTORY' => 'cinventory',
-	'DB_SZSTORAGE_AINVENTORY' => 'ainventory',
-	'DB_SZSTORAGE_OINVENTORY' => 'oinventory',
-	'DB_SZSTORAGE_IINVENTORY' => 'iinventory',
-	'DB_SZSTORAGE_CSALES' => 'csales',
-	'DB_SZSTORAGE_REMARK' => 'remark',
+	'DB_RESTOCK' => 'restock',
+	'DB_RESTOCK_ID' => 'id',
+	'DB_RESTOCK_CREATE_DATE' => 'create_date',
+	'DB_RESTOCK_SHIPPING_DATE' => 'shipping_date',
+	'DB_RESTOCK_MANAGER' => 'manager',
+	'DB_RESTOCK_SKU' => 'sku',
+	'DB_RESTOCK_QUANTITY' => 'quantity',
+	'DB_RESTOCK_WAREHOUSE' => 'warehouse', //美自建仓,万邑通美西，万邑通德国
+	'DB_RESTOCK_TRANSPORT' => 'transport', //空运，海运
+	'DB_RESTOCK_STATUS' => 'status', //待发货，已发货
+	'DB_RESTOCK_REMARK' => 'remark',
 
 
 
 	//purchase
-	/*创建补货表
+	/*创建采购表
 	create table if not exists `3s_purchase`(
 	`id` smallint(6) unsigned primary key not null auto_increment,
 	`manager` varchar(20) default null,
@@ -279,7 +275,7 @@ return array(
 	'DB_PURCHASE_CREATE_DATE' => 'create_date',
 	'DB_PURCHASE_PURCHASED_DATE' => 'purchase_date',
 	'DB_PURCHASE_SHIPPING_FEE' => 'shipping_fee',
-	'DB_PURCHASE_STATUS' => 'status',//待确认, 已确认, 待付款, 已付款, 待发货, 部分到货, 全部到货, 
+	'DB_PURCHASE_STATUS' => 'status',//待确认, 待付款, 待发货, 部分到货, 全部到货
 	'DB_PURCHASE_CANCEL' => 'cancel',
 	'DB_PURCHASE_ORDER_NUMBER' => 'order_number',//purchase order number
 	'DB_PURCHASE_TRACKING_NUMBER' => 'tracking_number',	
@@ -290,7 +286,7 @@ return array(
 	//purchase_item
 	/*创建补货产品表
 	create table if not exists `3s_purchase_item`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`purchase_item_id` smallint(6) unsigned primary key not null auto_increment,
 	`purchase_id` smallint(6) default null,
 	`sku` varchar(10) default null,
 	`price` decimal(6,2) default 0,
@@ -301,14 +297,14 @@ return array(
 	) engine=myisam default charset=utf8;
 	*/
 	'DB_PURCHASE_ITEM' => 'purchase_item',
-	'DB_PURCHASE_ITEM_ID' => 'id',
+	'DB_PURCHASE_ITEM_ID' => 'purchase_item_id',
 	'DB_PURCHASE_ITEM_PURCHASE_ID' => 'purchase_id',
 	'DB_PURCHASE_ITEM_SKU' => 'sku',
 	'DB_PURCHASE_ITEM_PRICE' => 'price',
 	'DB_PURCHASE_ITEM_PURCHASE_QUANTITY' => 'purchase_quantity',
 	'DB_PURCHASE_ITEM_RECEIVED_QUANTITY' => 'received_quantity',
-	'DB_PURCHASE_ITEM_WAREHOUSE' => 'warehouse',
-	'DB_PURCHASE_ITEM_TRANSPORT_METHOD' => 'transport_method',
+	'DB_PURCHASE_ITEM_WAREHOUSE' => 'warehouse',  //美自建仓,万邑通美西，万邑通德国
+	'DB_PURCHASE_ITEM_TRANSPORT_METHOD' => 'transport_method', //空运，海运
 
 
 	//supplier
