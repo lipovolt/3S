@@ -80,7 +80,7 @@ return array(
 	'DB_USSW_INBOUND_ID' => 'id',
 	'DB_USSW_INBOUND_DATE' => 'date',
 	'DB_USSW_INBOUND_SHIPPING_WAY' => 'shipping_way',  //空运，海运
-	'DB_USSW_INBOUND_STATUS' => 'status',
+	'DB_USSW_INBOUND_STATUS' => 'status', //产品已导入，装箱已导入，待入库，已入库
 
 	//ussw_inbound_package
 	/*
@@ -112,6 +112,7 @@ return array(
     `id` smallint(6) unsigned primary key not null auto_increment,
     `inbound_id` smallint(6),
     `package_number` varchar(10) default null,
+    `restock_id` smallint(6),
     `sku` varchar(10),
     `declare_quantity` smallint(6),
     `confirmed_quantity` smallint(6)
@@ -121,6 +122,7 @@ return array(
 	'DB_USSW_INBOUND_ITEM_ID' => 'id',
 	'DB_USSW_INBOUND_ITEM_IOID' => 'inbound_id',
 	'DB_USSW_INBOUND_ITEM_PACKAGE_NUMBER' => 'package_number',
+	'DB_USSW_INBOUND_ITEM_RESTOCK_ID' => 'restock_id',
 	'DB_USSW_INBOUND_ITEM_SKU' => 'sku',
 	'DB_USSW_INBOUND_ITEM_DQUANTITY' => 'declare_quantity',
 	'DB_USSW_INBOUND_ITEM_CQUANTITY' => 'confirmed_quantity',

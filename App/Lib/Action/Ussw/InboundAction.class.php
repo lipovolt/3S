@@ -148,15 +148,30 @@ class InboundAction extends CommonAction{
                     $errorInFile = null;
                     $data = null;
                     for($i=2;$i<=$highestRow;$i++){
-                        if($product->where(array(C('DB_PRODUCT_SKU')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->find() == null){
+                        if($product->where(array(C('DB_PRODUCT_SKU')=>$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue()))->find() == null){
                             $errorInFile[$i]='产品编码不存在或未注册';
                         }
 
                         $data[$i][C('DB_USSW_INBOUND_ITEM_IOID')] = $orderID;
-                        $data[$i][C('DB_USSW_INBOUND_ITEM_SKU')]= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();  
-                        $data[$i][C('DB_USSW_INBOUND_ITEM_DQUANTITY')]= $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();                                        
+                        $data[$i][C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(); 
+                        $data[$i][C('DB_USSW_INBOUND_ITEM_SKU')]= $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();  
+                        $data[$i][C('DB_USSW_INBOUND_ITEM_DQUANTITY')]= $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();                                        
                     }
                     $product->commit();
+
+                    $restock = M(C('DB_RESTOCK'));
+                    $restock->startTrans();
+                    for($i=2;$i<=$highestRow;$i++){
+                        $restockId = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+                        $sku = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+                        $quantity = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+
+                        $restockRow = $restock->where(array(C('DB_RESTOCK_ID')=>$restockId))->find();
+                        if($restockRow == null || $restockRow[C('DB_RESTOCK_SKU')] != $sku || $restockRow[C('DB_RESTOCK_QUANTITY')] != $quantity)
+                            $errorInFile[$i]='产品编码或数量与补货表不一致';
+                        }                                     
+                    }
+                    $restock->commit();
                     
                     if($errorInFile != null){
                         $this->assign('errorInFile',$errorInFile);
@@ -170,8 +185,7 @@ class InboundAction extends CommonAction{
                                 $result = $usswInboundItem->add($value);
                             }else{
                                 $errorDuringInsert[$key] = '未能添加';
-                            }
-                            
+                            }                            
                         }
                         $usswInboundItem->commit();
 
@@ -186,7 +200,15 @@ class InboundAction extends CommonAction{
                         }else{
                             $this->assign('errorInFile',$errorDuringInsert);
                             $this->display('importInboundError');
-                        }                    
+                        }
+
+                        //更新restock表格状态
+                        $restock = M(C('DB_RESTOCK'));
+                        $restock->startTrans(); 
+                        foreach ($data as $key => $value){
+                            $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->setField(C('DB_RESTOCK_STATUS'),'已发货');
+                        } 
+                        $restock->commit();                
                     }
                 }else{
                     $this->error('模板错误，请检查！');
