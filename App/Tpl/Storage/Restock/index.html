@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>补货</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>库存管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/storageMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form name="search_product" id="search_product" action="{:U('Storage/Purchase/index')}" method="POST">
+			<div class="search-area">
+				<div class="item">
+					<div class="form-group">
+						<label for="keyword" class="control-label">关键字</label>
+						<div class="control-wrap">
+							<select name="keyword" id="keyword" data-value="">
+								<option value="{:C('DB_RESTOCK_STATUS')}">状态</option>
+								<option value="{:C('DB_RESTOCK_WAREHOUSE')}">仓库</option>
+							</select>
+						</div>
+						<div class="control-wrap">
+							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
+						</div>
+					</div>
+					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
+				</div>			
+			</div>
+		</form>
+		<div>
+			<div class="tab-content">
+				<div class="tab" align="right">
+					<a class="btn btn-blue btn-s" href="{:U('Storage/Restock/export')}" >
+						<span>导出</span>
+					</a>
+				</div>
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th><div class="tl">编号</div></th>
+						<th><div class="tl">创建时间</div></th>
+						<th><div class="tl">发货时间</div></th>
+						<th><div class="tl">产品经理</th>
+						<th><div class="tl">产品编码</div></th>
+						<th><div class="tl">数量</div></th>
+						<th><div class="tl">仓库</div></th>
+						<th><div class="tl">运输方式</div></th>
+						<th><div class="tl">状态</div></th>
+						<th><div class="tl">备注</div></th>
+					</tr>
+					<volist name="restock" id="vo">
+						<tr>
+						<td><div class="tl">{$vo[C('DB_RESTOCK_ID')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_RESTOCK_CREATE_DATE')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_RESTOCK_SHIPPING_DATE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_RESTOCK_MANAGER')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_RESTOCK_SKU')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_RESTOCK_QUANTITY')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_RESTOCK_WAREHOUSE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_RESTOCK_TRANSPORT')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_RESTOCK_STATUS')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_RESTOCK_REMARK')]}</div></td>
+						</tr>	
+					</volist> 								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

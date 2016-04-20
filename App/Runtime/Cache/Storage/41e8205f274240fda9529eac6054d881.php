@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>产品信息</title>
+<title>补货</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -146,33 +146,41 @@
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>产品管理</strong></div>
+			<div class="sidenav-hd"><strong>库存管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>导入产品</strong>								
+		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Product/Product/productBatchAdd');?>" >导入产品</a></dd>
+	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
+	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>产品信息管理</strong>								
+		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Product/Product/productInfo');?>" >产品信息</a></dd>
-</dl>	
+	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>补货</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
+</dl>
+	
 			</div>
 		</div>
 	<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Product/Product/productInfo');?>" method="POST">
+		<form name="search_product" id="search_product" action="<?php echo U('Storage/Purchase/index');?>" method="POST">
 			<div class="search-area">
 				<div class="item">
 					<div class="form-group">
 						<label for="keyword" class="control-label">关键字</label>
 						<div class="control-wrap">
 							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_PRODUCT_SKU');?>">产品编码</option>
-								<option value="<?php echo C('DB_PRODUCT_CNAME');?>">产品名称</option>
+								<option value="<?php echo C('DB_RESTOCK_STATUS');?>">状态</option>
+								<option value="<?php echo C('DB_RESTOCK_WAREHOUSE');?>">仓库</option>
 							</select>
 						</div>
 						<div class="control-wrap">
@@ -184,35 +192,36 @@
 			</div>
 		</form>
 		<div>
-			<div class="tab-content">	
+			<div class="tab-content">
+				<div class="tab" align="right">
+					<a class="btn btn-blue btn-s" href="<?php echo U('Storage/Restock/export');?>" >
+						<span>导出</span>
+					</a>
+				</div>
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th width="110">产品编码</th>
-						<th><div class="tl">中文名称</div></th>
-						<th><div class="tl">重量g</div></th>
-						<th>长cm</th>
-						<th>宽cm</th>
-						<th><div class="tl">高cm</div></th>
-						<th><div>带电</div></th>
-						<th><div>德国头程</div></th>
-						<th><div>美国头程</div></th>
-						<th width="60">产品经理</th>
-						<th width="230">操作</th>
+						<th><div class="tl">编号</div></th>
+						<th><div class="tl">创建时间</div></th>
+						<th><div class="tl">发货时间</div></th>
+						<th><div class="tl">产品经理</th>
+						<th><div class="tl">产品编码</div></th>
+						<th><div class="tl">数量</div></th>
+						<th><div class="tl">仓库</div></th>
+						<th><div class="tl">运输方式</div></th>
+						<th><div class="tl">状态</div></th>
+						<th><div class="tl">备注</div></th>
 					</tr>
-					<?php if(is_array($products)): $i = 0; $__LIST__ = $products;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_SKU')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_CNAME')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_WEIGHT')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_LENGTH')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_WIDTH')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_HEIGHT')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_BATTERY')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_TODE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_TOUS')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_MANAGER')]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Product/Product/productEdit',array('sku'=>$vo['sku']));?>">编辑</a>
-						</td>
+					<?php if(is_array($restock)): $i = 0; $__LIST__ = $restock;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_ID')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_CREATE_DATE')]); ?></div></td>						
+						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_SHIPPING_DATE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_MANAGER')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_SKU')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_QUANTITY')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_WAREHOUSE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_TRANSPORT')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_STATUS')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_REMARK')]); ?></div></td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
 				<div class="result page" align="center"><?php echo ($page); ?></div>
