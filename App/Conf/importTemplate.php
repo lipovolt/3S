@@ -31,7 +31,7 @@ return array(
 
 	//Inbound_item import template
 	'IMPORT_INBOUND_ITEM' => array(
-		'A' => '补货表编号'
+		'A' => '补货表编号',
 		'A' => '产品编码',
 		'B' => '数量',
 		),
