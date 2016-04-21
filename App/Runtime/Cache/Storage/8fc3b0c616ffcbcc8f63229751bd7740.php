@@ -53,13 +53,20 @@
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl><!-- 
+	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
+</dl>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
-	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl> -->
+	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>补货</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
+</dl>
 
 		</div>
 	</li>
@@ -145,13 +152,20 @@
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl><!-- 
+	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
+</dl>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
-	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl> -->
+	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>补货</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
+</dl>
 
 			</div>
 		</div>
@@ -194,6 +208,7 @@
 						<th><div class="tr">待出库</div></th>
 						<th><div class="tr">在途库存</div></th>
 						<th><div class="tr">历史销量</div></th>
+						<th><div class="tr">30天销量</div></th>
 						<th><div class="t1">备注</div></th>
 					</tr>    
 					<tr>
@@ -208,6 +223,7 @@
 						<td><div class="tr"><?php echo ($vo["oinventory"]); ?></div></td>
 						<td><div class="tr"><?php echo ($vo["iinventory"]); ?></div></td>
 						<td><div class="tr"><?php echo ($vo["csales"]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo["30dayssales"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["remark"]); ?></div></td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
 					</tr>						

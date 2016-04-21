@@ -53,14 +53,20 @@
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存发送邮件</a></dd>
-</dl><!-- 
+	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
+</dl>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
-	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl> -->
+	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>补货</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
+</dl>
 
 		</div>
 	</li>
@@ -214,6 +220,11 @@
 			</div>
 		</form>
 		<div>
+			<div class="tab" align="right">
+				<a class="btn btn-blue btn-s" href="<?php echo U('Ussw/Storage/export');?>" >
+					<span>导出</span>
+				</a>
+			</div>
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
 					<tr>
@@ -227,6 +238,7 @@
 						<th><div class="tr">待出库</div></th>
 						<th><div class="tr">在途库存</div></th>
 						<th><div class="tr">历史销量</div></th>
+						<th><div class="tr">30天销量</div></th>
 						<th><div class="t1">备注</div></th>
 						<th width="230">操作</th>
 					</tr>    
@@ -242,6 +254,7 @@
 						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_OINVENTORY')]); ?></div></td>
 						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_IINVENTORY')]); ?></div></td>
 						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_CSALES')]); ?></div></td>
+						<td><div class="tr"><?php echo ($vo['30dayssales']); ?></div></td>
 						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_REMARK')]); ?></div></td>
 						<td>
 							<a href="<?php echo U('Ussw/Storage/edit',array(C('DB_USSTORAGE_SKU')=>$vo[C('DB_USSTORAGE_SKU')]));?>">编辑</a>
