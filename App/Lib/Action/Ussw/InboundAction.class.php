@@ -167,7 +167,7 @@ class InboundAction extends CommonAction{
                         $quantity = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
 
                         $restockRow = $restock->where(array(C('DB_RESTOCK_ID')=>$restockId))->find();
-                        if($restockRow == null || $restockRow[C('DB_RESTOCK_SKU')] != $sku || $restockRow[C('DB_RESTOCK_QUANTITY')] != $quantity)
+                        if($restockRow == null || $restockRow[C('DB_RESTOCK_SKU')] != $sku || $restockRow[C('DB_RESTOCK_QUANTITY')] != $quantity){
                             $errorInFile[$i]='产品编码或数量与补货表不一致';
                         }                                     
                     }
@@ -217,8 +217,7 @@ class InboundAction extends CommonAction{
             }else{
                 $this->error("请选择上传的文件");
             }
-        }
-        else{
+        }else{
             $this->error("无法上传！错误原因： 该单已入库或产品已导入！");
         } 
         

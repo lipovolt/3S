@@ -66,13 +66,21 @@ function del()
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl><!-- 
+	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
+</dl>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
-	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl> -->
+	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>缺货补货</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/index');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
+</dl>
 
 		</div>
 	</li>
@@ -102,7 +110,28 @@ function del()
 		</div>
 	</li>
 	<li>
-		<a href="#" mark="USSW"><span>美国自建仓</span></a>
+		<a href="<?php echo U('Purchase/Purchase/index');?>" mark="purchase"><span>采购</span></a>
+		<div class="subnav">
+			<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>采购单</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Purchase/Purchase/importPurchase');?>" >导入采购单</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'waiting confirm'));?>" >待确认</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'waiting pay'));?>" >待付款</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'no arrival'));?>" >待收货</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_CANCEL')=>1));?>" >已取消</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>供货商</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Purchase/Supplier/index');?>" >供货商信息</a></dd>
+</dl>
+		</div>
+	</li>
+	<li>
+		<a href="#" mark="ussw"><span>美国自建仓</span></a>
 		<div class="subnav">
 			<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
