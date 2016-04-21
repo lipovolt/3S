@@ -310,7 +310,9 @@ class PurchaseAction extends CommonAction{
         $receivedQuantity = $purchaseItem->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->getField(C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY'));
         $receivedQuantity = $receivedQuantity + $newReceived;
         $purchaseItem->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->setField(C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY'),$receivedQuantity);
+        $purchaseID = $purchaseItem->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->getField(C('DB_PURCHASE_ITEM_PURCHASE_ID'));
         $purchaseItem->commit();
+        $this->changeItemReceiveStatus($purchaseID);
 
         $restock = M(C('DB_RESTOCK'));
         $restock->startTrans();
@@ -337,6 +339,20 @@ class PurchaseAction extends CommonAction{
         $restock->commit();
         $this->success("添加成功");
 
+    }
+
+    private function changeItemReceiveStatus($purchaseID){
+        $status = '全部到货';
+        $items = M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_PURCHASE_ID')=>$purchaseID))->select();
+        foreach ($items as $key => $value) {
+            if($value[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')] != $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]){
+                $status = '部分到货';
+            }
+        }
+        M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->setField(C('DB_PURCHASE_STATUS'),$status);
+        if($status == '全部到货'){
+            $this->purchasedItemInSzStorage($items);
+        }
     }
 
 }

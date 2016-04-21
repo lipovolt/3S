@@ -53,13 +53,20 @@
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl><!-- 
+	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
+</dl>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
-	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl> -->
+	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>补货</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
+</dl>
 
 		</div>
 	</li>
