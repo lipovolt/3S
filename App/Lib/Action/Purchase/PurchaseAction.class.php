@@ -258,8 +258,8 @@ class PurchaseAction extends CommonAction{
         }
     }
 
-    public function deletePurchaseItem($id){
-        if(M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->delete() == false)
+    public function deletePurchaseItem($purchase_item_id){
+        if(M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_ID')=>$purchase_item_id))->delete() == false)
             $this->success('删除失败');
         else
             $this->success('删除成功');
