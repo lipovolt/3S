@@ -111,7 +111,7 @@ return array(
 		'P' => '备注',
 		),
 	'IMPORT_WINIT_STORAGE' => array(
-		'A' => '产品编号',
+		'A' => '商品编号',
 		'B' => '中文名称',
 		'C' => '英文名称',
 		'D' => '备注',
