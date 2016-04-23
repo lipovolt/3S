@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>缺货</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>库存管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/storageMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<div>
+			<div class="tab-content">
+				<div class="tab" align="right">
+					<a class="btn btn-blue btn-s" href="{:U('Storage/Restock/exportOutOfStock')}" >
+						<span>导出</span>
+					</a>
+				</div>
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th><div class="tl">仓库</div></th>
+						<th><div class="tl">产品编码</div></th>
+						<th><div class="tl">数量</div></th>
+						<th><div class="tl">产品经理</th>
+						<th><div class="tl">导出日期</div></th>
+					</tr>
+					<volist name="outofstock" id="vo">
+						<tr>
+						<td><div class="tl">{$vo['warehouse']}</div></td>
+						<td><div class="tl">{$vo['sku']}</div></td>						
+						<td><div class="tl">{$vo['quantity']}</div></td>
+						<td><div class="tl">{$vo['manager']}</div></td>
+						<td><div class="tl">{$vo['date']}</div></td>
+						</tr>	
+					</volist> 								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

@@ -304,6 +304,18 @@ class PurchaseAction extends CommonAction{
         }
     }
 
+    public function confirmAndPayPurchaseOrder($purchaseID){
+        $status = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->getField(C('DB_PURCHASE_STATUS'));
+        if($status == '待确认'){
+            $data[C('DB_PURCHASE_PURCHASED_DATE')] = date("Y-m-d H:i:s" ,time());
+            $data[C('DB_PURCHASE_STATUS')] = '待发货';
+            M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->save($data);
+            $this->redirect('index');
+        }else{
+            $this->error("状态无法更新");
+        }
+    }
+
     public function receivePurchasedItem($id,$newReceived){
         $purchaseItem = M(C('DB_PURCHASE_ITEM'));        
         $purchaseItem->startTrans();

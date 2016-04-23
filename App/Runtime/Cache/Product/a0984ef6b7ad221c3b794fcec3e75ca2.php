@@ -65,7 +65,7 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>缺货补货</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Storage/Restock/index');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
 </dl>
 

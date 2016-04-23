@@ -159,6 +159,7 @@ function addNewReceived(id){
     <div class="item tc"><input type='hidden' name='ProductID' value='1030634'>
 	<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
 	<input type="submit" class="btn btn-blue btn-s" value="保存基本信息" />
+	<a class="btn btn-blue btn-s" href="{:U('Purchase/Purchase/confirmAndPayPurchaseOrder',array('purchaseID'=>$purchaseOrder[0][C('DB_PURCHASE_ID')]))}">确认付款</a>
 </div>
 </form>
 </div>

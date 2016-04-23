@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>库存信息</title>
+<title>缺货</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -143,10 +143,11 @@
 			</div>
 		</div>
 	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
-		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>库存</strong></div>
+			<div class="sidenav-hd"><strong>库存管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
 	<dt>
@@ -168,84 +169,41 @@
 	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
 </dl>
-
+	
 			</div>
 		</div>
 	<div class="content">
-	<div id="Australia" class="main">
-		<form name="search_outbound" id="search_outbound" action="<?php echo U('Storage/Storage/usstorage');?>" method="POST">			
-		<div class="block-indent search-area">
-			<div class="form-group">
-				<label for="" class="control-label">关键字</label>
-				<div class="control-wrap">
-					<select name="keyword" id="keyword" data-value="">
-						<option value="sku">产品编码</option>
-						<option value="cname">产品中文名称</option>
-						<option value="ename">产品英文名称</option>
-					</select>
-				</div>
-				<div class="control-wrap">
-					<input type="text" name="keywordValue" id="keywordValue" value="">
-				</div>
-			</div>
-			<button class="btn btn-s btn-blue" onclick="search_outbound.submit();">
-				<i class="icon search"></i>
-				<i class="vline-inline"></i>
-				<span>查询</span>
-			</button>
-        </div>
-		<input type="hidden" name="__hash__" value="4aa8bc909dc4e7c9f1bf19868849db32_0a5f96e955ccfaec6ab83bbc99a7516f" /></form>
+	<div id="ProductInfo" class="main">
 		<div>
-			<div class="tab-content data-list">				
-							
+			<div class="tab-content">
+				<div class="tab" align="right">
+					<a class="btn btn-blue btn-s" href="<?php echo U('Storage/Restock/exportOutOfStock');?>" >
+						<span>导出</span>
+					</a>
+				</div>
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th>货位</th>
-					    <th>产品编码</th>					    
-					    <th><div class="tl">中文名称</div></th>	                          
-					    <th><div class="tl">英文名称</div></th>
-						<th><div class="tl">属性</div></th>
-						<th><div class="tr">历史入库</div></th>
-						<th><div class="tr">可用库存</div></th>
-						<th><div class="tr">待出库</div></th>
-						<th><div class="tr">在途库存</div></th>
-						<th><div class="tr">历史销量</div></th>
-						<th><div class="tr">30天销量</div></th>
-						<th><div class="t1">备注</div></th>
-					</tr>    
-					<tr>
-						<?php if(is_array($usstorage)): $i = 0; $__LIST__ = $usstorage;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><?php echo ($vo["position"]); ?></td>
-						<td><?php echo ($vo["sku"]); ?></td>						
-						<td><div class="tl"><?php echo ($vo["cname"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["ename"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["attribute"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["cinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["ainventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["oinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["iinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["csales"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["30dayssales"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["remark"]); ?></div></td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
-					</tr>						
+						<th><div class="tl">仓库</div></th>
+						<th><div class="tl">产品编码</div></th>
+						<th><div class="tl">数量</div></th>
+						<th><div class="tl">产品经理</th>
+						<th><div class="tl">导出日期</div></th>
+					</tr>
+					<?php if(is_array($outofstock)): $i = 0; $__LIST__ = $outofstock;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><div class="tl"><?php echo ($vo['warehouse']); ?></div></td>
+						<td><div class="tl"><?php echo ($vo['sku']); ?></div></td>						
+						<td><div class="tl"><?php echo ($vo['quantity']); ?></div></td>
+						<td><div class="tl"><?php echo ($vo['manager']); ?></div></td>
+						<td><div class="tl"><?php echo ($vo['date']); ?></div></td>
+						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
 				<div class="result page" align="center"><?php echo ($page); ?></div>
-				<div class="tr">
-								
-					<!-- 分页开始  --> 
-										<!-- 分页 结束 -->	
-				</div>
 			</div>
 		</div>
 	</div>
-
-
-
-
-		</div>
 	</div>
-		
+	</div>
+	</div>
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.

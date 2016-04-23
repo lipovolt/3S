@@ -61,6 +61,13 @@
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
 </dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>缺货补货</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
+</dl>
 
 		</div>
 	</li>
@@ -286,6 +293,7 @@ function addNewReceived(id){
     <div class="item tc"><input type='hidden' name='ProductID' value='1030634'>
 	<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
 	<input type="submit" class="btn btn-blue btn-s" value="保存基本信息" />
+	<a class="btn btn-blue btn-s" href="<?php echo U('Purchase/Purchase/confirmAndPayPurchaseOrder',array('purchaseID'=>$purchaseOrder[0][C('DB_PURCHASE_ID')]));?>">确认付款</a>
 </div>
 </form>
 </div>
