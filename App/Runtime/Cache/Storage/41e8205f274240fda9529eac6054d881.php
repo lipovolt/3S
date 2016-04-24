@@ -63,8 +63,9 @@
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>补货</strong>								
+		<i class="icon dropdown-s"></i><strong>缺货补货</strong>								
 	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
 </dl>
 
@@ -163,8 +164,9 @@
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>补货</strong>								
+		<i class="icon dropdown-s"></i><strong>缺货补货</strong>								
 	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
 </dl>
 	
@@ -193,9 +195,12 @@
 		</form>
 		<div>
 			<div class="tab-content">
-				<div class="tab" align="right">
-					<a class="btn btn-blue btn-s" href="<?php echo U('Storage/Restock/export');?>" >
-						<span>导出</span>
+				<div class="form-group">
+					<a class="btn btn-blue btn-s" href="<?php echo U('Storage/Restock/importRestock');?>" >
+							<span>导入</span>
+					</a>
+					<a class="btn btn-blue btn-s" href="<?php echo U('Storage/Restock/exportRestock');?>" >
+							<span>导出</span>
 					</a>
 				</div>
 				<table id="tablelist" class="tablelist">

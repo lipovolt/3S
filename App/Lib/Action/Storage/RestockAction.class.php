@@ -277,6 +277,14 @@ class RestockAction extends CommonAction{
         return true;
     }
 
+    private function verifyImportedURSSTemplateColumnName($firstRow){
+        for($c='A';$c<=max(array_keys(C('IMPORT_UPDATE_RESTOCK_SHIPPING_STATUS')));$c++){
+            if($firstRow[$c] != C('IMPORT_UPDATE_RESTOCK_SHIPPING_STATUS')[$c])
+                return false;
+        }
+        return true;
+    }
+
     private function isInOutOfStock($warehouse,$sku){
     	foreach ($GLOBALS['outOfStock'] as $key => $value) {
     		if($value['warehouse']==$warehouse && $value['sku']==$sku){
@@ -314,6 +322,80 @@ class RestockAction extends CommonAction{
     	}else{
     		return false;
     	}
+    }
+
+    public function importRestock(){
+    	$this->display();
+    }
+
+    public function updateRestockShippingStatus(){
+    	if (!empty($_FILES)) {
+			$splitname = explode('.',$file['name']);
+			$filename = $splitname[0].'_'.time();
+			import('ORG.Net.UploadFile');
+			$config=array(
+			 'allowExts'=>array('xls'),
+			 'savePath'=>'./Public/upload/',
+			 'saveRule'=>$filename,
+			);
+			$upload = new UploadFile($config);
+			if (!$upload->upload()) {
+				$this->error($upload->getErrorMsg());
+			}else {
+				$info = $upload->getUploadFileInfo();                 
+			}
+			vendor("PHPExcel.PHPExcel");
+			$file_name=$info[0]['savepath'].$info[0]['savename'];
+
+			$objReader = PHPExcel_IOFactory::createReader('Excel5');
+			$objPHPExcel = $objReader->load($file_name,$encode='utf-8'); 
+
+			$sheet = $objPHPExcel->getSheet(0);
+			$highestRow = $sheet->getHighestRow(); // 取得总行数
+			$highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+			for ($i=$highestRow; $i >0 ; $i--) { 
+				if($sheet->getCell("A".$i) == null or $sheet->getCell("A".$i) =='')
+				    $highestRow = $i;
+				else{
+				    $highestRow = $i;
+				    break;
+				}      
+			}
+
+			//excel firt column name verify
+            for($c='A';$c<=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+            }
+
+            if($this->verifyImportedURSSTemplateColumnName($firstRow)){             	 
+                $restock = M(C('DB_RESTOCK'));
+                for($i=2;$i<=$highestRow;$i++){
+                	$restockItem = $restock->where(array(C('DB_RESTOCK_ID')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->find();
+                	if($restockItem == null){
+                		$errorInFile[$i] = '补货表编号不存在';
+                	}
+                	if($restockItem[C('DB_RESTOCK_STATUS')] == '已发货'){
+                		$errorInFile[$i] = '该产品已经发出，无法再次更改状态';
+                	}
+                	if($restockItem[C('DB_RESTOCK_WAREHOUSE')] == '美自建仓'){
+                		$errorInFile[$i] = '该产品目的仓是美自建仓';
+                	}
+                }
+                if($errorInFile != null){
+                	$this->error('内容有错误，无法更新补货表发货状态');
+                }else{
+                	for($i=2;$i<=$highestRow;$i++){
+	                	$restock->where(array(C('DB_RESTOCK_ID')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->setField(C('DB_RESTOCK_STATUS'),'已发货');
+	                }
+	                $this->success('导入成功！');
+                }
+            }else{
+                $this->error("模板错误，请检查模板！");
+            }   
+        }else{
+            $this->error("请选择上传的文件");
+        }
     }
 }
 

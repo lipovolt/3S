@@ -196,8 +196,8 @@
 							<div class="block">
 								<div class="block-bd">
 									<div class="block-indent" style="overflow:hidden;">
-										<div style="float:left;width:456px;">
-											<p>请先下载万邑通最新美国和德国仓库存表，然后把两个文件合并成一个文件两个表单，然后上传数据。注意：第一个表单必须是万邑通美国库存表，第二个文件是万邑通德国库存表！！</p>
+										<div style="float:left;width:auto;">
+											<p style="color:red; text-decoration:underline;">请先下载万邑通最新美国和德国仓库存表，然后把两个文件合并成一个文件两个表单，然后上传数据。<br><strong>注意：第一个表单必须是万邑通美国库存表，第二个表单是万邑通德国库存表！！</strong></p>
 											<div>
 												 <form action="<?php echo U('Storage/Restock/findOutOfStockItem');?>" method="post" enctype="multipart/form-data">
 												 	<div class="form-group">

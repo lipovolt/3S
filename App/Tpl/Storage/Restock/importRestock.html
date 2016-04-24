@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>批量导入产品信息</title>
+<title>导入海外仓补货表</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -29,9 +29,9 @@
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>产品管理</strong></div>
+			<div class="sidenav-hd"><strong>库存管理</strong></div>
 			<div class="sidenav-bd">
-				<include file="./Public/Tpl/productMenu.html" />	
+				<include file="./Public/Tpl/storageMenu.html" />	
 			</div>
 		</div>
 		<div class="content">
@@ -48,26 +48,28 @@
 					<ul class="tab">
 						<li class="on">
 						<i class="before"></i>
-							<span>导入产品信息</span>
+							<span>导入海外仓补货表更新发货状态</span>
 						<i class="after"></i>
 						</li>					
 					</ul>
 					<div class="tab-content">
 						<div class="tab-inner-content" style="">
 							<div class="block">
-								<div class="block-hd">
-									<i class="icon import"></i>
-									<strong>导入新产品</strong>
-								</div>
 								<div class="block-bd">
 									<div class="block-indent" style="overflow:hidden;">
-										<div style="float:left;width:456px;">
-											<p>请<a href="http://www.lipovolt.com/3s/Download/Import_Products_Template.xls" style="color: #6495ED">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
+										<div style="float:left;width:auto;">
+											<p>请<a href="http://www.lipovolt.com/3s/Download/Import_Restock_Shipping_Status_Template.xls" style="color: #6495ED">点击此处</a>下载模板，填写信息完成后，上传数据。</p>
 											<div>
-												 <form action="{:U('Product/Product/batchAdd')}" method="post" enctype="multipart/form-data">
-										            <input type="file" name="import"/>
-								          			<input type="hidden" name="table" value="tablename"/>
-									             	<input type="submit" value="导入"/>
+												 <form action="{:U('Storage/Restock/updateRestockShippingStatus')}" method="post" enctype="multipart/form-data">
+												 	<div class="form-group">
+												 		<label for="winitUsStorage" class="control-label">万邑通美国或德国仓补货表</label>
+													 	<div class="control-wrap">
+											            	<input type="file" name="winitUsStorage"/>
+											            </div>
+										            </div>
+										            <div class="form-group">
+										             	<input class="btn btn-blue btn-s" type="submit" value="导入"/>
+										             </div>
 									         	</form>
 
 											</div>

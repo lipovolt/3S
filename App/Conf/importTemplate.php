@@ -110,6 +110,8 @@ return array(
 		'O' => '追踪号',
 		'P' => '备注',
 		),
+
+	//Winit storage template
 	'IMPORT_WINIT_STORAGE' => array(
 		'A' => '商品编号',
 		'B' => '中文名称',
@@ -125,6 +127,12 @@ return array(
 		'L' => '30天平均日销量',
 		'M' => '30天平均库存',
 		'N' => 'DOI',
+		),
+
+	//update restock shipping status for other warehosue
+	'IMPORT_UPDATE_RESTOCK_SHIPPING_STATUS' => array(
+		'A' => '补货表编号',
+		'D' => '状态', //部分发货，已发货
 		),
 	);
 ?>
