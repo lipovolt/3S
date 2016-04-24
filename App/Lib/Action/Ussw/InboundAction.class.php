@@ -206,7 +206,13 @@ class InboundAction extends CommonAction{
                         $restock = M(C('DB_RESTOCK'));
                         $restock->startTrans(); 
                         foreach ($data as $key => $value){
-                            $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->setField(C('DB_RESTOCK_STATUS'),'已发货');
+                            $restockQuantity = $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->getField(C('DB_RESTOCK_QUANTITY'));
+                            if($restockQuantity <= $value[C('DB_USSW_INBOUND_ITEM_DQUANTITY')]){
+                                $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->setField(C('DB_RESTOCK_STATUS'),'已发货');
+                            }else{
+                                $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->setField(C('DB_RESTOCK_STATUS'),'部分发货');
+                            }
+                            
                         } 
                         $restock->commit();                
                     }
@@ -428,8 +434,20 @@ class InboundAction extends CommonAction{
             $data[C('DB_USSW_INBOUND_ITEM_SKU')] = I('post.'.C('DB_USSW_INBOUND_ITEM_SKU'),'','htmlspecialchars');
             $data[C('DB_USSW_INBOUND_ITEM_CQUANTITY')] = I('post.'.C('DB_USSW_INBOUND_ITEM_CQUANTITY'),'','htmlspecialchars');
             $usswInboundOrder = M(C('DB_USSW_INBOUND_ITEM'));
+            $usswInboundOrder->startTrans();
             $where = array(C('DB_USSW_INBOUND_ITEM_ID')=>I('post.'.C('DB_USSW_INBOUND_ITEM_ID'),'','htmlspecialchars'));
             $result =  $usswInboundOrder->where($where)->save($data);
+
+            $restock = M(C('DB_RESTOCK'));
+            $restock->startTrans();
+            $restockId = $usswInboundOrder->where($where)->getField(C('DB_USSW_INBOUND_ITEM_RESTOCK_ID'));
+            $restockQuantity = $restock->where(array(C('DB_RESTOCK_ID')=>$restockId))->getField(C('DB_RESTOCK_QUANTITY'));
+            if($restockQuantity>$data[C('DB_USSW_INBOUND_ITEM_CQUANTITY')]){
+                $restock->where(array(C('DB_RESTOCK_ID')=>$restockId))->setField(C('DB_RESTOCK_STATUS'),'部分发货');
+            }
+            $restock->commit();
+            $usswInboundOrder->commit();
+
             if(false !== $result || 0 !== $result) {
                 $this->success('操作成功！');
             }else{

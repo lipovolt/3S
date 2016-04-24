@@ -289,7 +289,7 @@ class RestockAction extends CommonAction{
     private function isInRestock($warehosue,$sku){
     	$restock = M(C('DB_RESTOCK'))->select();
     	foreach ($restock as $key => $value) {
-    		if($value[C('DB_RESTOCK_WAREHOUSE')]==$warehouse && $value[C('DB_RESTOCK_SKU')]==$sku && $value[C('DB_RESTOCK_STATUS')]=='待发货'){
+    		if($value[C('DB_RESTOCK_WAREHOUSE')]==$warehouse && $value[C('DB_RESTOCK_SKU')]==$sku && $value[C('DB_RESTOCK_STATUS')]!='已发货'){
     			return true;
     		}
     	}
