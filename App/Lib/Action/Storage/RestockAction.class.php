@@ -125,7 +125,7 @@ class RestockAction extends CommonAction{
 			$GLOBALS["indexOfOutOfStock"] = 0;
 			$this->findUsstorageOutOfStockItem(); 
 
-			for ($sheetId=0; $sheetId < 1; $sheetId++) { 
+			for ($sheetId=0; $sheetId < 2; $sheetId++) { 
 				$sheet = $objPHPExcel->getSheet($sheetId);
 				$highestRow = $sheet->getHighestRow(); // 取得总行数
 				$highestColumn = $sheet->getHighestColumn(); // 取得总列数

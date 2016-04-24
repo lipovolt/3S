@@ -177,7 +177,7 @@
 		<div>
 			<div class="tab-content">
 				<div class="tab" align="right">
-					<a class="btn btn-blue btn-s" href="<?php echo U('Storage/Restock/exportOutOfStock',array('outofstock'=>$outofstock));?>" >
+					<a class="btn btn-blue btn-s" href="<?php echo U('Storage/Restock/exportOutOfStock');?>" >
 						<span>导出</span>
 					</a>
 				</div>
