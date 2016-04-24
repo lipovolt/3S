@@ -197,19 +197,13 @@
 								<div class="block-bd">
 									<div class="block-indent" style="overflow:hidden;">
 										<div style="float:left;width:456px;">
-											<p>请先下载万邑通最新美国和德国仓库存表，然后上传数据。</p>
+											<p>请先下载万邑通最新美国和德国仓库存表，然后把两个文件合并成一个文件两个表单，然后上传数据。注意：第一个表单必须是万邑通美国库存表，第二个文件是万邑通德国库存表！！</p>
 											<div>
 												 <form action="<?php echo U('Storage/Restock/findOutOfStockItem');?>" method="post" enctype="multipart/form-data">
 												 	<div class="form-group">
-												 		<label for="winitUsStorage" class="control-label">万邑通美国仓库存表</label>
+												 		<label for="winitUsStorage" class="control-label">万邑通美国和德国仓库存表</label>
 													 	<div class="control-wrap">
 											            	<input type="file" name="winitUsStorage"/>
-											            </div>
-										            </div>
-								          			<div class="form-group">
-												 		<label for="winitDeStorage" class="control-label">万邑通德国仓库存表</label>
-													 	<div class="control-wrap">
-											            	<input type="file" name="winitDeStorage"/>
 											            </div>
 										            </div>
 										            <div class="form-group">

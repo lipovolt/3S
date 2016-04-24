@@ -45,8 +45,8 @@ class StorageAction extends CommonAction{
         }
     }
 
-    Public function edit($sku){
-        $this->usstorage = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$sku))->select();
+    Public function edit($id){
+        $this->usstorage = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_ID')=>$id))->select();
         $this->display();
 
     }

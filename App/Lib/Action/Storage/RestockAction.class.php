@@ -59,15 +59,40 @@ class RestockAction extends CommonAction{
 	}
 
 	public function exportOutOfStock(){
-		$xlsName  = "OutOfStock";
+		$outOfStock = F('out');
+		$fileName = 'OutOfStock'.date('_Ymd');
         $xlsCell  = array(
-	        array('warehosue','仓库'),
+	        array('warehouse','仓库'),
 	        array('sku','产品编码'),
 	        array('quantity','数量'),
 	        array('manager','产品经理'),
 	        array('date','日期') 
 	        );
-        $this->exportExcel($xlsName,$xlsCell,$outOfStock);
+		$cellNum = count($xlsCell);
+		$dataNum = count($outOfStock);
+		vendor("PHPExcel.PHPExcel");
+
+		$objPHPExcel = new PHPExcel();
+		$cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
+
+		//$objPHPExcel->getActiveSheet(0)->mergeCells('A1:'.$cellName[$cellNum-1].'1');//合并单元格
+		// $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A1', $expTitle.'  Export time:'.date('Y-m-d H:i:s'));  
+		for($i=0;$i<$cellNum;$i++){
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i].'1', $xlsCell[$i][1]); 
+		} 
+		// Miscellaneous glyphs, UTF-8   
+		for($i=0;$i<$dataNum;$i++){
+			for($j=0;$j<$cellNum;$j++){
+				$objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $outOfStock[$i][$xlsCell[$j][0]]);
+			}             
+		}  
+
+		header('pragma:public');
+		header('Content-type:application/vnd.ms-excel;charset=utf-8;name="'.$xlsTitle.'.xls"');
+		header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
+		$objWriter->save('php://output'); 
+		exit;   
 	}
 
 	public function importStorage(){
@@ -170,7 +195,7 @@ class RestockAction extends CommonAction{
 	                $this->error("模板错误，请检查模板！");
 	            }
 			}
-			
+			F('out',$outOfStock);
 			$this->assign('outofstock',$outOfStock);
 			$this->display('exportOutOfStock');    
         }else{

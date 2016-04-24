@@ -53,13 +53,21 @@
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl><!-- 
+	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
+</dl>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
-	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl> -->
+	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>缺货补货</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
+</dl>
 
 		</div>
 	</li>
@@ -89,7 +97,28 @@
 		</div>
 	</li>
 	<li>
-		<a href="#" mark="USSW"><span>美国自建仓</span></a>
+		<a href="<?php echo U('Purchase/Purchase/index');?>" mark="purchase"><span>采购</span></a>
+		<div class="subnav">
+			<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>采购单</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Purchase/Purchase/importPurchase');?>" >导入采购单</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'waiting confirm'));?>" >待确认</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'waiting pay'));?>" >待付款</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'no arrival'));?>" >待收货</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_CANCEL')=>1));?>" >已取消</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>供货商</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Purchase/Supplier/index');?>" >供货商信息</a></dd>
+</dl>
+		</div>
+	</li>
+	<li>
+		<a href="#" mark="ussw"><span>美国自建仓</span></a>
 		<div class="subnav">
 			<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
@@ -140,13 +169,6 @@
 		</div>
 	<div class="content">
 	<div id="ProductInfo" class="main">
-		<form method="POST" id="edit_productImg" action="<?php echo U(Ussw/Storage/update);?>" enctype="multipart/form-data">
-		
-		<div class="product-upload-wrap">
-			<input type="hidden" name="ProductID" value="1030634"> 
-			<input type="hidden" name="CountryID" value="122">
-		</div>
-		<input type="hidden" name="__hash__" value="48007adec5871053582d206bccb8d2ac_c6d32f4df480a79e2054461b3dc60b86" /></form>
 		<form method="POST" id="edit_productInfo" action="<?php echo U('Ussw/Storage/update');?>">
 		<div class="block-outer BaseInfo">
 			<div class="block-outer-hd"><strong>基本信息</strong></div>
@@ -226,12 +248,12 @@
 				</div>
 			</div>
 		</div>
-		<div class="item tc"><input type='hidden' name='ProductID' value='1030634'>
+		<div class="item tc">
 			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
 			<button class="btn btn-blue btn-s" id="saveProductInfo">
 				保存			</button>
 		</div>
-		<input type="hidden" name="__hash__" value="48007adec5871053582d206bccb8d2ac_c6d32f4df480a79e2054461b3dc60b86" /></form> 
+		</form> 
 	</div>
 
 

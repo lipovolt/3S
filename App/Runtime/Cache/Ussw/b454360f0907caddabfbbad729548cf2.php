@@ -63,8 +63,9 @@
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>补货</strong>								
+		<i class="icon dropdown-s"></i><strong>缺货补货</strong>								
 	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
 </dl>
 
@@ -257,7 +258,7 @@
 						<td><div class="tr"><?php echo ($vo['30dayssales']); ?></div></td>
 						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_REMARK')]); ?></div></td>
 						<td>
-							<a href="<?php echo U('Ussw/Storage/edit',array(C('DB_USSTORAGE_SKU')=>$vo[C('DB_USSTORAGE_SKU')]));?>">编辑</a>
+							<a href="<?php echo U('Ussw/Storage/edit',array(C('DB_USSTORAGE_ID')=>$vo[C('DB_USSTORAGE_ID')]));?>">编辑</a>
 						</td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
 					</tr>								
