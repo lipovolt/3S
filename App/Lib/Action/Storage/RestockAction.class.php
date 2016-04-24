@@ -153,7 +153,7 @@ class RestockAction extends CommonAction{
 	                    	if($objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0){
 	                    		if(($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())==0){
 
-			                    	if($usStatus=='空运' && !$this->isInOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+			                    	if($usStatus=='空运' && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 			                    		$outOfStock[$indexOfOutOfStock]['warehouse'] = $sheetId==0?'美自建仓':'万邑通德国';
 			                    		$outOfStock[$indexOfOutOfStock]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 			                    		$outOfStock[$indexOfOutOfStock]['quantity'] = 0;
@@ -161,7 +161,7 @@ class RestockAction extends CommonAction{
 			                    		$outOfStock[$indexOfOutOfStock]['date'] = Date('Y-m-d');
 			                    		$indexOfOutOfStock = $indexOfOutOfStock+1;
 			                    	}
-			                    	if($usStatus=='海运' && !$this->isInOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+			                    	if($usStatus=='海运' && !$this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 			                    		$outOfStock[$indexOfOutOfStock]['warehouse'] = $sheetId==0?'万邑通美西':'万邑通德国';
 			                    		$outOfStock[$indexOfOutOfStock]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 			                    		$outOfStock[$indexOfOutOfStock]['quantity'] = 0;
@@ -173,7 +173,7 @@ class RestockAction extends CommonAction{
 	                    	}else{
 		                    	$dayAvailableForSale = ($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())/$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
 		                    	
-		                    	if($usStatus=='空运' && $dayAvailableForSale<15 && !$this->isInOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($usStatus=='空运' && $dayAvailableForSale<15 && !$this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 		                    		$outOfStock[$indexOfOutOfStock]['warehouse'] = $sheetId==0?'美自建仓':'万邑通德国';
 		                    		$outOfStock[$indexOfOutOfStock]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 		                    		$outOfStock[$indexOfOutOfStock]['quantity'] = ceil((15-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
@@ -181,7 +181,7 @@ class RestockAction extends CommonAction{
 		                    		$outOfStock[$indexOfOutOfStock]['date'] = Date('Y-m-d');
 		                    		$indexOfOutOfStock = $indexOfOutOfStock+1;
 		                    	}
-		                    	if($usStatus=='海运' && $dayAvailableForSale<60 && !$this->isInOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($usStatus=='海运' && $dayAvailableForSale<60 && !$this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 		                    		$outOfStock[$indexOfOutOfStock]['warehouse'] = $sheetId==0?'万邑通美西':'万邑通德国';
 		                    		$outOfStock[$indexOfOutOfStock]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 		                    		$outOfStock[$indexOfOutOfStock]['quantity'] = ceil((60-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
@@ -267,7 +267,16 @@ class RestockAction extends CommonAction{
         return $sku30daysales;
     }
 
+    private function verifyImportedWinitStorageTemplateColumnName($firstRow){
+        for($c='A';$c<=max(array_keys(C('IMPORT_WINIT_STORAGE')));$c++){
+            if($firstRow[$c] != C('IMPORT_WINIT_STORAGE')[$c])
+                return false;
+        }
+        return true;
+    }
+
     private function isInOutOfStock($warehouse,$sku){
+    	$outOfStock = F('out');
     	foreach ($outOfStock as $key => $value) {
     		if($value['warehouse']==$warehouse && $value['sku']==$sku){
     			return true;
@@ -276,12 +285,34 @@ class RestockAction extends CommonAction{
     	return false;
     }
 
-    private function verifyImportedWinitStorageTemplateColumnName($firstRow){
-        for($c='A';$c<=max(array_keys(C('IMPORT_WINIT_STORAGE')));$c++){
-            if($firstRow[$c] != C('IMPORT_WINIT_STORAGE')[$c])
-                return false;
-        }
-        return true;
+    private function isInRestock($warehosue,$sku){
+    	$restock = M(C('DB_RESTOCK'))->select();
+    	foreach ($restock as $key => $value) {
+    		if($value[C('DB_RESTOCK_WAREHOUSE')]==$warehouse && $value[C('DB_RESTOCK_SKU')]==$sku && $value[C('DB_RESTOCK_STATUS')]=='待发货'){
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+
+    private function isInPurchaseItem($warehosue,$sku){
+    	$purchasedItem = M(C('DB_PURCHASE_ITEM'))->select();
+    	foreach ($purchasedItem as $key => $value) {
+    		if($value[C('DB_PURCHASE_ITEM_WAREHOUSE')]==$warehouse && $value[C('DB_PURCHASE_ITEM_SKU')]==$sku){
+    			$purchaseOrderStatus = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$value[C('DB_PURCHASE_ITEM_PURCHASE_ID')]))->getField(C('DB_PURCHASE_STATUS'));
+    			if($purchaseOrderStatus == '待确认' || $purchaseOrderStatus == '到付款' || $purchaseOrderStatus == '待发货')
+    				return true;
+    		}
+    	}
+    	return false;
+    }
+
+    private function reallyOutOfStock($warehouse,$sku){
+    	if(!$this->isInOutOfStock($warehouse.$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse.$sku)){
+    		return true;
+    	}else{
+    		return false;
+    	}
     }
 }
 

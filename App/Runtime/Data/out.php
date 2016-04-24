@@ -1,1 +1,0 @@
-<?php	return array ( 0 => array ( 'warehouse' => '美自建仓', 'sku' => '1303.01', 'quantity' => 0, 'manager' => '杨杰', 'date' => '2016-04-24', ), );?>
