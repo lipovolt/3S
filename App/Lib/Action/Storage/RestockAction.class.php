@@ -92,6 +92,7 @@ class RestockAction extends CommonAction{
 		header("Content-Disposition:attachment;filename=$fileName.xls");//attachment新窗口打印inline本窗口打印
 		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
 		$objWriter->save('php://output'); 
+		F('out',null);
 		exit;   
 	}
 
