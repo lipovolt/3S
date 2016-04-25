@@ -2,9 +2,19 @@
 
 class PurchaseAction extends CommonAction{
 
-	public function index(){
-        $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->select());
-		$this->display();
+	public function index($status='',$cancel=''){
+        if($status !=''){
+            $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_STATUS')=>$status))->select());
+            $this->display();
+        }
+        elseif( $cancel != ''){
+            $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_CANCEL')=>$cancel))->select());
+            $this->display();
+        }else{
+            $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->select());
+            $this->display();
+        }
+        
 	}
 
 	public function importPurchase(){

@@ -11,9 +11,13 @@ class StorageAction extends CommonAction{
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
             $usstorage = $Data->limit($Page->firstRow.','.$Page->listRows)->select();
-
+            $products = M(C('DB_PRODUCT'));
             foreach ($usstorage as $key => $value) {
               $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
+              if($value[C('DB_USSTORAGE_CNAME')]==null){
+                $usstorage[$key][C('DB_USSTORAGE_CNAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
+                $usstorage[$key][C('DB_USSTORAGE_ENAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_ENAME'));
+              }
             }
 
             $this->assign('usstorage',$usstorage);
@@ -71,158 +75,6 @@ class StorageAction extends CommonAction{
 	    else{
 	        $this->error('写入错误！');
 	     }
-    }
-
-    public function insertSingleItem(){
-        if(IS_POST){
-            if($this->checkSku(I('post.sku','','htmlspecialchars'))){
-                $usstorage = M(C('DB_USSTORAGE'));
-                $usstorage->starttrans();
-                if(I('post.position','','htmlspecialchars') == ''){
-                    $where[C('DB_USSTORAGE_SKU')] = I('post.sku','','htmlspecialchars');
-                    $row = $usstorage->where($where)->find();
-                    if($row!=''){
-                        $data[C('DB_USSTORAGE_CINVENTORY')] = $row[C('DB_USSTORAGE_CINVENTORY')]+1;
-                        $data[C('DB_USSTORAGE_AINVENTORY')] = $row[C('DB_USSTORAGE_AINVENTORY')]+1;
-
-                        $result = $usstorage->where($where)->save($data);
-                        $usstorage->commit();
-                        if(false !== $result and 0!== $result){
-                            $this->success('入库成功！');
-                        }
-                        else{
-                            $this->error('入库失败！');
-                        }
-                    }else{
-                        $data[C('DB_USSTORAGE_SKU')] = I('post.sku','','htmlspecialchars');
-                        $data[C('DB_USSTORAGE_CINVENTORY')] = 1;
-                        $data[C('DB_USSTORAGE_AINVENTORY')] = 1;
-                        $result = $usstorage->add($data);
-                        $usstorage->commit();
-                        if($result){
-                            $this->success('入库成功！');
-                        }
-                        else{
-                            $this->error('入库失败！');
-                        }
-                    }
-                    
-                }else{
-                    $where[C('DB_USSTORAGE_SKU')] = I('post.sku','','htmlspecialchars');
-                    $where[C('DB_USSTORAGE_POSITION')] = I('post.position','','htmlspecialchars');
-                    $row = $usstorage->where($where)->find();
-                    if($row!=''){
-                        $data[C('DB_USSTORAGE_CINVENTORY')] = $row[C('DB_USSTORAGE_CINVENTORY')]+1;
-                        $data[C('DB_USSTORAGE_AINVENTORY')] = $row[C('DB_USSTORAGE_AINVENTORY')]+1;
-                        $result = $usstorage->where($where)->save($data);
-                        $usstorage->commit();
-                        if(false !== $result and 0!== $result){
-                            $this->success('入库成功！');
-                        }
-                        else{
-                            $this->error('入库失败！');
-                        }
-                    }else{
-                        $data[C('DB_USSTORAGE_SKU')] = I('post.sku','','htmlspecialchars');
-                        $data[C('DB_USSTORAGE_POSITION')] = I('post.position','','htmlspecialchars');
-                        $data[C('DB_USSTORAGE_CINVENTORY')] = 1;
-                        $data[C('DB_USSTORAGE_AINVENTORY')] = 1;
-                        $result = $usstorage->add($data);
-                        $usstorage->commit();
-                        if($result){
-                            $this->success('入库成功！');
-                        }
-                        else{
-                            $this->error('入库失败！');
-                        }
-                    }
-                    
-                }
-            }else{
-                $this->error('产品编码不在产品列表，请检查');
-            }
-            
-        } 
-    }
-
-    public function insertMultiItem(){
-        if(IS_POST){
-            if($this->checkSku(I('post.sku','','htmlspecialchars'))){
-                $usstorage = M(C('DB_USSTORAGE'));
-                $usstorage->starttrans();
-                if(I('post.position','','htmlspecialchars') == ''){
-                    $where[C('DB_USSTORAGE_SKU')] = I('post.sku','','htmlspecialchars');
-                    $row = $usstorage->where($where)->find();
-                    if($row!=''){
-                        $data[C('DB_USSTORAGE_CINVENTORY')] = $row[C('DB_USSTORAGE_CINVENTORY')]+I('post.quantity','','htmlspecialchars');
-                        $data[C('DB_USSTORAGE_AINVENTORY')] = $row[C('DB_USSTORAGE_AINVENTORY')]+I('post.quantity','','htmlspecialchars');
-
-                        $result = $usstorage->where($where)->save($data);
-                        $usstorage->commit();
-                        if(false !== $result and 0!== $result){
-                            $this->success('入库成功！');
-                        }
-                        else{
-                            $this->error('入库失败！');
-                        }
-                    }else{
-                        $data[C('DB_USSTORAGE_SKU')] = I('post.sku','','htmlspecialchars');
-                        $data[C('DB_USSTORAGE_CINVENTORY')] = I('post.quantity','','htmlspecialchars');
-                        $data[C('DB_USSTORAGE_AINVENTORY')] = I('post.quantity','','htmlspecialchars');
-                        $result = $usstorage->add($data);
-                        $usstorage->commit();
-                        if($result){
-                            $this->success('入库成功！');
-                        }
-                        else{
-                            $this->error('入库失败！');
-                        }
-                    }
-                    
-                }else{
-                    $where[C('DB_USSTORAGE_SKU')] = I('post.sku','','htmlspecialchars');
-                    $where[C('DB_USSTORAGE_POSITION')] = I('post.position','','htmlspecialchars');
-                    $row = $usstorage->where($where)->find();
-                    if($row!=''){
-                        $data[C('DB_USSTORAGE_CINVENTORY')] = $row[C('DB_USSTORAGE_CINVENTORY')]+I('post.quantity','','htmlspecialchars');;
-                        $data[C('DB_USSTORAGE_AINVENTORY')] = $row[C('DB_USSTORAGE_AINVENTORY')]+I('post.quantity','','htmlspecialchars');;
-                        $result = $usstorage->where($where)->save($data);
-                        $usstorage->commit();
-                        if(false !== $result and 0!== $result){
-                            $this->success('入库成功！');
-                        }
-                        else{
-                            $this->error('入库失败！');
-                        }
-                    }else{
-                        $data[C('DB_USSTORAGE_SKU')] = I('post.sku','','htmlspecialchars');
-                        $data[C('DB_USSTORAGE_POSITION')] = I('post.position','','htmlspecialchars');
-                        $data[C('DB_USSTORAGE_CINVENTORY')] = I('post.quantity','','htmlspecialchars');;
-                        $data[C('DB_USSTORAGE_AINVENTORY')] = I('post.quantity','','htmlspecialchars');;
-                        $result = $usstorage->add($data);
-                        $usstorage->commit();
-                        if($result){
-                            $this->success('入库成功！');
-                        }
-                        else{
-                            $this->error('入库失败！');
-                        }
-                    }
-                    
-                }
-            }else{
-                $this->error('产品编码不在产品列表，请检查');
-            }
-            
-        } 
-    }
-
-    private function checkSku($sku){
-        $result = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
-        if($result != ''){
-            return true;
-        }
-        return false;
     }
 
     private function get30DaysSales($sku){

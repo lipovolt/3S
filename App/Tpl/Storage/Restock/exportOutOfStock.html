@@ -46,6 +46,7 @@
 					<tr>
 						<th><div class="tl">仓库</div></th>
 						<th><div class="tl">产品编码</div></th>
+						<th><div class="tl">中文名称</div></th>
 						<th><div class="tl">数量</div></th>
 						<th><div class="tl">产品经理</th>
 						<th><div class="tl">导出日期</div></th>
@@ -53,7 +54,8 @@
 					<volist name="outofstock" id="vo">
 						<tr>
 						<td><div class="tl">{$vo['warehouse']}</div></td>
-						<td><div class="tl">{$vo['sku']}</div></td>						
+						<td><div class="tl">{$vo['sku']}</div></td>
+						<td><div class="tl">{$vo['cname']}</div></td>								
 						<td><div class="tl">{$vo['quantity']}</div></td>
 						<td><div class="tl">{$vo['manager']}</div></td>
 						<td><div class="tl">{$vo['date']}</div></td>
