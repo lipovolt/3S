@@ -60,6 +60,7 @@
 					<tr>
 						<th width="110">产品编码</th>
 						<th><div class="tl">中文名称</div></th>
+						<th><div class="tl">采购价</div></th>
 						<th><div class="tl">重量g</div></th>
 						<th>长cm</th>
 						<th>宽cm</th>
@@ -73,7 +74,8 @@
 					<volist name="products" id="vo">
 						<tr>
 						<td><div class="tl">{$vo[C('DB_PRODUCT_SKU')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_PRODUCT_CNAME')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_PRODUCT_CNAME')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_PRICE')]}</div></td>						
 						<td><div class="tl">{$vo[C('DB_PRODUCT_WEIGHT')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_PRODUCT_LENGTH')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_PRODUCT_WIDTH')]}</div></td>
