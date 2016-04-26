@@ -71,9 +71,9 @@ class ProductAction extends CommonAction{
                             break;
                         }else{
                             $data=null;
-                            $data[C('db_product_sku')]= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+                            $data[C('db_product_sku')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),"utf-8","auto");
                             $data[C('db_product_cname')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue(),"utf-8","auto");
-                            $data[C('db_product_ename')]= $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+                            $data[C('db_product_ename')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue(),"utf-8","auto");
                             $data[C('db_product_price')] = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();  
                             $data[C('db_product_weight')] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
                             $data[C('db_product_length')] = $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();

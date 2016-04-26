@@ -105,9 +105,9 @@
 		<i class="icon dropdown-s"></i><strong>采购单</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Purchase/Purchase/importPurchase');?>" >导入采购单</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'waiting confirm'));?>" >待确认</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'waiting pay'));?>" >待付款</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'no arrival'));?>" >待收货</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待确认'));?>" >待确认</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待付款'));?>" >待付款</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待发货'));?>" >待发货</a></dd>
 	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_CANCEL')=>1));?>" >已取消</a></dd>
 </dl>
 <dl>
@@ -123,6 +123,7 @@
 		<div class="subnav">
 			<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Inbound/singleItemInbound');?>">单品入库</a></dd>
 	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
 	<dd><a href="<?php echo U('Ussw/Inbound/createInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
 </dl>
@@ -135,7 +136,6 @@
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Storage/add');?>">新增库存</a></dd>
 </dl>
 
 		<div>
@@ -192,7 +192,7 @@
 								<div class="block-bd">
 									<div class="block-indent" style="overflow:hidden;">
 										<div style="float:left;width:456px;">
-											<p>请<a href="http://www.lipovolt.com/3s/Download/Download_Products_Template.xls" style="color: #6495ED">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
+											<p>请<a href="http://www.lipovolt.com/3s/Download/Import_Products_Template.xls" style="color: #6495ED">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
 											<div>
 												 <form action="<?php echo U('Product/Product/batchAdd');?>" method="post" enctype="multipart/form-data">
 										            <input type="file" name="import"/>
