@@ -70,7 +70,7 @@ class PurchaseAction extends CommonAction{
                 for($i=2;$i<=$highestRow;$i++){   
                     $data=null;
                     $data['tmpNo']= $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-                    $data[C('DB_PURCHASE_ITEM_SKU')]= $this->verifySku($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue());
+                    $data[C('DB_PURCHASE_ITEM_SKU')]= $this->verifySku(mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue(),"utf-8","auto"));
                     $data[C('DB_PURCHASE_ITEM_PRICE')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue(),"utf-8","auto");
                     $data[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')]= $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
                     $data[C('DB_PURCHASE_SHIPPING_FEE')] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue(); 
