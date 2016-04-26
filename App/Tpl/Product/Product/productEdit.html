@@ -102,12 +102,12 @@ function checkboxValue(tinyintValue){
 												<option value="不带电" selected>不带电</option>
 												<option value="内置电" >内置电</option>
 												<option value="纯电" >纯电</option>';
-										}elseif($product[0]['battery'] == '内置电'){
+										}elseif($product[0][C('DB_PRODUCT_BATTERY')] == '内置电'){
 											echo '<option value="" >请选择</option>
 												<option value="不带电" >不带电</option>
 												<option value="内置电" selected>内置电</option>
 												<option value="纯电" >纯电</option>';
-										}elseif($product[0]['battery'] == '纯电'){
+										}elseif($product[0][C('DB_PRODUCT_BATTERY')] == '纯电'){
 											echo '<option value="" >请选择</option>
 												<option value="不带电" >不带电</option>
 												<option value="内置电" >内置电</option>
@@ -174,15 +174,23 @@ function checkboxValue(tinyintValue){
 										if($product[0][C('DB_PRODUCT_TODE')] == '空运'){
 											echo '<option value="" >请选择</option>
 												<option value="空运" selected>空运</option>
-												<option value="海运">海运</option>';
-										}elseif($product[0]['battery'] == '海运'){
+												<option value="海运" >海运</option>
+												<option value="无" >无</option>';
+										}elseif($product[0][C('DB_PRODUCT_TODE')] == '海运'){
 											echo '<option value="" >请选择</option>
 												<option value="空运" >空运</option>
-												<option value="海运" selected>海运</option>';
+												<option value="海运" selected>海运</option>
+												<option value="无" >无</option>';
+										}elseif($product[0][C('DB_PRODUCT_TODE')] == '无'){
+											echo '<option value="" >请选择</option>
+												<option value="空运" >空运</option>
+												<option value="海运" >海运</option>
+												<option value="无" selected>无</option>';
 										}else{
 											echo '<option value="" selected>请选择</option>
 												<option value="空运" >空运</option>
-												<option value="海运" >海运</option>';
+												<option value="海运" >海运</option>
+												<option value="无" >无</option>';
 										}
 									?>							
 								</select>
@@ -204,15 +212,23 @@ function checkboxValue(tinyintValue){
 										if($product[0][C('DB_PRODUCT_TOUS')] == '空运'){
 											echo '<option value="" >请选择</option>
 												<option value="空运" selected>空运</option>
-												<option value="海运">海运</option>';
-										}elseif($product[0]['battery'] == '海运'){
+												<option value="海运" >海运</option>
+												<option value="无" >无</option>';
+										}elseif($product[0][C('DB_PRODUCT_TOUS')] == '海运'){
 											echo '<option value="" >请选择</option>
 												<option value="空运" >空运</option>
-												<option value="海运" selected>海运</option>';
+												<option value="海运" selected>海运</option>
+												<option value="无" >无</option>';
+										}elseif($product[0][C('DB_PRODUCT_TOUS')] == '无'){
+											echo '<option value="" >请选择</option>
+												<option value="空运" >空运</option>
+												<option value="海运" >海运</option>
+												<option value="无" selected>无</option>';
 										}else{
 											echo '<option value="" selected>请选择</option>
 												<option value="空运" >空运</option>
-												<option value="海运" >海运</option>';
+												<option value="海运" >海运</option>
+												<option value="无" >无</option>';
 										}
 									?>							
 								</select>

@@ -207,8 +207,6 @@ class ProductAction extends CommonAction{
             return '美国头程是必填项！';
         elseif($productToVerify[C('db_product_manager')] == null or $productToVerify[C('db_product_manager')] == '')
             return '产品经理是必填项！';
-        elseif($productToVerify[C('db_product_supplier')] == null or $productToVerify[C('db_product_supplier')] == '')
-            return '供货商信息是必填项！';
         else
             return null;
     }

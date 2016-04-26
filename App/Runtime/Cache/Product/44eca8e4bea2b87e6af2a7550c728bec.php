@@ -60,13 +60,21 @@ function checkboxValue(tinyintValue){
 		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-</dl><!-- 
+	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
+</dl>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
 	</dt>
-	<dd><a href="#"  mark="Outbound">深圳仓库存</a></dd>
-</dl> -->
+	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>缺货补货</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
+</dl>
 
 		</div>
 	</li>
@@ -77,7 +85,7 @@ function checkboxValue(tinyintValue){
 	<dt>
 		<i class="icon dropdown-s"></i><strong>基本信息</strong>								
 	</dt>
-	<dd><a href="#" >基本信息</a></dd>
+	<dd><a href="<?php echo U('Sale/Metadata/index');?>" >基本信息</a></dd>
 </dl>
 <dl>
 	<dt>
@@ -96,12 +104,34 @@ function checkboxValue(tinyintValue){
 		</div>
 	</li>
 	<li>
-		<a href="#" mark="USSW"><span>美国自建仓</span></a>
+		<a href="<?php echo U('Purchase/Purchase/index');?>" mark="purchase"><span>采购</span></a>
+		<div class="subnav">
+			<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>采购单</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Purchase/Purchase/importPurchase');?>" >导入采购单</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待确认'));?>" >待确认</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待付款'));?>" >待付款</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待发货'));?>" >待发货</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_CANCEL')=>1));?>" >已取消</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>供货商</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Purchase/Supplier/index');?>" >供货商信息</a></dd>
+</dl>
+		</div>
+	</li>
+	<li>
+		<a href="#" mark="ussw"><span>美国自建仓</span></a>
 		<div class="subnav">
 			<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Inbound/singleItemInbound');?>">单品入库</a></dd>
 	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
-	<dd><a href="<?php echo U('Ussw/Inbound/creatInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/createInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
@@ -111,7 +141,7 @@ function checkboxValue(tinyintValue){
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Ussw/usswManage');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
 </dl>
 
 		<div>
@@ -189,10 +219,10 @@ function checkboxValue(tinyintValue){
 									<?php  if($product[0][C('DB_PRODUCT_BATTERY')] == '不带电'){ echo '<option value="" >请选择</option>
 												<option value="不带电" selected>不带电</option>
 												<option value="内置电" >内置电</option>
-												<option value="纯电" >纯电</option>'; }elseif($product[0]['battery'] == '内置电'){ echo '<option value="" >请选择</option>
+												<option value="纯电" >纯电</option>'; }elseif($product[0][C('DB_PRODUCT_BATTERY')] == '内置电'){ echo '<option value="" >请选择</option>
 												<option value="不带电" >不带电</option>
 												<option value="内置电" selected>内置电</option>
-												<option value="纯电" >纯电</option>'; }elseif($product[0]['battery'] == '纯电'){ echo '<option value="" >请选择</option>
+												<option value="纯电" >纯电</option>'; }elseif($product[0][C('DB_PRODUCT_BATTERY')] == '纯电'){ echo '<option value="" >请选择</option>
 												<option value="不带电" >不带电</option>
 												<option value="内置电" >内置电</option>
 												<option value="纯电" selected>纯电</option>'; }else{ echo '<option value="" selected>请选择</option>
@@ -252,11 +282,17 @@ function checkboxValue(tinyintValue){
 								<select name="<?php echo C('DB_PRODUCT_TODE');?>"  id="<?php echo C('DB_PRODUCT_TODE');?>">
 									<?php  if($product[0][C('DB_PRODUCT_TODE')] == '空运'){ echo '<option value="" >请选择</option>
 												<option value="空运" selected>空运</option>
-												<option value="海运">海运</option>'; }elseif($product[0]['battery'] == '海运'){ echo '<option value="" >请选择</option>
+												<option value="海运" >海运</option>
+												<option value="无" >无</option>'; }elseif($product[0][C('DB_PRODUCT_TODE')] == '海运'){ echo '<option value="" >请选择</option>
 												<option value="空运" >空运</option>
-												<option value="海运" selected>海运</option>'; }else{ echo '<option value="" selected>请选择</option>
+												<option value="海运" selected>海运</option>
+												<option value="无" >无</option>'; }elseif($product[0][C('DB_PRODUCT_TODE')] == '无'){ echo '<option value="" >请选择</option>
 												<option value="空运" >空运</option>
-												<option value="海运" >海运</option>'; } ?>							
+												<option value="海运" >海运</option>
+												<option value="无" selected>无</option>'; }else{ echo '<option value="" selected>请选择</option>
+												<option value="空运" >空运</option>
+												<option value="海运" >海运</option>
+												<option value="无" >无</option>'; } ?>							
 								</select>
 							</div>
 						</div>
@@ -274,11 +310,17 @@ function checkboxValue(tinyintValue){
 								<select name="<?php echo C('DB_PRODUCT_TOUS');?>"  id="<?php echo C('DB_PRODUCT_TOUS');?>">
 									<?php  if($product[0][C('DB_PRODUCT_TOUS')] == '空运'){ echo '<option value="" >请选择</option>
 												<option value="空运" selected>空运</option>
-												<option value="海运">海运</option>'; }elseif($product[0]['battery'] == '海运'){ echo '<option value="" >请选择</option>
+												<option value="海运" >海运</option>
+												<option value="无" >无</option>'; }elseif($product[0][C('DB_PRODUCT_TOUS')] == '海运'){ echo '<option value="" >请选择</option>
 												<option value="空运" >空运</option>
-												<option value="海运" selected>海运</option>'; }else{ echo '<option value="" selected>请选择</option>
+												<option value="海运" selected>海运</option>
+												<option value="无" >无</option>'; }elseif($product[0][C('DB_PRODUCT_TOUS')] == '无'){ echo '<option value="" >请选择</option>
 												<option value="空运" >空运</option>
-												<option value="海运" >海运</option>'; } ?>							
+												<option value="海运" >海运</option>
+												<option value="无" selected>无</option>'; }else{ echo '<option value="" selected>请选择</option>
+												<option value="空运" >空运</option>
+												<option value="海运" >海运</option>
+												<option value="无" >无</option>'; } ?>							
 								</select>
 							</div>
 						</div>
