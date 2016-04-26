@@ -127,10 +127,10 @@ class RestockAction extends CommonAction{
 			$this->findUsstorageOutOfStockItem(); 
 
 			for ($sheetId=0; $sheetId < 2; $sheetId++) { 
+				$objPHPExcel->setActiveSheetIndex($sheetId);
 				$sheet = $objPHPExcel->getSheet($sheetId);
 				$highestRow = $sheet->getHighestRow(); // 取得总行数
 				$highestColumn = $sheet->getHighestColumn(); // 取得总列数
-
 				for ($i=$highestRow; $i >0 ; $i--) { 
 					if($sheet->getCell("A".$i) == null or $sheet->getCell("A".$i) =='')
 					    $highestRow = $i;
@@ -176,7 +176,7 @@ class RestockAction extends CommonAction{
 	                    		}
 	                    	}else{
 		                    	$dayAvailableForSale = ($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())/$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-		                    	
+
 		                    	if($usStatus=='空运' && $dayAvailableForSale<15 && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'美自建仓':'万邑通德国';
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
