@@ -124,6 +124,12 @@ return array(
 		'N' => 'DOI',
 		),
 
+	//Winit storage template
+	'IMPORT_WINIT_STORAGE_SHEET' => array(
+		0 => '万邑通美西库存表',
+		1 => '万邑通德国库存表',
+		),
+
 	//update restock shipping status for other warehosue
 	'IMPORT_UPDATE_RESTOCK_SHIPPING_STATUS' => array(
 		'A' => '补货表编号',

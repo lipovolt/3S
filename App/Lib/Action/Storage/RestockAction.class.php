@@ -124,6 +124,7 @@ class RestockAction extends CommonAction{
 
 			$objReader = PHPExcel_IOFactory::createReader('Excel5');
 			$objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+			$sheetnames = $objPHPExcel->getSheetNames();
 			$GLOBALS["outOfStock"] = null;
 			$GLOBALS["indexOfOutOfStock"] = 0;
 			$this->findUsstorageOutOfStockItem(); 
@@ -147,7 +148,7 @@ class RestockAction extends CommonAction{
 	                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
 	            }
 
-	            if($this->verifyImportedWinitStorageTemplateColumnName($firstRow)){  
+	            if($this->verifyImportedWinitStorageTemplateColumnName($firstRow) && $this->verifyImportedWinitStorageTemplateSheetName($sheetnames)){  
 	            	 
 	                $products = M(C('db_product'));
 	                for($i=2;$i<=$highestRow;$i++){
@@ -299,6 +300,14 @@ class RestockAction extends CommonAction{
     private function verifyImportedWinitStorageTemplateColumnName($firstRow){
         for($c='A';$c<=max(array_keys(C('IMPORT_WINIT_STORAGE')));$c++){
             if($firstRow[$c] != C('IMPORT_WINIT_STORAGE')[$c])
+                return false;
+        }
+        return true;
+    }
+
+    private function verifyImportedWinitStorageTemplateSheetName($sheetnames){
+        for($c=0;$c<=1;$c++){
+            if($sheetnames[$c] != C('IMPORT_WINIT_STORAGE_SHEET')[$c])
                 return false;
         }
         return true;
