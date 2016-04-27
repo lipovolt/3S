@@ -24,8 +24,7 @@ class RestockAction extends CommonAction{
 	        array(C('DB_RESTOCK_REMARK'),'备注')  
 	        );
         $xlsModel = M(C('DB_RESTOCK'));
-     	$manager = session(C('DB_3S_USER_USERNAME'));
-        $xlsData  = $xlsModel->where(array(C('DB_RESTOCK_MANAGER')=>$manager))->select();
+        $xlsData  = $xlsModel->select();
         $this->exportExcel($xlsName,$xlsCell,$xlsData);
 	}
 	
