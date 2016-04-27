@@ -64,7 +64,6 @@ class PurchaseAction extends CommonAction{
 
                 $ppo = null;
                 $ppoi = null;
-                $supplier = null;
                 $indexOfPpo = 0;
                 $indexOfPpoi =0;
                 for($i=2;$i<=$highestRow;$i++){   
@@ -76,12 +75,7 @@ class PurchaseAction extends CommonAction{
                     $data[C('DB_PURCHASE_SHIPPING_FEE')] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue(); 
                     $data[C('DB_PURCHASE_ITEM_WAREHOUSE')] = mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue(),"utf-8","auto"); 
                     $data[C('DB_PURCHASE_MANAGER')] = mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),"utf-8","auto");
-                    $data[C('DB_SUPPLIER_COMPANY')] = mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue(),"utf-8","auto");
-                    $data[C('DB_SUPPLIER_PERSON')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),"utf-8","auto");
-                    $data[C('DB_SUPPLIER_WANGWANG')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue(),"utf-8","auto");
-                    $data[C('DB_SUPPLIER_QQ')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue(),"utf-8","auto");
-                    $data[C('DB_SUPPLIER_TEL')]= $objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-                    $data[C('DB_SUPPLIER_WEBSITE')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue(),"utf-8","auto");
+                    $data[C('DB_PURCHASE_SUPPLIER_ID')] = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
                     $data[C('DB_PURCHASE_ORDER_NUMBER')]= $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
                     $data[C('DB_PURCHASE_TRACKING_NUMBER')]= $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
                     $data[C('DB_PURCHASE_REMARK')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue(),"utf-8","auto"); 
@@ -97,22 +91,7 @@ class PurchaseAction extends CommonAction{
                         $ppoi[$indexOfPpoi][C('DB_PURCHASE_ITEM_WAREHOUSE')] = $data[C('DB_PURCHASE_ITEM_WAREHOUSE')];
                         $indexOfPpoi = $indexOfPpoi+1;
 
-                    }else{
-                        if($data[C('DB_SUPPLIER_COMPANY')]!=null or $data[C('DB_SUPPLIER_COMPANY')]!=''){
-                            if($this->getSupplierID($data[C('DB_SUPPLIER_COMPANY')])==null){
-                                $supp[C('DB_SUPPLIER_COMPANY')] = $data[C('DB_SUPPLIER_COMPANY')];
-                                $supp[C('DB_SUPPLIER_PERSON')] = $data[C('DB_SUPPLIER_PERSON')];
-                                $supp[C('DB_SUPPLIER_WANGWANG')] = $data[C('DB_SUPPLIER_WANGWANG')];
-                                $supp[C('DB_SUPPLIER_QQ')] = $data[C('DB_SUPPLIER_QQ')];
-                                $supp[C('DB_SUPPLIER_WEBSITE')] = $data[C('DB_SUPPLIER_WEBSITE')];
-                                $supp[C('DB_SUPPLIER_TEL')] = $data[C('DB_SUPPLIER_TEL')];
-                                $supp[C('DB_SUPPLIER_ADDRESS')] = $data[C('DB_SUPPLIER_ADDRESS')];
-                                $data[C('DB_PURCHASE_SUPPLIER_ID')] = $this->insertSupplier($supp);
-                            }
-                            else{
-                                $data[C('DB_PURCHASE_SUPPLIER_ID')] = $this->getSupplierID($data[C('DB_SUPPLIER_COMPANY')]);
-                            }
-                        }                      
+                    }else{                     
                         $ppo[$indexOfPpo][C('DB_PURCHASE_ID')] = $data['tmpNo'];
                         $ppo[$indexOfPpo][C('DB_PURCHASE_MANAGER')] = $data[C('DB_PURCHASE_MANAGER')];
                         $ppo[$indexOfPpo][C('DB_PURCHASE_CREATE_DATE')] = date("Y-m-d H:i:s" ,time());
@@ -372,9 +351,6 @@ class PurchaseAction extends CommonAction{
             }
         }
         M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->setField(C('DB_PURCHASE_STATUS'),$status);
-        if($status == '全部到货'){
-            $this->purchasedItemInSzStorage($items);
-        }
     }
 
 }

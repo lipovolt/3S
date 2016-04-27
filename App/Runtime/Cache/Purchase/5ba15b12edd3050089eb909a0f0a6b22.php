@@ -3,11 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>产品信息</title>
+<title>编辑供货商</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+
 </head>
 <body>
 
@@ -170,61 +171,96 @@
 			</div>
 		</div>
 	<div class="content">
-	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Purchase/Purchase/index');?>" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">关键字</label>
-						<div class="control-wrap">
-							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_PURCHASE_ID');?>">采购单号</option>
-								<option value="<?php echo C('DB_PURCHASE_MANAGER');?>">产品经理</option>
-							</select>
+		<script type="text/javascript">
+		function checkForm()
+		{
+			var company = document.getElementById("<?php echo C('DB_SUPPLIER_COMPANY');?>").value;
+			var person = document.getElementById("<?php echo C('DB_SUPPLIER_PERSON');?>").value;
+			var wangwang = document.getElementById("<?php echo C('DB_SUPPLIER_WANGWANG');?>").value;
+			var qq = document.getElementById("<?php echo C('DB_SUPPLIER_QQ');?>").value;
+			var tel = document.getElementById("<?php echo C('DB_SUPPLIER_TEL');?>").value;
+			var website = document.getElementById("<?php echo C('DB_SUPPLIER_WEBSITE');?>").value;
+		    if(company.trim()==("") && person.trim()==""){
+		    	alert("公司名称或者联系人，必填一项");
+		    	return false;
+		    }
+		    else if(wangwang.trim()==("") && qq.trim()=="" && tel.trim()==("") && website.trim()=="" ){
+		    	alert("旺旺，qq，电话，网址，必填一项");
+		    	return false;
+		    }else{
+		    	return true;
+		    }
+
+		}
+		</script>
+	<div id="Supplier" class="main">
+		<form method="POST" id="add_new_supplier" action="<?php echo U('Purchase/Supplier/edit');?>">
+		<div class="block-outer BaseInfo">
+			<div class="block-outer-bd">
+				<div class="inline-block block-indent">
+					<div class="item">
+                        <div class="form-group">
+							<label for="price" class="control-label">供货商公司名</label>
+							<div class="control-wrap">
+								<input type="text"  id="<?php echo C('DB_SUPPLIER_COMPANY');?>" name="<?php echo C('DB_SUPPLIER_COMPANY');?>" value="<?php echo ($supplier[0][C('DB_SUPPLIER_COMPANY')]); ?>" />
+								<input type="hidden"  id="<?php echo C('DB_SUPPLIER_ID');?>" name="<?php echo C('DB_SUPPLIER_ID');?>" value="<?php echo ($supplier[0][C('DB_SUPPLIER_ID')]); ?>" />
+							</div>
 						</div>
-						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
+						<div class="form-group checkbox">
+							<label for="IsBattery" class="control-label">联系人</label>
+							<div class="control-wrap">
+								<input type="text"  id="<?php echo C('DB_SUPPLIER_PERSON');?>" name="<?php echo C('DB_SUPPLIER_PERSON');?>" value="<?php echo ($supplier[0][C('DB_SUPPLIER_PERSON')]); ?>" />
+							</div>							
 						</div>
 					</div>
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
-				</div>			
-			</div>
-		</form>
-		<div>
-			<div class="tab-content">	
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th><div class="tl">采购单号</div></th>
-						<th><div class="tl">产品经理</div></th>
-						<th><div class="tl">创建时间</div></th>
-						<th><div class="tl">采购时间</th>
-						<th><div class="tl">状态</div></th>
-						<th><div class="tl">订单号</div></th>
-						<th><div class="tl">追踪号</div></th>
-						<th><div class="tl">备注</div></th>
-						<th width="230">操作</th>
-					</tr>
-					<?php if(is_array($purchaseOrder)): $i = 0; $__LIST__ = $purchaseOrder;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_ID')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_MANAGER')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_CREATE_DATE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_PURCHASED_DATE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_STATUS')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_ORDER_NUMBER')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_TRACKING_NUMBER')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_REMARK')]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Purchase/Purchase/editPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">编辑</a>
-							<a href="<?php echo U('Purchase/Purchase/confirmPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">确认</a>
-							<a href="<?php echo U('Purchase/Purchase/payPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">付款</a>
-						</td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
+					<div class="item">
+						<div class="form-group">
+							<label for="Name" class="control-label">旺旺</label>
+							<div class="control-wrap">
+								<input type="text" name="<?php echo C('DB_SUPPLIER_WANGWANG');?>" id="<?php echo C('DB_SUPPLIER_WANGWANG');?>" value="<?php echo ($supplier[0][C('DB_SUPPLIER_WANGWANG')]); ?>" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="EName" class="control-label">QQ</label>
+							<div class="control-wrap">
+								<input type="text" name="<?php echo C('DB_SUPPLIER_QQ');?>" id="<?php echo C('DB_SUPPLIER_QQ');?>" value="<?php echo ($supplier[0][C('DB_SUPPLIER_QQ')]); ?>" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+                        <div class="form-group">
+							<label for="weight" class="control-label">电话</label>
+							<div class="control-wrap">
+								<input type="text"  id="<?php echo C('DB_SUPPLIER_TEL');?>" name="<?php echo C('DB_SUPPLIER_TEL');?>" value="<?php echo ($supplier[0][C('DB_SUPPLIER_TEL')]); ?>" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="length" class="control-label">网址</label>
+							<div class="control-wrap">
+								<input type="text"  id="<?php echo C('DB_SUPPLIER_WEBSITE');?>" name="<?php echo C('DB_SUPPLIER_WEBSITE');?>" value="<?php echo ($supplier[0][C('DB_SUPPLIER_WEBSITE')]); ?>" />
+							</div>
+						</div>
+					</div>
+                    <div class="item">
+                        <div class="form-group">
+							<label for="width" class="control-label">地址</label>
+							<div class="control-wrap">
+								<input type="text"  id="<?php echo C('DB_SUPPLIER_ADDRESS');?>" name="<?php echo C('DB_SUPPLIER_ADDRESS');?>" value="<?php echo ($supplier[0][C('DB_SUPPLIER_ADDRESS')]); ?>" />
+							</div>
+						</div>
+                    </div>
+				</div>
 			</div>
 		</div>
+		<div class="item tc">
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+			<button class="btn btn-blue btn-s" id="saveProductInfo" onclick="return checkForm()">保存</button>
+		</div>
+	</form> 
 	</div>
-	</div>
+
+
+		</div>
 	</div>
 	</div>
 	<!-- InstanceEndEditable -->

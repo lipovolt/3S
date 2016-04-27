@@ -114,6 +114,7 @@
 		<i class="icon dropdown-s"></i><strong>供货商</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Purchase/Supplier/index');?>" >供货商信息</a></dd>
+	<dd><a href="<?php echo U('Purchase/Supplier/addNewSupplier');?>" >添加供货商</a></dd>
 </dl>
 		</div>
 	</li>
@@ -190,6 +191,7 @@
 					<tr>
 						<th width="110">产品编码</th>
 						<th><div class="tl">中文名称</div></th>
+						<th><div class="tl">采购价</div></th>
 						<th><div class="tl">重量g</div></th>
 						<th>长cm</th>
 						<th>宽cm</th>
@@ -202,7 +204,8 @@
 					</tr>
 					<?php if(is_array($products)): $i = 0; $__LIST__ = $products;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
 						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_SKU')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_CNAME')]); ?></div></td>						
+						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_CNAME')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_PRICE')]); ?></div></td>						
 						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_WEIGHT')]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_LENGTH')]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_WIDTH')]); ?></div></td>

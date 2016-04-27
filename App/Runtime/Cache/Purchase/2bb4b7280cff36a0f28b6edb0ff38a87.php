@@ -115,6 +115,7 @@
 		<i class="icon dropdown-s"></i><strong>供货商</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Purchase/Supplier/index');?>" >供货商信息</a></dd>
+	<dd><a href="<?php echo U('Purchase/Supplier/addNewSupplier');?>" >添加供货商</a></dd>
 </dl>
 		</div>
 	</li>
@@ -165,6 +166,7 @@
 		<i class="icon dropdown-s"></i><strong>供货商</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Purchase/Supplier/index');?>" >供货商信息</a></dd>
+	<dd><a href="<?php echo U('Purchase/Supplier/addNewSupplier');?>" >添加供货商</a></dd>
 </dl>	
 			</div>
 		</div>

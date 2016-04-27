@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>编辑供货商</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>采购管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/purchaseMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+		<script type="text/javascript">
+		function checkForm()
+		{
+			var company = document.getElementById("{:C('DB_SUPPLIER_COMPANY')}").value;
+			var person = document.getElementById("{:C('DB_SUPPLIER_PERSON')}").value;
+			var wangwang = document.getElementById("{:C('DB_SUPPLIER_WANGWANG')}").value;
+			var qq = document.getElementById("{:C('DB_SUPPLIER_QQ')}").value;
+			var tel = document.getElementById("{:C('DB_SUPPLIER_TEL')}").value;
+			var website = document.getElementById("{:C('DB_SUPPLIER_WEBSITE')}").value;
+		    if(company.trim()==("") && person.trim()==""){
+		    	alert("公司名称或者联系人，必填一项");
+		    	return false;
+		    }
+		    else if(wangwang.trim()==("") && qq.trim()=="" && tel.trim()==("") && website.trim()=="" ){
+		    	alert("旺旺，qq，电话，网址，必填一项");
+		    	return false;
+		    }else{
+		    	return true;
+		    }
+
+		}
+		</script>
+	<div id="Supplier" class="main">
+		<form method="POST" id="add_new_supplier" action="{:U('Purchase/Supplier/edit')}">
+		<div class="block-outer BaseInfo">
+			<div class="block-outer-bd">
+				<div class="inline-block block-indent">
+					<div class="item">
+                        <div class="form-group">
+							<label for="price" class="control-label">供货商公司名</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_SUPPLIER_COMPANY')}" name="{:C('DB_SUPPLIER_COMPANY')}" value="{$supplier[0][C('DB_SUPPLIER_COMPANY')]}" />
+								<input type="hidden"  id="{:C('DB_SUPPLIER_ID')}" name="{:C('DB_SUPPLIER_ID')}" value="{$supplier[0][C('DB_SUPPLIER_ID')]}" />
+							</div>
+						</div>
+						<div class="form-group checkbox">
+							<label for="IsBattery" class="control-label">联系人</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_SUPPLIER_PERSON')}" name="{:C('DB_SUPPLIER_PERSON')}" value="{$supplier[0][C('DB_SUPPLIER_PERSON')]}" />
+							</div>							
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="Name" class="control-label">旺旺</label>
+							<div class="control-wrap">
+								<input type="text" name="{:C('DB_SUPPLIER_WANGWANG')}" id="{:C('DB_SUPPLIER_WANGWANG')}" value="{$supplier[0][C('DB_SUPPLIER_WANGWANG')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="EName" class="control-label">QQ</label>
+							<div class="control-wrap">
+								<input type="text" name="{:C('DB_SUPPLIER_QQ')}" id="{:C('DB_SUPPLIER_QQ')}" value="{$supplier[0][C('DB_SUPPLIER_QQ')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+                        <div class="form-group">
+							<label for="weight" class="control-label">电话</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_SUPPLIER_TEL')}" name="{:C('DB_SUPPLIER_TEL')}" value="{$supplier[0][C('DB_SUPPLIER_TEL')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="length" class="control-label">网址</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_SUPPLIER_WEBSITE')}" name="{:C('DB_SUPPLIER_WEBSITE')}" value="{$supplier[0][C('DB_SUPPLIER_WEBSITE')]}" />
+							</div>
+						</div>
+					</div>
+                    <div class="item">
+                        <div class="form-group">
+							<label for="width" class="control-label">地址</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_SUPPLIER_ADDRESS')}" name="{:C('DB_SUPPLIER_ADDRESS')}" value="{$supplier[0][C('DB_SUPPLIER_ADDRESS')]}" />
+							</div>
+						</div>
+                    </div>
+				</div>
+			</div>
+		</div>
+		<div class="item tc">
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+			<button class="btn btn-blue btn-s" id="saveProductInfo" onclick="return checkForm()">保存</button>
+		</div>
+	</form> 
+	</div>
+
+
+		</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

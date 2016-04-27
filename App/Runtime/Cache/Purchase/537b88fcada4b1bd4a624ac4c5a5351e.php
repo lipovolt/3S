@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>产品信息</title>
+<title>供货商信息</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -171,15 +171,15 @@
 		</div>
 	<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Purchase/Purchase/index');?>" method="POST">
+		<form name="search_supplier" id="search_supplier" action="<?php echo U('Purchase/Supplier/index');?>" method="POST">
 			<div class="search-area">
 				<div class="item">
 					<div class="form-group">
 						<label for="keyword" class="control-label">关键字</label>
 						<div class="control-wrap">
 							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_PURCHASE_ID');?>">采购单号</option>
-								<option value="<?php echo C('DB_PURCHASE_MANAGER');?>">产品经理</option>
+								<option value="<?php echo C('DB_SUPPLIER_COMPANY');?>">名称</option>
+								<option value="<?php echo C('DB_SUPPLIER_WANGWANG');?>">旺旺</option>
 							</select>
 						</div>
 						<div class="control-wrap">
@@ -194,29 +194,27 @@
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th><div class="tl">采购单号</div></th>
-						<th><div class="tl">产品经理</div></th>
-						<th><div class="tl">创建时间</div></th>
-						<th><div class="tl">采购时间</th>
-						<th><div class="tl">状态</div></th>
-						<th><div class="tl">订单号</div></th>
-						<th><div class="tl">追踪号</div></th>
-						<th><div class="tl">备注</div></th>
+						<th><div class="tl">供货商编号</div></th>
+						<th><div class="tl">公司名</div></th>
+						<th><div class="tl">联系人</div></th>
+						<th><div class="tl">旺旺</th>
+						<th><div class="tl">QQ</div></th>
+						<th><div class="tl">网址</div></th>
+						<th><div class="tl">电话</div></th>
+						<th><div class="tl">地址</div></th>
 						<th width="230">操作</th>
 					</tr>
-					<?php if(is_array($purchaseOrder)): $i = 0; $__LIST__ = $purchaseOrder;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_ID')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_MANAGER')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_CREATE_DATE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_PURCHASED_DATE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_STATUS')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_ORDER_NUMBER')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_TRACKING_NUMBER')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_REMARK')]); ?></div></td>
+					<?php if(is_array($supplier)): $i = 0; $__LIST__ = $supplier;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><div class="tl"><?php echo ($vo[C('DB_SUPPLIER_ID')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_SUPPLIER_COMPANY')]); ?></div></td>						
+						<td><div class="tl"><?php echo ($vo[C('DB_SUPPLIER_PERSON')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_SUPPLIER_WANGWANG')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_SUPPLIER_QQ')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_SUPPLIER_WEBSITE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_SUPPLIER_TEL')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_SUPPLIER_ADDRESS')]); ?></div></td>
 						<td>
-							<a href="<?php echo U('Purchase/Purchase/editPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">编辑</a>
-							<a href="<?php echo U('Purchase/Purchase/confirmPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">确认</a>
-							<a href="<?php echo U('Purchase/Purchase/payPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">付款</a>
+							<a href="<?php echo U('Purchase/Supplier/editSupplier',array(id=>$vo[C('DB_SUPPLIER_ID')]));?>">编辑</a>
 						</td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
