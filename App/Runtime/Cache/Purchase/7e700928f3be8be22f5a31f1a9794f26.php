@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>产品信息</title>
+<title>采购信息</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -178,16 +178,54 @@
 						<label for="keyword" class="control-label">关键字</label>
 						<div class="control-wrap">
 							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_PURCHASE_ID');?>">采购单号</option>
-								<option value="<?php echo C('DB_PURCHASE_MANAGER');?>">产品经理</option>
+								<option value="value">商品编码</option>
+								<option value="name">商品名称</option>
 							</select>
 						</div>
 						<div class="control-wrap">
 							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
 						</div>
 					</div>
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
-				</div>			
+					<input type="hidden" name="country" value="122" />
+					<button class="btn btn-s btn-blue" onclick="search_product.submit();">
+						<i class="icon search"></i>
+						<i class="vline-inline"></i>
+						<span>查询</span>
+					</button>
+					<input type="hidden" name="advanced" id="advanced" value="" />
+					<a class="AdvancedSearch " data-for="AdvancedSearchContent" href="javascript:;"><span>高级搜索</span><i class="icon"></i></a>
+				</div>
+				
+				<div id="AdvancedSearchContent" class="AdvancedSearchContent" style="display:none;">	
+					<div class="form-group">
+						<label for="category_3" class="control-label">商品分类</label>
+						<div class="control-wrap">
+							<select id="category_3" name="category_3" data-value="" class="form-control">
+								<option value="">请选择</option>
+								<option value="1007331">Home & Garden</option><option value="1007366">Business & Industrial</option><option value="1007369">Toys & Hobbies</option><option value="1015607">LED</option><option value="1015775">Business</option><option value="1021875">Pet Supplies</option><option value="1022595">Clothing, Shoes & Accessories</option><option value="1022755">Clothing Shoes & Accessories</option><option value="1028735">Sporting Goods</option><option value="1028736">Musical Instruments & Gear</option><option value="1028737">Cell Phones & Accessories</option><option value="1028738">Computers/Tablets & Networking</option><option value="1028739">Jewelry & Watches</option><option value="1028740">Kitchen & Home</option><option value="1025334">Consumer Electronics</option><option value="1026883">Health & Beauty</option><option value="1031330">Motors</option><option value="1030513">eBay Motors</option><option value="1107330">Crafts</option><option value="1165356">Collectibles</option>						</select>
+						</div>
+						<div class="control-wrap">
+							<select id="category_2" name="category_2" data-value="" class="form-control">
+								<option value="">请选择</option>
+														</select>
+						</div>
+						<div class="control-wrap">
+							<select id="category_1" name="category_1" data-value="" class="form-control">
+								<option value="">请选择</option>
+														</select>
+						</div>
+					</div>
+					<div class="form-group">
+	                    <label for="keyword" class="control-label">服务类型</label>
+	                    <div class="control-wrap">
+	                        <select id="serviceType" name="serviceType"  class="form-control" data-value="">
+	                            <option value="">请选择</option>
+	                            <option value="N">仅支持海外仓</option>
+	                            <option value="Y">仅支持国际送仓</option>
+	                        </select>
+	                    </div>
+	                </div>
+				</div>
 			</div>
 		</form>
 		<div>

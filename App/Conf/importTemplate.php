@@ -32,8 +32,8 @@ return array(
 	//Inbound_item import template
 	'IMPORT_INBOUND_ITEM' => array(
 		'A' => '补货表编号',
-		'A' => '产品编码',
-		'B' => '数量',
+		'B' => '产品编码',
+		'C' => '数量',
 		),
 
 	//Inbound_item import template
@@ -101,9 +101,9 @@ return array(
 		'F' => '仓库',
 		'G' => '产品经理',
 		'H' => '供货商编号',
-		'N' => '订单号',
-		'O' => '追踪号',
-		'P' => '备注',
+		'I' => '订单号',
+		'J' => '追踪号',
+		'K' => '备注',
 		),
 
 	//Winit storage template
