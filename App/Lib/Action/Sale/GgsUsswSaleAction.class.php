@@ -527,8 +527,8 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function getUsswCost($data){
-			$exchange = M('metadata')->where('id=1')->getField('usdtormb');
-			$c = ($data['price']+0.5)/$exchange+$data['us-rate']+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee']+$data['ggs-ussw-sp']*0.144+0.35;
+			$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
+			$c = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee']+$data[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]*0.144+0.35;
 			return $c;
 		}
 }
