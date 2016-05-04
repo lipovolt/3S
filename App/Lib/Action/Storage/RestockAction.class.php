@@ -6,7 +6,8 @@ class RestockAction extends CommonAction{
 	public $indexOfOutOfStock;
 
 	public function index(){
-		$restock = M(C('DB_RESTOCK'))->select();
+		$map[C('DB_RESTOCK_STATUS')] = array('neq','已发货');
+		$restock = M(C('DB_RESTOCK'))->where($map)->select();
 		$this->assign('restock',$restock);
 		$this->display();
 	}
@@ -421,7 +422,9 @@ class RestockAction extends CommonAction{
                 	$this->error('内容有错误，无法更新补货表发货状态');
                 }else{
                 	for($i=2;$i<=$highestRow;$i++){
-	                	$restock->where(array(C('DB_RESTOCK_ID')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->setField(C('DB_RESTOCK_STATUS'),'已发货');
+                		$id = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+                		$status = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+	                	$restock->where(array(C('DB_RESTOCK_ID')=>$id))->setField(C('DB_RESTOCK_STATUS'),$status);
 	                }
 	                $this->success('导入成功！');
                 }
