@@ -133,7 +133,7 @@ return array(
 	//update restock shipping status for other warehosue
 	'IMPORT_UPDATE_RESTOCK_SHIPPING_STATUS' => array(
 		'A' => '补货表编号',
-		'D' => '状态', //部分发货，已发货
+		'B' => '状态', //部分发货，已发货
 		),
 	);
 ?>
