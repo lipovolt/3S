@@ -384,9 +384,9 @@ function checkboxValue(tinyintValue){
 					</div>
 					<div class="item">						
 						<div class="form-group">
-							<label for="height" class="control-label">供货商信息</label>
+							<label for="height" class="control-label">供货商编号</label>
 							<div class="control-wrap">
-								<input type="text" colspan="3" style="width:480px;height:60px" id="<?php echo C('DB_PRODUCT_SUPPLIER');?>" name="<?php echo C('DB_PRODUCT_SUPPLIER');?>" value="<?php echo ($product[0][C('DB_PRODUCT_SUPPLIER')]); ?>" />
+								<input type="text"  id="<?php echo C('DB_PRODUCT_SUPPLIER');?>" name="<?php echo C('DB_PRODUCT_SUPPLIER');?>" value="<?php echo ($product[0][C('DB_PRODUCT_SUPPLIER')]); ?>" />
 							</div>
 						</div>  
 					</div>

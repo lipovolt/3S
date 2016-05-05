@@ -79,7 +79,7 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
         	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
         	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
-        	$data[$key][C('DB_PRODUCT_USTARIFF')]=round($value[C('DB_PRODUCT_USTARIFF')]/100*$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')],2);
+        	$data[$key][C('DB_PRODUCT_USTARIFF')]=$value[C('DB_PRODUCT_USTARIFF')]/100;
         	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key][C('DB_PRODUCT_TOUS')]=$value[C('DB_PRODUCT_TOUS')];
         	$data[$key]['way-to-us-fee']=$data[$key][C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
@@ -112,7 +112,7 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
         	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
         	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
-        	$data[$key][C('DB_PRODUCT_USTARIFF')]=round($value[C('DB_PRODUCT_USTARIFF')]/100*$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')],2);
+        	$data[$key][C('DB_PRODUCT_USTARIFF')]=$value[C('DB_PRODUCT_USTARIFF')]/100;
         	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key][C('DB_PRODUCT_TOUS')]=$value[C('DB_PRODUCT_TOUS')];
         	$data[$key]['way-to-us-fee']=$data[$key][C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
@@ -120,7 +120,7 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['local-shipping-fee']=$this->getUsswLocalShippingFee($value['weight'],$value['length'],$value['width'],$value['height']);
         	$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]=$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')];
         	$data[$key]['cost']=round($this->getUsswCost($data[$key]),2);
-        	$data[$key]['gprofit']=$data[$key]['ggs-ussw-sp']-$data[$key]['cost'];
+        	$data[$key]['gprofit']=$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key]['ggs-ussw-sp']*100,2).'%';
         	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')]*0.0352740,2);
         	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')]*0.3937008,2);
@@ -164,12 +164,12 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function getUsswAirFirstTransportFee($weight,$l,$w,$h){
-		if(($weight/1000)>=(l * w * h / 6000)){
+		if(($weight/1000)>=($l * $w * $h / 6000)){
 			return round($weight / 1000 * 5.8,2);
 		}
 		else{
 			return round(($l * $w * $h) / 6000 * 5.8,2);
-		}
+		}	
 	}
 
 	private function getUsswSeaFirstTransportFee($l,$w,$h){
@@ -527,9 +527,9 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function getUsswCost($data){
-			$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-			$c = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee']+$data[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]*0.144+0.35;
-			return $c;
+		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
+		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee']+$data[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]*0.144+0.35;
+		return $c;
 	}
 }
 
