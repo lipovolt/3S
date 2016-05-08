@@ -223,8 +223,8 @@ class GgsUsswSaleAction extends CommonAction{
 				2=>$this->calUsswUspsPrioritySmallFlatRateBoxFee($weight,$l,$w,$h),
 				3=>$this->calUsswUspsPriorityMediumFlatRateBoxFee($weight,$l,$w,$h),
 				4=>$this->calUsswUspsPriorityLargeFlatRateBoxFee($weight,$l,$w,$h),
-				5=>$this->calUsswUspsPriorityPackageFee(),
-				6=>$this->calUsswFedexSmartPostFee(),
+				5=>$this->calUsswUspsPriorityPackageFee($weight,$l,$w,$h),
+				6=>$this->calUsswFedexSmartPostFee($weight,$l,$w,$h),
 				7=>$this->calUsswUspsFedexHomeDeliveryFee($weight,$l,$w,$h)
 			);
 		$cheapest=65536;
@@ -302,6 +302,8 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPriorityPackageFee($weight,$l,$w,$h){
+		/*dump($weight);
+		die;*/
 		if($weight <= 31751 and ($l + 2 * ($w + $h)) <= 274){
 			if($weight>=0 and $weight<453){
 				return 8.34;
