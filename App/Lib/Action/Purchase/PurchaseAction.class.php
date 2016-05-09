@@ -3,17 +3,36 @@
 class PurchaseAction extends CommonAction{
 
 	public function index($status='',$cancel=''){
-        if($status !=''){
-            $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_STATUS')=>$status))->select());
-            $this->display();
-        }
-        elseif( $cancel != ''){
-            $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_CANCEL')=>$cancel))->select());
-            $this->display();
+        if($_POST['keyword']==""){
+            if($status !=''){
+                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_STATUS')=>$status))->select());
+                $this->display();
+            }
+            elseif( $cancel != ''){
+                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_CANCEL')=>$cancel))->select());
+                $this->display();
+            }else{
+                $map[C('DB_PURCHASE_STATUS')] = array('neq','全部到货');
+                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where($map)->select());
+                $this->display();
+            }
         }else{
-            $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->select());
-            $this->display();
+            if($_POST['keyword']==C('DB_PURCHASE_ID')){
+                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>I('post.keywordValue','','htmlspecialchars')))->select());
+                $this->display();
+            }
+            if($_POST['keyword']==C('DB_PURCHASE_MANAGER')){
+                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_MANAGER')=>I('post.keywordValue','','htmlspecialchars')))->select());
+                $this->display();
+            }
+            if($_POST['keyword']==C('DB_PURCHASE_ITEM_SKU')){
+                $purchaseOrders = M(C('DB_PURCHASE_ITEM'))->distinct(true)->where(array(C('DB_PURCHASE_ITEM_SKU')=>I('post.keywordValue','','htmlspecialchars')))->getField(C('DB_PURCHASE_ITEM_PURCHASE_ID'),true);
+                $map[C('DB_PURCHASE_ID')] = array('in',$purchaseOrders);
+                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where($map)->select());
+                $this->display();
+            }
         }
+        
         
 	}
 
