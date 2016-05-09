@@ -25,7 +25,17 @@ class StorageAction extends CommonAction{
         }
         else{
             $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
-            $this->usstorage = M(C('DB_USSTORAGE'))->where($where)->select();
+            $usstorage = M(C('DB_USSTORAGE'))->where($where)->select();
+            $products = M(C('DB_PRODUCT'));
+            foreach ($usstorage as $key => $value) {
+              $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
+              if($value[C('DB_USSTORAGE_CNAME')]==null){
+                $usstorage[$key][C('DB_USSTORAGE_CNAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
+                $usstorage[$key][C('DB_USSTORAGE_ENAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_ENAME'));
+              }
+            }
+
+            $this->assign('usstorage',$usstorage);
         }
         $this->display();
     }
