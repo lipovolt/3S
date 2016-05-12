@@ -216,8 +216,7 @@
 						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_REMARK')]); ?></div></td>
 						<td>
 							<a href="<?php echo U('Purchase/Purchase/editPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">编辑</a>
-							<a href="<?php echo U('Purchase/Purchase/confirmPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">确认</a>
-							<a href="<?php echo U('Purchase/Purchase/payPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">付款</a>
+							<a href="<?php echo U('Purchase/Purchase/deletePurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">删除</a>
 						</td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
