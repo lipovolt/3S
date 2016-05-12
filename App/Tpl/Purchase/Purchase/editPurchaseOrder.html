@@ -235,6 +235,7 @@ function addNewReceived(id){
 		
 			<tr>
 				<th>商品编码</th>
+				<th>商品名称</th>
 				<th>单价</th>				
 				<th>采购数量</th>
 				<th>已到数量</th>
@@ -246,9 +247,11 @@ function addNewReceived(id){
 			<volist name="purchaseItem" id="vo" key="k">
 				
 				<tr>
-				<td><input id="{:C('DB_PURCHASE_ITEM_SKU')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_SKU')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_SKU')]}"></input>
+				<td>{$vo[C('DB_PURCHASE_ITEM_SKU')]}
 					<input type="hidden" id="{:C('DB_PURCHASE_ITEM_ID')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_ID')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_ID')]}"></input>
 				</td>
+
+				<td>{$vo[C('DB_PRODUCT_CNAME')]}</td>
 				<td><input id="{:C('DB_PURCHASE_ITEM_PRICE')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_PRICE')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_PRICE')]}"></input></td>
 				<td><input id="{:C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')]}"></input></td>
 				<td><input id="{:C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]}"></input></td>

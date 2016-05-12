@@ -220,7 +220,8 @@ class PurchaseAction extends CommonAction{
         $purchaseItem = M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_PURCHASE_ID')=>$purchaseID))->select();
         $total = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->getField(C('DB_PURCHASE_SHIPPING_FEE'));
         foreach ($purchaseItem as $key => $value) {
-            $total = $total+$value[C('DB_PURCHASE_ITEM_PRICE')]*$value[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')];            
+            $total = $total+$value[C('DB_PURCHASE_ITEM_PRICE')]*$value[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')];
+            $purchaseItem[$key][C('DB_PRODUCT_CNAME')] = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_PURCHASE_ITEM_SKU')]))->getField(C('DB_PRODUCT_CNAME'));         
         }
         $this->assign('purchaseOrder',$purchaseOrder);
         $this->assign('total',$total);

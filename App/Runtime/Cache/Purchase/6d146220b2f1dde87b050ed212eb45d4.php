@@ -371,6 +371,7 @@ function addNewReceived(id){
 		
 			<tr>
 				<th>商品编码</th>
+				<th>商品名称</th>
 				<th>单价</th>				
 				<th>采购数量</th>
 				<th>已到数量</th>
@@ -380,9 +381,11 @@ function addNewReceived(id){
 			</tr> 
 
 			<?php if(is_array($purchaseItem)): $k = 0; $__LIST__ = $purchaseItem;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($k % 2 );++$k;?><tr>
-				<td><input id="<?php echo C('DB_PURCHASE_ITEM_SKU');?>[<?php echo ($k["value"]); ?>]" name="<?php echo C('DB_PURCHASE_ITEM_SKU');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_SKU')]); ?>"></input>
+				<td><?php echo ($vo[C('DB_PURCHASE_ITEM_SKU')]); ?>
 					<input type="hidden" id="<?php echo C('DB_PURCHASE_ITEM_ID');?>[<?php echo ($k["value"]); ?>]" name="<?php echo C('DB_PURCHASE_ITEM_ID');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_ID')]); ?>"></input>
 				</td>
+
+				<td><?php echo ($vo[C('DB_PRODUCT_CNAME')]); ?></td>
 				<td><input id="<?php echo C('DB_PURCHASE_ITEM_PRICE');?>[<?php echo ($k["value"]); ?>]" name="<?php echo C('DB_PURCHASE_ITEM_PRICE');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_PRICE')]); ?>"></input></td>
 				<td><input id="<?php echo C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY');?>[<?php echo ($k["value"]); ?>]" name="<?php echo C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')]); ?>"></input></td>
 				<td><input id="<?php echo C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY');?>[<?php echo ($k["value"]); ?>]" name="<?php echo C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]); ?>"></input></td>
