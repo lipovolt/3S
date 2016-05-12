@@ -361,9 +361,11 @@ function addNewReceived(id){
 </div>
 <!--产品列表-->
 <div class="block-outer">
+	<form method="POST" id="edit_purchaseItem" name="edit_purchaseItem" action="<?php echo U('Purchase/Purchase/updatePurchaseItem',array(C('DB_PURCHASE_ID')=>$purchaseOrder[0][C('DB_PURCHASE_ID')]));?>">
 	<div class="block-outer-hd">
 		<strong>产品列表</strong>
 		<a class="btn btn-blue btn-s" href="<?php echo U('Purchase/Purchase/addPurchaseItem',array(C('DB_PURCHASE_ID')=>$purchaseOrder[0][C('DB_PURCHASE_ID')]));?>" onclick='return checkForm()'>新增产品</a>
+		<button class="btn btn-blue btn-s" id="savePurchaseItemInfo">保存</button>
     </div>
 	<table  id="warehouseProduct" class="tablelist">              
 		
@@ -371,29 +373,28 @@ function addNewReceived(id){
 				<th>商品编码</th>
 				<th>单价</th>				
 				<th>采购数量</th>
-				<th>到货数量</th>
+				<th>已到数量</th>
+				<th>新到数量</th>
 				<th>仓库</th>
 				<th>操作</th>
 			</tr> 
 
-			<?php if(is_array($purchaseItem)): $i = 0; $__LIST__ = $purchaseItem;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><form method="POST" id="edit_purchaseItem" name="edit_purchaseItem" action="<?php echo U('Purchase/Purchase/updatePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]));?>">
-				<tr>
-				<td><input id="<?php echo C('DB_PURCHASE_ITEM_SKU');?>" name="<?php echo C('DB_PURCHASE_ITEM_SKU');?>" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_SKU')]); ?>"></input>
-					<input type="hidden" id="<?php echo C('DB_PURCHASE_ITEM_ID');?>" name="<?php echo C('DB_PURCHASE_ITEM_ID');?>" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_ID')]); ?>"></input>
+			<?php if(is_array($purchaseItem)): $k = 0; $__LIST__ = $purchaseItem;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($k % 2 );++$k;?><tr>
+				<td><input id="<?php echo C('DB_PURCHASE_ITEM_SKU');?>[<?php echo ($k["value"]); ?>]" name="<?php echo C('DB_PURCHASE_ITEM_SKU');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_SKU')]); ?>"></input>
+					<input type="hidden" id="<?php echo C('DB_PURCHASE_ITEM_ID');?>[<?php echo ($k["value"]); ?>]" name="<?php echo C('DB_PURCHASE_ITEM_ID');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_ID')]); ?>"></input>
 				</td>
-				<td><input id="<?php echo C('DB_PURCHASE_ITEM_PRICE');?>" name="<?php echo C('DB_PURCHASE_ITEM_PRICE');?>" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_PRICE')]); ?>"></input></td>
-				<td><input id="<?php echo C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY');?>" name="<?php echo C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY');?>" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')]); ?>"></input></td>
-				<td><input id="<?php echo C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY');?>" name="<?php echo C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY');?>" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]); ?>"></input></td>
-				<td><input id="<?php echo C('DB_PURCHASE_ITEM_WAREHOUSE');?>" name="<?php echo C('DB_PURCHASE_ITEM_WAREHOUSE');?>" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_WAREHOUSE')]); ?>"></input>
+				<td><input id="<?php echo C('DB_PURCHASE_ITEM_PRICE');?>[<?php echo ($k["value"]); ?>]" name="<?php echo C('DB_PURCHASE_ITEM_PRICE');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_PRICE')]); ?>"></input></td>
+				<td><input id="<?php echo C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY');?>[<?php echo ($k["value"]); ?>]" name="<?php echo C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')]); ?>"></input></td>
+				<td><input id="<?php echo C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY');?>[<?php echo ($k["value"]); ?>]" name="<?php echo C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]); ?>"></input></td>
+				<td><input id="new_received_quantity[<?php echo ($k["value"]); ?>]" name="new_received_quantity[<?php echo ($k["value"]); ?>]" value="0"></input></td>
+				<td><input id="<?php echo C('DB_PURCHASE_ITEM_WAREHOUSE');?>[<?php echo ($k["value"]); ?>]" name="<?php echo C('DB_PURCHASE_ITEM_WAREHOUSE');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_WAREHOUSE')]); ?>"></input>
 				</td>
 				<td>
-					<button class="btn btn-blue btn-s-auto " id="saveProductInfo" onclick="return checkForm()">保存</button>
 					<a class="btn btn-blue btn-s-auto " href="<?php echo U('Purchase/Purchase/deletePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]));?>" onclick="return checkForm()">删除</a>
-					<a class="btn btn-blue btn-s-auto " onclick="addNewReceived(<?php echo ($vo[C('DB_PURCHASE_ITEM_ID')]); ?>)">添加到货</a>
 				</td>
-				</tr>
-				</form><?php endforeach; endif; else: echo "" ;endif; ?>	
+				</tr><?php endforeach; endif; else: echo "" ;endif; ?>	
 		</table>
+	</form>	
 </div>
 
 </div>

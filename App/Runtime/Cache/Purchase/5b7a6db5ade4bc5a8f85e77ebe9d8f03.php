@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>补货</title>
+<title>批量确认收货数量</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -148,93 +148,56 @@
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>库存管理</strong></div>
+			<div class="sidenav-hd"><strong>采购管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
+		<i class="icon dropdown-s"></i><strong>采购单</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/importPurchase');?>" >导入采购单</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待确认'));?>" >待确认</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待付款'));?>" >待付款</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待发货'));?>" >待发货</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_CANCEL')=>1));?>" >已取消</a></dd>
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
+		<i class="icon dropdown-s"></i><strong>供货商</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
-</dl>
-<dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>缺货补货</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
-	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
-</dl>
-	
+	<dd><a href="<?php echo U('Purchase/Supplier/index');?>" >供货商信息</a></dd>
+	<dd><a href="<?php echo U('Purchase/Supplier/addNewSupplier');?>" >添加供货商</a></dd>
+</dl>	
 			</div>
 		</div>
 	<div class="content">
-	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Storage/Purchase/index');?>" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">关键字</label>
-						<div class="control-wrap">
-							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_RESTOCK_STATUS');?>">状态</option>
-								<option value="<?php echo C('DB_RESTOCK_WAREHOUSE');?>">仓库</option>
-							</select>
-						</div>
-						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
-						</div>
-					</div>
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
-				</div>			
-			</div>
-		</form>
-		<div>
-			<div class="tab-content">
-				<div class="form-group">
-					<a class="btn btn-blue btn-s" href="<?php echo U('Storage/Restock/importRestock');?>" >
-						<span>导入</span>
-					</a>
-					<a class="btn btn-blue btn-s" href="<?php echo U('Storage/Restock/exportRestock');?>" >
-						<span>导出</span>
-					</a>
-				</div>
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th><div class="tl">编号</div></th>
-						<th><div class="tl">创建时间</div></th>
-						<th><div class="tl">发货时间</div></th>
-						<th><div class="tl">产品经理</th>
-						<th><div class="tl">产品编码</div></th>
-						<th><div class="tl">数量</div></th>
-						<th><div class="tl">仓库</div></th>
-						<th><div class="tl">运输方式</div></th>
-						<th><div class="tl">状态</div></th>
-						<th><div class="tl">备注</div></th>
-					</tr>
-					<?php if(is_array($restock)): $i = 0; $__LIST__ = $restock;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_ID')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_CREATE_DATE')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_SHIPPING_DATE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_MANAGER')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_SKU')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_QUANTITY')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_WAREHOUSE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_TRANSPORT')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_STATUS')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_RESTOCK_REMARK')]); ?></div></td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
-			</div>
-		</div>
-	</div>
-	</div>
+<!-- 主页面开始  -->
+<div id="WarehouseOutbound" class="main">
+<!--产品列表-->
+<div class="block-outer">
+	<div class="block-outer-hd">
+		<strong>产品列表</strong>
+    </div>
+	<table  id="warehouseProduct" class="tablelist">              
+		
+			<tr>
+				<th>商品编码</th>	
+				<th>商品名称</th>	
+				<th>到货数量</th>
+			</tr> 
+			<form method="POST" id="edit_purchaseItem" name="edit_purchaseItem" action="<?php echo U('Purchase/Purchase/batchConfirmReceivedItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]));?>">
+			<?php if(is_array($purchaseItem)): $k = 0; $__LIST__ = $purchaseItem;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($k % 2 );++$k;?><tr>
+				<input type="hidden" id="<?php echo C('DB_PURCHASE_ITEM_ID');?>" name="<?php echo C('DB_PURCHASE_ITEM_ID');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_ID')]); ?>"></input>
+				<td><?php echo ($vo[C('DB_PURCHASE_ITEM_SKU')]); ?></td>
+				<td><?php echo ($vo[C('DB_PRODUCT_CNAME')]); ?></td>
+				<td><input id="<?php echo C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY');?>" name="<?php echo C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY');?>[<?php echo ($k["value"]); ?>]" value="<?php echo ($vo[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]); ?>"></input></td>
+				</tr><?php endforeach; endif; else: echo "" ;endif; ?>
+			<input class="btn btn-blue btn-s-auto" type="submit" name="submit" value="提交"></input>
+			</form>		
+		</table>
+</div>
+
+</div>
+</div>
 	</div>
 	</div>
 	<!-- InstanceEndEditable -->

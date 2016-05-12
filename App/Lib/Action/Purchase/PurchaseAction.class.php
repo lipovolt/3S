@@ -242,23 +242,28 @@ class PurchaseAction extends CommonAction{
         }
     }
 
-    public function updatePurchaseItem(){
+    public function updatePurchaseItem($id){
         if(IS_POST){
-            $purchaseID = M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_ID')=>I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars')))->getField(C('DB_PURCHASE_ITEM_PURCHASE_ID'));
-            $purchaseOrderStatus = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->getField(C('DB_PURCHASE_STATUS'));
+            $purchaseOrderStatus = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$id))->getField(C('DB_PURCHASE_STATUS'));
+            $count = count(I('post.'.C('DB_PURCHASE_ITEM_ID')));
+            
             if($purchaseOrderStatus=="待确认" or $purchaseOrderStatus=="待付款"){
-                $data[C('DB_PURCHASE_ITEM_ID')] = I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars');
-                $data[C('DB_PURCHASE_ITEM_SKU')] = I('post.'.C('DB_PURCHASE_ITEM_SKU'),'','htmlspecialchars');
-                $data[C('DB_PURCHASE_ITEM_PRICE')] = I('post.'.C('DB_PURCHASE_ITEM_PRICE'),'','htmlspecialchars');
-                $data[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')] = I('post.'.C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY'),'','htmlspecialchars');
-                $data[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')] = I('post.'.C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY'),'','htmlspecialchars');
-                $data[C('DB_PURCHASE_ITEM_WAREHOUSE')] = I('post.'.C('DB_PURCHASE_ITEM_WAREHOUSE'),'','htmlspecialchars');
-                M(C('DB_PURCHASE_ITEM'))->save($data);
+                $purchaseItem = M(C('DB_PURCHASE_ITEM'));
+                $purchaseItem->startTrans();
+                for($i=0;$i<$count;$i++){
+                    $data[C('DB_PURCHASE_ITEM_ID')] = I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars')[$i];
+                    $data[C('DB_PURCHASE_ITEM_SKU')] = I('post.'.C('DB_PURCHASE_ITEM_SKU'),'','htmlspecialchars')[$i];
+                    $data[C('DB_PURCHASE_ITEM_PRICE')] = I('post.'.C('DB_PURCHASE_ITEM_PRICE'),'','htmlspecialchars')[$i];
+                    $data[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')] = I('post.'.C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY'),'','htmlspecialchars')[$i];
+                    $data[C('DB_PURCHASE_ITEM_WAREHOUSE')] = I('post.'.C('DB_PURCHASE_ITEM_WAREHOUSE'),'','htmlspecialchars')[$i];
+                    $purchaseItem->save($data);
+                }
+                $purchaseItem->commit();
                 $this->success('保存成功');
             }elseif($purchaseOrderStatus=="待发货" or $purchaseOrderStatus=="部分到货"){
-                $data[C('DB_PURCHASE_ITEM_ID')] = I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars');
-                $data[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')] = I('post.'.C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY'),'','htmlspecialchars');
-                M(C('DB_PURCHASE_ITEM'))->save($data);
+                for ($i=0; $i < $count; $i++) { 
+                    $this->receivePurchasedItem(I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars')[$i],I('post.new_received_quantity','','htmlspecialchars')[$i]);
+                }
                 $this->success('保存成功');
             }else{
                 $this->error('已完成的采购单，无法修改');
@@ -357,7 +362,6 @@ class PurchaseAction extends CommonAction{
             $restock->add($data);
         }     
         $restock->commit();
-        $this->success("添加成功");
 
     }
 
@@ -371,7 +375,6 @@ class PurchaseAction extends CommonAction{
         }
         M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->setField(C('DB_PURCHASE_STATUS'),$status);
     }
-
 }
 
 ?>
