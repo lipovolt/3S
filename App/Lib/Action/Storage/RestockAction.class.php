@@ -330,7 +330,7 @@ class RestockAction extends CommonAction{
     	return false;
     }
 
-    private function isInRestock($warehosue,$sku){
+    private function isInRestock($warehouse,$sku){
     	$restock = M(C('DB_RESTOCK'))->select();
     	foreach ($restock as $key => $value) {
     		if($value[C('DB_RESTOCK_WAREHOUSE')]==$warehouse && $value[C('DB_RESTOCK_SKU')]==$sku && $value[C('DB_RESTOCK_STATUS')]!='已发货'){
@@ -340,7 +340,7 @@ class RestockAction extends CommonAction{
     	return false;
     }
 
-    private function isInPurchaseItem($warehosue,$sku){
+    private function isInPurchaseItem($warehouse,$sku){
     	$purchasedItem = M(C('DB_PURCHASE_ITEM'))->select();
     	foreach ($purchasedItem as $key => $value) {
     		if($value[C('DB_PURCHASE_ITEM_WAREHOUSE')]==$warehouse && $value[C('DB_PURCHASE_ITEM_SKU')]==$sku){
@@ -352,9 +352,22 @@ class RestockAction extends CommonAction{
     	return false;
     }
 
+    private function isInUSSW($sku){
+    	$usstorage = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$sku))->find();
+		if($usstorage!==null || $usstorage !== false){
+			return true;
+		}else{
+			return false;
+		}    	
+    }
+
     private function reallyOutOfStock($warehouse,$sku){
-    	if(!$this->isInOutOfStock($warehouse,$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse.$sku)){
-    		return true;
+    	if(!$this->isInOutOfStock($warehouse,$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku)){
+    		if($warehouse=='万邑通美西'){
+    			return !$this->isInUSSW($sku);
+    		}else{
+    			return true;
+    		}
     	}else{
     		return false;
     	}

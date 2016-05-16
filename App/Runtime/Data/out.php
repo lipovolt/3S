@@ -1,0 +1,1 @@
+<?php	return array ( 0 => array ( 'warehouse' => '美自建仓', 'sku' => '1303.01', 'cname' => '', 'quantity' => 4, 'manager' => '杨杰', 'price' => '36.00', 'supplier' => 'alex_fighter:two https://detail.1688.com/offer/42326537508.html?spm=0.0.0.0.SjvCnY ', 'date' => '2016-05-16', ), );?>
