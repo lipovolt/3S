@@ -154,7 +154,7 @@ class RestockAction extends CommonAction{
 	                for($i=2;$i<=$highestRow;$i++){
 	                	$usStatus = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_tous'));
 	                    
-	                    if($usStatus != null && $usStatus != '无' && !$this->isInUSSW($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+	                    if($usStatus != null && $usStatus != '无' && !$this->hasMovedToUSSW($sheetId,$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 	                    	if($objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0){
 	                    		if(($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())==0){
 
@@ -360,6 +360,14 @@ class RestockAction extends CommonAction{
 		}else{
 			return false;
 		}    	
+    }
+
+    private function hasMovedToUSSW($sheetId,$sku){
+    	if($sheetId==0 && $this->isInUSSW($sku)){
+    		return true;
+    	}else{
+    		return false;
+    	}
     }
 
     private function reallyOutOfStock($warehouse,$sku){
