@@ -14,6 +14,7 @@ class StorageAction extends CommonAction{
             $products = M(C('DB_PRODUCT'));
             foreach ($usstorage as $key => $value) {
               $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
+              $usstorage[$key][C('DB_USSTORAGE_IINVENTORY')] = $this->getIInventory($value[C('DB_USSTORAGE_SKU')]);
               if($value[C('DB_USSTORAGE_CNAME')]==null){
                 $usstorage[$key][C('DB_USSTORAGE_CNAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
                 $usstorage[$key][C('DB_USSTORAGE_ENAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_ENAME'));
@@ -29,12 +30,12 @@ class StorageAction extends CommonAction{
             $products = M(C('DB_PRODUCT'));
             foreach ($usstorage as $key => $value) {
               $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
+              $usstorage[$key][C('DB_USSTORAGE_IINVENTORY')] = $this->getIInventory($value[C('DB_USSTORAGE_SKU')]);
               if($value[C('DB_USSTORAGE_CNAME')]==null){
                 $usstorage[$key][C('DB_USSTORAGE_CNAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
                 $usstorage[$key][C('DB_USSTORAGE_ENAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_ENAME'));
               }
             }
-
             $this->assign('usstorage',$usstorage);
         }
         $this->display();
@@ -154,6 +155,24 @@ class StorageAction extends CommonAction{
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
         $objWriter->save('php://output'); 
         exit;   
+    }
+
+    private function getIInventory($sku){
+        $iinventory = 0;
+        $inbound = M(C('DB_USSW_INBOUND'));
+        $inbounditems = M(C('DB_USSW_INBOUND_ITEM'));
+        $ioids = $inbounditems->where(array(C('DB_USSW_INBOUND_ITEM_SKU')=>$sku))->select();
+        
+        foreach ($ioids as $ok => $ov) {
+          $status = $inbound->where(array(C('DB_USSW_INBOUND_ID')=>$ov[C('DB_USSW_INBOUND_ITEM_IOID')]))->getField(C('DB_USSW_INBOUND_STATUS'));
+          if($status=='待入库'){
+            $map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
+            $map[C('DB_USSW_INBOUND_ITEM_IOID')] = array('eq',$ov[C('DB_USSW_INBOUND_ITEM_IOID')]);
+            $tmpquantity = $inbounditems->where($map)->getField(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
+            $iinventory = $iinventory + intval($tmpquantity);
+          }
+        } 
+        return $iinventory;
     }
 }
 
