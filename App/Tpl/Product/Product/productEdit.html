@@ -265,6 +265,20 @@ function checkboxValue(tinyintValue){
 					</div>
 					<div class="item">
                         <div class="form-group">
+							<label for="ggs-ussw-sp" class="control-label">亚马逊美国仓售价$</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_PRODUCT_AMAZON_USSW_SALE_PRICE')}" name="{:C('DB_PRODUCT_AMAZON_USSW_SALE_PRICE')}" value="{$product[0][C('DB_PRODUCT_AMAZON_USSW_SALE_PRICE')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="length" class="control-label">UPC</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_PRODUCT_UPC')}" name="{:C('DB_PRODUCT_UPC')}" value="{$product[0][C('DB_PRODUCT_UPC')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+                        <div class="form-group">
 							<label for="ebaycombest" class="control-label">ebay.com 销量链接</label>
 							<div class="control-wrap">
 								<input type="text"  id="{:C('DB_PRODUCT_EBAY_COM_BEST_MATCH')}" name="{:C('DB_PRODUCT_EBAY_COM_BEST_MATCH')}" value="{$product[0][C('DB_PRODUCT_EBAY_COM_BEST_MATCH')]}" />

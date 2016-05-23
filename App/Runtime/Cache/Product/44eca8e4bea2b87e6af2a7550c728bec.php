@@ -57,20 +57,20 @@ function checkboxValue(tinyintValue){
 		<div class="subnav">
 			<dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
+		<strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
 	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
+		<strong>深圳仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>缺货补货</strong>								
+		<strong>缺货补货</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
@@ -112,9 +112,8 @@ function checkboxValue(tinyintValue){
 	</dt>
 	<dd><a href="<?php echo U('Purchase/Purchase/importPurchase');?>" >导入采购单</a></dd>
 	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待确认'));?>" >待确认</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待付款'));?>" >待付款</a></dd>
 	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待发货'));?>" >待发货</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_CANCEL')=>1));?>" >已取消</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'部分到货'));?>" >部分到货</a></dd>
 </dl>
 <dl>
 	<dt>
@@ -143,6 +142,8 @@ function checkboxValue(tinyintValue){
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/awaitingToStop');?>">待下架商品</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/stopped');?>">已下架商品</a></dd>
 </dl>
 
 		<div>
@@ -351,6 +352,20 @@ function checkboxValue(tinyintValue){
 							<label for="length" class="control-label">rc-helicar万邑通德国仓售价€</label>
 							<div class="control-wrap">
 								<input type="text"  id="<?php echo C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE');?>" name="<?php echo C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE');?>" value="<?php echo ($product[0][C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]); ?>" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+                        <div class="form-group">
+							<label for="ggs-ussw-sp" class="control-label">亚马逊美国仓售价$</label>
+							<div class="control-wrap">
+								<input type="text"  id="<?php echo C('DB_PRODUCT_AMAZON_USSW_SALE_PRICE');?>" name="<?php echo C('DB_PRODUCT_AMAZON_USSW_SALE_PRICE');?>" value="<?php echo ($product[0][C('DB_PRODUCT_AMAZON_USSW_SALE_PRICE')]); ?>" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="length" class="control-label">UPC</label>
+							<div class="control-wrap">
+								<input type="text"  id="<?php echo C('DB_PRODUCT_UPC');?>" name="<?php echo C('DB_PRODUCT_UPC');?>" value="<?php echo ($product[0][C('DB_PRODUCT_UPC')]); ?>" />
 							</div>
 						</div>
 					</div>

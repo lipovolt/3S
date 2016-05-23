@@ -135,7 +135,8 @@
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Storage/index',array(C('DB_USSTORAGE_SALE_STATUS')=>'待下架'));?>">待下架商品</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/awaitingToStop');?>">待下架商品</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/stopped');?>">已下架商品</a></dd>
 </dl>
 
 		<div>

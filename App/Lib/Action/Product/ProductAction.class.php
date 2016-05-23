@@ -135,6 +135,7 @@ class ProductAction extends CommonAction{
         $data = null;
         $data[C('db_product_id')] = I('post.'.C('db_product_id'),'','htmlspecialchars');
         $data[C('db_product_sku')] = I('post.'.C('db_product_sku'),'','htmlspecialchars');
+        $data[C('db_product_upc')] = I('post.'.C('db_product_upc'),'','htmlspecialchars');
         $data[C('db_product_cname')] = I('post.'.C('db_product_cname'),'','htmlspecialchars');
         $data[C('db_product_ename')] = I('post.'.C('db_product_ename'),'','htmlspecialchars');
         $data[C('db_product_price')] = I('post.'.C('db_product_price'),'','htmlspecialchars');
@@ -152,6 +153,7 @@ class ProductAction extends CommonAction{
         $data[C('db_product_ggs_ussw_sale_price')] = I('post.'.C('db_product_ggs_ussw_sale_price'),'','htmlspecialchars');
         $data[C('db_product_rc_winit_us_sale_price')] = I('post.'.C('db_product_rc_winit_us_sale_price'),'','htmlspecialchars');
         $data[C('db_product_rc_winit_de_sale_price')] = I('post.'.C('db_product_rc_winit_de_sale_price'),'','htmlspecialchars');
+        $data[C('DB_PRODUCT_AMAZON_USSW_SALE_PRICE')] = I('post.'.C('DB_PRODUCT_AMAZON_USSW_SALE_PRICE'),'','htmlspecialchars');
         $data[C('db_product_ebay_com_best_match')] = I('post.'.C('db_product_ebay_com_best_match'),'','htmlspecialchars');
         $data[C('db_product_ebay_com_price_lowest')] = I('post.'.C('db_product_ebay_com_price_lowest'),'','htmlspecialchars');
         $data[C('db_product_ebay_de_best_match')] = I('post.'.C('db_product_ebay_de_best_match'),'','htmlspecialchars');
