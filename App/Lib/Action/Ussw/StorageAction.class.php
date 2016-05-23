@@ -185,13 +185,22 @@ class StorageAction extends CommonAction{
                 $saleStatus[C('DB_USSTORAGE_SALE_STATUS')]='待下架';
                 $usstorage->where(array(C('DB_USSTORAGE_ID')=>$value[C('DB_USSTORAGE_ID')]))->save($saleStatus);
             }
+            if($value[C('DB_USSTORAGE_AINVENTORY')]!=0 && $value[C('DB_USSTORAGE_SALE_STATUS')]=='已下架'){
+                $saleStatus[C('DB_USSTORAGE_SALE_STATUS')]=null;
+                $usstorage->where(array(C('DB_USSTORAGE_ID')=>$value[C('DB_USSTORAGE_ID')]))->save($saleStatus);
+            }
         }
         $usstorage->commit();
     }
 
     public function stopListing($id){
         $data[C('DB_USSTORAGE_SALE_STATUS')] = '已下架';
-        M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_ID')=>$id))->save($data);
+        if(M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_ID')=>$id))->getField(C('DB_USSTORAGE_SALE_STATUS'))=='待下架'){
+            M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_ID')=>$id))->save($data);
+        }
+        else{
+            $this->error('该产品库存大于0，不需要下架！');
+        }
         $this->success('更新成功');
     }
 
