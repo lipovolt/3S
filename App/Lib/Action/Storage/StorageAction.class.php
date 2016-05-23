@@ -55,13 +55,13 @@ class StorageAction extends CommonAction{
       $warning = null;
       $indexOfWarning = 0;
       $product = M(C('DB_PRODUCT'));
-      $user = M(C('DB_USER'));
       foreach ($data as $key => $value) {
-          if($value[C('DB_USSTORAGE_AINVENTORY')]+$value[C('DB_USSTORAGE_IINVENTORY')]<=1){
+          if($value[C('DB_USSTORAGE_AINVENTORY')]<=1){
 
             $manager = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_MANAGER'));
             $warning[$indexOfWarning][C('DB_PRODUCT_MANAGER')] = $manager;
             $warning[$indexOfWarning][C('DB_PRODUCT_SKU')] = $value[C('DB_USSTORAGE_SKU')];
+            $warning[$indexOfWarning][C('DB_USSTORAGE_AINVENTORY')] = $value[C('DB_USSTORAGE_AINVENTORY')];
             $indexOfWarning = $indexOfWarning+1;
           }
       }

@@ -40,11 +40,13 @@
 					<tr>
 						<th>产品经理</th>
 					    <th>产品编码</th>
+					    <th>可用库存</th>
 					</tr>    
 						<volist name="usstorage" id="vo">
 						<tr>
 						<td>{$vo[C('DB_PRODUCT_MANAGER')]}</td>
 						<td>{$vo[C('DB_PRODUCT_SKU')]}</td>
+						<td>{$vo[C('DB_USSTORAGE_AINVENTORY')]}</td>
 						</tr>	
 					</volist> 										
 				</table>
