@@ -104,6 +104,7 @@
 						<th><div class="tr">在途库存</div></th>
 						<th><div class="tr">历史销量</div></th>
 						<th><div class="tr">30天销量</div></th>
+						<th><div class="t1">销售状态</div></th>
 						<th><div class="t1">备注</div></th>
 						<th width="230">操作</th>
 					</tr>    
@@ -120,9 +121,11 @@
 						<td><div class="tr">{$vo[C('DB_USSTORAGE_IINVENTORY')]}</div></td>
 						<td><div class="tr">{$vo[C('DB_USSTORAGE_CSALES')]}</div></td>
 						<td><div class="tr">{$vo['30dayssales']}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSTORAGE_SALE_STATUS')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_USSTORAGE_REMARK')]}</div></td>
 						<td>
 							<a href="{:U('Ussw/Storage/edit',array(C('DB_USSTORAGE_ID')=>$vo[C('DB_USSTORAGE_ID')]))}">编辑</a>
+							<a href="{:U('Ussw/Storage/stopListing',array(C('DB_USSTORAGE_ID')=>$vo[C('DB_USSTORAGE_ID')]))}">已下架</a>
 						</td>
 						</tr>	
 					</volist> 		

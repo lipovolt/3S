@@ -208,7 +208,8 @@ return array(
 	  `oinventory` smallint(6) DEFAULT 0,
 	  `iinventory` smallint(6) DEFAULT 0,
 	  `csales` smallint(6) DEFAULT 0,
-	  `remark` varchar(255) DEFAULT NULL
+	  `remark` varchar(255) DEFAULT NULL,
+	  `sale_status` varchar(10) DEFAULT NULL
 	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 	*/
 	'DB_USSTORAGE' => 'usstorage',
@@ -224,6 +225,7 @@ return array(
 	'DB_USSTORAGE_IINVENTORY' => 'iinventory',
 	'DB_USSTORAGE_CSALES' => 'csales',
 	'DB_USSTORAGE_REMARK' => 'remark',
+	'DB_USSTORAGE_SALE_STATUS' => 'sale_status', //待下架，已下架, Null
 
 
 	//restock

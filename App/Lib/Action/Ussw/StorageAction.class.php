@@ -3,6 +3,7 @@
 class StorageAction extends CommonAction{
 
     public function index(){
+        $this->setSaleStatus();
     	if($_POST['keyword']==""){
             $Data = M(C('DB_USSTORAGE'));
             import('ORG.Util.Page');
@@ -173,6 +174,57 @@ class StorageAction extends CommonAction{
           }
         } 
         return $iinventory;
+    }
+
+    private function setSaleStatus(){
+        $usstorage = M(C('DB_USSTORAGE'));
+        $usstorage->startTrans();
+        $data = $usstorage->select();
+        foreach ($data as $key => $value) {
+            if($value[C('DB_USSTORAGE_AINVENTORY')]==0 && $value[C('DB_USSTORAGE_SALE_STATUS')]!='已下架'){
+                $saleStatus[C('DB_USSTORAGE_SALE_STATUS')]='待下架';
+                $usstorage->where(array(C('DB_USSTORAGE_ID')=>$value[C('DB_USSTORAGE_ID')]))->save($saleStatus);
+            }
+        }
+        $usstorage->commit();
+    }
+
+    public function stopListing($id){
+        $data[C('DB_USSTORAGE_SALE_STATUS')] = '已下架';
+        M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_ID')=>$id))->save($data);
+        $this->success('更新成功');
+    }
+
+    public function awaitingToStop(){
+        $usstorage = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SALE_STATUS')=>'待下架'))->select();
+        $products = M(C('DB_PRODUCT'));
+        foreach ($usstorage as $key => $value) {
+          $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
+          $usstorage[$key][C('DB_USSTORAGE_IINVENTORY')] = $this->getIInventory($value[C('DB_USSTORAGE_SKU')]);
+          if($value[C('DB_USSTORAGE_CNAME')]==null){
+            $usstorage[$key][C('DB_USSTORAGE_CNAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
+            $usstorage[$key][C('DB_USSTORAGE_ENAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_ENAME'));
+          }
+        }
+        $this->assign('usstorage',$usstorage);
+        $this->display('index');
+
+    }
+
+    public function stopped(){
+        $usstorage = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SALE_STATUS')=>'已下架'))->select();
+        $products = M(C('DB_PRODUCT'));
+        foreach ($usstorage as $key => $value) {
+          $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
+          $usstorage[$key][C('DB_USSTORAGE_IINVENTORY')] = $this->getIInventory($value[C('DB_USSTORAGE_SKU')]);
+          if($value[C('DB_USSTORAGE_CNAME')]==null){
+            $usstorage[$key][C('DB_USSTORAGE_CNAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
+            $usstorage[$key][C('DB_USSTORAGE_ENAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_ENAME'));
+          }
+        }
+        $this->assign('usstorage',$usstorage);
+        $this->display('index');
+
     }
 }
 

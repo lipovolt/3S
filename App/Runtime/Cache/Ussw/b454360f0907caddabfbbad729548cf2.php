@@ -135,6 +135,7 @@
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/awaitingToStop');?>">待下架商品</a></dd>
 </dl>
 
 		<div>
@@ -163,6 +164,7 @@
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/awaitingToStop');?>">待下架商品</a></dd>
 </dl>
 	
 			</div>
@@ -239,6 +241,7 @@
 						<th><div class="tr">在途库存</div></th>
 						<th><div class="tr">历史销量</div></th>
 						<th><div class="tr">30天销量</div></th>
+						<th><div class="t1">销售状态</div></th>
 						<th><div class="t1">备注</div></th>
 						<th width="230">操作</th>
 					</tr>    
@@ -254,9 +257,11 @@
 						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_IINVENTORY')]); ?></div></td>
 						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_CSALES')]); ?></div></td>
 						<td><div class="tr"><?php echo ($vo['30dayssales']); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_SALE_STATUS')]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_REMARK')]); ?></div></td>
 						<td>
 							<a href="<?php echo U('Ussw/Storage/edit',array(C('DB_USSTORAGE_ID')=>$vo[C('DB_USSTORAGE_ID')]));?>">编辑</a>
+							<a href="<?php echo U('Ussw/Storage/stopListing',array(C('DB_USSTORAGE_ID')=>$vo[C('DB_USSTORAGE_ID')]));?>">已下架</a>
 						</td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
 					</tr>								
