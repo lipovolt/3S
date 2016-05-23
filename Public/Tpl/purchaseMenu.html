@@ -4,9 +4,8 @@
 	</dt>
 	<dd><a href="{:U('Purchase/Purchase/importPurchase')}" >导入采购单</a></dd>
 	<dd><a href="{:U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待确认'))}" >待确认</a></dd>
-	<dd><a href="{:U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待付款'))}" >待付款</a></dd>
 	<dd><a href="{:U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待发货'))}" >待发货</a></dd>
-	<dd><a href="{:U('Purchase/Purchase/index',array(C('DB_PURCHASE_CANCEL')=>1))}" >已取消</a></dd>
+	<dd><a href="{:U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'部分到货'))}" >部分到货</a></dd>
 </dl>
 <dl>
 	<dt>
