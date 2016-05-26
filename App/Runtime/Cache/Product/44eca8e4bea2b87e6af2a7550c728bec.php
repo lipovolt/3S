@@ -89,17 +89,17 @@ function checkboxValue(tinyintValue){
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>greatgoodshop</strong>								
+		<i class="icon dropdown-s"></i><strong>美国自建仓 Ebay Amazon</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>rc-helcar</strong>								
+		<i class="icon dropdown-s"></i><strong>万邑通 Ebay</strong>								
 	</dt>
-	<dd><a href="#" >美国万邑通销售表</a></dd>
-	<dd><a href="#" >德国万邑通销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/WinitUsSale/index');?>" >美国万邑通销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/WinitDeSale/index');?>" >德国万邑通销售表</a></dd>
 </dl>
 		</div>
 	</li>

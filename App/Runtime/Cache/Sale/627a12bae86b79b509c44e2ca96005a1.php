@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>销售信息</title>
+<title>美自建仓销售信息</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -92,7 +92,7 @@
 		<i class="icon dropdown-s"></i><strong>万邑通 Ebay</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/WinitUsSale/index');?>" >美国万邑通销售表</a></dd>
-	<dd><a href="#" >德国万邑通销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/WinitDeSale/index');?>" >德国万邑通销售表</a></dd>
 </dl>
 		</div>
 	</li>
@@ -169,7 +169,7 @@
 		<i class="icon dropdown-s"></i><strong>万邑通 Ebay</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/WinitUsSale/index');?>" >美国万邑通销售表</a></dd>
-	<dd><a href="#" >德国万邑通销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/WinitDeSale/index');?>" >德国万邑通销售表</a></dd>
 </dl>	
 			</div>
 		</div>

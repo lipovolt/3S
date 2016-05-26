@@ -92,7 +92,7 @@
 		<i class="icon dropdown-s"></i><strong>万邑通 Ebay</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/WinitUsSale/index');?>" >美国万邑通销售表</a></dd>
-	<dd><a href="#" >德国万邑通销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/WinitDeSale/index');?>" >德国万邑通销售表</a></dd>
 </dl>
 		</div>
 	</li>
@@ -169,7 +169,7 @@
 		<i class="icon dropdown-s"></i><strong>万邑通 Ebay</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/WinitUsSale/index');?>" >美国万邑通销售表</a></dd>
-	<dd><a href="#" >德国万邑通销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/WinitDeSale/index');?>" >德国万邑通销售表</a></dd>
 </dl>	
 			</div>
 		</div>
@@ -206,7 +206,7 @@
 						<th width="66">产品编码</th>
 						<th><div class="tl">中文名称</div></th>
 						<th><div class="tl">采购价￥</div></th>
-						<th><div class="tl">关税$</div></th>
+						<th><div class="tl">关税率</div></th>
 						<th><div class="tl">仓出入费$</div></th>
 						<th><div class="tl">头程方式</div></th>
 						<th><div class="tl">头程$</div></th>
@@ -232,7 +232,7 @@
 						<td><div class="tl"><?php echo ($vo["local-shipping-way"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["local-shipping-fee"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["cost"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_RC_WINIT_US_SALE_PRICE')]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["gprofit"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["grate"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
