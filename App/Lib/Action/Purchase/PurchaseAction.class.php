@@ -95,9 +95,9 @@ class PurchaseAction extends CommonAction{
                     $data[C('DB_PURCHASE_ITEM_WAREHOUSE')] = mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue(),"utf-8","auto"); 
                     $data[C('DB_PURCHASE_MANAGER')] = mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),"utf-8","auto");
                     $data[C('DB_PURCHASE_SUPPLIER_ID')] = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
-                    $data[C('DB_PURCHASE_ORDER_NUMBER')]= $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
-                    $data[C('DB_PURCHASE_TRACKING_NUMBER')]= $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
-                    $data[C('DB_PURCHASE_REMARK')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue(),"utf-8","auto"); 
+                    $data[C('DB_PURCHASE_ORDER_NUMBER')]= $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+                    $data[C('DB_PURCHASE_TRACKING_NUMBER')]= $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+                    $data[C('DB_PURCHASE_REMARK')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue(),"utf-8","auto"); 
                     $verifyError = $this->verifyPurchaseOrder($data);
                     if($verifyError != null)
                         $this->error($verifyError);
