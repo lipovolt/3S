@@ -152,13 +152,18 @@ class RestockAction extends CommonAction{
 	            	 
 	                $products = M(C('db_product'));
 	                for($i=2;$i<=$highestRow;$i++){
-	                	$usStatus = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_tous'));
+	                	if($sheetId==0){
+	                		$status = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_tous'));
+	                	}else{
+	                		$status = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_tode'));
+	                	}
+	                	
 	                    
-	                    if($usStatus != null && $usStatus != '无' && !$this->hasMovedToUSSW($sheetId,$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+	                    if($status != null && $status != '无' && !$this->hasMovedToUSSW($sheetId,$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 	                    	if($objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0){
 	                    		if(($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())==0){
 
-			                    	if($usStatus=='空运' && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+			                    	if($status=='空运' && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'美自建仓':'万邑通德国';
 			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
@@ -169,7 +174,7 @@ class RestockAction extends CommonAction{
 			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
 			                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
 			                    	}
-			                    	if($usStatus=='海运' && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+			                    	if($status=='海运' && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'万邑通美西':'万邑通德国';
 			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
@@ -184,7 +189,7 @@ class RestockAction extends CommonAction{
 	                    	}else{
 		                    	$dayAvailableForSale = ($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())/$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
 
-		                    	if($usStatus=='空运' && $dayAvailableForSale<15 && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($status=='空运' && $dayAvailableForSale<15 && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'美自建仓':'万邑通德国';
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
@@ -195,7 +200,7 @@ class RestockAction extends CommonAction{
 			                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
 		                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
 		                    	}
-		                    	if($usStatus=='海运' && $dayAvailableForSale<60 && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($status=='海运' && $dayAvailableForSale<60 && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'万邑通美西':'万邑通德国';
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
@@ -370,8 +375,30 @@ class RestockAction extends CommonAction{
     	}
     }
 
+    private function getIInventory($warehouse, $sku){
+    	if($warehouse != '美自建仓'){
+    		return 0;
+    	}else{
+    		$iinventory = 0;
+	        $inbound = M(C('DB_USSW_INBOUND'));
+	        $inbounditems = M(C('DB_USSW_INBOUND_ITEM'));
+	        $ioids = $inbounditems->where(array(C('DB_USSW_INBOUND_ITEM_SKU')=>$sku))->select();
+	        
+	        foreach ($ioids as $ok => $ov) {
+	          $status = $inbound->where(array(C('DB_USSW_INBOUND_ID')=>$ov[C('DB_USSW_INBOUND_ITEM_IOID')]))->getField(C('DB_USSW_INBOUND_STATUS'));
+	          if($status=='待入库'){
+	            $map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
+	            $map[C('DB_USSW_INBOUND_ITEM_IOID')] = array('eq',$ov[C('DB_USSW_INBOUND_ITEM_IOID')]);
+	            $tmpquantity = $inbounditems->where($map)->getField(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
+	            $iinventory = $iinventory + intval($tmpquantity);
+	          }
+	        } 
+	        return $iinventory;
+    	}        
+    }
+
     private function reallyOutOfStock($warehouse,$sku){
-    	if(!$this->isInOutOfStock($warehouse,$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku)){
+    	if(!$this->isInOutOfStock($warehouse,$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && $this->getIInventory($warehouse,$sku)==0){
     		return true;
     	}else{
     		return false;
