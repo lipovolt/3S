@@ -61,10 +61,10 @@ class WinitUsSaleAction extends CommonAction{
         	$data[$key]['way-to-us-fee']=$data[$key][C('DB_PRODUCT_TOUS')]=="空运"?$this->getWinitAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getWinitSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key]['local-shipping-way']=$this->getWinitLocalShippingWay($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($value['weight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]=$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')];
+        	$data[$key][C('DB_PRODUCT_RC_WINIT_US_SALE_PRICE')]=$value[C('DB_PRODUCT_RC_WINIT_US_SALE_PRICE')];
         	$data[$key]['cost']=round($this->getWinitUsCost($data[$key]),2);
-        	$data[$key]['gprofit']=$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]-$data[$key]['cost'];
-        	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]*100,2).'%';
+        	$data[$key]['gprofit']=$data[$key][C('DB_PRODUCT_RC_WINIT_US_SALE_PRICE')]-$data[$key]['cost'];
+        	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_PRODUCT_RC_WINIT_US_SALE_PRICE')]*100,2).'%';
         	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')]*0.0352740,2);
         	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')]*0.3937008,2);
         	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')]*0.3937008,2);
