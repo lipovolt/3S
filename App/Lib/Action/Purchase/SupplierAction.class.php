@@ -2,9 +2,22 @@
 
 class SupplierAction extends CommonAction{
 	public function index(){
-		$supplier = M(C('DB_SUPPLIER'))->select();
-		$this->assign('supplier',$supplier);
-		$this->display();
+		if($_POST['keyword']==""){
+            $Data = M(C('DB_SUPPLIER'));
+            import('ORG.Util.Page');
+            $count = $Data->count();
+            $Page = new Page($count,20);            
+            $Page->setConfig('header', '条数据');
+            $show = $Page->show();
+            $supplier = $Data->limit($Page->firstRow.','.$Page->listRows)->select();
+            $this->assign('supplier',$supplier);
+            $this->assign('page',$show);
+        }
+        else{
+            $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+            $this->supplier = M(C('DB_SUPPLIER'))->where($where)->select();
+        }
+        $this->display();
 	}
 
 	public function add(){

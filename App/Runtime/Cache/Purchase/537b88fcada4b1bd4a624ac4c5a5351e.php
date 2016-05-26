@@ -50,20 +50,20 @@
 		<div class="subnav">
 			<dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>美国仓库存</strong>								
+		<strong>美国仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
 	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>深圳仓库存</strong>								
+		<strong>深圳仓库存</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>缺货补货</strong>								
+		<strong>缺货补货</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
@@ -82,17 +82,17 @@
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>greatgoodshop</strong>								
+		<i class="icon dropdown-s"></i><strong>美国自建仓 Ebay Amazon</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>rc-helcar</strong>								
+		<i class="icon dropdown-s"></i><strong>万邑通 Ebay</strong>								
 	</dt>
-	<dd><a href="#" >美国万邑通销售表</a></dd>
-	<dd><a href="#" >德国万邑通销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/WinitUsSale/index');?>" >美国万邑通销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/WinitDeSale/index');?>" >德国万邑通销售表</a></dd>
 </dl>
 		</div>
 	</li>
@@ -105,9 +105,8 @@
 	</dt>
 	<dd><a href="<?php echo U('Purchase/Purchase/importPurchase');?>" >导入采购单</a></dd>
 	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待确认'));?>" >待确认</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待付款'));?>" >待付款</a></dd>
 	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待发货'));?>" >待发货</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_CANCEL')=>1));?>" >已取消</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'部分到货'));?>" >部分到货</a></dd>
 </dl>
 <dl>
 	<dt>
@@ -136,6 +135,8 @@
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/awaitingToStop');?>">待下架商品</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/stopped');?>">已下架商品</a></dd>
 </dl>
 
 		<div>
@@ -156,9 +157,8 @@
 	</dt>
 	<dd><a href="<?php echo U('Purchase/Purchase/importPurchase');?>" >导入采购单</a></dd>
 	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待确认'));?>" >待确认</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待付款'));?>" >待付款</a></dd>
 	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待发货'));?>" >待发货</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_CANCEL')=>1));?>" >已取消</a></dd>
+	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'部分到货'));?>" >部分到货</a></dd>
 </dl>
 <dl>
 	<dt>
