@@ -152,6 +152,7 @@ class RestockAction extends CommonAction{
 	            	 
 	                $products = M(C('db_product'));
 	                for($i=2;$i<=$highestRow;$i++){
+	                	
 	                	if($sheetId==0){
 	                		$status = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_tous'));
 	                	}else{
@@ -213,6 +214,7 @@ class RestockAction extends CommonAction{
 		                    	}
 		                    }	
 	                    }
+	                    ob_flush();
 	                } 
 	            }else{
 	                $this->error("模板错误，请检查模板！");
@@ -232,6 +234,7 @@ class RestockAction extends CommonAction{
 		$usstorage = M(C('DB_USSTORAGE'))->select();
 		$products = M(C('db_product'));
 		foreach ($usstorage as $ussk => $ussv) {
+			
 			$usStatus = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('db_product_tous'));
 			if($usStatus != null && $usStatus != '无'){
 				if($this->get30DaysSales($ussv[C('DB_USSTORAGE_SKU')])==0 && ($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_INVENTORY')])==0){
@@ -285,6 +288,7 @@ class RestockAction extends CommonAction{
 					}
 				}
 			}
+			ob_flush();
 		}
 	}
 
@@ -294,11 +298,13 @@ class RestockAction extends CommonAction{
         $outbounditem = M(C('DB_USSW_OUTBOUND_ITEM'));
         $sku30daysales = 0;
         foreach ($outbound as $ok => $ov) {
-          $items = $outbounditem->where(array(C('DB_USSW_OUTBOUND_ITEM_OOID')=>$ov[C('DB_USSW_OUTBOUND_ID')]))->select();
-          foreach ($items as $ik => $iv) {
+        	
+          	$items = $outbounditem->where(array(C('DB_USSW_OUTBOUND_ITEM_OOID')=>$ov[C('DB_USSW_OUTBOUND_ID')]))->select();
+          	foreach ($items as $ik => $iv) {
             if($iv[C('DB_USSW_OUTBOUND_ITEM_SKU')] == $sku)
                 $sku30daysales = $sku30daysales + $iv[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
-          }
+            }
+            ob_flush();
         }
         return $sku30daysales;
     }
@@ -329,9 +335,11 @@ class RestockAction extends CommonAction{
 
     private function isInOutOfStock($warehouse,$sku){
     	foreach ($GLOBALS['outOfStock'] as $key => $value) {
+    		
     		if($value['warehouse']==$warehouse && $value['sku']==$sku){
     			return true;
     		}
+    		ob_flush();
     	}
     	return false;
     }
@@ -339,9 +347,11 @@ class RestockAction extends CommonAction{
     private function isInRestock($warehouse,$sku){
     	$restock = M(C('DB_RESTOCK'))->select();
     	foreach ($restock as $key => $value) {
+    		
     		if($value[C('DB_RESTOCK_WAREHOUSE')]==$warehouse && $value[C('DB_RESTOCK_SKU')]==$sku && $value[C('DB_RESTOCK_STATUS')]!='已发货'){
     			return true;
     		}
+    		ob_flush();
     	}
     	return false;
     }
@@ -349,11 +359,13 @@ class RestockAction extends CommonAction{
     private function isInPurchaseItem($warehouse,$sku){
     	$purchasedItem = M(C('DB_PURCHASE_ITEM'))->select();
     	foreach ($purchasedItem as $key => $value) {
+    		
     		if($value[C('DB_PURCHASE_ITEM_WAREHOUSE')]==$warehouse && $value[C('DB_PURCHASE_ITEM_SKU')]==$sku){
     			$purchaseOrderStatus = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$value[C('DB_PURCHASE_ITEM_PURCHASE_ID')]))->getField(C('DB_PURCHASE_STATUS'));
     			if($purchaseOrderStatus == '待确认' || $purchaseOrderStatus == '到付款' || $purchaseOrderStatus == '待发货')
     				return true;
     		}
+    		ob_flush();
     	}
     	return false;
     }
@@ -385,13 +397,15 @@ class RestockAction extends CommonAction{
 	        $ioids = $inbounditems->where(array(C('DB_USSW_INBOUND_ITEM_SKU')=>$sku))->select();
 	        
 	        foreach ($ioids as $ok => $ov) {
-	          $status = $inbound->where(array(C('DB_USSW_INBOUND_ID')=>$ov[C('DB_USSW_INBOUND_ITEM_IOID')]))->getField(C('DB_USSW_INBOUND_STATUS'));
-	          if($status=='待入库'){
-	            $map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
-	            $map[C('DB_USSW_INBOUND_ITEM_IOID')] = array('eq',$ov[C('DB_USSW_INBOUND_ITEM_IOID')]);
-	            $tmpquantity = $inbounditems->where($map)->getField(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
-	            $iinventory = $iinventory + intval($tmpquantity);
-	          }
+	        	
+	          	$status = $inbound->where(array(C('DB_USSW_INBOUND_ID')=>$ov[C('DB_USSW_INBOUND_ITEM_IOID')]))->getField(C('DB_USSW_INBOUND_STATUS'));
+	          	if($status=='待入库'){
+		            $map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
+		            $map[C('DB_USSW_INBOUND_ITEM_IOID')] = array('eq',$ov[C('DB_USSW_INBOUND_ITEM_IOID')]);
+		            $tmpquantity = $inbounditems->where($map)->getField(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
+		            $iinventory = $iinventory + intval($tmpquantity);
+		        }
+		        ob_flush();
 	        } 
 	        return $iinventory;
     	}        
