@@ -125,7 +125,7 @@ class WinitDeSaleAction extends CommonAction{
 		$ways=array(
 				0=>'No way',
 				1=>'DE Post Small Letter',
-				2=>'DE Post Small Letter',
+				2=>'DE Post Large Letter',
 				3=>'DPD Small Parcels',
 				4=>'DPD Normal Parcels',
 				4=>'DHL Packet Service'

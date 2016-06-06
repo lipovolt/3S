@@ -158,8 +158,6 @@ class RestockAction extends CommonAction{
 	                	}else{
 	                		$status = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_tode'));
 	                	}
-	                	
-	                    
 	                    if($status != null && $status != '无' && !$this->hasMovedToUSSW($sheetId,$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 	                    	if($objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0){
 	                    		if(($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())==0){
@@ -189,12 +187,12 @@ class RestockAction extends CommonAction{
 	                    		}
 	                    	}else{
 		                    	$dayAvailableForSale = ($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())/$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-
-		                    	if($status=='空运' && $dayAvailableForSale<15 && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	$airRestockDays = $sheetId==0?15:45;
+		                    	if($status=='空运' && $dayAvailableForSale<$airRestockDays && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'美自建仓':'万邑通德国';
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil((15-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
+		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil(($airRestockDays-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
 			                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
@@ -214,7 +212,7 @@ class RestockAction extends CommonAction{
 		                    	}
 		                    }	
 	                    }
-	                    ob_flush();
+	                    
 	                } 
 	            }else{
 	                $this->error("模板错误，请检查模板！");
@@ -237,8 +235,11 @@ class RestockAction extends CommonAction{
 			
 			$usStatus = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('db_product_tous'));
 			if($usStatus != null && $usStatus != '无'){
-				if($this->get30DaysSales($ussv[C('DB_USSTORAGE_SKU')])==0 && ($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_INVENTORY')])==0){
-					if($usStatus=='空运' && $this->reallyOutOfStock('美自建仓',$ussv[C('DB_USSTORAGE_SKU')])){
+				$msq = $this->get30DaysSales($ussv[C('DB_USSTORAGE_SKU')]);
+				$usswroos = $this->reallyOutOfStock('美自建仓',$ussv[C('DB_USSTORAGE_SKU')]);
+				$winitroos = $this->reallyOutOfStock('万邑通美西',$ussv[C('DB_USSTORAGE_SKU')]);
+				if($msq==0 && ($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_INVENTORY')])==0){
+					if($usStatus=='空运' && $usswroos){
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '美自建仓';
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $ussv[C('DB_USSTORAGE_SKU')];
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $ussv[C('DB_USSTORAGE_CNAME')];
@@ -249,7 +250,7 @@ class RestockAction extends CommonAction{
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
 						$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
 					}
-					if($usstorage=='海运' && $this->reallyOutOfStock('万邑通美西',$ussv[C('DB_USSTORAGE_SKU')])){
+					if($usstorage=='海运' && $winitroos){
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '万邑通美西';
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $ussv[C('DB_USSTORAGE_SKU')];
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $ussv[C('DB_USSTORAGE_CNAME')];
@@ -262,24 +263,24 @@ class RestockAction extends CommonAction{
 					}
 				}
 
-				if($this->get30DaysSales($ussv[C('DB_USSTORAGE_SKU')])>0){
-					$dayAvailableForSale=($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_IINVENTORY')])/(($this->get30DaysSales($ussv[C('DB_USSTORAGE_SKU')]))/30);
-					if($usStatus=='空运' && $dayAvailableForSale<15 && $this->reallyOutOfStock('美自建仓',$ussv[C('DB_USSTORAGE_SKU')])){
+				if($msq>0){
+					$dayAvailableForSale=($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_IINVENTORY')])/($msq/30);
+					if($usStatus=='空运' && $dayAvailableForSale<15 && $usswroos){
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '美自建仓';
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $ussv[C('DB_USSTORAGE_SKU')];
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $ussv[C('DB_USSTORAGE_CNAME')];
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil((15-$dayAvailableForSale)*($this->get30DaysSales($ussv[C('DB_USSTORAGE_SKU')])/30));
+						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil((15-$dayAvailableForSale)*($msq/30));
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('db_product_manager'));
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_PRICE'));
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_SUPPLIER'));
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
 						$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
 					}
-					if($usStatus=='海运' && $dayAvailableForSale<60 && $this->reallyOutOfStock('万邑通美西',$ussv[C('DB_USSTORAGE_SKU')])){
+					if($usStatus=='海运' && $dayAvailableForSale<60 && $winitroos){
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '万邑通美西';
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $ussv[C('DB_USSTORAGE_SKU')];
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $ussv[C('DB_USSTORAGE_CNAME')];
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil((60-$dayAvailableForSale)*($this->get30DaysSales($ussv[C('DB_USSTORAGE_SKU')]))/30);
+						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil((60-$dayAvailableForSale)*$msq/30);
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('db_product_manager'));
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_PRICE'));
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_SUPPLIER'));
@@ -288,7 +289,7 @@ class RestockAction extends CommonAction{
 					}
 				}
 			}
-			ob_flush();
+			
 		}
 	}
 
@@ -304,7 +305,7 @@ class RestockAction extends CommonAction{
             if($iv[C('DB_USSW_OUTBOUND_ITEM_SKU')] == $sku)
                 $sku30daysales = $sku30daysales + $iv[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
             }
-            ob_flush();
+            
         }
         return $sku30daysales;
     }
@@ -339,40 +340,39 @@ class RestockAction extends CommonAction{
     		if($value['warehouse']==$warehouse && $value['sku']==$sku){
     			return true;
     		}
-    		ob_flush();
+
     	}
     	return false;
     }
 
     private function isInRestock($warehouse,$sku){
-    	$restock = M(C('DB_RESTOCK'))->select();
-    	foreach ($restock as $key => $value) {
-    		
-    		if($value[C('DB_RESTOCK_WAREHOUSE')]==$warehouse && $value[C('DB_RESTOCK_SKU')]==$sku && $value[C('DB_RESTOCK_STATUS')]!='已发货'){
-    			return true;
-    		}
-    		ob_flush();
-    	}
+    	$map[C('DB_RESTOCK_SKU')] = array('eq',$sku);
+    	$map[C('DB_RESTOCK_WAREHOUSE')] = array('eq',$warehouse);
+    	$map[C('DB_RESTOCK_STATUS')] = array('neq','已发货');
+    	$restock = M(C('DB_RESTOCK'))->where($map)->select();
+    	if($restock !== false && $restock !==null){
+			return true;
+		}
     	return false;
     }
 
     private function isInPurchaseItem($warehouse,$sku){
-    	$purchasedItem = M(C('DB_PURCHASE_ITEM'))->select();
-    	foreach ($purchasedItem as $key => $value) {
-    		
-    		if($value[C('DB_PURCHASE_ITEM_WAREHOUSE')]==$warehouse && $value[C('DB_PURCHASE_ITEM_SKU')]==$sku){
-    			$purchaseOrderStatus = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$value[C('DB_PURCHASE_ITEM_PURCHASE_ID')]))->getField(C('DB_PURCHASE_STATUS'));
-    			if($purchaseOrderStatus == '待确认' || $purchaseOrderStatus == '到付款' || $purchaseOrderStatus == '待发货')
-    				return true;
-    		}
-    		ob_flush();
+    	$map[C('purchaseOrderStatus')] = array('in','待确认,待付款,待发货');
+    	$poid = M(C('DB_PURCHASE'))->where($map)->getField(C('DB_PURCHASE_ID'),true);
+    	foreach ($poid as $key => $id) {
+    		$mapitem[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('eq',$warehouse);
+    		$mapitem[C('DB_PURCHASE_ITEM_PURCHASE_ID')] = array('eq',$id);
+    		$mapitem[C('DB_PURCHASE_ITEM_SKU')] = array('eq',$sku);
+    		$result = M(C('DB_PURCHASE_ITEM'))->where($mapitem)->select();
+    		if($result !== null && $result !==false)
+    			return true;
     	}
     	return false;
     }
 
     private function isInUSSW($sku){
     	$usstorage = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$sku))->find();
-		if($usstorage!==null || $usstorage !== false){
+		if($usstorage!==null && $usstorage !== false){
 			return true;
 		}else{
 			return false;
@@ -405,18 +405,21 @@ class RestockAction extends CommonAction{
 		            $tmpquantity = $inbounditems->where($map)->getField(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
 		            $iinventory = $iinventory + intval($tmpquantity);
 		        }
-		        ob_flush();
+		        
 	        } 
 	        return $iinventory;
     	}        
     }
 
     private function reallyOutOfStock($warehouse,$sku){
-    	if(!$this->isInOutOfStock($warehouse,$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && $this->getIInventory($warehouse,$sku)==0){
-    		return true;
-    	}else{
-    		return false;
+    	
+    	if(!$this->isInOutOfStock($warehouse,$sku)){
+    		if(!$this->isInRestock($warehouse,$sku))
+    			if(!$this->isInPurchaseItem($warehouse,$sku))
+    				if($this->getIInventory($warehouse,$sku)==0)
+    					return true;
     	}
+    	return false;
     }
 
     public function importRestock(){
