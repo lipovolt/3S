@@ -273,7 +273,10 @@ class PurchaseAction extends CommonAction{
                 $this->success('保存成功');
             }elseif($purchaseOrderStatus=="待发货" or $purchaseOrderStatus=="部分到货"){
                 for ($i=0; $i < $count; $i++) { 
-                    $this->receivePurchasedItem(I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars')[$i],I('post.new_received_quantity','','htmlspecialchars')[$i]);
+                    if(I('post.new_received_quantity','','htmlspecialchars')[$i]>0){
+                        $this->receivePurchasedItem(I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars')[$i],I('post.new_received_quantity','','htmlspecialchars')[$i]);
+                    }
+                    
                 }
                 $this->success('保存成功');
             }else{
