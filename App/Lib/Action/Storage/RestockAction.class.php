@@ -25,7 +25,8 @@ class RestockAction extends CommonAction{
 	        array(C('DB_RESTOCK_REMARK'),'备注')  
 	        );
         $xlsModel = M(C('DB_RESTOCK'));
-        $xlsData  = $xlsModel->select();
+        $map[C('DB_RESTOCK_STATUS')] = array('neq', '已发货');
+        $xlsData  = $xlsModel->where($map)->select();
         $this->exportExcel($xlsName,$xlsCell,$xlsData);
 	}
 	
