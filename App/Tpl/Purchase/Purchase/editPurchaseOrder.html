@@ -223,7 +223,7 @@ function checkNewReceived()
 	<div class="block-outer-hd">
 		<strong>产品列表</strong>
 		<a class="btn btn-blue btn-s" href="{:U('Purchase/Purchase/addPurchaseItem',array(C('DB_PURCHASE_ID')=>$purchaseOrder[0][C('DB_PURCHASE_ID')]))}" onclick='return checkForm()'>新增产品</a>
-		<button class="btn btn-blue btn-s" id="savePurchaseItemInfo">保存更改</button>
+		<button class="btn btn-blue btn-s" id="savePurchaseItemInfo" onclick="return checkForm()">保存更改</button>
 		<button class="btn btn-blue btn-s" id="savePurchaseItemInfo" onclick="return checkNewReceived()">添加新到数量</button>
     </div>
 	<table  id="warehouseProduct" class="tablelist">              
