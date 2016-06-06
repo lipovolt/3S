@@ -48,26 +48,20 @@ function checkForm()
     }
 }
 
-function checkNewReceived(){
-	var newReceived = document.getElementById("newReceived").value;
-	if(newReceived<0){
-		alert("新到数量不能是负数");
-		return false;
-	}else{
-		return true;
-	}
-}
-
-function addNewReceived(id){
-	var newReceived = prompt('输入到货数量：', '');
-	if(newReceived != null && newReceived != ''){
-		if(newReceived<=0){
-			alert("新到数量不正确");
-		}else{
-			var url="{:U('Purchase/Purchase/receivePurchasedItem')}?id="+id+"&newReceived="+newReceived;
-		    window.location.href=url;
-		}
-	}
+function checkNewReceived()
+{
+    var array = document.getElementsByName('new_received_quantity[]');
+    var returnValue = false;
+    for (var i = 0; i < array.length; i++)
+    {
+        if(array[i].value > 0){
+        	returnValue = true;
+        }
+    }
+    if(!returnValue){
+    	alert('新到数量全部为0，无法保存');
+    }
+    return returnValue;
 }
 </script>
 
@@ -229,7 +223,7 @@ function addNewReceived(id){
 	<div class="block-outer-hd">
 		<strong>产品列表</strong>
 		<a class="btn btn-blue btn-s" href="{:U('Purchase/Purchase/addPurchaseItem',array(C('DB_PURCHASE_ID')=>$purchaseOrder[0][C('DB_PURCHASE_ID')]))}" onclick='return checkForm()'>新增产品</a>
-		<button class="btn btn-blue btn-s" id="savePurchaseItemInfo">保存</button>
+		<button class="btn btn-blue btn-s" id="savePurchaseItemInfo" onclick="return checkNewReceived()">添加新到数量</button>
     </div>
 	<table  id="warehouseProduct" class="tablelist">              
 		
