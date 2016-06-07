@@ -441,8 +441,7 @@ class RestockAction extends CommonAction{
 	                    		}
 	                    	}else{
 		                    	$dayAvailableForSale = ($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())/$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-		                    	$airRestockDays = $sheetId==0?15:45;
-		                    	if($status=='空运' && $dayAvailableForSale<$airRestockDays && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($status=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'美自建仓':'万邑通德国';
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
@@ -453,7 +452,7 @@ class RestockAction extends CommonAction{
 			                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
 		                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
 		                    	}
-		                    	if($status=='海运' && $dayAvailableForSale<60 && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($status=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'万邑通美西':'万邑通德国';
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
