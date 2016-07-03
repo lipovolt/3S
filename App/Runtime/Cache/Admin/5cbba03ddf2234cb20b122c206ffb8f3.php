@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>采购信息</title>
+<title>用户信息</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -66,6 +66,8 @@
 		<strong>缺货补货</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'US'));?>" >导出美国缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'DE'));?>" >导出德国缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
 </dl>
 
@@ -146,7 +148,8 @@
 		<div class="subnav">
 			<dl>
 	<dt><strong>用户管理</strong>	</dt>
-	<dd><a href="#" >添加用户</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/addUser');?>" >添加用户</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/index');?>" >用户列表</a></dd>
 	<dd><a href="#" >删除用户</a></dd>
 	<dd><a href="#" >锁定用户</a></dd>
 </dl>
@@ -164,7 +167,7 @@
 </dl>
 <dl>
 	<dt><strong>权限分配</strong></dt>
-	<dd><a href="#" >权限分配</a></dd>
+	<dd><a href="#" >权限列表</a></dd>
 </dl>
 		<div>
 	</li>
@@ -176,38 +179,44 @@
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>采购管理</strong></div>
+			<div class="sidenav-hd"><strong>权限管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>采购单</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Purchase/Purchase/importPurchase');?>" >导入采购单</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待确认'));?>" >待确认</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待发货'));?>" >待发货</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'部分到货'));?>" >部分到货</a></dd>
+	<dt><strong>用户管理</strong>	</dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addUser');?>" >添加用户</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/index');?>" >用户列表</a></dd>
+	<dd><a href="#" >删除用户</a></dd>
+	<dd><a href="#" >锁定用户</a></dd>
 </dl>
 <dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>供货商</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Purchase/Supplier/index');?>" >供货商信息</a></dd>
-	<dd><a href="<?php echo U('Purchase/Supplier/addNewSupplier');?>" >添加供货商</a></dd>
+	<dt><strong>角色管理</strong>	</dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addRole');?>" >添加角色</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/role');?>" >角色列表</a></dd>
+	<dd><a href="#" >删除角色</a></dd>
+	<dd><a href="#" >锁定角色</a></dd>
+</dl>
+<dl>
+	<dt><strong>节点管理</strong></dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addNode');?>" >添加节点</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/node');?>" >节点列表</a></dd>
+</dl>
+<dl>
+	<dt><strong>权限分配</strong></dt>
+	<dd><a href="#" >权限列表</a></dd>
 </dl>	
 			</div>
 		</div>
 	<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Purchase/Purchase/index');?>" method="POST">
+		<form name="search_product" id="search_product" action="<?php echo U('Admin/Rbac/searchRole');?>" method="POST">
 			<div class="search-area">
 				<div class="item">
 					<div class="form-group">
 						<label for="keyword" class="control-label">关键字</label>
 						<div class="control-wrap">
 							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_PURCHASE_ITEM_SKU');?>">产品编码</option>
-								<option value="<?php echo C('DB_PURCHASE_ID');?>">采购单号</option>
-								<option value="<?php echo C('DB_PURCHASE_MANAGER');?>">产品经理</option>
+								<option value="<?php echo C('DB_ROLE_ID');?>">用户编号</option>
+								<option value="<?php echo C('DB_ROLE_NAME');?>">用户名称</option>
 							</select>
 						</div>
 						<div class="control-wrap">
@@ -222,28 +231,29 @@
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th><div class="tl">采购单号</div></th>
-						<th><div class="tl">产品经理</div></th>
-						<th><div class="tl">创建时间</div></th>
-						<th><div class="tl">采购时间</th>
-						<th><div class="tl">状态</div></th>
-						<th><div class="tl">订单号</div></th>
-						<th><div class="tl">追踪号</div></th>
-						<th><div class="tl">备注</div></th>
+						<th width="110">用户编号</th>
+						<th><div class="tl">用户名称</div></th>
+						<th><div class="tl">上次登录时间</div></th>
+						<th><div class="tl">上次登录IP</div></th>
+						<th><div class="tl">锁定状态</div></th>
+						<th><div class="tl">用户所属组别</div></th>
 						<th width="230">操作</th>
 					</tr>
-					<?php if(is_array($purchaseOrder)): $i = 0; $__LIST__ = $purchaseOrder;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_ID')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_MANAGER')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_CREATE_DATE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_PURCHASED_DATE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_STATUS')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_ORDER_NUMBER')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_TRACKING_NUMBER')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_REMARK')]); ?></div></td>
+					<?php if(is_array($user)): $i = 0; $__LIST__ = $user;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><div class="tl"><?php echo ($vo[C('DB_3S_USER_ID')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_3S_USER_USERNAME')]); ?></div></td>						
+						<td><div class="tl"><?php echo ($vo[C('DB_3S_USER_LOGINTIME')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_3S_USER_LOGINIP')]); ?></div></td>						
+						<td><div class="tl"><?php if($vo["lock"]): ?>锁定<?php endif; ?></div></td>
 						<td>
-							<a href="<?php echo U('Purchase/Purchase/editPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">编辑</a>
-							<a href="<?php echo U('Purchase/Purchase/deletePurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">删除</a>
+							<div class="tl">
+							<ul>
+								<?php if(is_array($vo["role"])): foreach($vo["role"] as $key=>$value): ?><li><?php echo ($value[C('DB_ROLE_NAME')]); ?>(<?php echo ($value[C('DB_ROLE_REMARK')]); ?>)</li><?php endforeach; endif; ?>
+							</ul>
+							</div>
+						</td>	
+						<td>
+							<?php if($vo["lock"]): ?><a href="<?php echo U('Admin/Rbac/unlockUser',array(uid=>$vo[C('DB_3S_USER_ID')]));?>">解锁</a><?php else: ?><a href="<?php echo U('Admin/Rbac/lockUser',array(uid=>$vo[C('DB_3S_USER_ID')]));?>">锁定</a><?php endif; ?>
 						</td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>

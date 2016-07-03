@@ -28,10 +28,17 @@ class IndexAction extends Action {
             );
         M(C('db_3s_user'))->save($data);
 
-        session('uid', $user[C('db_3s_user_id')]);
+        session(C('USER_AUTH_KEY'), $user[C('db_3s_user_id')]);
         session('username', $user[C('db_3s_user_username')]);
         session('logintime', date('Y-m-d H:i:s', $user[C('db_3s_user_logintime')]));
         session('loginip', $user[C('db_3s_user_loginip')]);
+
+        if($user[C('DB_3S_USER_USERNAME')] == C('RBAC_SUPERADMIN')){
+            SESSION(C('ADMIN_AUTH_KEY'),true);
+        }
+        import('ORG.Util.RBAC');
+        RBAC::saveAccessList();
+  
         $this->redirect(U('Product/Product/productInfo','','',1));
 
     }

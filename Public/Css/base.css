@@ -763,6 +763,15 @@ input.datepicker {
 /**
   button
 */
+.add-role {
+	font-size:12px;
+	width:100px;
+	height: 24px;
+	line-height: 22px;
+	color:#FFFFFF;
+	background:#425C88;
+}
+
 .btn {
 	position: relative;
 	display: inline-block;
@@ -4342,6 +4351,11 @@ table > tbody > tr >td:last-child  a{
 	position: absolute;
 	right: 14px;
 	top: 7px;
+}
+.app{
+	position:relative;
+    padding:10px;
+    border: 1px solid #C7D3E3;
 }
 	
 	

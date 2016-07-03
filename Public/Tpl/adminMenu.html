@@ -1,20 +1,23 @@
 <dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>用户管理</strong>								</dt>
-	<dd><a href="{:U('Index/Rbac/addRole')}" >添加用户</a></dd>
+	<dt><strong>用户管理</strong>	</dt>
+	<dd><a href="{:U('Admin/Rbac/addUser')}" >添加用户</a></dd>
+	<dd><a href="{:U('Admin/Rbac/index')}" >用户列表</a></dd>
 	<dd><a href="#" >删除用户</a></dd>
 	<dd><a href="#" >锁定用户</a></dd>
 </dl>
 <dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>角色管理</strong>								</dt>
-	<dd><a href="#" >添加角色</a></dd>
+	<dt><strong>角色管理</strong>	</dt>
+	<dd><a href="{:U('Admin/Rbac/addRole')}" >添加角色</a></dd>
+	<dd><a href="{:U('Admin/Rbac/role')}" >角色列表</a></dd>
+	<dd><a href="#" >删除角色</a></dd>
+	<dd><a href="#" >锁定角色</a></dd>
 </dl>
 <dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>节点管理</strong>								</dt>
-	<dd><a href="#" >添加节点</a></dd>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>权限分配</strong>								</dt>
-	<dd><a href="#" >权限分配</a></dd>
+	<dt><strong>节点管理</strong></dt>
+	<dd><a href="{:U('Admin/Rbac/addNode')}" >添加节点</a></dd>
+	<dd><a href="{:U('Admin/Rbac/node')}" >节点列表</a></dd>
+</dl>
+<dl>
+	<dt><strong>权限分配</strong></dt>
+	<dd><a href="#" >权限列表</a></dd>
 </dl>

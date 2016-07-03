@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>节点信息</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>权限管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/adminMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form name="search_product" id="search_product" action="{:U('Admin/Rbac/searchNode')}" method="POST">
+			<div class="search-area">
+				<div class="item">
+					<div class="form-group">
+						<label for="keyword" class="control-label">关键字</label>
+						<div class="control-wrap">
+							<select name="keyword" id="keyword" data-value="">
+								<option value="{:C('DB_NODE_ID')}">节点编号</option>
+								<option value="{:C('DB_NODE_NAME')}">节点名称</option>
+							</select>
+						</div>
+						<div class="control-wrap">
+							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
+						</div>
+					</div>
+					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
+				</div>			
+			</div>
+		</form>
+		<div>
+			<div class="tab-content">
+				<div class="tab-inner"><a href="{:U('Admin/Rbac/addNode')}">添加应用</a></div>
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th width="110">节点编号</th>
+						<th><div class="tl">节点名称</div></th>
+						<th><div class="tl">节点描述</div></th>
+						<th><div class="tl">节点状态</div></th>
+						<th><div class="tl">排序</div></th>
+						<th><div class="tl">父节点编号</div></th>
+						<th><div class="tl">节点级别</div></th>
+						<th><div class="tl">备注</div></th>
+						<th width="230">操作</th>
+					</tr>
+					<volist name="node" id="app">
+						<tr>
+						<td><div class="tl">{$app[C('DB_NODE_ID')]}</div></td>
+						<td><div class="tl">{$app[C('DB_NODE_NAME')]}</div></td>						
+						<td><div class="tl">{$app[C('DB_NODE_TITLE')]}</div></td>
+						<td><div class="tl">{$app[C('DB_NODE_STATUS')]}</div></td>						
+						<td><div class="tl">{$app[C('DB_NODE_SORT')]}</div></td>
+						<td><div class="tl">{$app[C('DB_NODE_PID')]}</div></td>
+						<td><div class="tl">{$app[C('DB_NODE_LEVEL')]}</div></td>
+						<td><div class="tl">{$app[C('DB_NODE_REMARK')]}</div></td>
+						<td>
+							<a href="{:U('Admin/Rbac/addNode',array(C('DB_NODE_PID')=>$app[C('DB_NODE_ID')],C('DB_NODE_LEVEL')=>2))}">添加控制器</a>
+							<a href="{:U('Admin/Rbac/updateNode',array(C('DB_NODE_PID')=>$app[C('DB_NODE_ID')],C('DB_NODE_LEVEL')=>2))}">修改</a>
+							<a href="{:U('Admin/Rbac/deleteNode',array(C('DB_NODE_PID')=>$app[C('DB_NODE_ID')],C('DB_NODE_LEVEL')=>2))}">删除</a>
+						</td>
+						</tr>	
+						<volist name="app.child" id='action'>
+							<tr>
+								<td><div class="tl">{$action[C('DB_NODE_ID')]}</div></td>
+								<td><div class="tl">{$action[C('DB_NODE_NAME')]}</div></td>
+								<td><div class="tl">{$action[C('DB_NODE_TITLE')]}</div></td>
+								<td><div class="tl">{$action[C('DB_NODE_STATUS')]}</div></td>
+								<td><div class="tl">{$action[C('DB_NODE_SORT')]}</div></td>
+								<td><div class="tl">{$action[C('DB_NODE_PID')]}</div></td>
+								<td><div class="tl">{$action[C('DB_NODE_LEVEL')]}</div></td>
+								<td><div class="tl">{$action[C('DB_NODE_REMARK')]}</div></td>
+								<td>
+									<a href="{:U('Admin/Rbac/addNode',array(C('DB_NODE_PID')=>$action[C('DB_NODE_ID')],C('DB_NODE_LEVEL')=>3))}">添加方法</a>
+								</td>
+							</tr>
+							<volist name="action.child" id='method'>
+								<tr>
+									<td><div class="tl">{$method[C('DB_NODE_ID')]}</div></td>
+									<td><div class="tl">{$method[C('DB_NODE_NAME')]}</div></td>
+									<td><div class="tl">{$method[C('DB_NODE_TITLE')]}</div></td>
+									<td><div class="tl">{$method[C('DB_NODE_STATUS')]}</div></td>
+									<td><div class="tl">{$method[C('DB_NODE_SORT')]}</div></td>
+									<td><div class="tl">{$method[C('DB_NODE_PID')]}</div></td>
+									<td><div class="tl">{$method[C('DB_NODE_LEVEL')]}</div></td>
+									<td><div class="tl">{$method[C('DB_NODE_REMARK')]}</div></td>
+									<td>
+										<a href="{:U('Admin/Rbac/updateNode',array(C('DB_NODE_PID')=>$method[C('DB_NODE_ID')],C('DB_NODE_LEVEL')=>3))}">修改</a>
+										<a href="{:U('Admin/Rbac/deleteNode',array(C('DB_NODE_PID')=>$method[C('DB_NODE_ID')],C('DB_NODE_LEVEL')=>3))}">删除</a>
+									</td>
+								</tr>
+							</volist>
+							<tr><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td><td> </td></tr>
+						</volist>
+					</volist>								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

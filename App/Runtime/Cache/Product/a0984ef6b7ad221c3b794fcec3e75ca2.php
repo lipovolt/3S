@@ -66,6 +66,8 @@
 		<strong>缺货补货</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'US'));?>" >导出美国缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'DE'));?>" >导出德国缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
 </dl>
 
@@ -139,6 +141,34 @@
 	<dd ><a href="<?php echo U('Ussw/Storage/stopped');?>">已下架商品</a></dd>
 </dl>
 
+		<div>
+	</li>
+	<li>
+		<a href="#" mark="ussw"><span>权限管理</span></a>
+		<div class="subnav">
+			<dl>
+	<dt><strong>用户管理</strong>	</dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addUser');?>" >添加用户</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/index');?>" >用户列表</a></dd>
+	<dd><a href="#" >删除用户</a></dd>
+	<dd><a href="#" >锁定用户</a></dd>
+</dl>
+<dl>
+	<dt><strong>角色管理</strong>	</dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addRole');?>" >添加角色</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/role');?>" >角色列表</a></dd>
+	<dd><a href="#" >删除角色</a></dd>
+	<dd><a href="#" >锁定角色</a></dd>
+</dl>
+<dl>
+	<dt><strong>节点管理</strong></dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addNode');?>" >添加节点</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/node');?>" >节点列表</a></dd>
+</dl>
+<dl>
+	<dt><strong>权限分配</strong></dt>
+	<dd><a href="#" >权限列表</a></dd>
+</dl>
 		<div>
 	</li>
 </ul>

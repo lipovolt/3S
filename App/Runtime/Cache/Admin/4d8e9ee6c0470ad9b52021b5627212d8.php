@@ -3,11 +3,26 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>采购信息</title>
+<title>配置权限</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript" src='__PUBLIC__/Js/jquery-1.7.2.min.js'></script>
+<script type="text/javascript">
+	$(function () {
+
+		$('input[level=1]').click(function () {
+			var inputs = $(this).parents('.app').find('input');
+			$(this).attr('checked') ? inputs.attr('checked','checked') : inputs.removeAttr('checked');
+		});
+
+		$('input[level=2]').click(function () {
+			var inputs = $(this).parents('dl').find('input');
+			$(this).attr('checked') ? inputs.attr('checked','checked') : inputs.removeAttr('checked');
+		});
+	});
+</script>
 </head>
 <body>
 
@@ -66,6 +81,8 @@
 		<strong>缺货补货</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'US'));?>" >导出美国缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'DE'));?>" >导出德国缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
 </dl>
 
@@ -146,7 +163,8 @@
 		<div class="subnav">
 			<dl>
 	<dt><strong>用户管理</strong>	</dt>
-	<dd><a href="#" >添加用户</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/addUser');?>" >添加用户</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/index');?>" >用户列表</a></dd>
 	<dd><a href="#" >删除用户</a></dd>
 	<dd><a href="#" >锁定用户</a></dd>
 </dl>
@@ -164,7 +182,7 @@
 </dl>
 <dl>
 	<dt><strong>权限分配</strong></dt>
-	<dd><a href="#" >权限分配</a></dd>
+	<dd><a href="#" >权限列表</a></dd>
 </dl>
 		<div>
 	</li>
@@ -176,78 +194,61 @@
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>采购管理</strong></div>
+			<div class="sidenav-hd"><strong>权限管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>采购单</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Purchase/Purchase/importPurchase');?>" >导入采购单</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待确认'));?>" >待确认</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待发货'));?>" >待发货</a></dd>
-	<dd><a href="<?php echo U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'部分到货'));?>" >部分到货</a></dd>
+	<dt><strong>用户管理</strong>	</dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addUser');?>" >添加用户</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/index');?>" >用户列表</a></dd>
+	<dd><a href="#" >删除用户</a></dd>
+	<dd><a href="#" >锁定用户</a></dd>
 </dl>
 <dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>供货商</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Purchase/Supplier/index');?>" >供货商信息</a></dd>
-	<dd><a href="<?php echo U('Purchase/Supplier/addNewSupplier');?>" >添加供货商</a></dd>
+	<dt><strong>角色管理</strong>	</dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addRole');?>" >添加角色</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/role');?>" >角色列表</a></dd>
+	<dd><a href="#" >删除角色</a></dd>
+	<dd><a href="#" >锁定角色</a></dd>
+</dl>
+<dl>
+	<dt><strong>节点管理</strong></dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addNode');?>" >添加节点</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/node');?>" >节点列表</a></dd>
+</dl>
+<dl>
+	<dt><strong>权限分配</strong></dt>
+	<dd><a href="#" >权限列表</a></dd>
 </dl>	
 			</div>
 		</div>
 	<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Purchase/Purchase/index');?>" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">关键字</label>
-						<div class="control-wrap">
-							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_PURCHASE_ITEM_SKU');?>">产品编码</option>
-								<option value="<?php echo C('DB_PURCHASE_ID');?>">采购单号</option>
-								<option value="<?php echo C('DB_PURCHASE_MANAGER');?>">产品经理</option>
-							</select>
-						</div>
-						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
-						</div>
-					</div>
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
-				</div>			
-			</div>
-		</form>
 		<div>
-			<div class="tab-content">	
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th><div class="tl">采购单号</div></th>
-						<th><div class="tl">产品经理</div></th>
-						<th><div class="tl">创建时间</div></th>
-						<th><div class="tl">采购时间</th>
-						<th><div class="tl">状态</div></th>
-						<th><div class="tl">订单号</div></th>
-						<th><div class="tl">追踪号</div></th>
-						<th><div class="tl">备注</div></th>
-						<th width="230">操作</th>
-					</tr>
-					<?php if(is_array($purchaseOrder)): $i = 0; $__LIST__ = $purchaseOrder;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_ID')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_MANAGER')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_CREATE_DATE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_PURCHASED_DATE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_STATUS')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_ORDER_NUMBER')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_TRACKING_NUMBER')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PURCHASE_REMARK')]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Purchase/Purchase/editPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">编辑</a>
-							<a href="<?php echo U('Purchase/Purchase/deletePurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]));?>">删除</a>
-						</td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
+			<div class="tab-content">
+				<div align="center">
+					<a href="<?php echo U('Admin/Rbac/role');?>">返回</a>
+				</div>
+				<form action="<?php echo U('Admin/Rbac/setAccess');?>" method='post'>				
+					<?php if(is_array($node)): foreach($node as $key=>$app): ?><div class='app'>
+						<p><strong><?php echo ($app["title"]); ?></strong>
+							<input type="checkbox" name='access[]' value='<?php echo ($app["id"]); ?>_1' level='1' <?php if($app["access"]): ?>checked = 'checked'<?php endif; ?> />
+						</p>
+						<?php if(is_array($app["child"])): foreach($app["child"] as $key=>$action): ?><dl>
+								<dt>
+									<strong><?php echo ($action[C('DB_NODE_TITLE')]); ?></strgon>
+									<input type="checkbox" name='access[]' value='<?php echo ($action["id"]); ?>_2' level='2' <?php if($action["access"]): ?>checked = 'checked'<?php endif; ?> />
+								</dt>
+								<?php if(is_array($action["child"])): foreach($action["child"] as $key=>$method): ?><dd>
+										<strong><?php echo ($method[C('DB_NODE_TITLE')]); ?></strong>
+										<input type="checkbox" name='access[]' value='<?php echo ($method["id"]); ?>_3' level='3' <?php if($method["access"]): ?>checked = 'checked'<?php endif; ?> />
+									<dd><?php endforeach; endif; ?>
+							</dl><?php endforeach; endif; ?>
+						</div><?php endforeach; endif; ?>
+					<div align="center">
+						<input type="hidden" name="rid" value="<?php echo ($rid); ?>"/>
+						<input class="btn btn-s btn-blue" type="submit" value='保存'/>
+					</div>				
+				</form>
 			</div>
 		</div>
 	</div>

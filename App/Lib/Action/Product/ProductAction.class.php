@@ -10,7 +10,7 @@ class ProductAction extends CommonAction{
             $Page = new Page($count,20);            
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
-            $products = $Data->limit($Page->firstRow.','.$Page->listRows)->select();
+            $products = $Data->order(C('DB_PRODUCT_SKU'))->limit($Page->firstRow.','.$Page->listRows)->select();
             $this->assign('products',$products);
             $this->assign('page',$show);
         }

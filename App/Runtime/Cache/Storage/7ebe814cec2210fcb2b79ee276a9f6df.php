@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>批量导入库存信息</title>
+<title>批量导入<?php echo ($country); ?>库存信息</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -67,6 +67,8 @@
 		<strong>缺货补货</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'US'));?>" >导出美国缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'DE'));?>" >导出德国缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
 </dl>
 
@@ -142,6 +144,33 @@
 
 		<div>
 	</li>
+	<li>
+		<a href="#" mark="ussw"><span>权限管理</span></a>
+		<div class="subnav">
+			<dl>
+	<dt><strong>用户管理</strong>	</dt>
+	<dd><a href="#" >添加用户</a></dd>
+	<dd><a href="#" >删除用户</a></dd>
+	<dd><a href="#" >锁定用户</a></dd>
+</dl>
+<dl>
+	<dt><strong>角色管理</strong>	</dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addRole');?>" >添加角色</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/role');?>" >角色列表</a></dd>
+	<dd><a href="#" >删除角色</a></dd>
+	<dd><a href="#" >锁定角色</a></dd>
+</dl>
+<dl>
+	<dt><strong>节点管理</strong></dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addNode');?>" >添加节点</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/node');?>" >节点列表</a></dd>
+</dl>
+<dl>
+	<dt><strong>权限分配</strong></dt>
+	<dd><a href="#" >权限分配</a></dd>
+</dl>
+		<div>
+	</li>
 </ul>
 			</div>
 		</div>
@@ -170,6 +199,8 @@
 		<strong>缺货补货</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'US'));?>" >导出美国缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'DE'));?>" >导出德国缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
 </dl>
 	
@@ -189,7 +220,7 @@
 					<ul class="tab">
 						<li class="on">
 						<i class="before"></i>
-							<span>导入海外仓库存信息</span>
+							<span>导入<?php echo ($country); ?>库存信息</span>
 						<i class="after"></i>
 						</li>					
 					</ul>
@@ -199,18 +230,33 @@
 								<div class="block-bd">
 									<div class="block-indent" style="overflow:hidden;">
 										<div style="float:left;width:auto;">
-											<p style="color:red; text-decoration:underline;">请先下载万邑通最新美国和德国仓库存表，然后把两个文件合并成一个文件两个表单，然后上传数据。<br><strong>注意：第一个表单名必须是“万邑通美西库存表”，第二个表单名是“万邑通德国库存表”！！</strong></p>
+											<p style="color:red; text-decoration:underline;">请先下载万邑通最新<?php echo ($country); ?>仓库存表，然后上传数据。<br>
+
+												<strong><?php echo ($noteForAllCountry); ?></strong></p>
 											<div>
-												 <form action="<?php echo U('Storage/Restock/findOutOfStockItem');?>" method="post" enctype="multipart/form-data">
+												 <form action="<?php echo U('Storage/Restock/findOutOfStockItem',array('country'=>$country));?>" method="post" enctype="multipart/form-data">
 												 	<div class="form-group">
-												 		<label for="winitUsStorage" class="control-label">万邑通美国和德国仓库存表</label>
+												 		<label for="winitUsStorage" class="control-label">万邑通<?php echo ($country); ?>仓库存表</label>
 													 	<div class="control-wrap">
 											            	<input type="file" name="winitUsStorage"/>
 											            </div>
 										            </div>
 										            <div class="form-group">
+														<label for="price" class="control-label">空运库存可售天数</label>
+														<div class="control-wrap">
+															<input type="text"  id="dfa" name="dfa" value="15" />
+														</div>
+													</div>
+													<div class="form-group">
+														<label for="price" class="control-label">海运库存可售天数</label>
+														<div class="control-wrap">
+															<input type="text"  id="dfs" name="dfs" value="60" />
+														</div>
+													</div>
+										            <div class="form-group">
 										             	<input class="btn btn-blue btn-s" type="submit" value="导入"/>
-										             </div>
+										            </div>
+
 									         	</form>
 
 											</div>
