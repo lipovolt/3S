@@ -290,7 +290,9 @@ class RestockAction extends CommonAction{
                 for($i=2;$i<=$highestRow;$i++){
                 	
                 	$status = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_tous'));
-                    if($status != null && $status != '无' && !$this->hasMovedToUSSW($sheetId,$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+                    $movedToUssw = $this->isInUSSW($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue());
+                    if($status != null && $status != '无' && !$movedToUssw){
+                    	
                     	if($objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0){
                     		if(($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())==0){
 
@@ -489,11 +491,12 @@ class RestockAction extends CommonAction{
 			$usStatus = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('db_product_tous'));
 			if($usStatus !== null && $usStatus !== '无'){
 				$msq = $this->get30DaysSales($ussv[C('DB_USSTORAGE_SKU')]);
-				if($usStatus == '空运'){
+				/*if($usStatus == '空运'){
 					$roos = $this->reallyOutOfStock('美自建仓',$ussv[C('DB_USSTORAGE_SKU')]);
 				}else{
 					$roos = $this->reallyOutOfStock('万邑通美西',$ussv[C('DB_USSTORAGE_SKU')]);
-				}
+				}*/
+				$roos = true;
 				if($msq==0 && ($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_INVENTORY')])==0){
 					if($usStatus=='空运' && $roos){
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '美自建仓';
@@ -628,7 +631,7 @@ class RestockAction extends CommonAction{
     }
 
     private function isInUSSW($sku){
-    	$usstorage = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$sku))->find();
+    	$usstorage = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$sku))->find();    	
 		if($usstorage!==null && $usstorage !== false){
 			return true;
 		}else{
