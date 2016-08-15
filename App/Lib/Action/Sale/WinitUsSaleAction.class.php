@@ -334,6 +334,10 @@ class WinitUsSaleAction extends CommonAction{
 
 	private function calWinitUPSGroundPostFee($weight,$l,$w,$h){
 		$fee = 0;
+		$vWeight = $l*$w*$h/6000;
+		if($weight<$vWeight){
+			$weight = $vWeight;
+		}
 		if($weight <= 68040 and $l<=274.32){
 			if($weight>=0 and $weight<453){
 				$fee = 9.88;
@@ -431,12 +435,12 @@ class WinitUsSaleAction extends CommonAction{
 			elseif($weight>=56700 and $weight<=68040){
 				$fee = 69.93;
 			}
-			elseif($l>=152.4 or $l<=274.32 or $w>76.2 or $w>=31752){
-				$fee = $fee+8.5;
-			}
-			elseif(($l+2*($w+$h))>=330.2 and ($l+2*($w+$h))<=419.1){
-				$fee = $fee+51;
-			}
+		}
+		if($l>=121.9 or $w>76.2 or $weight>=31752){
+			$fee = $fee+8.5;
+		}
+		if(($l+2*($w+$h))>=330.2 and ($l+2*($w+$h))<=419.1){
+			$fee = $fee+51;
 		}
 		return $fee;
 	}
