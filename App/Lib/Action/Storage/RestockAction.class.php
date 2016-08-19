@@ -214,7 +214,7 @@ class RestockAction extends CommonAction{
 		                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
 	                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
 	                    	}
-	                    	if($status=='海运' && $dayAvailableForSale<60 && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+	                    	if($status=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '万邑通德国';
 	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
@@ -617,7 +617,7 @@ class RestockAction extends CommonAction{
     }
 
     private function isInPurchaseItem($warehouse,$sku){
-    	$map[C('purchaseOrderStatus')] = array('in','待确认,待付款,待发货');
+    	$map[C('DB_PURCHASE_STATUS')] = array('in','待确认,待付款,待发货');
     	$poid = M(C('DB_PURCHASE'))->where($map)->getField(C('DB_PURCHASE_ID'),true);
     	foreach ($poid as $key => $id) {
     		$mapitem[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('eq',$warehouse);
