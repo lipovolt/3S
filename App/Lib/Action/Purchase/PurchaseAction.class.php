@@ -26,7 +26,8 @@ class PurchaseAction extends CommonAction{
                 $this->display();
             }
             if($_POST['keyword']==C('DB_PURCHASE_ITEM_SKU')){
-                $purchaseOrders = M(C('DB_PURCHASE_ITEM'))->distinct(true)->where(array(C('DB_PURCHASE_ITEM_SKU')=>I('post.keywordValue','','htmlspecialchars')))->getField(C('DB_PURCHASE_ITEM_PURCHASE_ID'),true);
+                $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+                $purchaseOrders = M(C('DB_PURCHASE_ITEM'))->distinct(true)->where($where)->getField(C('DB_PURCHASE_ITEM_PURCHASE_ID'),true);
                 $map[C('DB_PURCHASE_ID')] = array('in',$purchaseOrders);
                 $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where($map)->select());
                 $this->display();
