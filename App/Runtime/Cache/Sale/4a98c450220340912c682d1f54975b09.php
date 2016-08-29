@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>万邑通德国销售信息</title>
+<title>直发美国试算</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -98,10 +98,12 @@
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>深圳 Ebay</strong>								
+		<i class="icon dropdown-s"></i><strong>深圳直发 Ebay</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >飞特小包美国试算</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >飞特小包德国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usTestCal');?>" >新产品美国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deTestCal');?>" >新产品德国试算</a></dd>
 </dl>
 		</div>
 	</li>
@@ -210,82 +212,54 @@
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>深圳 Ebay</strong>								
+		<i class="icon dropdown-s"></i><strong>深圳直发 Ebay</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >飞特小包美国试算</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >飞特小包德国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usTestCal');?>" >新产品美国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deTestCal');?>" >新产品德国试算</a></dd>
 </dl>	
 			</div>
 		</div>
 		<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Sale/WinitDeSale/index');?>" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">关键字</label>
-						<div class="control-wrap">
-							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_PRODUCT_SKU');?>">产品编码</option>
-								<option value="<?php echo C('DB_PRODUCT_CNAME');?>">产品名称</option>
-							</select>
-						</div>
-						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
-						</div>
-					</div>
-					<input type="hidden" name="country" value="122" />
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
-						<i class="icon search"></i>
-						<i class="vline-inline"></i>
-						<span>查询</span>
-					</button>
-				</div>			
-			</div>
-		</form>
 		<div>
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th width="66">产品编码</th>
-						<th><div class="tl">中文名称</div></th>
 						<th><div class="tl">采购价￥</div></th>
-						<th><div class="tl">关税率</div></th>
-						<th><div class="tl">仓出入费€</div></th>
-						<th><div class="tl">头程方式</div></th>
-						<th><div class="tl">头程€</div></th>
 						<th><div class="tl">本地方式</div></th>
-						<th><div class="tl">本地运费€</div></th>
-						<th><div class="tl">成本€</div></th>
-						<th><div class="tl">售价€</div></th>
-						<th><div class="tl">毛利润€</div></th>
+						<th><div class="tl">本地运费￥</div></th>
+						<th><div class="tl">成本$</div></th>
+						<th><div class="tl">售价$</div></th>
+						<th><div class="tl">毛利润$</div></th>
 						<th><div class="tl">毛利率</div></th>
 						<th><div class="tl">重量g</div></th>
 						<th>长cm</th>
 						<th>宽cm</th>
 						<th><div class="tl">高cm</div></th>
+						<th><div class="tl">操作</div></th>
 					</tr>
-					<?php if(is_array($data)): $i = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_SKU')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_CNAME')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_PRICE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_DETARIFF')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["winit-fee"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_TODE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["way-to-de-fee"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["local-shipping-way"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["local-shipping-fee"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["cost"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["gprofit"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["grate"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["length"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["width"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["height"]); ?></div></td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
+					<tr>
+						<form method="POST" id="ggs-ussw-item-test" action="<?php echo U('Sale/SzSale/usTestCal');?>">		
+						<td><div class="tl"><input type="text" style="width:50px;" name="price" value="<?php echo ($testData['price']); ?>" id="price"q/></div></td>
+						<td><div class="tl"><?php echo ($testData['shipping-way']); ?></div></td>
+						<td><div class="tl"><?php echo ($testData['shipping-fee']); ?></div></td>
+						<td><div class="tl"><?php echo ($testData['cost']); ?></div></td>
+						<td><div class="tl"><input type="text" style="width:60px;" name="saleprice" value="<?php echo ($testData['saleprice']); ?>" id="saleprice"/></div></td>
+						<td><div class="tl"><?php echo ($testData['gprofit']); ?></div></td>
+						<td><div class="tl"><?php echo ($testData['grate']); ?></div></td>
+						<td><div class="tl"><input type="text" style="width:60px;" name="weight" value="<?php echo ($testData['weight']); ?>" id="weight"/></div></td>
+						<td><div class="tl"><input type="text" style="width:50px;" name="length" value="<?php echo ($testData['length']); ?>" id="length"/></div></td>
+						<td><div class="tl"><input type="text" style="width:50px;" name="width" value="<?php echo ($testData['width']); ?>" id="width"/></div></td>
+						<td><div class="tl"><input type="text" style="width:50px;" name="height" value="<?php echo ($testData['height']); ?>" id="height"/></div></td>
+						<td>
+							<button class="btn btn-blue btn-s" id="saveProductInfo">试算</button>
+							<a href="<?php echo U('Sale/SzSale/usTestCal');?>">重置</a>
+						</td>
+						</form>
+					</tr>								
 				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
 			</div>
 		</div>
 	</div>

@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>万邑通德国销售信息</title>
+<title>深圳直发美国试算</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -219,7 +219,7 @@
 		</div>
 		<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Sale/WinitDeSale/index');?>" method="POST">
+		<form name="search_product" id="search_product" action="<?php echo U('Sale/SzSale/usCal');?>" method="POST">
 			<div class="search-area">
 				<div class="item">
 					<div class="form-group">
@@ -250,39 +250,25 @@
 						<th width="66">产品编码</th>
 						<th><div class="tl">中文名称</div></th>
 						<th><div class="tl">采购价￥</div></th>
-						<th><div class="tl">关税率</div></th>
-						<th><div class="tl">仓出入费€</div></th>
-						<th><div class="tl">头程方式</div></th>
-						<th><div class="tl">头程€</div></th>
-						<th><div class="tl">本地方式</div></th>
-						<th><div class="tl">本地运费€</div></th>
-						<th><div class="tl">成本€</div></th>
-						<th><div class="tl">售价€</div></th>
-						<th><div class="tl">毛利润€</div></th>
+						<th><div class="tl">发货方式</div></th>
+						<th><div class="tl">运费￥</div></th>
+						<th><div class="tl">成本$</div></th>
+						<th><div class="tl">售价$</div></th>
+						<th><div class="tl">毛利润$</div></th>
 						<th><div class="tl">毛利率</div></th>
 						<th><div class="tl">重量g</div></th>
-						<th>长cm</th>
-						<th>宽cm</th>
-						<th><div class="tl">高cm</div></th>
 					</tr>
 					<?php if(is_array($data)): $i = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
 						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_SKU')]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_CNAME')]); ?></div></td>						
 						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_PRICE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_DETARIFF')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["winit-fee"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_TODE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["way-to-de-fee"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["local-shipping-way"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["local-shipping-fee"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["shipping-way"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["shipping-fee"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["cost"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_SZ_US_SALE_PRICE')]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["gprofit"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["grate"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["length"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["width"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["height"]); ?></div></td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
 				<div class="result page" align="center"><?php echo ($page); ?></div>

@@ -32,6 +32,8 @@ return array(
 	'DB_PRODUCT_RC_WINIT_US_SALE_PRICE' => 'rc_winit_us_sale_price',
 	'DB_PRODUCT_RC_WINIT_DE_SALE_PRICE' => 'rc_winit_de_sale_price',
 	'DB_PRODUCT_AMAZON_USSW_SALE_PRICE' => 'amazon_ussw_sale_price',
+	'DB_PRODUCT_SZ_US_SALE_PRICE' => 'sz_us_sale_price',
+	'DB_PRODUCT_SZ_DE_SALE_PRICE' => 'sz_de_sale_price',
 	'DB_PRODUCT_EBAY_COM_BEST_MATCH' => 'ebay_com_best',
 	'DB_PRODUCT_EBAY_COM_PRICE_LOWEST' => 'ebay_com_cheapest',
 	'DB_PRODUCT_EBAY_DE_BEST_MATCH' => 'ebay_de_best',

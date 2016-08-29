@@ -140,7 +140,7 @@ class WinitDeSaleAction extends CommonAction{
 			);
 		$cheapest=65536;
 		$way=0;
-		for ($i=0; $i < 7; $i++) { 
+		for ($i=0; $i < 6; $i++) { 
 			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
 				$cheapest = $fees[$i];
 				$way = $i;
@@ -159,7 +159,7 @@ class WinitDeSaleAction extends CommonAction{
 				5=>$this->calWinitDHLFee($weight,$l,$w,$h)
 			);
 		$cheapest=65536;
-		for ($i=0; $i < 7; $i++) { 
+		for ($i=0; $i < 6; $i++) { 
 			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
 				$cheapest = $fees[$i];
 			}

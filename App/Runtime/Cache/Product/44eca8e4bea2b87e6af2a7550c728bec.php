@@ -73,6 +73,8 @@ function checkboxValue(tinyintValue){
 		<strong>缺货补货</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'US'));?>" >导出美国缺货表</a></dd>
+	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'DE'));?>" >导出德国缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
 </dl>
 
@@ -100,6 +102,13 @@ function checkboxValue(tinyintValue){
 	</dt>
 	<dd><a href="<?php echo U('Sale/WinitUsSale/index');?>" >美国万邑通销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/WinitDeSale/index');?>" >德国万邑通销售表</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>深圳 Ebay</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >飞特小包美国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >飞特小包德国试算</a></dd>
 </dl>
 		</div>
 	</li>
@@ -146,6 +155,34 @@ function checkboxValue(tinyintValue){
 	<dd ><a href="<?php echo U('Ussw/Storage/stopped');?>">已下架商品</a></dd>
 </dl>
 
+		<div>
+	</li>
+	<li>
+		<a href="#" mark="ussw"><span>权限管理</span></a>
+		<div class="subnav">
+			<dl>
+	<dt><strong>用户管理</strong>	</dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addUser');?>" >添加用户</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/index');?>" >用户列表</a></dd>
+	<dd><a href="#" >删除用户</a></dd>
+	<dd><a href="#" >锁定用户</a></dd>
+</dl>
+<dl>
+	<dt><strong>角色管理</strong>	</dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addRole');?>" >添加角色</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/role');?>" >角色列表</a></dd>
+	<dd><a href="#" >删除角色</a></dd>
+	<dd><a href="#" >锁定角色</a></dd>
+</dl>
+<dl>
+	<dt><strong>节点管理</strong></dt>
+	<dd><a href="<?php echo U('Admin/Rbac/addNode');?>" >添加节点</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/node');?>" >节点列表</a></dd>
+</dl>
+<dl>
+	<dt><strong>权限分配</strong></dt>
+	<dd><a href="#" >权限列表</a></dd>
+</dl>
 		<div>
 	</li>
 </ul>
@@ -363,9 +400,23 @@ function checkboxValue(tinyintValue){
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="length" class="control-label">UPC</label>
+							<label for="upc" class="control-label">UPC</label>
 							<div class="control-wrap">
 								<input type="text"  id="<?php echo C('DB_PRODUCT_UPC');?>" name="<?php echo C('DB_PRODUCT_UPC');?>" value="<?php echo ($product[0][C('DB_PRODUCT_UPC')]); ?>" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+                        <div class="form-group">
+							<label for="sz-us-sp" class="control-label">直发美国售价$</label>
+							<div class="control-wrap">
+								<input type="text"  id="<?php echo C('DB_PRODUCT_SZ_US_SALE_PRICE');?>" name="<?php echo C('DB_PRODUCT_SZ_US_SALE_PRICE');?>" value="<?php echo ($product[0][C('DB_PRODUCT_SZ_US_SALE_PRICE')]); ?>" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="sz-de-sp" class="control-label">直发德国售价€</label>
+							<div class="control-wrap">
+								<input type="text"  id="<?php echo C('DB_PRODUCT_SZ_DE_SALE_PRICE');?>" name="<?php echo C('DB_PRODUCT_SZ_DE_SALE_PRICE');?>" value="<?php echo ($product[0][C('DB_PRODUCT_SZ_DE_SALE_PRICE')]); ?>" />
 							</div>
 						</div>
 					</div>
