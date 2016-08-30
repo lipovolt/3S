@@ -491,12 +491,11 @@ class RestockAction extends CommonAction{
 			$usStatus = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('db_product_tous'));
 			if($usStatus !== null && $usStatus !== '无'){
 				$msq = $this->get30DaysSales($ussv[C('DB_USSTORAGE_SKU')]);
-				/*if($usStatus == '空运'){
+				if($usStatus == '空运'){
 					$roos = $this->reallyOutOfStock('美自建仓',$ussv[C('DB_USSTORAGE_SKU')]);
 				}else{
 					$roos = $this->reallyOutOfStock('万邑通美西',$ussv[C('DB_USSTORAGE_SKU')]);
-				}*/
-				$roos = true;
+				}
 				if($msq==0 && ($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_INVENTORY')])==0){
 					if($usStatus=='空运' && $roos){
 						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '美自建仓';
@@ -666,7 +665,7 @@ class RestockAction extends CommonAction{
 		            $iinventory = $iinventory + intval($tmpquantity);
 		        }
 		        
-	        } 
+	        }
 	        return $iinventory;
     	}        
     }
@@ -676,8 +675,10 @@ class RestockAction extends CommonAction{
     	if(!$this->isInOutOfStock($warehouse,$sku)){
     		if(!$this->isInRestock($warehouse,$sku))
     			if(!$this->isInPurchaseItem($warehouse,$sku))
-    				if($this->getIInventory($warehouse,$sku)==0)
+    				if($this->getIInventory($warehouse,$sku)==0){
     					return true;
+    				}
+    					
     	}
     	return false;
     }
