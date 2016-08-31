@@ -338,7 +338,7 @@ class PurchaseAction extends CommonAction{
             $data[C('DB_PURCHASE_PURCHASED_DATE')] = date("Y-m-d H:i:s" ,time());
             $data[C('DB_PURCHASE_STATUS')] = '待发货';
             M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->save($data);
-            $this->redirect('index');
+            $this->redirect('index',array('status'=>'待确认'));
         }else{
             $this->error("状态无法更新");
         }
