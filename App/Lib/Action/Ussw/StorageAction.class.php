@@ -185,7 +185,7 @@ class StorageAction extends CommonAction{
                 $saleStatus[C('DB_USSTORAGE_SALE_STATUS')]='待下架';
                 $usstorage->where(array(C('DB_USSTORAGE_ID')=>$value[C('DB_USSTORAGE_ID')]))->save($saleStatus);
             }
-            if($value[C('DB_USSTORAGE_AINVENTORY')]!=0 && $value[C('DB_USSTORAGE_SALE_STATUS')]=='已下架'){
+            if($value[C('DB_USSTORAGE_AINVENTORY')]!=0 && $value[C('DB_USSTORAGE_SALE_STATUS')]=='待下架'){
                 $saleStatus[C('DB_USSTORAGE_SALE_STATUS')]=null;
                 $usstorage->where(array(C('DB_USSTORAGE_ID')=>$value[C('DB_USSTORAGE_ID')]))->save($saleStatus);
             }
