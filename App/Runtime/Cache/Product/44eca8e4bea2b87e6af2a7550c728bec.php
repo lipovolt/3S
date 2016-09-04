@@ -9,9 +9,32 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <script type="text/javascript">
-function checkboxValue(tinyintValue){
-	if(tinyintValue==1){
-		echo "checked";
+function GenerateUpc(){
+
+	var upc = document.getElementById("upc").value;
+	if(upc==0 || upc==null){
+		var used_upc = document.getElementById("used_upc").value;
+		var oddSum=parseInt(used_upc.substr(0,1))+parseInt(used_upc.substr(2,1))+parseInt(used_upc.substr(4,1))+parseInt(used_upc.substr(6,1))+parseInt(used_upc.substr(8,1))+parseInt(used_upc.substr(10,1))+1;
+	    var evenSum=parseInt(used_upc.substr(1,1))+parseInt(used_upc.substr(3,1))+parseInt(used_upc.substr(5,1))+parseInt(used_upc.substr(7,1))+parseInt(used_upc.substr(9,1));
+	    var sum=oddSum*3+evenSum;
+	    var verifyNumber = 10-parseInt(String(sum).substr(String(sum).length-1,1));
+	    var int_upc = parseInt(used_upc.substr(0,11))+1;
+	    if(verifyNumber==10){
+	        document.getElementById("upc").value= String(int_upc)+0;
+	    }else{
+	        document.getElementById("upc").value= String(int_upc)+verifyNumber;
+	    }
+	}else{
+		var oddSum=parseInt(upc.substr(0,1))+parseInt(upc.substr(2,1))+parseInt(upc.substr(4,1))+parseInt(upc.substr(6,1))+parseInt(upc.substr(8,1))+parseInt(upc.substr(10,1))+1;
+	    var evenSum=parseInt(upc.substr(1,1))+parseInt(upc.substr(3,1))+parseInt(upc.substr(5,1))+parseInt(upc.substr(7,1))+parseInt(upc.substr(9,1));
+	    var sum=oddSum*3+evenSum;
+	    var verifyNumber = 10-parseInt(String(sum).substr(String(sum).length-1,1));
+	    var int_upc = parseInt(upc.substr(0,11))+1;
+	    if(verifyNumber==10){
+	        document.getElementById("upc").value= String(int_upc)+0;
+	    }else{
+	        document.getElementById("upc").value= String(int_upc)+verifyNumber;
+	    }
 	}
 }
 </script>
@@ -105,10 +128,12 @@ function checkboxValue(tinyintValue){
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>深圳 Ebay</strong>								
+		<i class="icon dropdown-s"></i><strong>深圳直发 Ebay</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >飞特小包美国试算</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >飞特小包德国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usTestCal');?>" >新产品美国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deTestCal');?>" >新产品德国试算</a></dd>
 </dl>
 		</div>
 	</li>
@@ -400,10 +425,12 @@ function checkboxValue(tinyintValue){
 							</div>
 						</div>
 						<div class="form-group">
-							<label for="upc" class="control-label">UPC</label>
+							<label for="upc" class="control-label">UPC 生成之后需要保存</label>
 							<div class="control-wrap">
 								<input type="text"  id="<?php echo C('DB_PRODUCT_UPC');?>" name="<?php echo C('DB_PRODUCT_UPC');?>" value="<?php echo ($product[0][C('DB_PRODUCT_UPC')]); ?>" />
+								<input type="hidden"  id="<?php echo C('DB_METADATA_USED_UPC');?>" name="<?php echo C('DB_METADATA_USED_UPC');?>" value="<?php echo ($product[0][C('DB_METADATA_USED_UPC')]); ?>" />
 							</div>
+							<a class="btn btn-s btn-grey" href="javascript:GenerateUpc();">生成</a>
 						</div>
 					</div>
 					<div class="item">
@@ -461,7 +488,7 @@ function checkboxValue(tinyintValue){
 		</div>
 		<div class="item tc"><input type='hidden' name='ProductID' value='1030634'>
 			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
-			<button class="btn btn-blue btn-s" id="saveProductInfo">保存	</button>
+			<button class="btn btn-blue btn-s" id="saveProductInfo" name="saveProductInfo">保存	</button>
 		</div>
 	</form> 
 	</div>

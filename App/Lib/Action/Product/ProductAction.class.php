@@ -126,7 +126,9 @@ class ProductAction extends CommonAction{
     }
 
     Public function productEdit($sku){
-        $this->product = M(C('db_product'))->where(array(C('db_product_sku')=>$sku))->select();
+        $product = M(C('db_product'))->where(array(C('db_product_sku')=>$sku))->select();
+        $product[0][C('DB_METADATA_USED_UPC')] = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USED_UPC'));
+        $this->assign('product',$product);
         $this->display();
 
     }
@@ -160,22 +162,28 @@ class ProductAction extends CommonAction{
         $data[C('db_product_ebay_com_price_lowest')] = I('post.'.C('db_product_ebay_com_price_lowest'),'','htmlspecialchars');
         $data[C('db_product_ebay_de_best_match')] = I('post.'.C('db_product_ebay_de_best_match'),'','htmlspecialchars');
         $data[C('db_product_ebay_de_price_lowest')] = I('post.'.C('db_product_ebay_de_price_lowest'),'','htmlspecialchars');
-        
         $verifyError = $this->verifyProduct($data);
+        
         if($verifyError != null){
             $this->error($verifyError);
-        }else{
+        }else{                
             $product = M(C('db_product'));
             $product-> startTrans();
             $result =  $product->save($data);
             $product->commit();
+            $metadata = M(C('DB_METADATA'));
+            $mdata[C('DB_METADATA_USED_UPC')]=$data[C('db_product_upc')];
+            $mdata[C('DB_METADATA_ID')]=1;
+            $metadata->save($mdata);
+            $metadata->commit();
             if(false !== $result || 0 !== $result) {
                 $this->success('操作成功！');
             }else{
                 $this->error('写入错误！');
             }
 
-        }        
+        } 
+               
     }
 
     private function verifyImportedProductTemplateColumnName($firstRow){

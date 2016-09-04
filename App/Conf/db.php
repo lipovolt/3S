@@ -1,14 +1,57 @@
 <?php
 return array(
 	//meta_data
+	/*创建meta_data表
+    CREATE TABLE IF NOT EXISTS `3s_metadata`(
+    `id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
+    `eur_usd` decimal(5,3) default null,
+    `usd_rmb` decimal(5,3) default null,
+    `eur_rmb` decimal(5,3) default null,
+    `de_mwst` int(5) default null,
+    `used_upc` bigint default null
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;        
+    */
 	'DB_METADATA' => 'metadata',
 	'DB_METADATA_ID' => 'id',
 	'DB_METADATA_EURTOUSD' => 'eur_usd',
 	'DB_METADATA_USDTORMB' => 'usd_rmb',
 	'DB_METADATA_EURTORMB' => 'eur_rmb',
 	'DB_METADATA_DEMWST' => 'de_mwst',
+	'DB_METADATA_USED_UPC' => 'used_upc',
 
 	//product
+	/*创建product表
+    CREATE TABLE IF NOT EXISTS `3s_product`(
+    `id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
+    `sku` varchar(10) Not null,
+    `upc` bigint default null,
+    `cname` varchar(255) default null,
+    `ename` varchar(255) default null,
+    `price` decimal(5,2) default 0,
+    `weight` smallint(6) default 0,
+    `length` decimal(5,2) default 0,
+    `width` decimal(5,2) default 0,
+    `height` decimal(5,2) default 0,
+    `battery` varchar(10) default null,
+    `tode` varchar(10) default null,
+    `tous` varchar(10) default null,
+    `detariff` decimal(4,2) default 5,
+    `ustariff` decimal(4,2) default 5,
+    `incoming_day` smallint(3) default 0,
+    `manager` varchar(20) default null,
+    `supplier` varchar(255) default null,
+    `ggs_ussw_sale_price` decimal(6,2) default 0,
+    `rc_winit_us_sale_price` decimal(6,2) default 0,
+    `rc_winit_de_sale_price` decimal(6,2) default 0,
+    `amazon_ussw_sale_price` decimal(6,2) default 0,
+    `sz_us_sale_price` decimal(6,2) default 0,
+    `sz_de_sale_price` decimal(6,2) default 0,
+    `ebay_com_best` varchar(255) default null,
+    `ebay_com_cheapest` varchar(255) default null,
+    `ebay_de_best` varchar(255) default null,
+    `ebay_de_cheapest` varchar(255) default null
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;        
+    */
 	'DB_PRODUCT' => 'product',
 	'DB_PRODUCT_ID' => 'id',
 	'DB_PRODUCT_SKU' => 'sku',
@@ -40,12 +83,31 @@ return array(
 	'DB_PRODUCT_EBAY_DE_PRICE_LOWEST' => 'ebay_de_cheapest',
 
 	//session
+	/*创建session表
+    CREATE TABLE `3s_session` (
+    session_id varchar(255) NOT NULL,
+    session_expire int(11) NOT NULL,
+    session_data blob,
+    UNIQUE KEY `session_id` (`session_id`)
+    );        
+    */
 	'DB_SESSION'=> 'session',
 	'DB_SESSION_ID' => 'session_id',
 	'DB_SESSION_EXPIRE' =>'session_expire',
 	'DB_SESSION_DATA' => 'session_data',
 
 	//user
+	/*创建user表
+	    CREATE TABLE IF NOT EXISTS `3s_user`(
+	    `id` int(10) unsigned primary key NOT NULL AUTO_INCREMENT,
+	    `username` char(20) Not null default '',
+	    `password` char(32) Not null default '',
+	    `loginip` varchar(30) not null,
+	    `logintime` int(10) unsigned not null,
+	    `lock` tinyint(1) default 0,
+	    `email` varchar(30) default null
+	    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;        
+    */
 	'DB_3S_USER' => 'user',
 	'DB_3S_USER_ID' => 'id',
 	'DB_3S_USER_USERNAME' => 'username',
@@ -57,14 +119,14 @@ return array(
 
 	//us_inventory
 	'DB_US_INVENTORY' => 'us_inventory',
-	'DB_US_INVENTORY_ID' => 'us_inventory_id',
-	'DB_US_INVENTORY_SKU' => 'us_inventory_sku',
-	'DB_US_INVENTORY_POSITION' => 'us_inventory_position',
-	'DB_US_INVENTORY_CINVENTORY' => 'us_inventory_cinventory',
-	'DB_US_INVENTORY_AINVENTORY' => 'us_inventory_ainventory',
-	'DB_US_INVENTORY_OINVENTORY' => 'us_inventory_oinventory',
-	'DB_US_INVENTORY_iINVENTORY' => 'us_inventory_iinventory',
-	'DB_US_INVENTORY_CSALES' => 'us_inventory_csales',
+	'DB_US_INVENTORY_ID' => 'id',
+	'DB_US_INVENTORY_SKU' => 'sku',
+	'DB_US_INVENTORY_POSITION' => 'position',
+	'DB_US_INVENTORY_CINVENTORY' => 'cinventory',
+	'DB_US_INVENTORY_AINVENTORY' => 'ainventory',
+	'DB_US_INVENTORY_OINVENTORY' => 'oinventory',
+	'DB_US_INVENTORY_iINVENTORY' => 'iinventory',
+	'DB_US_INVENTORY_CSALES' => 'csales',
 
 	//ussw_inbound
 	/*创建usswInbound表
