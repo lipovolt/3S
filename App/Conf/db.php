@@ -558,7 +558,7 @@ return array(
 	CREATE TABLE IF NOT EXISTS `3s_ussw_postage_firstclass` (
 	  `oz` smallint(3) unsigned primary key not null auto_increment,
 	  `gram` smallint(3) default null,
-	  `fee` deciaml(5,2) DEFAULT NULL
+	  `fee` decimal(5,2) DEFAULT NULL
 	) engine=myisam default charset=utf8;
 	*/
 	'DB_USSW_POSTAGE_FIRSTCLASS' => 'ussw_postage_firstclass',
@@ -567,7 +567,32 @@ return array(
 	'DB_USSW_POSTAGE_FIRSTCLASS_FEE' =>'fee',
 
 
+	/*
+	ussw_postage_priorityflatrate
+	CREATE TABLE IF NOT EXISTS `3s_ussw_postage_priorityflatrate` (
+	  `id` smallint(3) unsigned primary key not null auto_increment,
+	  `name` varchar(30) default null,
+	  `fee` decimal(5,2) DEFAULT NULL
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_USSW_POSTAGE_PRIORITYFLATRATE' => 'ussw_postage_priorityflatrate',
+	'DB_USSW_POSTAGE_PRIORITYFLATRATE_ID' => 'id',
+	'DB_USSW_POSTAGE_PRIORITYFLATRATE_NAME' => 'name',
+	'DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE' =>'fee',
 
+
+	/*
+	ussw_postage_priority
+	CREATE TABLE IF NOT EXISTS `3s_ussw_postage_priority` (
+	  `lbs` smallint(3) unsigned primary key not null auto_increment,
+	  `gram` smallint(3) default null,
+	  `fee` decimal(5,2) DEFAULT NULL
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_USSW_POSTAGE_PRIORITY' => 'ussw_postage_priority',
+	'DB_USSW_POSTAGE_PRIORITY_LBS' => 'lbs',
+	'DB_USSW_POSTAGE_PRIORITY_GR' => 'gram',
+	'DB_USSW_POSTAGE_PRIORITY_FEE' =>'fee',
 
 
 	/*
