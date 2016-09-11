@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>销售信息</title>
+<title>美自建仓销售建议</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -87,7 +87,8 @@
 		<i class="icon dropdown-s"></i><strong>美国自建仓 Ebay Amazon</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSalePlanMetadata');?>" >美国自建仓销售基础表</a></dd>
-	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
 <dl>
@@ -189,7 +190,7 @@
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>基本信息</strong></div>
+			<div class="sidenav-hd"><strong>销售</strong></div>
 			<div class="sidenav-bd">
 				<dl>
 	<dt>
@@ -202,7 +203,8 @@
 		<i class="icon dropdown-s"></i><strong>美国自建仓 Ebay Amazon</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSalePlanMetadata');?>" >美国自建仓销售基础表</a></dd>
-	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
 <dl>
@@ -225,27 +227,70 @@
 		</div>
 		<div class="content">
 	<div id="ProductInfo" class="main">
+		<form name="search_product" id="search_product" action="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" method="POST">
+			<div class="search-area">
+				<div class="item">
+					<div class="form-group">
+						<label for="keyword" class="control-label">关键字</label>
+						<div class="control-wrap">
+							<select name="keyword" id="keyword" data-value="">
+								<option value="<?php echo C('DB_PRODUCT_SKU');?>">产品编码</option>
+								<option value="<?php echo C('DB_PRODUCT_CNAME');?>">产品名称</option>
+							</select>
+						</div>
+						<div class="control-wrap">
+							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
+						</div>
+					</div>
+					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
+						<i class="icon search"></i>
+						<i class="vline-inline"></i>
+						<span>查询</span>
+					</button>
+				</div>			
+			</div>
+		</form>
 		<div>
 			<div class="tab-content">	
+			<div>
+				<a class="btn btn-s btn-blue" href="<?php echo U('Sale/GgsUsswSale/calUsswSaleInfo');?>">更新建议</a>
+			</div>
+				<!-- <form method="POST" id="updateSuggestStatus" name="updateSuggestStatus" action="<?php echo U('Sale/GgsUsswSale/updateSuggestStatus');?>">
+				<div class="block-outer-hd" align="right">
+					<button class="btn btn-blue btn-s" id="savePurchaseItemInfo">批量保存自动建议设置</button>
+			    </div> -->
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th width="66">欧元/美元</th>
-						<th><div class="tl">美元/人民币</div></th>
-						<th><div class="tl">欧元/人民币</div></th>
-						<th><div class="tl">德国增值税率</div></th>
+						<th width="66">产品编码</th>
+						<th><div class="tl">中文名称</div></th>
+						<th><div class="tl">首次销售时间</div></th>
+						<th><div class="tl">上一次变更时间</div></th>
+						<th><div class="tl">重新刊登次数</div></th>
+						<th><div class="tl">价格轨迹</div></th>
+						<th><div class="tl">成本$</div></th>
+						<th><div class="tl">售价$</div></th>
+						<th><div class="tl">建议售价$</div></th>
+						<th><div class="tl">销售建议</div></th>
 						<th><div class="tl">操作</div></th>
 					</tr>
-					<?php if(is_array($data)): $i = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<form method="POST" id="metadataUpdate" action="<?php echo U('Sale/Metadata/update');?>">
-							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_METADATA_EURTOUSD');?>" value="<?php echo ($vo[C('DB_METADATA_EURTOUSD')]); ?>" id="<?php echo C('DB_METADATA_EURTOUSD');?>"/>
-								<input type="hidden" style="width:60px;" name="<?php echo C('DB_METADATA_ID');?>" value="<?php echo ($vo[C('DB_METADATA_ID')]); ?>" id="<?php echo C('DB_METADATA_ID');?>"/></div></td>
-							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_METADATA_USDTORMB');?>" value="<?php echo ($vo[C('DB_METADATA_USDTORMB')]); ?>" id="<?php echo C('DB_METADATA_USDTORMB');?>"/></div></td>						
-							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_METADATA_EURTORMB');?>" value="<?php echo ($vo[C('DB_METADATA_EURTORMB')]); ?>" id="<?php echo C('DB_METADATA_EURTORMB');?>"/></div></td>
-							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_METADATA_DEMWST');?>" value="<?php echo ($vo[C('DB_METADATA_DEMWST')]); ?>" id="<?php echo C('DB_METADATA_DEMWST');?>"/></div></td>
-							<td><div class="tl"><button class="btn btn-blue btn-s" id="saveMetadataInfo">保存</button></div></td>
-						</form>
+					<?php if(is_array($suggest)): $i = 0; $__LIST__ = $suggest;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_SKU')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_CNAME')]); ?></div></td>						
+						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_FIRST_DATE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_COST')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_PRICE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_SUGGEST')]); ?></div></td>
+						<td>
+							<a href="<?php echo U('Sale/GgsUsswSale/confirmSuggest',array('id'=>$vo['id']));?>">已修改</a>
+							<a href="<?php echo U('Sale/GgsUsswSale/ignoreSuggest',array('id'=>$vo['id']));?>">忽略</a>
+						</td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
+				<!-- </form>	 -->
 				<div class="result page" align="center"><?php echo ($page); ?></div>
 			</div>
 		</div>

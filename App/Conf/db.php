@@ -481,14 +481,15 @@ return array(
 	'DB_USSW_SALE_PLAN_COST' => 'cost',
 	'DB_USSW_SALE_PLAN_PRICE' => 'sale_price',
 	'DB_USSW_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
-	'DB_USSW_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,adjust_price,complete_product_info,complete_sale_info,null
+	'DB_USSW_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
 	'DB_USSW_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
 
 	'USSW_SALE_PLAN_COMPLETE_PRODUCT_INFO' => '完善产品信息',
 	'USSW_SALE_PLAN_COMPLETE_SALE_INFO' => '完善自建仓销售信息',
 	'USSW_SALE_PLAN_CLEAR' => '清货',
 	'USSW_SALE_PLAN_RELISTING' => '重新刊登',
-	'USSW_SALE_PLAN_ADJUST_PRICE' => '调价',
+	'USSW_SALE_PLAN_PRICE_UP' => '涨价',
+	'USSW_SALE_PLAN_PRICE_DOWN' => '降价',
 	'USSW_SALE_PLAN_NONE' => '无',
 
 

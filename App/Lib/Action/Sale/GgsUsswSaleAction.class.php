@@ -39,7 +39,6 @@ class GgsUsswSaleAction extends CommonAction{
 		$usswProduct = M(C('DB_USSTORAGE'))->distinct(true)->field(C('DB_USSTORAGE_SKU'))->select();
 
 		foreach ($usswProduct as $key => $p) {
-
 			$usp = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
 			if($usp == null){
 				$this->addProductToUsp($p[C('DB_USSTORAGE_SKU')]);
@@ -63,6 +62,7 @@ class GgsUsswSaleAction extends CommonAction{
 				$adjustPeriod = M(C('DB_USSW_SALE_PLAN_METADATA'))->where(array('id'=>1))->getField('adjust_period');
 				if(-($Date->dateDiff($lastModifyDate))>$adjustPeriod){
 					//开始计算该产品的销售建议
+					$suggest=null;
 					$suggest = $this->calUsswSuggest($p[C('DB_USSTORAGE_SKU')]);
 					$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
 					$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_USSW_SALE_PLAN_SUGGEST')];
@@ -104,8 +104,7 @@ class GgsUsswSaleAction extends CommonAction{
 
 	private function calUsswSuggest($sku){
 		//返回数组包含销售建议和价格
-		$saleplanMap[C('DB_USSW_SALE_PLAN_SKU')] = array('eq',$sku);
-		$saleplan = M(C('DB_USSW_SALE_PLAN'))->find();
+		$saleplan = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
 		$cost = $saleplan[C('DB_USSW_SALE_PLAN_COST')];
 		$price = $saleplan[C('DB_USSW_SALE_PLAN_PRICE')];
 		$status = $saleplan[C('DB_USSW_SALE_PLAN_STATUS')];
@@ -118,7 +117,7 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 
 		$metaMap[C('DB_USSW_SALE_PLAN_METADATA_ID')] = array('eq',1);
-		$metadata = M(C('DB_USSW_SALE_PLAN_METADATA'))->find();		
+		$metadata = M(C('DB_USSW_SALE_PLAN_METADATA'))->where($metaMap)->find();		
 		$clear_nod = $metadata[C('DB_USSW_SALE_PLAN_METADATA_CLEAR_NOD')];
 		$relisting_nod = $metadata[C('DB_USSW_SALE_PLAN_METADATA_RELISTING_NOD')];
 		$adjust_period = $metadata[C('DB_USSW_SALE_PLAN_METADATA_ADJUST_PERIOD')];
@@ -144,7 +143,8 @@ class GgsUsswSaleAction extends CommonAction{
 			$startDate = date('Y-m-d H:i:s',time()-60*60*24*$relisting_nod);
 			$relistingNodSaleQuantity = $this->calUsswSaleQuantity($sku,$startDate);
 			if($relistingNodSaleQuantity==0){
-				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost+$cost*$this->getCostClass($cost);
+				$sugg=null;
+				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost+$cost*$this->getCostClass($cost)/100;
 				$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_RELISTING');
 				return $sugg;
 			}
@@ -155,6 +155,7 @@ class GgsUsswSaleAction extends CommonAction{
 			$startDate = date('Y-m-d H:i:s',time()-60*60*24*$clear_nod);
 			$clearNodSaleQuantity = $this->calUsswSaleQuantity($sku,$startDate);
 			if($clearNodSaleQuantity==0){
+				$sugg=null;
 				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
 				$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_CLEAR');
 				return $sugg;
@@ -167,15 +168,16 @@ class GgsUsswSaleAction extends CommonAction{
 		if($lspsq<$sqnr){
 			$lspsq = $denominator;
 		}
-
 		if($diff/$lspsq>$grfr/100){
+			$sugg=null;
 			$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $price+$price*($pcr/100);
-			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_ADJUST_PRICE');
+			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_PRICE_UP');
 			return $sugg;
 		}
 		if($diff/$lspsq<-($grfr/100)){
+			$sugg=null;
 			$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $price-$price*($pcr/100);
-			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_ADJUST_PRICE');
+			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_PRICE_DOWN');
 			return $sugg;
 		}
 
@@ -183,12 +185,12 @@ class GgsUsswSaleAction extends CommonAction{
 
 	private function getCostClass($cost){
 		$metaMap[C('DB_USSW_SALE_PLAN_METADATA_ID')] = array('eq',1);
-		$metadata = M(C('DB_USSW_SALE_PLAN_METADATA'))->select();
-		$spr1 = $metadata->where($metaMap)->getField(C('DB_USSW_SALE_PLAN_METADATA_SPR1'));
-		$spr2 = $metadata->where($metaMap)->getField(C('DB_USSW_SALE_PLAN_METADATA_SPR2'));
-		$spr3 = $metadata->where($metaMap)->getField(C('DB_USSW_SALE_PLAN_METADATA_SPR3'));
-		$spr4 = $metadata->where($metaMap)->getField(C('DB_USSW_SALE_PLAN_METADATA_SPR4'));
-		$spr5 = $metadata->where($metaMap)->getField(C('DB_USSW_SALE_PLAN_METADATA_SPR5'));
+		$metadata = M(C('DB_USSW_SALE_PLAN_METADATA'))->find();
+		$spr1 = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR1')];
+		$spr2 = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR2')];
+		$spr3 = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR3')];
+		$spr4 = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR4')];
+		$spr5 = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR5')];
 		if($cost<=10)
 			return $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR1')];
 		if($cost>10 && $cost<=20)
@@ -216,10 +218,11 @@ class GgsUsswSaleAction extends CommonAction{
 
 	private function addProductToUsp($sku){
 		//添加产品到ussw_sale_plan表
-		
 		$newUsp[C('DB_USSW_SALE_PLAN_SKU')] = $sku;
-		$newUsp[C('DB_USSW_SALE_PLAN_FIRST_DATE')] = date('Y-m-d H:i:s',time()); 
-		$newUsp[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time()); 
+		/*$newUsp[C('DB_USSW_SALE_PLAN_FIRST_DATE')] = date('Y-m-d H:i:s',time()); 
+		$newUsp[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time()); */
+		$newUsp[C('DB_USSW_SALE_PLAN_FIRST_DATE')] = '2016-05-01'; 
+		$newUsp[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = '2016-05-01'; 
 		$newUsp[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')] = 0; 
 		$newUsp[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =null;
 		$newUsp[C('DB_USSW_SALE_PLAN_COST')] = $this->calUsswSuggestCost($sku);

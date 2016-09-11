@@ -86,6 +86,8 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>美国自建仓 Ebay Amazon</strong>								
 	</dt>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSalePlanMetadata');?>" >美国自建仓销售基础表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售建议表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
@@ -98,10 +100,12 @@
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>深圳 Ebay</strong>								
+		<i class="icon dropdown-s"></i><strong>深圳直发 Ebay</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >飞特小包美国试算</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >飞特小包德国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usTestCal');?>" >新产品美国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deTestCal');?>" >新产品德国试算</a></dd>
 </dl>
 		</div>
 	</li>
@@ -198,6 +202,8 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>美国自建仓 Ebay Amazon</strong>								
 	</dt>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSalePlanMetadata');?>" >美国自建仓销售基础表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售建议表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
@@ -210,10 +216,12 @@
 </dl>
 <dl>
 	<dt>
-		<i class="icon dropdown-s"></i><strong>深圳 Ebay</strong>								
+		<i class="icon dropdown-s"></i><strong>深圳直发 Ebay</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >飞特小包美国试算</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >飞特小包德国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usTestCal');?>" >新产品美国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deTestCal');?>" >新产品德国试算</a></dd>
 </dl>	
 			</div>
 		</div>
@@ -250,39 +258,33 @@
 						<th width="66">产品编码</th>
 						<th><div class="tl">中文名称</div></th>
 						<th><div class="tl">采购价￥</div></th>
-						<th><div class="tl">关税$</div></th>
-						<th><div class="tl">仓出入费$</div></th>
-						<th><div class="tl">头程方式</div></th>
-						<th><div class="tl">头程$</div></th>
 						<th><div class="tl">本地方式</div></th>
 						<th><div class="tl">本地运费$</div></th>
+						<th><div class="tl">重量oz</div></th>
+						<th><div class="tl">长in.</div></th>
+						<th><div class="tl">宽in.</div></th>
+						<th><div class="tl">高in.</div></th>
+						<th><div class="tl">目标利润率</div></th>
 						<th><div class="tl">成本$</div></th>
 						<th><div class="tl">售价$</div></th>
 						<th><div class="tl">毛利润$</div></th>
 						<th><div class="tl">毛利率</div></th>
-						<th><div class="tl">重量oz</div></th>
-						<th>长in.</th>
-						<th>宽in.</th>
-						<th><div class="tl">高in.</div></th>
 					</tr>
 					<?php if(is_array($data)): $i = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
 						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_SKU')]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_CNAME')]); ?></div></td>						
 						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_PRICE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_USTARIFF')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["ussw-fee"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_TOUS')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["way-to-us-fee"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["local-shipping-way"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["local-shipping-fee"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["cost"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["gprofit"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["grate"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["weight"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["length"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["width"]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo["height"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["[C('DB_USSW_SALE_PLAN_TARGET_PROFIT_RATE')]"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["cost"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["gprofit"]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo["grate"]); ?></div></td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
 				<div class="result page" align="center"><?php echo ($page); ?></div>

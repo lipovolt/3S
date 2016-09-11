@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>销售信息</title>
+<title>美自建仓销售建议参数</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -87,7 +87,8 @@
 		<i class="icon dropdown-s"></i><strong>美国自建仓 Ebay Amazon</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSalePlanMetadata');?>" >美国自建仓销售基础表</a></dd>
-	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
 <dl>
@@ -189,7 +190,7 @@
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>基本信息</strong></div>
+			<div class="sidenav-hd"><strong>销售</strong></div>
 			<div class="sidenav-bd">
 				<dl>
 	<dt>
@@ -202,7 +203,8 @@
 		<i class="icon dropdown-s"></i><strong>美国自建仓 Ebay Amazon</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSalePlanMetadata');?>" >美国自建仓销售基础表</a></dd>
-	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
 <dl>
@@ -224,24 +226,45 @@
 			</div>
 		</div>
 		<div class="content">
-	<div id="ProductInfo" class="main">
-		<div>
-			<div class="tab-content">	
+			<div class="tab-content">
+				<div class="block-hd">
+					<i class="icon import"></i>
+					<strong>美自建仓销售建议参数设置</strong>
+				</div>
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th width="66">欧元/美元</th>
-						<th><div class="tl">美元/人民币</div></th>
-						<th><div class="tl">欧元/人民币</div></th>
-						<th><div class="tl">德国增值税率</div></th>
+						<th><div class="tl">清货条件（天数）</div></th>
+						<th><div class="tl">重新刊登条件（天数）</div></th>
+						<th><div class="tl">调整周期（天数）</div></th>
+						<th><div class="tl">算法标准周期（天数）</div></th>
+						<th><div class="tl">10美元起始利润率</div></th>
+						<th><div class="tl">10-20美元起始利润率</div></th>
+						<th><div class="tl">20-30美元起始利润率</div></th>
+						<th><div class="tl">30-50美元起始利润率</div></th>
+						<th><div class="tl">50美元以上起始利润率</div></th>
+						<th><div class="tl">售价每次调整百分比</div></th>
+						<th><div class="tl">周期销量下限</div></th>
+						<th><div class="tl">销量下限替换分母</div></th>
+						<th><div class="tl">增长率波动范围±</div></th>
 						<th><div class="tl">操作</div></th>
 					</tr>
 					<?php if(is_array($data)): $i = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<form method="POST" id="metadataUpdate" action="<?php echo U('Sale/Metadata/update');?>">
-							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_METADATA_EURTOUSD');?>" value="<?php echo ($vo[C('DB_METADATA_EURTOUSD')]); ?>" id="<?php echo C('DB_METADATA_EURTOUSD');?>"/>
-								<input type="hidden" style="width:60px;" name="<?php echo C('DB_METADATA_ID');?>" value="<?php echo ($vo[C('DB_METADATA_ID')]); ?>" id="<?php echo C('DB_METADATA_ID');?>"/></div></td>
-							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_METADATA_USDTORMB');?>" value="<?php echo ($vo[C('DB_METADATA_USDTORMB')]); ?>" id="<?php echo C('DB_METADATA_USDTORMB');?>"/></div></td>						
-							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_METADATA_EURTORMB');?>" value="<?php echo ($vo[C('DB_METADATA_EURTORMB')]); ?>" id="<?php echo C('DB_METADATA_EURTORMB');?>"/></div></td>
-							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_METADATA_DEMWST');?>" value="<?php echo ($vo[C('DB_METADATA_DEMWST')]); ?>" id="<?php echo C('DB_METADATA_DEMWST');?>"/></div></td>
+						<form method="POST" id="metadataUpdate" action="<?php echo U('Sale/GgsUsswSale/updataMetaDate');?>">
+							<td><div class="tl">
+							<input type="hidden" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_ID');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_ID')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_ID');?>"/>
+							<input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_CLEAR_NOD');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_CLEAR_NOD')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_CLEAR_NOD');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_RELISTING_NOD');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_RELISTING_NOD')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_RELISTING_NOD');?>"/></div></td>						
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_ADJUST_PERIOD');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_ADJUST_PERIOD')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_ADJUST_PERIOD');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_STANDARD_PERIOD');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_STANDARD_PERIOD')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_STANDARD_PERIOD');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SPR1');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_SPR1')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SPR1');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SPR2');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_SPR2')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SPR2');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SPR3');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_SPR3')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SPR3');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SPR4');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_SPR4')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SPR4');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SPR5');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_SPR5')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SPR5');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_PCR');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_PCR')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_PCR');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SQNR');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_SQNR')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_SQNR');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_DENOMINATOR');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_DENOMINATOR')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_DENOMINATOR');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_USSW_SALE_PLAN_METADATA_GRFR');?>" value="<?php echo ($vo[C('DB_USSW_SALE_PLAN_METADATA_GRFR')]); ?>" id="<?php echo C('DB_USSW_SALE_PLAN_METADATA_GRFR');?>"/></div></td>
 							<td><div class="tl"><button class="btn btn-blue btn-s" id="saveMetadataInfo">保存</button></div></td>
 						</form>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
