@@ -219,10 +219,8 @@ class GgsUsswSaleAction extends CommonAction{
 	private function addProductToUsp($sku){
 		//添加产品到ussw_sale_plan表
 		$newUsp[C('DB_USSW_SALE_PLAN_SKU')] = $sku;
-		/*$newUsp[C('DB_USSW_SALE_PLAN_FIRST_DATE')] = date('Y-m-d H:i:s',time()); 
-		$newUsp[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time()); */
-		$newUsp[C('DB_USSW_SALE_PLAN_FIRST_DATE')] = '2016-05-01'; 
-		$newUsp[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = '2016-05-01'; 
+		$newUsp[C('DB_USSW_SALE_PLAN_FIRST_DATE')] = date('Y-m-d H:i:s',time()); 
+		$newUsp[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time()); 
 		$newUsp[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')] = 0; 
 		$newUsp[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =null;
 		$newUsp[C('DB_USSW_SALE_PLAN_COST')] = $this->calUsswSuggestCost($sku);
