@@ -23,6 +23,48 @@ class PostageAction extends CommonAction{
 
 	}
 
+	public function priorityFlatRate(){
+		$this->postage=M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->select();
+		$this->display();
+	}
+
+	public function updatepriorityFlatRate(){
+		if(IS_POST){
+			$pfr = M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'));
+			$count = $pfr->count();
+			$pfr->startTrans();
+			for($i=1;$i<=$count;$i++){
+				$data[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')]=I('post.'.'id'.$i,'','htmlspecialchars');
+				$data[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE')]=I('post.'.'fee'.$i,'','htmlspecialchars');
+				$pfr->save($data);
+			}
+			$pfr->commit();
+			$this->success('保存成功');	
+		}
+
+	}
+
+	public function priority(){
+		$this->postage=M(C('DB_USSW_POSTAGE_PRIORITY'))->select();
+		$this->display();
+	}
+
+	public function updatePriority(){
+		if(IS_POST){
+			$priority = M(C('DB_USSW_POSTAGE_PRIORITY'));
+			$count = $priority->count();
+			$priority->startTrans();
+			for($i=1;$i<=$count;$i++){
+				$data[C('DB_USSW_POSTAGE_PRIORITY_LBS')]=I('post.'.'lbs'.$i,'','htmlspecialchars');
+				$data[C('DB_USSW_POSTAGE_PRIORITY_FEE')]=I('post.'.'fee'.$i,'','htmlspecialchars');
+				$priority->save($data);
+			}
+			$priority->commit();
+			$this->success('保存成功');	
+		}
+
+	}
+
 }
 
 ?>
