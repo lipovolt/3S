@@ -553,6 +553,22 @@ return array(
 	'DB_USSW_SALE_PLAN_METADATA_STANDARD_PERIOD' =>'standard_period',//the sale quantity of adjust period should be change to sale quantity of standard period
 
 
+	/*
+	ussw_postage_firstclass
+	CREATE TABLE IF NOT EXISTS `3s_ussw_postage_firstclass` (
+	  `oz` smallint(3) unsigned primary key not null auto_increment,
+	  `gram` smallint(3) default null,
+	  `fee` deciaml(5,2) DEFAULT NULL
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_USSW_POSTAGE_FIRSTCLASS' => 'ussw_postage_firstclass',
+	'DB_USSW_POSTAGE_FIRSTCLASS_OZ' => 'oz',
+	'DB_USSW_POSTAGE_FIRSTCLASS_GR' => 'gram',
+	'DB_USSW_POSTAGE_FIRSTCLASS_FEE' =>'fee',
+
+
+
+
 
 	/*
 	Role 

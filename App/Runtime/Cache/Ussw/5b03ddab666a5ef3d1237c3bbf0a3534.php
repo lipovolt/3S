@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>产品信息</title>
+<title>USPS First Class Postage</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -193,88 +193,70 @@
 			</div>
 		</div>
 	</div>	
-	
-    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
+		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>产品管理</strong></div>
+			<div class="sidenav-hd"><strong>美国库存管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>导入产品</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Product/Product/productBatchAdd');?>" >导入产品</a></dd>
+	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Inbound/singleItemInbound');?>">单品入库</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
+	<dd><a href="<?php echo U('Ussw/Inbound/createInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
 </dl>
 <dl>
-	<dt>
-		<i class="icon dropdown-s"></i><strong>产品信息管理</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Product/Product/productInfo');?>" >产品信息</a></dd>
-</dl>	
+	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/importEbayWso');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/awaitingToStop');?>">待下架商品</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Storage/stopped');?>">已下架商品</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Postage/firstclass');?>">USPS First Class</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/priorityflatrate');?>">USPS Priority Falt Rate</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/priority');?>">USPS Priority</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedex');?>">Fedex</a></dd>
+</dl>
+	
 			</div>
 		</div>
 	<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Product/Product/productInfo');?>" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">关键字</label>
-						<div class="control-wrap">
-							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_PRODUCT_SKU');?>">产品编码</option>
-								<option value="<?php echo C('DB_PRODUCT_CNAME');?>">产品名称</option>
-							</select>
-						</div>
-						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
-						</div>
-					</div>
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
-				</div>			
-			</div>
-		</form>
-		<div>
-			<div class="tab-content">	
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th width="110">产品编码</th>
-						<th><div class="tl">中文名称</div></th>
-						<th><div class="tl">采购价</div></th>
-						<th><div class="tl">重量g</div></th>
-						<th>长cm</th>
-						<th>宽cm</th>
-						<th><div class="tl">高cm</div></th>
-						<th><div>带电</div></th>
-						<th><div>德国头程</div></th>
-						<th><div>美国头程</div></th>
-						<th width="60">产品经理</th>
-						<th width="230">操作</th>
-					</tr>
-					<?php if(is_array($products)): $i = 0; $__LIST__ = $products;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_SKU')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_CNAME')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_PRICE')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_WEIGHT')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_LENGTH')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_WIDTH')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_HEIGHT')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_BATTERY')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_TODE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_TOUS')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_MANAGER')]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Product/Product/productEdit',array('sku'=>$vo['sku']));?>">编辑</a>
-						</td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
-			</div>
+		<div class="tab-content">	
+			<div class="sidenav-hd"><strong>USPS First Class 邮费设置</strong></div>
+			<form method="POST" id="updateFirstClass" name="updateFirstClass" action="<?php echo U('Ussw/Postage/updateFirstClass');?>">
+			<div class="block-outer-hd" align="right">
+				<button class="btn btn-blue btn-s" id="savePurchaseItemInfo">保存</button>
+		    </div>
+			<table id="tablelist" class="tablelist">
+				<tr>
+					<th>盎司</th>
+				    <th>克</th>					    
+				    <th>运费$</th>
+				</tr>    
+				<tr>
+					<?php if(is_array($postage)): $i = 0; $__LIST__ = $postage;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><input type="hidden" id="oz<?php echo ($vo[C('DB_USSW_POSTAGE_FIRSTCLASS_OZ')]); ?>" name="oz<?php echo ($vo[C('DB_USSW_POSTAGE_FIRSTCLASS_OZ')]); ?>" value="<?php echo ($vo[C('DB_USSW_POSTAGE_FIRSTCLASS_OZ')]); ?>"> <?php echo ($vo[C('DB_USSW_POSTAGE_FIRSTCLASS_OZ')]); ?></td>
+						<td><?php echo ($vo[C('DB_USSW_POSTAGE_FIRSTCLASS_GR')]); ?></td>
+						<td><input type="text" id="fee<?php echo ($vo[C('DB_USSW_POSTAGE_FIRSTCLASS_OZ')]); ?>" name="fee<?php echo ($vo[C('DB_USSW_POSTAGE_FIRSTCLASS_OZ')]); ?>" value="<?php echo ($vo[C('DB_USSW_POSTAGE_FIRSTCLASS_FEE')]); ?>" style="width:60px;"/> </td>
+						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
+				</tr>								
+			</table>
+			</form>
+			<div class="result page" align="center"><?php echo ($page); ?></div>
 		</div>
 	</div>
+
+
 	</div>
 	</div>
-	</div>
+		
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.
