@@ -1,120 +1,120 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<!-- InstanceBeginEditable name="doctitle" -->
-<title>美自建仓销售信息</title>
-<!-- InstanceEndEditable -->
-<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
-<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
-<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
-</head>
-<body>
-
-	<div class="header">
-		<div class="top">
-			<div class="area">
-				<span>
-					<include file="./Public/Tpl/header.html" />
-			</div>
-		</div>		
-		<div class="nav">
-			<div class="area">
-				<include file="./Public/Tpl/top.html" />
-			</div>
-		</div>
-	</div>	
-	
-    <!-- InstanceBeginEditable name="左边栏" -->
-	<div class="area clearfix">
-		<div class="sidenav">
-			<div class="sidenav-hd"><strong>销售</strong></div>
-			<div class="sidenav-bd">
-				<include file="./Public/Tpl/saleMenu.html" />	
-			</div>
-		</div>
-		<div class="content">
-	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="{:U('Sale/GgsUsswSale/index')}" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">关键字</label>
-						<div class="control-wrap">
-							<select name="keyword" id="keyword" data-value="">
-								<option value="{:C('DB_PRODUCT_SKU')}">产品编码</option>
-								<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
-							</select>
-						</div>
-						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
-						</div>
-					</div>
-					<input type="hidden" name="country" value="122" />
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
-						<i class="icon search"></i>
-						<i class="vline-inline"></i>
-						<span>查询</span>
-					</button>
-				</div>			
-			</div>
-		</form>
-		<div>
-			<div class="tab-content">	
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th width="66">产品编码</th>
-						<th><div class="tl">中文名称</div></th>
-						<th><div class="tl">采购价￥</div></th>
-						<th><div class="tl">关税$</div></th>
-						<th><div class="tl">仓出入费$</div></th>
-						<th><div class="tl">头程方式</div></th>
-						<th><div class="tl">头程$</div></th>
-						<th><div class="tl">本地方式</div></th>
-						<th><div class="tl">本地运费$</div></th>
-						<th><div class="tl">成本$</div></th>
-						<th><div class="tl">售价$</div></th>
-						<th><div class="tl">毛利润$</div></th>
-						<th><div class="tl">毛利率</div></th>
-						<th><div class="tl">重量oz</div></th>
-						<th>长in.</th>
-						<th>宽in.</th>
-						<th><div class="tl">高in.</div></th>
-					</tr>
-					<volist name="data" id="vo">
-						<tr>
-						<td><div class="tl">{$vo[C('DB_PRODUCT_SKU')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_PRODUCT_CNAME')]}</div></td>						
-						<td><div class="tl">{$vo[C('DB_PRODUCT_PRICE')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_PRODUCT_USTARIFF')]}</div></td>
-						<td><div class="tl">{$vo.ussw-fee}</div></td>
-						<td><div class="tl">{$vo[C('DB_PRODUCT_TOUS')]}</div></td>
-						<td><div class="tl">{$vo.way-to-us-fee}</div></td>
-						<td><div class="tl">{$vo.local-shipping-way}</div></td>
-						<td><div class="tl">{$vo.local-shipping-fee}</div></td>
-						<td><div class="tl">{$vo.cost}</div></td>
-						<td><div class="tl">{$vo[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]}</div></td>
-						<td><div class="tl">{$vo.gprofit}</div></td>
-						<td><div class="tl">{$vo.grate}</div></td>
-						<td><div class="tl">{$vo.weight}</div></td>
-						<td><div class="tl">{$vo.length}</div></td>
-						<td><div class="tl">{$vo.width}</div></td>
-						<td><div class="tl">{$vo.height}</div></td>
-						</tr>	
-					</volist> 								
-				</table>
-				<div class="result page" align="center">{$page}</div>
-			</div>
-		</div>
-	</div>
-
-
-	</div>
-	</div>
-	</div>
-	<!-- InstanceEndEditable -->
-	<div class="area footer">
-		<include file="./Public/Tpl/footer.html" />
-	</div> 
-</body>
-<!-- InstanceEnd --></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>美自建仓销售信息</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>销售</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/saleMenu.html" />	
+			</div>
+		</div>
+		<div class="content">
+	<div id="ProductInfo" class="main">
+		<form name="search_product" id="search_product" action="{:U('Sale/GgsUsswSale/index')}" method="POST">
+			<div class="search-area">
+				<div class="item">
+					<div class="form-group">
+						<label for="keyword" class="control-label">关键字</label>
+						<div class="control-wrap">
+							<select name="keyword" id="keyword" data-value="">
+								<option value="{:C('DB_PRODUCT_SKU')}">产品编码</option>
+								<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
+							</select>
+						</div>
+						<div class="control-wrap">
+							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
+						</div>
+					</div>
+					<input type="hidden" name="country" value="122" />
+					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
+						<i class="icon search"></i>
+						<i class="vline-inline"></i>
+						<span>查询</span>
+					</button>
+				</div>			
+			</div>
+		</form>
+		<div>
+			<div class="tab-content">	
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th width="66">产品编码</th>
+						<th><div class="tl">中文名称</div></th>
+						<th><div class="tl">采购价￥</div></th>
+						<th><div class="tl">关税$</div></th>
+						<th><div class="tl">仓出入费$</div></th>
+						<th><div class="tl">头程方式</div></th>
+						<th><div class="tl">头程$</div></th>
+						<th><div class="tl">本地方式</div></th>
+						<th><div class="tl">本地运费$</div></th>
+						<th><div class="tl">成本$</div></th>
+						<th><div class="tl">售价$</div></th>
+						<th><div class="tl">毛利润$</div></th>
+						<th><div class="tl">毛利率</div></th>
+						<th><div class="tl">重量oz</div></th>
+						<th>长in.</th>
+						<th>宽in.</th>
+						<th><div class="tl">高in.</div></th>
+					</tr>
+					<volist name="data" id="vo">
+						<tr>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_SKU')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_CNAME')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_PRODUCT_PRICE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_USTARIFF')]}</div></td>
+						<td><div class="tl">{$vo.ussw-fee}</div></td>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_TOUS')]}</div></td>
+						<td><div class="tl">{$vo.way-to-us-fee}</div></td>
+						<td><div class="tl">{$vo.local-shipping-way}</div></td>
+						<td><div class="tl">{$vo.local-shipping-fee}</div></td>
+						<td><div class="tl">{$vo.cost}</div></td>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]}</div></td>
+						<td><div class="tl">{$vo.gprofit}</div></td>
+						<td><div class="tl">{$vo.grate}</div></td>
+						<td><div class="tl">{$vo.weight}</div></td>
+						<td><div class="tl">{$vo.length}</div></td>
+						<td><div class="tl">{$vo.width}</div></td>
+						<td><div class="tl">{$vo.height}</div></td>
+						</tr>	
+					</volist> 								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+
+
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>
