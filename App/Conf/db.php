@@ -400,6 +400,159 @@ return array(
 	'DB_SUPPLIER_TEL' => 'tel',
 	'DB_SUPPLIER_ADDRESS' => 'address',
 
+
+	//szstorage
+	/*
+	CREATE TABLE IF NOT EXISTS `3s_szstorage` (
+	  `id` smallint(6) unsigned primary key NOT NULL,
+	  `position` varchar(10) NOT NULL,
+	  `sku` varchar(10) NOT NULL,
+	  `cinventory` smallint(6) DEFAULT 0,
+	  `ainventory` smallint(6) DEFAULT 0,
+	  `oinventory` smallint(6) DEFAULT 0,
+	  `iinventory` smallint(6) DEFAULT 0,
+	  `csales` smallint(6) DEFAULT 0,
+	  `remark` varchar(255) DEFAULT NULL
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
+	'DB_SZSTORAGE' => 'szstorage',
+	'DB_SZSTORAGE_ID' => 'id',
+	'DB_SZSTORAGE_POSITION' => 'position',
+	'DB_SZSTORAGE_SKU' => 'sku',
+	'DB_SZSTORAGE_CINVENTORY' => 'cinventory',
+	'DB_SZSTORAGE_AINVENTORY' => 'ainventory',
+	'DB_SZSTORAGE_OINVENTORY' => 'oinventory',
+	'DB_SZSTORAGE_IINVENTORY' => 'iinventory',
+	'DB_SZSTORAGE_CSALES' => 'csales',
+	'DB_SZSTORAGE_REMARK' => 'remark',
+
+
+	//sz_outbound
+	/*创建深圳仓出库表
+	create table if not exists `3s_sz_outbound`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`shipping_company` varchar(20),
+	`shipping_way` varchar(30) default null,
+	`tracking_number` varchar(30) default null,
+	`create_time` datetime,
+	`market_no` varchar(20) default null,
+	`sku` varchar(20) default null,
+	`quantity` smallint(6) default 0,
+	`price` decimal(5,2) default 0,
+	`country` varchar(20) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_SZ_OUTBOUND' => 'sz_outbound',
+	'DB_SZ_OUTBOUND_ID' => 'id',
+	'DB_SZ_OUTBOUND_MARKET_NO' => 'market_no',
+	'DB_SZ_OUTBOUND_SHIPPING_COMPANY' => 'shipping_company',
+	'DB_SZ_OUTBOUND_SHIPPING_WAY' => 'shipping_way',
+	'DB_SZ_OUTBOUND_TRACKING_NUMBER' => 'tracking_number',
+	'DB_SZ_OUTBOUND_CREATE_TIME' => 'create_time',
+	'DB_SZ_OUTBOUND_SKU' => 'sku',
+	'DB_SZ_OUTBOUND_QUANTITY' => 'quantity',
+	'DB_SZ_OUTBOUND_PRICE' => 'price',
+	'DB_SZ_OUTBOUND_COUNTRY' => 'country',
+
+
+	//ussw_sale_plan
+	/*
+	create table if not exists `3s_ussw_sale_plan`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`sku` varchar(10) not null,
+	`first_sale_date` timestamp default NOW(),
+	`last_modify_date` datetime default null,
+	`relisting_times` smallint(6) default 0,
+	`price_note` varchar(255) default null,
+	`cost` decimal(5,2) default null,
+	`sale_price` decimal(5,2) default null,
+	`suggested_price` decimal(5,2) default null,
+	`suggest` varchar(20) default null,
+	`status` tinyint(1) default 1
+	) engine=myisam default charset=utf8;	
+	*/
+	'DB_USSW_SALE_PLAN' => 'ussw_sale_plan',
+	'DB_USSW_SALE_PLAN_ID' => 'id',
+	'DB_USSW_SALE_PLAN_SKU' => 'sku',
+	'DB_USSW_SALE_PLAN_FIRST_DATE' => 'first_sale_date',
+	'DB_USSW_SALE_PLAN_LAST_MODIFY_DATE' => 'last_modify_date',
+	'DB_USSW_SALE_PLAN_RELISTING_TIMES' => 'relisting_times',
+	'DB_USSW_SALE_PLAN_PRICE_NOTE' => 'price_note',
+	'DB_USSW_SALE_PLAN_COST' => 'cost',
+	'DB_USSW_SALE_PLAN_PRICE' => 'sale_price',
+	'DB_USSW_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
+	'DB_USSW_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,adjust_price,complete_product_info,complete_sale_info,null
+	'DB_USSW_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+
+	'USSW_SALE_PLAN_COMPLETE_PRODUCT_INFO' => '完善产品信息',
+	'USSW_SALE_PLAN_COMPLETE_SALE_INFO' => '完善自建仓销售信息',
+	'USSW_SALE_PLAN_CLEAR' => '清货',
+	'USSW_SALE_PLAN_RELISTING' => '重新刊登',
+	'USSW_SALE_PLAN_ADJUST_PRICE' => '调价',
+	'USSW_SALE_PLAN_NONE' => '无',
+
+
+	/*
+	create table if not exists `3s_ussw_sale_plan_metadata`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`clear_nod` smallint(3) not null,
+	`relisting_nod` smallint(3) not null,
+	`adjust_period` smallint(3) not null,
+	`spr1` smallint(3) not null,
+	`spr2` smallint(3) not null,
+	`spr3` smallint(3) not null,
+	`spr4` smallint(3) not null,
+	`spr5` smallint(3) not null,
+	`pcr` smallint(3) not null,
+	`sqnr` smallint(3) not null,
+	`denominator` smallint(3) not null,
+	`grfr` smallint(3) not null,
+	`standard_period` smallint(3) not null
+	) engine=myisam default charset=utf8;
+
+	
+
+
+	Paramters
+		1. asq: actual adjust period sale quantity
+		2. lsq: last adjust period sale quantity
+		3. clear_nod: number of days, if the sale quantity of the clear_nod==0 then clear
+		4. relisting_nod: number of days, if the sale quantity of the relisting_nod==0 then relisting
+		5. adjust_period: number of days
+		6. spr1, spr2, spr3, spr4, spr5: item cost classify. To define different start and floor sale price for different item. The cheap item can be sold with spr1 profit rate. The expensivest item must be sold with spr5 profit rate.
+		7. pcr: price change rate, define the proce change rate of each adjust.
+		8. sqnr: smallest sale quantity need to be replaced with a determine denominator. For example the lsq=1 and the asp=2. The growth rate is (asp-lsp)/lsp equal 100%. In this situation, the growth rate is high. But the price needn't to be adjusted. So we need to define a sqnr. For example, if the lsq<5, the growth rate should be (asp-lsp)/denominator.
+		9. denominator: see the 8.
+		10. grfr: growth rate fluctuation range. growth rate >grfr then increse price, growth rate <-grfr then reduct price.
+		11. standard_period: define the standard period, the sale quantity of adjust period must be changed to the sale quantity of standard period. Then classify the sale quantity of standard period to decide the grfr.
+
+	Algorithm
+	foreach item in usstorage
+		if sale qauantty of clear_nod == 0 then clear
+		if sale qauantty of relisting_nod == 0 then relisting
+		if  last_modify_date < actual_date - adjust_period 
+			if (actual_standard_period_sale_quantity - last_standard_period_sale_quantity) / last_standard_period_sale_quantity > grfr then sale_price=sale-price + sale_price*pcr.
+			if (actual_standard_period_sale_quantity - last_standard_period_sale_quantity) / last_standard_period_sale_quantity < -grfr then sale_price=sale-price - sale_price*pcr.
+
+	*/
+	'DB_USSW_SALE_PLAN_METADATA' => 'ussw_sale_plan_metadata',
+	'DB_USSW_SALE_PLAN_METADATA_ID' => 'id',
+	'DB_USSW_SALE_PLAN_METADATA_CLEAR_NOD' =>'clear_nod', // number of day
+	'DB_USSW_SALE_PLAN_METADATA_RELISTING_NOD' =>'relisting_nod', //number of day
+	'DB_USSW_SALE_PLAN_METADATA_ADJUST_PERIOD' =>'adjust_period', //number of day
+	'DB_USSW_SALE_PLAN_METADATA_SPR1' =>'spr1',//start_profit_rate for cost under 10 USD
+	'DB_USSW_SALE_PLAN_METADATA_SPR2' =>'spr2',//start_profit_rate for cost over 10 under 20 USD
+	'DB_USSW_SALE_PLAN_METADATA_SPR3' =>'spr3',//start_profit_rate for cost over 20 under 30 USD
+	'DB_USSW_SALE_PLAN_METADATA_SPR4' =>'spr4',//start_profit_rate for cost over 30 under 50 USD
+	'DB_USSW_SALE_PLAN_METADATA_SPR5' =>'spr5',//start_profit_rate for cost over 50 USD
+	'DB_USSW_SALE_PLAN_METADATA_PCR' =>'pcr',//price_change_rate
+	'DB_USSW_SALE_PLAN_METADATA_SQNR' =>'sqnr',//smallest sale quantity need to be replaced with denominator
+	'DB_USSW_SALE_PLAN_METADATA_DENOMINATOR' =>'denominator',//denominator to avoid small sale quantity with higher growth rate.
+	'DB_USSW_SALE_PLAN_METADATA_GRFR' =>'grfr',//growth rate fluctuation range
+	'DB_USSW_SALE_PLAN_METADATA_STANDARD_PERIOD' =>'standard_period',//the sale quantity of adjust period should be change to sale quantity of standard period
+
+
+
 	/*
 	Role 
 	角色表
