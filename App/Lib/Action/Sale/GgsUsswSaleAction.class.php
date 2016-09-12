@@ -32,6 +32,8 @@ class GgsUsswSaleAction extends CommonAction{
 
 
 	public function calUsswSaleInfo(){
+		dump("calUsswSaleInfo");
+		die;
 		import('ORG.Util.Date');// 导入日期类
 		$Date = new Date();
 
@@ -74,6 +76,8 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	public function confirmSuggest($id){
+		dump("Confirm");
+		die;
 		$data = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->find();
 		$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 		if($data[C('DB_USSW_SALE_PLAN_ID_SUGGEST')]=='relisting'){
@@ -94,12 +98,42 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	public function ignoreSuggest($id){
+		dump("ignore");
+		die;
 		$data = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->find();
 		$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 		$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 		$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
 		M(C('DB_USSW_SALE_PLAN'))->save($data);
 		$this->redirect('usswSaleSuggest');
+	}
+
+	public function updateUsswSalePlan(){
+		$data=null;
+		foreach ($_POST as $key => $value) {
+			$arr = explode("-",$key);
+			if($arr[0]=='id'){
+				$data[$arr[1]]['id']=$value; 
+			}
+			if($arr[0]=='sale_price'){
+				$data[$arr[1]]['sale_price']=$value; 
+			}
+			if($arr[0]=='status'){
+				$data[$arr[1]]['status']=$value; 
+			}
+		}
+		$salePlan = M(C('DB_USSW_SALE_PLAN'));
+		$salePlan->startTrans();
+		foreach ($data as $key => $value) {
+			if($value['status']=="on"){
+				$value['status']=1;
+			}else{
+				$value['status']=0;
+			}
+			$salePlan->save($value);
+		}
+		$salePlan->commit();
+		$this->redirect('usswSaleSuggest');		
 	}
 
 	private function calUsswSuggest($sku){
@@ -176,7 +210,11 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 		if($diff/$lspsq<-($grfr/100)){
 			$sugg=null;
-			$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $price-$price*($pcr/100);
+			if($price-$price*($pcr/100)<$cost){
+				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
+			}else{
+				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $price-$price*($pcr/100);
+			}			
 			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_PRICE_DOWN');
 			return $sugg;
 		}
@@ -590,7 +628,7 @@ class GgsUsswSaleAction extends CommonAction{
 		else{
 			return 0;
 		}
-	}
+	}	
 
 	private function calUsswUspsPriorityMediumFlatRateBoxFee($weight,$l,$w,$h){
 		if ($weight <= 31751 and (($l <= 34 and $w <= 29 and $h <= 8) Or ($l <= 27 and $w <= 21 and $h <= 13))){

@@ -8,6 +8,13 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript">
+function save(){
+	var myArray=new Array()
+	form.action="{:U('Sale/GgsUsswSale/updateUsswSalePlan')}"; 
+	form.submit();
+}
+</script>
 </head>
 <body>
 
@@ -59,26 +66,23 @@
 			</div>
 		</form>
 		<div>
-			<div class="tab-content">	
-			<div>
+			<div class="tab-content">
+				<form name="form" id="search_product" action="#" method="POST">
 				<a class="btn btn-s btn-blue" href="{:U('Sale/GgsUsswSale/calUsswSaleInfo')}">更新建议</a>
-			</div>
-				<!-- <form method="POST" id="updateSuggestStatus" name="updateSuggestStatus" action="{:U('Sale/GgsUsswSale/updateSuggestStatus')}">
-				<div class="block-outer-hd" align="right">
-					<button class="btn btn-blue btn-s" id="savePurchaseItemInfo">批量保存自动建议设置</button>
-			    </div> -->
+				<input class="btn btn-s btn-blue" type="button" onclick="save()" value="保存售价和自动建议状态" style="width:200px;"/>
 				<table id="tablelist" class="tablelist">
 					<tr>
 						<th width="66">产品编码</th>
 						<th><div class="tl">中文名称</div></th>
 						<th><div class="tl">首次销售时间</div></th>
 						<th><div class="tl">上一次变更时间</div></th>
-						<th><div class="tl">重新刊登次数</div></th>
+						<th><div class="tl">重新刊<br>登次数</div></th>
 						<th><div class="tl">价格轨迹</div></th>
 						<th><div class="tl">成本$</div></th>
 						<th><div class="tl">售价$</div></th>
 						<th><div class="tl">建议售价$</div></th>
 						<th><div class="tl">销售建议</div></th>
+						<th><div class="tl">开启关闭<br>自动建议</div></th>
 						<th><div class="tl">操作</div></th>
 					</tr>
 					<volist name="suggest" id="vo">
@@ -90,9 +94,14 @@
 						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_COST')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_PRICE')]}</div></td>
+						<td><div class="tl">
+						<input type="hidden" id="id-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="id-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" value="{$vo[C('DB_USSW_SALE_PLAN_ID')]}" />
+						<input id="sale_price-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name='sale_price-{$vo[C('DB_USSW_SALE_PLAN_ID')]}' type='text' value='{$vo[C('DB_USSW_SALE_PLAN_PRICE')]}' style="width:60px;"/></div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_SUGGEST')]}</div></td>
+						<if condition="($vo[C('DB_USSW_SALE_PLAN_STATUS')] eq 1)"> <td><div class="tl"><input id="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" type='checkbox' checked /></div></td>
+						<else /> <td><div class="tl"><input id="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" type='checkbox' /></div></td>
+						</if>
 						<td>
 							<a href="{:U('Sale/GgsUsswSale/confirmSuggest',array('id'=>$vo['id']))}">已修改</a>
 							<a href="{:U('Sale/GgsUsswSale/ignoreSuggest',array('id'=>$vo['id']))}">忽略</a>
@@ -100,7 +109,7 @@
 						</tr>	
 					</volist> 								
 				</table>
-				<!-- </form>	 -->
+				</form>
 				<div class="result page" align="center">{$page}</div>
 			</div>
 		</div>
