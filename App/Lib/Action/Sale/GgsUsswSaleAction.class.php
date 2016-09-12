@@ -32,8 +32,6 @@ class GgsUsswSaleAction extends CommonAction{
 
 
 	public function calUsswSaleInfo(){
-		dump("calUsswSaleInfo");
-		die;
 		import('ORG.Util.Date');// 导入日期类
 		$Date = new Date();
 
@@ -76,8 +74,6 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	public function confirmSuggest($id){
-		dump("Confirm");
-		die;
 		$data = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->find();
 		$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 		if($data[C('DB_USSW_SALE_PLAN_ID_SUGGEST')]=='relisting'){
@@ -98,8 +94,6 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	public function ignoreSuggest($id){
-		dump("ignore");
-		die;
 		$data = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->find();
 		$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 		$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
