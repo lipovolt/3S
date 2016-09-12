@@ -596,6 +596,34 @@ return array(
 
 
 	/*
+	ussw_postage_fedex_smart
+	CREATE TABLE IF NOT EXISTS `3s_ussw_postage_fedex_smart` (
+	  `lbs` smallint(3) unsigned primary key not null auto_increment,
+	  `gram` smallint(3) default null,
+	  `fee` decimal(5,2) DEFAULT NULL
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_USSW_POSTAGE_FEDEX_SMART' => 'ussw_postage_fedex_smart',
+	'DB_USSW_POSTAGE_FEDEX_SMART_LBS' => 'lbs',
+	'DB_USSW_POSTAGE_FEDEX_SMART_GR' => 'gram',
+	'DB_USSW_POSTAGE_FEDEX_SMART_FEE' =>'fee',
+
+
+	/*
+	ussw_postage_fedex_home
+	CREATE TABLE IF NOT EXISTS `3s_ussw_postage_fedex_home` (
+	  `lbs` smallint(3) unsigned primary key not null auto_increment,
+	  `gram` smallint(3) default null,
+	  `fee` decimal(5,2) DEFAULT NULL
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_USSW_POSTAGE_FEDEX_HOME' => 'ussw_postage_fedex_home',
+	'DB_USSW_POSTAGE_FEDEX_HOME_LBS' => 'lbs',
+	'DB_USSW_POSTAGE_FEDEX_HOME_GR' => 'gram',
+	'DB_USSW_POSTAGE_FEDEX_HOME_FEE' =>'fee',
+
+
+	/*
 	Role 
 	角色表
 	CREATE TABLE IF NOT EXISTS `3s_role` (

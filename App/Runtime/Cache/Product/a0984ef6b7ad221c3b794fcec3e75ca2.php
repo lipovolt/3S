@@ -154,9 +154,11 @@
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Postage/firstclass');?>">USPS First Class</a></dd>
+	<dd > </dd>
 	<dd ><a href="<?php echo U('Ussw/Postage/priorityflatrate');?>">USPS Priority Falt Rate</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Postage/priority');?>">USPS Priority</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Postage/fedex');?>">Fedex</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexSmartPost');?>">Fedex Smart Post</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexHomeDelivery');?>">Fedex Home Delivery</a></dd>
 </dl>
 
 		<div>

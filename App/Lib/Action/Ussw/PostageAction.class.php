@@ -65,6 +65,48 @@ class PostageAction extends CommonAction{
 
 	}
 
+	public function fedexSmartPost(){
+		$this->postage=M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->select();
+		$this->display();
+	}
+
+	public function updateFedexSmart(){
+		if(IS_POST){
+			$priority = M(C('DB_USSW_POSTAGE_FEDEX_SMART'));
+			$count = $priority->count();
+			$priority->startTrans();
+			for($i=1;$i<=$count;$i++){
+				$data[C('DB_USSW_POSTAGE_FEDEX_SMART_LBS')]=I('post.'.'lbs'.$i,'','htmlspecialchars');
+				$data[C('DB_USSW_POSTAGE_FEDEX_SMART_FEE')]=I('post.'.'fee'.$i,'','htmlspecialchars');
+				$priority->save($data);
+			}
+			$priority->commit();
+			$this->success('保存成功');	
+		}
+
+	}
+
+	public function fedexHomeDelivery(){
+		$this->postage=M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->select();
+		$this->display();
+	}
+
+	public function updateFedexHome(){
+		if(IS_POST){
+			$priority = M(C('DB_USSW_POSTAGE_FEDEX_HOME'));
+			$count = $priority->count();
+			$priority->startTrans();
+			for($i=1;$i<=$count;$i++){
+				$data[C('DB_USSW_POSTAGE_FEDEX_HOME_LBS')]=I('post.'.'lbs'.$i,'','htmlspecialchars');
+				$data[C('DB_USSW_POSTAGE_FEDEX_HOME_FEE')]=I('post.'.'fee'.$i,'','htmlspecialchars');
+				$priority->save($data);
+			}
+			$priority->commit();
+			$this->success('保存成功');	
+		}
+
+	}
+
 }
 
 ?>

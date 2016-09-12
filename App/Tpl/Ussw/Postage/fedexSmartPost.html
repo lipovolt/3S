@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Fedex Smart Post Postage</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	<div class="area clearfix">
+		<!-- 左边栏 -->
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>美国库存管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/usswMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<div class="tab-content">	
+			<div class="sidenav-hd"><strong>Fedex Smart Post 邮费设置</strong></div>
+			<form method="POST" id="updatePriority" name="updatePriority" action="{:U('Ussw/Postage/updateFedexSmart')}">
+			<div class="block-outer-hd" align="right">
+				<button class="btn btn-blue btn-s" id="savePurchaseItemInfo">保存</button>
+		    </div>
+			<table id="tablelist" class="tablelist">
+				<tr>
+					<th>英磅</th>
+				    <th>克</th>					    
+				    <th>运费$</th>
+				</tr>    
+				<tr>
+					<volist name="postage" id="vo">
+						<tr>
+						<td><input type="hidden" id="lbs{$vo[C('DB_USSW_POSTAGE_FEDEX_SMART_LBS')]}" name="lbs{$vo[C('DB_USSW_POSTAGE_FEDEX_SMART_LBS')]}" value="{$vo[C('DB_USSW_POSTAGE_FEDEX_SMART_LBS')]}"> {$vo[C('DB_USSW_POSTAGE_FEDEX_SMART_LBS')]}</td>
+						<td>{$vo[C('DB_USSW_POSTAGE_FEDEX_SMART_GR')]}</td>
+						<td><input type="text" id="fee{$vo[C('DB_USSW_POSTAGE_FEDEX_SMART_LBS')]}" name="fee{$vo[C('DB_USSW_POSTAGE_FEDEX_SMART_LBS')]}" value="{$vo[C('DB_USSW_POSTAGE_FEDEX_SMART_FEE')]}" style="width:60px;"/> </td>
+						</tr>	
+					</volist> 		
+				</tr>								
+			</table>
+			</form>
+			<div class="result page" align="center">{$page}</div>
+		</div>
+	</div>
+
+
+	</div>
+	</div>
+		
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>
