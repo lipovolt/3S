@@ -154,9 +154,11 @@
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Postage/firstclass');?>">USPS First Class</a></dd>
+	<dd > </dd>
 	<dd ><a href="<?php echo U('Ussw/Postage/priorityflatrate');?>">USPS Priority Falt Rate</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Postage/priority');?>">USPS Priority</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Postage/fedex');?>">Fedex</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexSmartPost');?>">Fedex Smart Post</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexHomeDelivery');?>">Fedex Home Delivery</a></dd>
 </dl>
 
 		<div>
@@ -219,9 +221,11 @@
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Postage/firstclass');?>">USPS First Class</a></dd>
+	<dd > </dd>
 	<dd ><a href="<?php echo U('Ussw/Postage/priorityflatrate');?>">USPS Priority Falt Rate</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Postage/priority');?>">USPS Priority</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Postage/fedex');?>">Fedex</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexSmartPost');?>">Fedex Smart Post</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexHomeDelivery');?>">Fedex Home Delivery</a></dd>
 </dl>
 	
 			</div>
@@ -230,7 +234,7 @@
 	<div id="ProductInfo" class="main">
 		<div class="tab-content">	
 			<div class="sidenav-hd"><strong>USPS First Class 邮费设置</strong></div>
-			<form method="POST" id="updateFirstClass" name="updateFirstClass" action="<?php echo U('Ussw/Postage/updateFirstClass');?>">
+			<form method="POST" id="updateFirstClass" name="updateFirstClass" action="<?php echo U('Sale/GgsUsswSale/calUsswUspsFirstClassFee',array('weight'=>85,'l'=>18,'w'=>10,'h'=>4));?>">
 			<div class="block-outer-hd" align="right">
 				<button class="btn btn-blue btn-s" id="savePurchaseItemInfo">保存</button>
 		    </div>

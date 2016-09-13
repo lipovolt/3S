@@ -161,9 +161,11 @@ function save(){
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
 	<dd ><a href="<?php echo U('Ussw/Postage/firstclass');?>">USPS First Class</a></dd>
+	<dd > </dd>
 	<dd ><a href="<?php echo U('Ussw/Postage/priorityflatrate');?>">USPS Priority Falt Rate</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Postage/priority');?>">USPS Priority</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Postage/fedex');?>">Fedex</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexSmartPost');?>">Fedex Smart Post</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexHomeDelivery');?>">Fedex Home Delivery</a></dd>
 </dl>
 
 		<div>
@@ -287,8 +289,8 @@ function save(){
 					<?php if(is_array($suggest)): $i = 0; $__LIST__ = $suggest;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
 						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_SKU')]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo[C('DB_PRODUCT_CNAME')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_FIRST_DATE')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')]); ?></div></td>
+						<td><div class="tl"><?php echo (substr($vo[C('DB_USSW_SALE_PLAN_FIRST_DATE')],0,10)); ?></div></td>
+						<td><div class="tl"><?php echo (substr($vo[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] ,0,10)); ?></div></td>
 						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]); ?></div></td>
 						<td><div class="tl"><?php echo ($vo[C('DB_USSW_SALE_PLAN_COST')]); ?></div></td>

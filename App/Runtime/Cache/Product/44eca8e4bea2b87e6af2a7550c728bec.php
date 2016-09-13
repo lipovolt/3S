@@ -117,7 +117,8 @@ function GenerateUpc(){
 		<i class="icon dropdown-s"></i><strong>美国自建仓 Ebay Amazon</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSalePlanMetadata');?>" >美国自建仓销售基础表</a></dd>
-	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
 <dl>
@@ -179,6 +180,15 @@ function GenerateUpc(){
 	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Storage/awaitingToStop');?>">待下架商品</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Storage/stopped');?>">已下架商品</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Postage/firstclass');?>">USPS First Class</a></dd>
+	<dd > </dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/priorityflatrate');?>">USPS Priority Falt Rate</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/priority');?>">USPS Priority</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexSmartPost');?>">Fedex Smart Post</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexHomeDelivery');?>">Fedex Home Delivery</a></dd>
 </dl>
 
 		<div>
