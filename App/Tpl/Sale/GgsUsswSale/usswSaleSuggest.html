@@ -89,8 +89,8 @@ function save(){
 						<tr>
 						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_SKU')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_PRODUCT_CNAME')]}</div></td>						
-						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_FIRST_DATE')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_FIRST_DATE')]|substr=0,10}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] | substr=0,10}</div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_COST')]}</div></td>

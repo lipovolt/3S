@@ -44,6 +44,10 @@ class GgsUsswSaleAction extends CommonAction{
 				$this->addProductToUsp($p[C('DB_USSTORAGE_SKU')]);
 				$usp=$this->getUsp($p[C('DB_USSTORAGE_SKU')]);
 				$usp = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
+			}else{
+				$usp[C('DB_USSW_SALE_PLAN_COST')]=$this->calUsswSuggestCost($p[C('DB_USSTORAGE_SKU')]);
+				$this->updateUsp($usp);
+				$usp = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
 			}
 			if(!$this->isProductInfoComplete($p[C('DB_USSTORAGE_SKU')])){
 				//产品信息不全，建议完善产品信息,退出循环
@@ -288,7 +292,7 @@ class GgsUsswSaleAction extends CommonAction{
     	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
     	$data[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
     	$data['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
-    	$data['way-to-us-fee']=$data[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+    	$data['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$data['local-shipping-fee']=$this->getUsswLocalShippingFee($product['weight'],$product['length'],$product['width'],$product['height']);
 
     	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
@@ -425,10 +429,10 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key][C('DB_PRODUCT_USTARIFF')]=$value[C('DB_PRODUCT_USTARIFF')]/100;
         	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key][C('DB_PRODUCT_TOUS')]=$value[C('DB_PRODUCT_TOUS')];
-        	$data[$key]['way-to-us-fee']=$data[$key][C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['way-to-us-fee']=$value[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key]['local-shipping-way']=$this->getUsswLocalShippingWay($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key]['local-shipping-fee']=$this->getUsswLocalShippingFee($value['weight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]=$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')];
+        	$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]=M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_PRICE'));
         	$data[$key]['cost']=round($this->getUsswCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]*100,2).'%';
@@ -461,7 +465,7 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['way-to-us-fee']=$data[$key][C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key]['local-shipping-way']=$this->getUsswLocalShippingWay($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key]['local-shipping-fee']=$this->getUsswLocalShippingFee($value['weight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]=$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')];
+        	$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]=M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_PRICE'));
         	$data[$key]['cost']=round($this->getUsswCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key][C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_PRODUCT_GGS_USSW_SALE_PRICE')]*100,2).'%';
@@ -580,34 +584,34 @@ class GgsUsswSaleAction extends CommonAction{
 	private function calUsswUspsFirstClassFee($weight,$l,$w,$h){
 		if($weight <= 453 And ($l + 2 * ($w + $h)) <= 210){
 			if($weight>=0 and $weight<85){
-				return 2.57;
+				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>85))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
 			elseif($weight>=85 and $weight<226){
-				return 2.72;
+				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>226))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
 			elseif($weight>=226 and $weight<255){
-				return 3.68;
+				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>255))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
 			elseif($weight>=255 and $weight<283){
-				return 3.91;
+				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>283))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
 			elseif($weight>=283 and $weight<311){
-				return 4.15;
+				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>311))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
 			elseif($weight>=311 and $weight<340){
-				return 4.27;
+				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>340))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
 			elseif($weight>=340 and $weight<368){
-				return 4.51;
+				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>368))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
 			elseif($weight>=368 and $weight<396){
-				return 5.25;
+				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>396))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
 			elseif($weight>=396 and $weight<425){
-				return 5.25;
+				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>425))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
 			elseif($weight>=425 and $weight<=453){
-				return 5.25;
+				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>453))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
 		}
 		else{
@@ -617,7 +621,7 @@ class GgsUsswSaleAction extends CommonAction{
 
 	private function calUsswUspsPrioritySmallFlatRateBoxFee($weight,$l,$w,$h){
 		if ($weight <= 31751 and $l <= 21.5 and $w <= 13.3 and $h <= 4){
-			return 7.08;
+			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>1))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
 		}
 		else{
 			return 0;
@@ -626,7 +630,7 @@ class GgsUsswSaleAction extends CommonAction{
 
 	private function calUsswUspsPriorityMediumFlatRateBoxFee($weight,$l,$w,$h){
 		if ($weight <= 31751 and (($l <= 34 and $w <= 29 and $h <= 8) Or ($l <= 27 and $w <= 21 and $h <= 13))){
-			return 13.92;
+			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>2))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
 		}
 		else{
 			return 0;
@@ -635,7 +639,7 @@ class GgsUsswSaleAction extends CommonAction{
 
 	private function calUsswUspsPriorityLargeFlatRateBoxFee($weight,$l,$w,$h){
 		if ($weight <= 31751 And $l <= 30 And $w <= 30 And $h <= 15){
-			return 19.02;
+			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>3))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
 		}
 		else{
 			return 0;
@@ -645,79 +649,79 @@ class GgsUsswSaleAction extends CommonAction{
 	private function calUsswUspsPriorityPackageFee($weight,$l,$w,$h){
 		if($weight <= 31751 and ($l + 2 * ($w + $h)) <= 274){
 			if($weight>=0 and $weight<453){
-				return 8.34;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>453))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=453 and $weight<907){
-				return 12.53;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>907))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=907 and $weight<1360){
-				return 16.84;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>1360))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=1360 and $weight<1814){
-				return 19.9;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>1814))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=1814 and $weight<2268){
-				return 23.06;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>2268))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=2268 and $weight<2721){
-				return 26.41;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>2721))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=2721 and $weight<3175){
-				return 29.66;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>3175))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=3175 and $weight<3628){
-				return 33.3;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>3628))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=3628 and $weight<4082){
-				return 37.03;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>4082))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=4082 and $weight<4536){
-				return 40.27;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>4536))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=4536 and $weight<=4989){
-				return 43.63;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>4989))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=4989 and $weight<=5443){
-				return 46.79;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>5443))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=5443 and $weight<=5896){
-				return 48.44;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>5896))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=5896 and $weight<=6350){
-				return 50.86;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>6350))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=6350 and $weight<=6804){
-				return 52.2;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>6804))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=6804 and $weight<=7257){
-				return 55.07;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>7257))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=7257 and $weight<=7711){
-				return 57.97;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>7711))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=7711 and $weight<=8164){
-				return 60.89;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>8164))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=8164 and $weight<=8618){
-				return 63.79;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>8618))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=8618 and $weight<=9072){
-				return 66.73;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>9072))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=9072 and $weight<=9525){
-				return 67.58;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>9525))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=9525 and $weight<=9979){
-				return 68.36;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>9979))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=9979 and $weight<=10432){
-				return 68.77;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>10432))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=10432 and $weight<=10886){
-				return 70.45;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>10886))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=10886 and $weight<=11340){
-				return 71.66;
+				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>11340))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 
 		}
@@ -729,79 +733,79 @@ class GgsUsswSaleAction extends CommonAction{
 	private function calUsswFedexSmartPostFee($weight,$l,$w,$h){
 		if($weight <= 31751 and ($l + $w + $h) <= 325 and  $l > 16 and $w > 11 and $h > 2.5 ){
 			if($weight>=0 and $weight<453){
-				return 8.15;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>453))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=453 and $weight<907){
-				return 9.61;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>907))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=907 and $weight<1360){
-				return 10.9;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>1360))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=1360 and $weight<1814){
-				return 11.98;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>1814))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=1814 and $weight<2268){
-				return 14.29;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>2268))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=2268 and $weight<2721){
-				return 14.4;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>2721))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=2721 and $weight<3175){
-				return 14.95;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>3175))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=3175 and $weight<3628){
-				return 15.47;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>3628))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=3628 and $weight<4082){
-				return 16.44;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>4082))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=4082 and $weight<4536){
-				return 24.82;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>4536))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=4536 and $weight<=4989){
-				return 26.45;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>4989))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=4989 and $weight<=5443){
-				return 27.95;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>5443))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=5443 and $weight<=5896){
-				return 29.76;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>5896))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=5896 and $weight<=6350){
-				return 31.48;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>6350))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=6350 and $weight<=6804){
-				return 33.1;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>6804))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=6804 and $weight<=7257){
-				return 33.1;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>7257))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=7257 and $weight<=7711){
-				return 34.08;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>7711))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=7711 and $weight<=8164){
-				return 35.71;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>8164))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=8164 and $weight<=8618){
-				return 37.45;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>8618))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=8618 and $weight<=9072){
-				return 38.72;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>9072))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=9072 and $weight<=9525){
-				return 41;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>9525))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=9525 and $weight<=9979){
-				return 44;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>9979))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=9979 and $weight<=10432){
-				return 47;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>10432))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=10432 and $weight<=10886){
-				return 50;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>10886))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=10886 and $weight<=11340){
-				return 53;
+				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>11340))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 
 		}
@@ -813,52 +817,52 @@ class GgsUsswSaleAction extends CommonAction{
 	private function calUsswUspsFedexHomeDeliveryFee($weight,$l,$w,$h){
 		if($weight <= 31751 and ($l + $w + $h) <= 325 and  $l > 16 and $w > 11 and $h > 2.5 ){
 			if($weight>=0 and $weight<453){
-				return 8.15;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>453))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=4536 and $weight<=4989){
-				return 20.51;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>4989))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=4989 and $weight<=5443){
-				return 20.51;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>5443))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=5443 and $weight<=5896){
-				return 21.08;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>5896))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=5896 and $weight<=6350){
-				return 22.2;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>6350))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=6350 and $weight<=6804){
-				return 23.24;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>6804))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=6804 and $weight<=7257){
-				return 24.22;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>7257))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=7257 and $weight<=7711){
-				return 24.83;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>7711))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=7711 and $weight<=8164){
-				return 25.82;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>8164))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=8164 and $weight<=8618){
-				return 26.88;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>8618))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=8618 and $weight<=9072){
-				return 28.08;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>9072))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=9072 and $weight<=9525){
-				return 41;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>9525))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=9525 and $weight<=9979){
-				return 44;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>9979))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=9979 and $weight<=10432){
-				return 47;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>10432))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=10432 and $weight<=10886){
-				return 50;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>10886))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=10886 and $weight<=11340){
-				return 53;
+				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>11340))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 
 		}
