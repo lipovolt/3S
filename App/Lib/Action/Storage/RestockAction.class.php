@@ -13,6 +13,8 @@ class RestockAction extends CommonAction{
 	}
 
 	public function exportRestock(){
+		$this->getIInventory('1269');
+
 		$xlsName  = "restock";
         $xlsCell  = array(
 	        array(C('DB_RESTOCK_ID'),'补货编号'),
@@ -244,15 +246,14 @@ class RestockAction extends CommonAction{
 				}      
 			}
 
-			//excel firt column name verify
+			//excel first column name verify
             for($c='A';$c<=$highestColumn;$c++){
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
 
             if($this->verifyImportedWinitStorageTemplateColumnName($firstRow)){  
-            	 
-                $product = M(C('db_product'))->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->find();
                 for($i=2;$i<=$highestRow;$i++){
+                	$product = M(C('db_product'))->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->find();
                     $movedToUssw = $this->isInUSSW($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue());
                     if($product[C('db_product_tous')] != null && $product[C('db_product_tous')] != '无' && !$movedToUssw){
                     	
@@ -435,21 +436,6 @@ class RestockAction extends CommonAction{
 	}
 
 	private function get30DaysSales($sku){
-        /*$timestart = date("Y-m-d H:i:s",strtotime("last month"));
-        $outbound = M(C('DB_USSW_OUTBOUND'))->where(C('DB_USSW_OUTBOUND_CREATE_TIME')>=$timestart)->select();
-        $outbounditem = M(C('DB_USSW_OUTBOUND_ITEM'));
-        $sku30daysales = 0;
-        foreach ($outbound as $ok => $ov) {
-        	$map[C('DB_USSW_OUTBOUND_ITEM_OOID')] = array('eq',$ov[C('DB_USSW_OUTBOUND_ID')]);
-        	$map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
-          	$items = $outbounditem->where($map)->select();
-          	if($items !==null && $items!==false){
-	          	foreach ($items as $ik => $iv) {
-	            	$sku30daysales = $sku30daysales + $iv[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];                
-	            }
-	        }            
-        }
-        return $sku30daysales;*/
         $map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('gt',date("Y-m-d H:i:s",strtotime("last month")));
         $map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
         return D("UsswOutboundView")->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
@@ -508,17 +494,6 @@ class RestockAction extends CommonAction{
     }
 
     private function isInPurchaseItem($warehouse,$sku){
-    	/*$map[C('DB_PURCHASE_STATUS')] = array('in','待确认,待付款,待发货');
-    	$poid = M(C('DB_PURCHASE'))->where($map)->getField(C('DB_PURCHASE_ID'),true);
-    	foreach ($poid as $key => $id) {
-    		$mapitem[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('eq',$warehouse);
-    		$mapitem[C('DB_PURCHASE_ITEM_PURCHASE_ID')] = array('eq',$id);
-    		$mapitem[C('DB_PURCHASE_ITEM_SKU')] = array('eq',$sku);
-    		$result = M(C('DB_PURCHASE_ITEM'))->where($mapitem)->select();
-    		if($result !== null && $result !==false)
-    			return true;
-    	}
-    	return false;*/
     	$map[C('DB_PURCHASE_STATUS')] = array('in','待确认,待付款,待发货');
     	$map[C('DB_PURCHASE_ITEM_WAREHOUSE')] = $warehouse;
     	$map[C('DB_PURCHASE_ITEM_SKU')] = $sku;
@@ -547,27 +522,25 @@ class RestockAction extends CommonAction{
     	}
     }
 
-    private function getIInventory($warehouse, $sku){
-    	if($warehouse != '美自建仓'){
-    		return 0;
-    	}else{
-    		$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
-    		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = $sku;
-    		return D("UsswInboundView")->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
-    	}        
+    private function getIInventory($sku){
+    	$iinventory = 0;
+    	$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
+		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = $sku;
+		$iinventory = D("UsswInboundView")->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
+		return $iinventory;
+  
     }
 
     private function reallyOutOfStock($warehouse,$sku){
-    	
-    	if(!$this->isInOutOfStock($warehouse,$sku)){
-    		if(!$this->isInRestock($warehouse,$sku))
-    			if(!$this->isInPurchaseItem($warehouse,$sku))
-    				if($this->getIInventory($warehouse,$sku)==0){
-    					return true;
-    				}
-    					
-    	}
-    	return false;
+    	if($warehouse=='万邑通德国' && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku)){
+    		return true;
+    	}elseif($warehouse=='美自建仓' && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && $this->getIInventory($sku)==0){
+    		return true;
+    	}elseif($warehouse=='万邑通美西' && !$this->isInOutOfStock($warehouse,$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku)){
+    		return true;
+    	}else{
+    		return false;
+    	}   	
     }
 
     public function importRestock(){
