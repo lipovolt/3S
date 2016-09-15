@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>Untitled Document</title>
+<title>深圳仓单品入库</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -27,38 +27,14 @@
 	<div class="area clearfix">
 		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>美国自建仓</strong></div>
+			<div class="sidenav-hd"><strong>深圳仓</strong></div>
 			<div class="sidenav-bd">
-				<include file="./Public/Tpl/usswMenu.html" />	
+				<include file="./Public/Tpl/szswMenu.html" />	
 			</div>
 		</div>
 	<div class="content">
 	<div id="itemInbound" class="main">
-		
-		<form name="search_inbound" id="search_inbound" action="{:U('Ussw/Inbound/insertSingleItem')}" method="POST" >			
-		<div class="block-indent search-area">
-			<div><strong>单品入库</strong></div>
-			<div class="form-group">
-				<label for="" class="control-label" name="position" id="position" >货位</label>
-				<div class="control-wrap">
-					<input type="text" name="position" id="position" value="">
-				</div>
-				<label for="" class="control-label" name="sku" id="sku" >货号</label>
-				<div class="control-wrap">
-					<input type="text" name="sku" id="sku" value="">
-				</div>
-			</div>
-			<button class="btn btn-s btn-blue" onmousedown="return checkSingle()" onclick="search_inbound.submit();">
-				<i class="icon search"></i>
-				<i class="vline-inline"></i>
-				<span>入库</span>
-			</button>
-        </div></form>
-        <br />
-        <br />
-        <br />
-        <br />
-        <form name="search_inbound" id="search_inbound" action="{:U('Ussw/Inbound/insertMultiItem')}" method="POST" >			
+        <form name="inbound" id="inbound" action="{:U('Szsw/Inbound/inbound')}" method="POST" >			
 		<div class="block-indent search-area">
 			<div><strong>批量入库</strong></div>
 			<div class="form-group">
@@ -72,7 +48,7 @@
 				</div>
 				<label for="" class="control-label" name="quantity" id="quantity" >数量</label>
 				<div class="control-wrap">
-					<input type="text" name="quantity" id="quantity" value="">
+					<input type="text" name="quantity" id="quantity" value="1">
 				</div>
 			</div>
 			<button class="btn btn-s btn-blue">

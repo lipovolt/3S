@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>深圳仓出库错误</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	<div class="area clearfix">
+		<!-- 左边栏 -->
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>深圳仓库存管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/szswMenu.html" />	
+			</div>
+		</div>
+		<div class="content">
+			 <table id="tablelist" class="tablelist">
+								<tr>
+									<th><div class="tl">平台订单号</div></th>
+									<th><div class="tl">产品编码</div></th>
+									<th><div class="tl">错误信息</div></th>
+								</tr>
+								<volist name="errorInFile" id="vo">
+									<tr>
+									<td><div class="tl">{$vo.saleno}</div></td>
+									<td><div class="tl">{$vo.sku}</div></td>
+									<td><div class="tl">{$vo.error}</div></td>
+									</tr>	
+								</volist> 	 								
+							</table>
+		</div>
+	</div>
+		
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>
