@@ -263,7 +263,7 @@ return array(
 	//usstorage
 	/*
 	CREATE TABLE IF NOT EXISTS `3s_usstorage` (
-	  `id` smallint(6) unsigned primary key NOT NULL,
+	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
 	  `position` varchar(10) NOT NULL,
 	  `sku` varchar(10) NOT NULL,
 	  `cname` varchar(255) DEFAULT NULL,
@@ -373,7 +373,7 @@ return array(
 	'DB_PURCHASE_ITEM_PRICE' => 'price',
 	'DB_PURCHASE_ITEM_PURCHASE_QUANTITY' => 'purchase_quantity',
 	'DB_PURCHASE_ITEM_RECEIVED_QUANTITY' => 'received_quantity',
-	'DB_PURCHASE_ITEM_WAREHOUSE' => 'warehouse',  //美自建仓,万邑通美西，万邑通德国
+	'DB_PURCHASE_ITEM_WAREHOUSE' => 'warehouse',  //美自建仓,万邑通美西，万邑通德国,深圳仓
 	'DB_PURCHASE_ITEM_TRANSPORT_METHOD' => 'transport_method', //空运，海运
 
 
@@ -404,13 +404,11 @@ return array(
 	//szstorage
 	/*
 	CREATE TABLE IF NOT EXISTS `3s_szstorage` (
-	  `id` smallint(6) unsigned primary key NOT NULL,
+	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
 	  `position` varchar(10) NOT NULL,
 	  `sku` varchar(10) NOT NULL,
 	  `cinventory` smallint(6) DEFAULT 0,
 	  `ainventory` smallint(6) DEFAULT 0,
-	  `oinventory` smallint(6) DEFAULT 0,
-	  `iinventory` smallint(6) DEFAULT 0,
 	  `csales` smallint(6) DEFAULT 0,
 	  `remark` varchar(255) DEFAULT NULL
 	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
@@ -421,8 +419,6 @@ return array(
 	'DB_SZSTORAGE_SKU' => 'sku',
 	'DB_SZSTORAGE_CINVENTORY' => 'cinventory',
 	'DB_SZSTORAGE_AINVENTORY' => 'ainventory',
-	'DB_SZSTORAGE_OINVENTORY' => 'oinventory',
-	'DB_SZSTORAGE_IINVENTORY' => 'iinventory',
 	'DB_SZSTORAGE_CSALES' => 'csales',
 	'DB_SZSTORAGE_REMARK' => 'remark',
 
@@ -431,28 +427,69 @@ return array(
 	/*创建深圳仓出库表
 	create table if not exists `3s_sz_outbound`(
 	`id` smallint(6) unsigned primary key not null auto_increment,
-	`shipping_company` varchar(20),
+	`market` varchar(20) default null,
+	`market_no` varchar(20) default null,
+	`status` varchar(10) default null,
+	`shipping_company` varchar(20) default null,
 	`shipping_way` varchar(30) default null,
 	`tracking_number` varchar(30) default null,
-	`create_time` datetime,
-	`market_no` varchar(20) default null,
-	`sku` varchar(20) default null,
-	`quantity` smallint(6) default 0,
-	`price` decimal(5,2) default 0,
-	`country` varchar(20) default null
+	`create_time` timestamp default CURRENT_TIMESTAMP,
+	`seller_id` varchar(20) default null,
+	`buyer_id` varchar(20) default null,
+	`buyer_name` varchar(30) default null,
+	`buyer_tel` varchar(20) default null,
+	`buyer_email` varchar(30) default null,
+	`buyer_address1` varchar(50) default null,
+	`buyer_address2` varchar(50) default null,
+	`buyer_city` varchar(30) default null,
+	`buyer_state` varchar(30) default null,
+	`buyer_country` varchar(30) default null,
+	`buyer_zip` varchar(20) default null
 	) engine=myisam default charset=utf8;
 	*/
 	'DB_SZ_OUTBOUND' => 'sz_outbound',
 	'DB_SZ_OUTBOUND_ID' => 'id',
+	'DB_SZ_OUTBOUND_MARKET' => 'market',
 	'DB_SZ_OUTBOUND_MARKET_NO' => 'market_no',
+	'DB_SZ_OUTBOUND_STATUS' => 'status', //待出库，已出库
 	'DB_SZ_OUTBOUND_SHIPPING_COMPANY' => 'shipping_company',
 	'DB_SZ_OUTBOUND_SHIPPING_WAY' => 'shipping_way',
 	'DB_SZ_OUTBOUND_TRACKING_NUMBER' => 'tracking_number',
 	'DB_SZ_OUTBOUND_CREATE_TIME' => 'create_time',
-	'DB_SZ_OUTBOUND_SKU' => 'sku',
-	'DB_SZ_OUTBOUND_QUANTITY' => 'quantity',
-	'DB_SZ_OUTBOUND_PRICE' => 'price',
-	'DB_SZ_OUTBOUND_COUNTRY' => 'country',
+	'DB_SZ_OUTBOUND_SELLER_ID' => 'seller_id',
+	'DB_SZ_OUTBOUND_BUYER_ID' => 'buyer_id',
+	'DB_SZ_OUTBOUND_BUYER_NAME' => 'buyer_name',
+	'DB_SZ_OUTBOUND_BUYER_TEL' => 'buyer_tel',
+	'DB_SZ_OUTBOUND_BUYER_EMAIL' => 'buyer_email',
+	'DB_SZ_OUTBOUND_BUYER_ADDRESS1' => 'buyer_address1',
+	'DB_SZ_OUTBOUND_BUYER_ADDRESS2' => 'buyer_address2',
+	'DB_SZ_OUTBOUND_BUYER_CITY' => 'buyer_city',
+	'DB_SZ_OUTBOUND_BUYER_STATE' => 'buyer_state',
+	'DB_SZ_OUTBOUND_BUYER_COUNTRY' => 'buyer_country',
+	'DB_SZ_OUTBOUND_BUYER_ZIP' => 'buyer_zip',
+
+
+	//sz_outbound_item
+	/*
+	创建美国出库单产品明细表
+	create table if not exists `3s_sz_outbound_item`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`outbound_id` smallint(6) not null,
+	`sku` varchar(10) default null,
+	`position` varchar(10) default null,
+	`quantity` smallint(3) default 0,
+	`market_no` varchar(20) default null,
+	`transaction_no` varchar(20) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_SZ_OUTBOUND_ITEM' => 'sz_outbound_item',
+	'DB_SZ_OUTBOUND_ITEM_ID' => 'id',
+	'DB_SZ_OUTBOUND_ITEM_OOID' => 'outbound_id',
+	'DB_SZ_OUTBOUND_ITEM_SKU' => 'sku',
+	'DB_SZ_OUTBOUND_ITEM_POSITION' => 'position',
+	'DB_SZ_OUTBOUND_ITEM_QUANTITY' => 'quantity',
+	'DB_SZ_OUTBOUND_ITEM_MARKET_NO' => 'market_no',
+	'DB_SZ_OUTBOUND_ITEM_TRANSACTION_NO' => 'transaction_no',
 
 
 	//ussw_sale_plan

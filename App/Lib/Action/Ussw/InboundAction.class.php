@@ -104,11 +104,13 @@ class InboundAction extends CommonAction{
         $status = M(C('DB_USSW_INBOUND'))->where(array(C('DB_USSW_INBOUND_ID')=>$orderID))->getField('status');
         if($status != '已入库' and $status != '产品已导入' and $status != '待入库'){
             if (!empty($_FILES)) {
+                $splitname = explode('.',$file['name']);
+                $filename = $splitname[0].'_'.time();
                 import('ORG.Net.UploadFile');
                  $config=array(
                      'allowExts'=>array('xlsx','xls'),
-                     'savePath'=>'./Public/upload/',
-                     'saveRule'=>'time',
+                     'savePath'=>'./Public/upload/usswInbound/',
+                     'saveRule'=>$filename,
                  );
                  $upload = new UploadFile($config);
                  if (!$upload->upload()) {

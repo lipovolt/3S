@@ -133,7 +133,7 @@ class RestockAction extends CommonAction{
 			import('ORG.Net.UploadFile');
 			$config=array(
 			 'allowExts'=>array('xls'),
-			 'savePath'=>'./Public/upload/',
+			 'savePath'=>'./Public/upload/restock/',
 			 'saveRule'=>$filename,
 			);
 			$upload = new UploadFile($config);
@@ -168,62 +168,27 @@ class RestockAction extends CommonAction{
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
 
-            if($this->verifyImportedWinitStorageTemplateColumnName($firstRow)){  
-            	 
-                $products = M(C('db_product'));
+            if($this->verifyImportedWinitStorageTemplateColumnName($firstRow)){
                 for($i=2;$i<=$highestRow;$i++){
-                	
-                	$status = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_tode'));
-                    if($status != null && $status != '无'){
+                	$product = M(C('db_product'))->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->find();
+                    if($product[C('db_product_tode')] != null && $product[C('db_product_tode')] != '无'){
                     	if($objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0){
                     		if(($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())==0){
 
-		                    	if($status=='空运' && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '万邑通德国';
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = 0;
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-		                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+		                    	if($product[C('db_product_tode')]=='空运' && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    		$this->addRestockOrder('万邑通德国',0,$product);
 		                    	}
-		                    	if($status=='海运' && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '万邑通德国';
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = 0;
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-		                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+		                    	if($product[C('db_product_tode')]=='海运' && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    		$this->addRestockOrder('万邑通德国',0,$product);
 		                    	}
                     		}
                     	}else{
 	                    	$dayAvailableForSale = ($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())/$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-	                    	if($status=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '万邑通德国';
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-		                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-		                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-	                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+	                    	if($product[C('db_product_tode')]=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+	                    		$this->addRestockOrder('万邑通德国',ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()),$product);
 	                    	}
-	                    	if($status=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '万邑通德国';
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-		                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-		                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-	                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+	                    	if($product[C('db_product_tode')]=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+	                    		$this->addRestockOrder('万邑通德国',ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()),$product);
 	                    	}
 	                    }	
                     }
@@ -248,7 +213,7 @@ class RestockAction extends CommonAction{
 			import('ORG.Net.UploadFile');
 			$config=array(
 			 'allowExts'=>array('xls'),
-			 'savePath'=>'./Public/upload/',
+			 'savePath'=>'./Public/upload/restock/',
 			 'saveRule'=>$filename,
 			);
 			$upload = new UploadFile($config);
@@ -286,62 +251,28 @@ class RestockAction extends CommonAction{
 
             if($this->verifyImportedWinitStorageTemplateColumnName($firstRow)){  
             	 
-                $products = M(C('db_product'));
+                $product = M(C('db_product'))->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->find();
                 for($i=2;$i<=$highestRow;$i++){
-                	
-                	$status = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_tous'));
                     $movedToUssw = $this->isInUSSW($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue());
-                    if($status != null && $status != '无' && !$movedToUssw){
+                    if($product[C('db_product_tous')] != null && $product[C('db_product_tous')] != '无' && !$movedToUssw){
                     	
                     	if($objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0){
                     		if(($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())==0){
 
-		                    	if($status=='空运' && $this->reallyOutOfStock('美自建仓',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '美自建仓';
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = 0;
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-		                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+		                    	if($product[C('db_product_tous')]=='空运' && $this->reallyOutOfStock('美自建仓',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    		$this->addRestockOrder('美自建仓',0,$product);
 		                    	}
-		                    	if($status=='海运' && $this->reallyOutOfStock('万邑通美西',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '万邑通美西';
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = 0;
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-		                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+		                    	if($product[C('db_product_tous')]=='海运' && $this->reallyOutOfStock('万邑通美西',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    		$this->addRestockOrder('万邑通美西',0,$product);
 		                    	}
                     		}
                     	}else{
 	                    	$dayAvailableForSale = ($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())/$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-	                    	if($status=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock('美自建仓',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '美自建仓';
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-		                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-		                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-	                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+	                    	if($product[C('db_product_tous')]=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock('美自建仓',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+	                    		$this->addRestockOrder('美自建仓',ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()),$product);
 	                    	}
-	                    	if($status=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock('万邑通美西',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '万邑通美西';
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-	                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-		                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-		                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-	                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+	                    	if($product[C('db_product_tous')]=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock('万邑通美西',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+	                    		$this->addRestockOrder('万邑通美西',ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()),$product);
 	                    	}
 	                    }	
                     }
@@ -366,7 +297,7 @@ class RestockAction extends CommonAction{
 			import('ORG.Net.UploadFile');
 			$config=array(
 			 'allowExts'=>array('xls'),
-			 'savePath'=>'./Public/upload/',
+			 'savePath'=>'./Public/upload/restock/',
 			 'saveRule'=>$filename,
 			);
 			$upload = new UploadFile($config);
@@ -399,71 +330,44 @@ class RestockAction extends CommonAction{
 					}      
 				}
 
-				//excel firt column name verify
+				//excel first column name verify
 	            for($c='A';$c<=$highestColumn;$c++){
 	                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
 	            }
 
 	            if($this->verifyImportedWinitStorageTemplateColumnName($firstRow) && $this->verifyImportedWinitStorageTemplateSheetName($sheetnames)){  
 	            	 
-	                $products = M(C('db_product'));
 	                for($i=2;$i<=$highestRow;$i++){
-	                	
+	                	$product = M(C('db_product'))->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->find();               	
 	                	if($sheetId==0){
-	                		$status = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_tous'));
+	                		$status = $product[C('db_product_tous')];
 	                	}else{
-	                		$status = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_tode'));
+	                		$status = $product[C('db_product_tode')];
 	                	}
 	                    if($status != null && $status != '无' && !$this->hasMovedToUSSW($sheetId,$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 	                    	if($objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0){
 	                    		if(($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())==0){
 
 			                    	if($status=='空运' && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'美自建仓':'万邑通德国';
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = 0;
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-			                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+			                    		$w = $sheetId==0?'美自建仓':'万邑通德国';
+			                    		$this->addRestockOrder($w,0,$product);
 			                    	}
 			                    	if($status=='海运' && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'万邑通美西':'万邑通德国';
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = 0;
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-			                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-			                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+			                    		$w = $sheetId==0?'万邑通美西':'万邑通德国';
+			                    		$this->addRestockOrder($w,0,$product);
 			                    	}
 	                    		}
 	                    	}else{
 		                    	$dayAvailableForSale = ($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())/$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
 		                    	if($status=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'美自建仓':'万邑通德国';
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil(($airRestockDays-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-			                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-			                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-		                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+		                    		$w = $sheetId==0?'美自建仓':'万邑通德国';
+		                    		$q = ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
+		                    		$this->addRestockOrder($w,$q,$product);
 		                    	}
 		                    	if($status=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $sheetId==0?'万邑通美西':'万邑通德国';
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_cname'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil((60-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('db_product_manager'));
-		                    		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_PRICE'));
-			                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->getField(C('DB_PRODUCT_SUPPLIER'));
-			                    	$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-		                    		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+		                    		$w = $sheetId==0?'万邑通美西':'万邑通德国';
+		                    		$q = ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
+		                    		$this->addRestockOrder($w,$q,$product);
 		                    	}
 		                    }	
 	                    }
@@ -485,65 +389,32 @@ class RestockAction extends CommonAction{
 	private function findUsswOutOfStockItem($dfa,$dfs){
 		
 		$usstorage = M(C('DB_USSTORAGE'))->select();
-		$products = M(C('db_product'));
+		
 		foreach ($usstorage as $ussk => $ussv) {
-			
-			$usStatus = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('db_product_tous'));
-			if($usStatus !== null && $usStatus !== '无'){
+			$product = M(C('db_product'))->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->find();
+			if($product[C('db_product_tous')] !== null && $product[C('db_product_tous')] !== '无'){
 				$msq = $this->get30DaysSales($ussv[C('DB_USSTORAGE_SKU')]);
-				if($usStatus == '空运'){
+				if($product[C('db_product_tous')] == '空运'){
 					$roos = $this->reallyOutOfStock('美自建仓',$ussv[C('DB_USSTORAGE_SKU')]);
 				}else{
 					$roos = $this->reallyOutOfStock('万邑通美西',$ussv[C('DB_USSTORAGE_SKU')]);
 				}
 				if($msq==0 && ($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_INVENTORY')])==0){
-					if($usStatus=='空运' && $roos){
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '美自建仓';
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $ussv[C('DB_USSTORAGE_SKU')];
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $ussv[C('DB_USSTORAGE_CNAME')];
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = 0;
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('db_product_manager'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_PRICE'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_SUPPLIER'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-						$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+					if($product[C('db_product_tous')]=='空运' && $roos){
+						$this->addRestockOrder('美自建仓',0,$product);
 					}
 					if($usstorage=='海运' && $roos){
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '万邑通美西';
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $ussv[C('DB_USSTORAGE_SKU')];
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $ussv[C('DB_USSTORAGE_CNAME')];
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = 0;
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('db_product_manager'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_PRICE'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_SUPPLIER'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-						$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+						$this->addRestockOrder('万邑通美西',0,$product);
 					}
 				}
 
 				if($msq>0){
 					$dayAvailableForSale=($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_IINVENTORY')])/($msq/30);
-					if($usStatus=='空运' && $dayAvailableForSale<$dfa && $roos){
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '美自建仓';
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $ussv[C('DB_USSTORAGE_SKU')];
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $ussv[C('DB_USSTORAGE_CNAME')];
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil(($dfa-$dayAvailableForSale)*($msq/30));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('db_product_manager'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_PRICE'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_SUPPLIER'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-						$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+					if($product[C('db_product_tous')]=='空运' && $dayAvailableForSale<$dfa && $roos){
+						$this->addRestockOrder('美自建仓',ceil(($dfa-$dayAvailableForSale)*($msq/30)),$product);
 					}
-					if($usStatus=='海运' && $dayAvailableForSale<$dfs && $roos){
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = '万邑通美西';
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $ussv[C('DB_USSTORAGE_SKU')];
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $ussv[C('DB_USSTORAGE_CNAME')];
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = ceil(($dfs-$dayAvailableForSale)*$msq/30);
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('db_product_manager'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_PRICE'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $products->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_SUPPLIER'));
-						$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-						$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+					if($product[C('db_product_tous')]=='海运' && $dayAvailableForSale<$dfs && $roos){
+						$this->addRestockOrder('万邑通美西',ceil(($dfs-$dayAvailableForSale)*$msq/30),$product);
 					}
 				}
 			}
@@ -551,8 +422,20 @@ class RestockAction extends CommonAction{
 		}
 	}
 
+	private function addRestockOrder($warehouse,$quantity,$product){
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $warehouse;
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $product[C('DB_USSTORAGE_SKU')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $product[C('DB_USSTORAGE_CNAME')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = $quantity;
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $product[C('db_product_manager')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $product[C('DB_PRODUCT_PRICE')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $product[C('DB_PRODUCT_SUPPLIER')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
+		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+	}
+
 	private function get30DaysSales($sku){
-        $timestart = date("Y-m-d H:i:s",strtotime("last month"));
+        /*$timestart = date("Y-m-d H:i:s",strtotime("last month"));
         $outbound = M(C('DB_USSW_OUTBOUND'))->where(C('DB_USSW_OUTBOUND_CREATE_TIME')>=$timestart)->select();
         $outbounditem = M(C('DB_USSW_OUTBOUND_ITEM'));
         $sku30daysales = 0;
@@ -566,7 +449,10 @@ class RestockAction extends CommonAction{
 	            }
 	        }            
         }
-        return $sku30daysales;
+        return $sku30daysales;*/
+        $map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('gt',date("Y-m-d H:i:s",strtotime("last month")));
+        $map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
+        return D("UsswOutboundView")->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
     }
 
     private function verifyImportedWinitStorageTemplateColumnName($firstRow){
@@ -604,6 +490,12 @@ class RestockAction extends CommonAction{
     	return false;
     }
 
+    private function deleteDuplicate($list){
+    	foreach ($list as $key => $value) {
+    		
+    	}
+    }
+
     private function isInRestock($warehouse,$sku){
     	$map[C('DB_RESTOCK_SKU')] = array('eq',$sku);
     	$map[C('DB_RESTOCK_WAREHOUSE')] = array('eq',$warehouse);
@@ -616,7 +508,7 @@ class RestockAction extends CommonAction{
     }
 
     private function isInPurchaseItem($warehouse,$sku){
-    	$map[C('DB_PURCHASE_STATUS')] = array('in','待确认,待付款,待发货');
+    	/*$map[C('DB_PURCHASE_STATUS')] = array('in','待确认,待付款,待发货');
     	$poid = M(C('DB_PURCHASE'))->where($map)->getField(C('DB_PURCHASE_ID'),true);
     	foreach ($poid as $key => $id) {
     		$mapitem[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('eq',$warehouse);
@@ -626,7 +518,16 @@ class RestockAction extends CommonAction{
     		if($result !== null && $result !==false)
     			return true;
     	}
-    	return false;
+    	return false;*/
+    	$map[C('DB_PURCHASE_STATUS')] = array('in','待确认,待付款,待发货');
+    	$map[C('DB_PURCHASE_ITEM_WAREHOUSE')] = $warehouse;
+    	$map[C('DB_PURCHASE_ITEM_SKU')] = $sku;
+    	$result=D("PurchaseView")->where($map)->find();
+    	if($result !== null && $result!==false){
+    		return true;
+    	}else{
+    		return false;
+    	}
     }
 
     private function isInUSSW($sku){
@@ -650,23 +551,9 @@ class RestockAction extends CommonAction{
     	if($warehouse != '美自建仓'){
     		return 0;
     	}else{
-    		$iinventory = 0;
-	        $inbound = M(C('DB_USSW_INBOUND'));
-	        $inbounditems = M(C('DB_USSW_INBOUND_ITEM'));
-	        $ioids = $inbounditems->where(array(C('DB_USSW_INBOUND_ITEM_SKU')=>$sku))->select();
-	        
-	        foreach ($ioids as $ok => $ov) {
-	        	
-	          	$status = $inbound->where(array(C('DB_USSW_INBOUND_ID')=>$ov[C('DB_USSW_INBOUND_ITEM_IOID')]))->getField(C('DB_USSW_INBOUND_STATUS'));
-	          	if($status=='待入库'){
-		            $map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
-		            $map[C('DB_USSW_INBOUND_ITEM_IOID')] = array('eq',$ov[C('DB_USSW_INBOUND_ITEM_IOID')]);
-		            $tmpquantity = $inbounditems->where($map)->getField(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
-		            $iinventory = $iinventory + intval($tmpquantity);
-		        }
-		        
-	        }
-	        return $iinventory;
+    		$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
+    		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = $sku;
+    		return D("UsswInboundView")->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
     	}        
     }
 
