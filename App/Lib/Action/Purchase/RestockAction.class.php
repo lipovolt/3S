@@ -110,6 +110,8 @@ class RestockAction extends CommonAction{
 			$this->country='美国';
 		}elseif($country == 'DE'){
 			$this->country='德国';
+		}elseif($country == 'SZ'){
+			$this->country='深圳';
 		}
 		$this->display();
 	}
@@ -124,6 +126,8 @@ class RestockAction extends CommonAction{
 				$this->findUsOutOfStockItem($dfa,$dfs);
 			}elseif($country=='德国'){
 				$this->findDeOutOfStockItem($dfa,$dfs);
+			}elseif($country=='深圳'){
+				$this->findSzOutOfStockItem($dfa,$dfs);
 			}
 		}		
 	}
@@ -232,7 +236,8 @@ class RestockAction extends CommonAction{
 			$sheetnames = $objPHPExcel->getSheetNames();
 			$GLOBALS["outOfStock"] = null;
 			$GLOBALS["indexOfOutOfStock"] = 0;
-			$this->findUsswOutOfStockItem($dfa,$dfs); 
+			$this->findUsswOutOfStockItem($dfa,$dfs);
+			$this->findSzswOutOfStockItem();
 
 			$sheet = $objPHPExcel->getSheet(0);
 			$highestRow = $sheet->getHighestRow(); // 取得总行数
@@ -394,7 +399,7 @@ class RestockAction extends CommonAction{
 		foreach ($usstorage as $ussk => $ussv) {
 			$product = M(C('db_product'))->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->find();
 			if($product[C('db_product_tous')] !== null && $product[C('db_product_tous')] !== '无'){
-				$msq = $this->get30DaysSales($ussv[C('DB_USSTORAGE_SKU')]);
+				$msq = $this->getUssw30DaysSales($ussv[C('DB_USSTORAGE_SKU')]);
 				if($product[C('db_product_tous')] == '空运'){
 					$roos = $this->reallyOutOfStock('美自建仓',$ussv[C('DB_USSTORAGE_SKU')]);
 				}else{
@@ -423,6 +428,33 @@ class RestockAction extends CommonAction{
 		}
 	}
 
+	public function findSzswOutOfStockItem(){
+		$szstorage = M(C('DB_SZSTORAGE'))->select();
+	
+		foreach ($szstorage as $szsk => $szsv) {
+			$product = M(C('db_product'))->where(array(C('db_product_sku')=>$szsv[C('DB_SZSTORAGE_SKU')]))->find();
+			if($product!=null){
+				$msq = $this->getSzsw30DaysSales($szsv[C('DB_SZSTORAGE_SKU')]);
+				$dayAvailableForSale=($szsv[C('DB_SZSTORAGE_AINVENTORY')]+$this->getSzIinventory($szsv[C('DB_SZSTORAGE_SKU')]))/($msq/30);
+				$roos = $this->reallyOutOfStock('深圳仓',$szsv[C('DB_USSTORAGE_SKU')]);
+				if($product[C('DB_PRODUCT_TOUS')]!='无' && $dayAvailableForSale<3 && $roos){				
+					$this->addRestockOrder('深圳仓',ceil(($dfa-$dayAvailableForSale)*$msq/30),$product);
+				}
+			}			
+		}
+
+		F('out',$GLOBALS["outOfStock"]);
+		$this->assign('outofstock',$GLOBALS["outOfStock"]);
+		$this->display('exportOutOfStock');  
+	}
+
+	private function getSzIinventory($sku){
+		$map['sku'] = array('eq',$sku);
+		$map['status'] = array('in',array('待确认', '待付款', '待发货'));
+		$map['warehouse'] = array('eq','深圳仓');
+		return D("PurchaseView")->where($map)->sum('quantity');
+	}
+
 	private function addRestockOrder($warehouse,$quantity,$product){
 		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $warehouse;
 		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $product[C('DB_USSTORAGE_SKU')];
@@ -435,10 +467,16 @@ class RestockAction extends CommonAction{
 		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
 	}
 
-	private function get30DaysSales($sku){
+	private function getUssw30DaysSales($sku){
         $map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('gt',date("Y-m-d H:i:s",strtotime("last month")));
         $map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
         return D("UsswOutboundView")->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
+    }
+
+    private function getSzsw30DaysSales($sku){
+        $map[C('DB_SZ_OUTBOUND_CREATE_TIME')] = array('gt',date("Y-m-d H:i:s",strtotime("last month")));
+        $map[C('DB_SZ_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
+        return D("SzOutboundView")->where($map)->sum(C('DB_SZ_OUTBOUND_ITEM_QUANTITY'));
     }
 
     private function verifyImportedWinitStorageTemplateColumnName($firstRow){
@@ -537,6 +575,8 @@ class RestockAction extends CommonAction{
     	}elseif($warehouse=='美自建仓' && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && $this->getIInventory($sku)==0){
     		return true;
     	}elseif($warehouse=='万邑通美西' && !$this->isInOutOfStock($warehouse,$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku)){
+    		return true;
+    	}elseif($warehouse=='深圳仓' && !$this->isInPurchaseItem($warehouse,$sku)){
     		return true;
     	}else{
     		return false;

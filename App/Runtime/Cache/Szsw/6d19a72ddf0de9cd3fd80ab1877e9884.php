@@ -3,11 +3,24 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>美国仓库存信息管理</title>
+<title>深圳仓出库单</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script>
+function del()
+{
+    if(confirm("确定要删除吗？"))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+</script>
 </head>
 <body>
 
@@ -229,137 +242,78 @@
 			</div>
 		</div>
 	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
-		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>美国库存管理</strong></div>
+			<div class="sidenav-hd"><strong>深圳仓库存管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
 	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Inbound/singleItemInbound');?>">单品入库</a></dd>
-	<dd><a href="<?php echo U('Ussw/Inbound/index');?>"  mark="Outbound">全部入库单</a></dd>
-	<dd><a href="<?php echo U('Ussw/Inbound/createInboundOrder');?>"  mark="Outbound">新建美国自建仓入库单</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Inbound/simpleInbound');?>">单品入库</a></dd>
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Outbound/outbound');?>">单品出库</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Outbound/importEbayWso');?>">导入ebay订单</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Outbound/index');?>">全部出库单</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Outbound/simpleOutbound');?>">单品出库</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Outbound/importEbayOrders');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Outbound/index');?>">全部出库单</a></dd>
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Storage/index');?>">库存信息</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Storage/awaitingToStop');?>">待下架商品</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Storage/stopped');?>">已下架商品</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Storage/index');?>">库存信息</a></dd>
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
-	<dd ><a href="<?php echo U('Ussw/Postage/firstclass');?>">USPS First Class</a></dd>
-	<dd > </dd>
-	<dd ><a href="<?php echo U('Ussw/Postage/priorityflatrate');?>">USPS Priority Falt Rate</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Postage/priority');?>">USPS Priority</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Postage/fedexSmartPost');?>">Fedex Smart Post</a></dd>
-	<dd ><a href="<?php echo U('Ussw/Postage/fedexHomeDelivery');?>">Fedex Home Delivery</a></dd>
+	<dd ><a href="#">EUB</a></dd>
 </dl>
 	
 			</div>
 		</div>
 	<div class="content">
-	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="<?php echo U('Ussw/Storage/index');?>" method="POST">
+	<div id="inbounds" class="main">
+		<form name="search_product" id="search_product" action="<?php echo U('Szsw/Outbound/index');?>" method="POST">
 			<div class="search-area">
 				<div class="item">
 					<div class="form-group">
 						<label for="keyword" class="control-label">关键字</label>
 						<div class="control-wrap">
 							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_USSTORAGE_SKU');?>">产品编码</option>
-								<option value="<?php echo C('DB_USSTORAGE_CNAME');?>">产品名称</option>
+								<option value="id">出库单号</option>
+								<option value="saleno">平台订单号</option>
 							</select>
 						</div>
 						<div class="control-wrap">
 							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
 						</div>
 					</div>
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
+					<input type="hidden" name="country" value="122" />
+					<button class="btn btn-s btn-blue">
+						<i class="icon search"></i>
+						<i class="vline-inline"></i>
 						<span>查询</span>
 					</button>
 				</div>			
 			</div>
 		</form>
-		<form name="sort_usstorage" id="sort_usstorage" action="<?php echo U('Ussw/Storage/sort');?>" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">按照</label>
-						<div class="control-wrap">
-						<select name="sortword" id="sortword" first="firstSelect" data-value="">
-							<option value="<?php echo C('DB_USSTORAGE_SKU');?>" <?php echo C('DB_USSTORAGE_SKU')==$selected?selected:'' ?>>产品编码</option>
-							<option value="<?php echo C('DB_USSTORAGE_AINVENTORY');?>" <?php echo C('DB_USSTORAGE_AINVENTORY')==$selected?selected:'' ?>>可用库存</option>
-							<option value="<?php echo C('DB_USSTORAGE_CINVENTORY');?>" <?php echo C('DB_USSTORAGE_CINVENTORY')==$selected?selected:'' ?>>历史入库</option>
-							<option value="<?php echo C('DB_USSTORAGE_CSALES');?>" <?php echo C('DB_USSTORAGE_CSALES')==$selected?selected:'' ?>>历史销量</option>
-							<option value="<?php echo C('DB_USSTORAGE_OINVENTORY');?>" <?php echo C('DB_USSTORAGE_OINVENTORY')==$selected?selected:'' ?>>待出库</option>
-							<option value="<?php echo C('DB_USSTORAGE_IINVENTORY');?>" <?php echo C('DB_USSTORAGE_IINVENTORY')==$selected?selected:'' ?>>在途库存</option>
-						</select>
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="control-wrap">
-							<select name="sort" id="sort" data-value="">
-								<option value="asc" <?php echo 'asc'==$sort?selected:'' ?>>正序</option>
-								<option value="desc" <?php echo 'desc'==$sort?selected:'' ?>>倒序</option>
-							</select>
-						</div>
-					</div>
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
-						<span>排序</span>
-					</button>
-				</div>			
-			</div>
-		</form>
 		<div>
-			<div class="tab" align="right">
-				<a class="btn btn-blue btn-s" href="<?php echo U('Ussw/Storage/export');?>" >
-					<span>导出</span>
-				</a>
-			</div>
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th><div class="t1">货位</div></th>
-					    <th><div class="t1">产品编码</div></th>					    
-					    <th><div class="tl">中文名称</div></th>
-						<th><div class="tl">属性</div></th>
-						<th><div class="tr">历史入库</div></th>
-						<th><div class="tr">可用库存</div></th>
-						<th><div class="tr">待出库</div></th>
-						<th><div class="tr">在途库存</div></th>
-						<th><div class="tr">历史销量</div></th>
-						<th><div class="tr">30天销量</div></th>
-						<th><div class="t1">销售状态</div></th>
-						<th><div class="t1">备注</div></th>
-						<th width="230">操作</th>
-					</tr>    
-					<tr>
-						<?php if(is_array($usstorage)): $i = 0; $__LIST__ = $usstorage;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_POSITION')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_SKU')]); ?></div></td>						
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_CNAME')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_ATTRIBUTE')]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_CINVENTORY')]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_AINVENTORY')]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_OINVENTORY')]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_IINVENTORY')]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo[C('DB_USSTORAGE_CSALES')]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo['30dayssales']); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_SALE_STATUS')]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo[C('DB_USSTORAGE_REMARK')]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Ussw/Storage/edit',array(C('DB_USSTORAGE_ID')=>$vo[C('DB_USSTORAGE_ID')]));?>">编辑</a>
-							<a href="<?php echo U('Ussw/Storage/stopListing',array(C('DB_USSTORAGE_ID')=>$vo[C('DB_USSTORAGE_ID')]));?>">已下架</a>
-						</td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
-					</tr>								
+						<th><div class="tl">出库单编号</div></th>
+						<th><div class="tl">平台订单号</div></th>						
+						<th><div class="tl">发货状态</div></th>
+						<th><div class="tl">发货方式</div></th>
+						<th><div class="tl">追踪号</div></th>
+						<th><div class="tl">下单时间</div></th>
+					</tr>
+					<?php if(is_array($outboundOrders)): $i = 0; $__LIST__ = $outboundOrders;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<td><div class="tl"><a href="<?php echo U('Szsw/Outbound/outboundOrderDetails',array('id'=>$vo['id']));?>"><?php echo ($vo[C('DB_SZ_OUTBOUND_ID')]); ?></a></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_SZ_OUTBOUND_MARKET_NO')]); ?></div></td>						
+						<td><div class="tl"><?php echo ($vo[C('DB_SZ_OUTBOUND_STATUS')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_SZ_OUTBOUND_SHIPPING_WAY')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_SZ_OUTBOUND_TRACKING_NUMBER')]); ?></div></td>
+						<td><div class="tl"><?php echo ($vo[C('DB_SZ_OUTBOUND_CREATE_TIME')]); ?></div></td>
+						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
 				<div class="result page" align="center"><?php echo ($page); ?></div>
 			</div>
@@ -369,7 +323,7 @@
 
 	</div>
 	</div>
-		
+	</div>
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.

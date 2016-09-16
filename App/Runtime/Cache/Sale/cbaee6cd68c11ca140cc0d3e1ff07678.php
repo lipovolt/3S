@@ -171,6 +171,30 @@ function save(){
 		<div>
 	</li>
 	<li>
+		<a href="#" mark="ussw"><span>深圳仓</span></a>
+		<div class="subnav">
+			<dl>
+	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Inbound/simpleInbound');?>">单品入库</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Outbound/simpleOutbound');?>">单品出库</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Outbound/importEbayOrders');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Outbound/index');?>">全部出库单</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Storage/index');?>">库存信息</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
+	<dd ><a href="#">EUB</a></dd>
+</dl>
+
+		<div>
+	</li>
+	<li>
 		<a href="#" mark="ussw"><span>权限管理</span></a>
 		<div class="subnav">
 			<dl>

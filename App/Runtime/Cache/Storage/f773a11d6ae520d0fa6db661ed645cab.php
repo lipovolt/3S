@@ -86,6 +86,8 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>美国自建仓 Ebay Amazon</strong>								
 	</dt>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSalePlanMetadata');?>" >美国自建仓销售基础表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售建议表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
@@ -95,6 +97,15 @@
 	</dt>
 	<dd><a href="<?php echo U('Sale/WinitUsSale/index');?>" >美国万邑通销售表</a></dd>
 	<dd><a href="<?php echo U('Sale/WinitDeSale/index');?>" >德国万邑通销售表</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>深圳直发 Ebay</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >飞特小包美国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >飞特小包德国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usTestCal');?>" >新产品美国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deTestCal');?>" >新产品德国试算</a></dd>
 </dl>
 		</div>
 	</li>
@@ -140,6 +151,39 @@
 	<dd ><a href="<?php echo U('Ussw/Storage/awaitingToStop');?>">待下架商品</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Storage/stopped');?>">已下架商品</a></dd>
 </dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
+	<dd ><a href="<?php echo U('Ussw/Postage/firstclass');?>">USPS First Class</a></dd>
+	<dd > </dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/priorityflatrate');?>">USPS Priority Falt Rate</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/priority');?>">USPS Priority</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexSmartPost');?>">Fedex Smart Post</a></dd>
+	<dd ><a href="<?php echo U('Ussw/Postage/fedexHomeDelivery');?>">Fedex Home Delivery</a></dd>
+</dl>
+
+		<div>
+	</li>
+	<li>
+		<a href="#" mark="ussw"><span>深圳仓</span></a>
+		<div class="subnav">
+			<dl>
+	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Inbound/simpleInbound');?>">单品入库</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Outbound/simpleOutbound');?>">单品出库</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Outbound/importEbayOrders');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Outbound/index');?>">全部出库单</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Storage/index');?>">库存信息</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
+	<dd ><a href="#">EUB</a></dd>
+</dl>
 
 		<div>
 	</li>
@@ -148,7 +192,8 @@
 		<div class="subnav">
 			<dl>
 	<dt><strong>用户管理</strong>	</dt>
-	<dd><a href="#" >添加用户</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/addUser');?>" >添加用户</a></dd>
+	<dd><a href="<?php echo U('Admin/Rbac/index');?>" >用户列表</a></dd>
 	<dd><a href="#" >删除用户</a></dd>
 	<dd><a href="#" >锁定用户</a></dd>
 </dl>
@@ -166,7 +211,7 @@
 </dl>
 <dl>
 	<dt><strong>权限分配</strong></dt>
-	<dd><a href="#" >权限分配</a></dd>
+	<dd><a href="#" >权限列表</a></dd>
 </dl>
 		<div>
 	</li>
