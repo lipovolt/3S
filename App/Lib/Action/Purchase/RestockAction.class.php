@@ -589,13 +589,11 @@ class RestockAction extends CommonAction{
 
     public function updateRestockShippingStatus(){
     	if (!empty($_FILES)) {
-			$splitname = explode('.',$file['name']);
-			$filename = $splitname[0].'_'.time();
 			import('ORG.Net.UploadFile');
 			$config=array(
 			 'allowExts'=>array('xls'),
-			 'savePath'=>'./Public/upload/',
-			 'saveRule'=>$filename,
+			 'savePath'=>'./Public/upload/restockUpdate',
+			 'saveRule'=>time(),
 			);
 			$upload = new UploadFile($config);
 			if (!$upload->upload()) {

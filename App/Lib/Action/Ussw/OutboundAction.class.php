@@ -94,13 +94,11 @@ class OutboundAction extends CommonAction{
 
     public function importEbaySaleRecordFile(){
     	if (!empty($_FILES)) {
-            $splitname = explode('.',$file['name']);
-            $filename = $splitname[0].'_'.time();
             import('ORG.Net.UploadFile');
              $config=array(
                  'allowExts'=>array('xlsx','xls'),
                  'savePath'=>'./Public/upload/usswOutbound/',
-                 'saveRule'=>$filename,
+                 'saveRule'=>I('post.sellerID').'_'.time(),
              );
              $upload = new UploadFile($config);
              if (!$upload->upload()) {

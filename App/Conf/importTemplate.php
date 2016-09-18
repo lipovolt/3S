@@ -81,7 +81,6 @@ return array(
 		'AF' => 'Cash on delivery option',
 		'AG' => 'Transaction ID',
 		'AH' => 'Order ID',
-		'AI' => 'Variation Details',
 		),
 
 	//Purchase order template
