@@ -82,13 +82,6 @@ return array(
 		'AG' => 'Transaction ID',
 		'AH' => 'Order ID',
 		'AI' => 'Variation Details',
-		'AJ' => 'Global Shipping Program',
-		'AK' => 'Global Shipping Reference ID',
-		'AL' => 'Ship To Address 1',
-		'AM' => 'Ship To Address 2',
-		'AN' => 'Ship To City',
-		'AO' => 'Ship To State',
-		'AP' => 'Ship To Zip',
 		),
 
 	//Purchase order template
