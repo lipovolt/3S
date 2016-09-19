@@ -90,7 +90,7 @@ class SzSaleAction extends CommonAction{
 				if(-($Date->dateDiff($lastModifyDate))>$adjustPeriod){
 					//开始计算该产品的销售建议
 					$suggest=null;
-					$suggest = $this->calUsSuggest($p[C('DB_SZSTORAGE_SKU')]);
+					$suggest = $this->calSuggest($p[C('DB_SZSTORAGE_SKU')],$country);
 					$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')];
 					$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_SZ_US_SALE_PLAN_SUGGEST')];
 					$this->updateUsp($usp,$country);
@@ -272,7 +272,7 @@ class SzSaleAction extends CommonAction{
 	}
 
 
-	private function calUsSuggest($sku,$country){
+	private function calSuggest($sku,$country){
 		//返回数组包含销售建议和价格
 		if($country=='us'){
 			$salePlanTable = M(C('DB_SZ_US_SALE_PLAN'));

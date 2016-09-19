@@ -333,7 +333,7 @@ class OutboundAction extends CommonAction{
     }
 
     private function verifyImportedEbayEnOrderColumnName($secondRow){
-        for($c='A';$c<=max(array_keys(C('IMPORT_EBAY_EN_ORDER')));$c++){
+        for($c='A';$c<='AH';$c++){
             if(trim($secondRow[$c]) != C('IMPORT_EBAY_EN_ORDER')[$c]){
                 return false;
             }
