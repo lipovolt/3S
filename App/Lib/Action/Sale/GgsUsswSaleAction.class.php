@@ -98,7 +98,7 @@ class GgsUsswSaleAction extends CommonAction{
 			$this->error('无法保存，当前产品没有销售建议');
 		}
 		
-		$this->redirect('usswSaleSuggest');
+		$this->success('保存成功');
 	}
 
 	public function ignoreSuggest($id){
@@ -107,7 +107,7 @@ class GgsUsswSaleAction extends CommonAction{
 		$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 		$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
 		M(C('DB_USSW_SALE_PLAN'))->save($data);
-		$this->redirect('usswSaleSuggest');
+		$this->success('保存成功');
 	}
 
 	public function updateUsswSalePlan(){

@@ -163,11 +163,10 @@ class InboundAction extends CommonAction{
                     for($i=2;$i<=$highestRow;$i++){
                         $restockId = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
                         $sku = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
-                        $quantity = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
 
                         $restockRow = $restock->where(array(C('DB_RESTOCK_ID')=>$restockId))->find();
-                        if($restockRow == null || $restockRow[C('DB_RESTOCK_SKU')] != $sku || $restockRow[C('DB_RESTOCK_QUANTITY')] != $quantity){
-                            $errorInFile[$i]='产品编码或数量与补货表不一致';
+                        if($restockRow == null || $restockRow[C('DB_RESTOCK_SKU')] != $sku){
+                            $errorInFile[$i]='产品编码与补货表不一致';
                         }                                     
                     }
                     $restock->commit();
@@ -209,7 +208,8 @@ class InboundAction extends CommonAction{
                             if($restockQuantity <= $value[C('DB_USSW_INBOUND_ITEM_DQUANTITY')]){
                                 $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->setField(C('DB_RESTOCK_STATUS'),'已发货');
                             }else{
-                                $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->setField(C('DB_RESTOCK_STATUS'),'部分发货');
+                                $rest = $restockQuantity - $value[C('DB_USSW_INBOUND_ITEM_DQUANTITY')];
+                                $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->setField(C('DB_RESTOCK_QUANTITY'),$rest);
                             }
                             
                         } 
