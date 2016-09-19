@@ -533,22 +533,26 @@ class GgsUsswSaleAction extends CommonAction{
 		$ways=array(
 				0=>'No way',
 				1=>'USPS First Class Mail',
-				2=>'USPS Priority Mail Small Flat Rate Box',
-				3=>'USPS Priority Mail Medium Flat Rate Box',
-				4=>'USPS Priority Mail Large Flat Rate Box',
-				5=>'USPS Priority Mail Package',
-				6=>'Fedex Smart Post',
-				7=>'Fedex Home Delivery'
+				2=>'USPS Priority Mail Flat Rate Envelope',
+				3=>'USPS Priority Mail Small Flat Rate Box',
+				4=>'USPS Priority Mail Medium Flat Rate Box',
+				5=>'USPS Priority Mail Large Flat Rate Box',
+				6=>'USPS Priority Mail Package',
+				7=>'Fedex Smart Post',
+				8=>'Fedex Home Delivery',
+				9=>'USPS Priority Regional Box A'
 			);
 		$fees=array(
 				0=>0,
 				1=>$this->calUsswUspsFirstClassFee($weight,$l,$w,$h),
-				2=>$this->calUsswUspsPrioritySmallFlatRateBoxFee($weight,$l,$w,$h),
-				3=>$this->calUsswUspsPriorityMediumFlatRateBoxFee($weight,$l,$w,$h),
-				4=>$this->calUsswUspsPriorityLargeFlatRateBoxFee($weight,$l,$w,$h),
-				5=>$this->calUsswUspsPriorityPackageFee(),
-				6=>$this->calUsswFedexSmartPostFee(),
-				7=>$this->calUsswUspsFedexHomeDeliveryFee($weight,$l,$w,$h)
+				2=>$this->calUsswUspsPriorityFlatRateEnvelopeFee($weight,$l,$w,$h),
+				3=>$this->calUsswUspsPrioritySmallFlatRateBoxFee($weight,$l,$w,$h),
+				4=>$this->calUsswUspsPriorityMediumFlatRateBoxFee($weight,$l,$w,$h),
+				5=>$this->calUsswUspsPriorityLargeFlatRateBoxFee($weight,$l,$w,$h),
+				6=>$this->calUsswUspsPriorityPackageFee($weight,$l,$w,$h),
+				7=>$this->calUsswFedexSmartPostFee($weight,$l,$w,$h),
+				8=>$this->calUsswUspsFedexHomeDeliveryFee($weight,$l,$w,$h),
+				9=>$this->calUsswUspsPriorityRegionalBoxAFee($weight,$l,$w,$h)
 			);
 		$cheapest=65536;
 		$way=0;
@@ -565,12 +569,14 @@ class GgsUsswSaleAction extends CommonAction{
 		$fees=array(
 				0=>0,
 				1=>$this->calUsswUspsFirstClassFee($weight,$l,$w,$h),
-				2=>$this->calUsswUspsPrioritySmallFlatRateBoxFee($weight,$l,$w,$h),
-				3=>$this->calUsswUspsPriorityMediumFlatRateBoxFee($weight,$l,$w,$h),
-				4=>$this->calUsswUspsPriorityLargeFlatRateBoxFee($weight,$l,$w,$h),
-				5=>$this->calUsswUspsPriorityPackageFee($weight,$l,$w,$h),
-				6=>$this->calUsswFedexSmartPostFee($weight,$l,$w,$h),
-				7=>$this->calUsswUspsFedexHomeDeliveryFee($weight,$l,$w,$h)
+				2=>$this->calUsswUspsPriorityFlatRateEnvelopeFee($weight,$l,$w,$h),
+				3=>$this->calUsswUspsPrioritySmallFlatRateBoxFee($weight,$l,$w,$h),
+				4=>$this->calUsswUspsPriorityMediumFlatRateBoxFee($weight,$l,$w,$h),
+				5=>$this->calUsswUspsPriorityLargeFlatRateBoxFee($weight,$l,$w,$h),
+				6=>$this->calUsswUspsPriorityPackageFee($weight,$l,$w,$h),
+				7=>$this->calUsswFedexSmartPostFee($weight,$l,$w,$h),
+				8=>$this->calUsswUspsFedexHomeDeliveryFee($weight,$l,$w,$h),
+				9=>$this->calUsswUspsPriorityRegionalBoxAFee($weight,$l,$w,$h)
 			);
 		$cheapest=65536;
 		for ($i=0; $i < 8; $i++) { 
@@ -613,6 +619,24 @@ class GgsUsswSaleAction extends CommonAction{
 			elseif($weight>=425 and $weight<=453){
 				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>453))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
+		}
+		else{
+			return 0;
+		}
+	}
+
+	private function calUsswUspsPriorityFlatRateEnvelopeFee($weight,$l,$w,$h){
+		if ($weight <= 31751 and $l <= 31 and $w+$h <= 24){
+			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>4))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
+		}
+		else{
+			return 0;
+		}
+	}
+
+	private function calUsswUspsPriorityRegionalBoxAFee($weight,$l,$w,$h){
+		if ($weight <= 31751 and $l <= 25 and $w <= 17 and $h <= 12){
+			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>6))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
 		}
 		else{
 			return 0;
