@@ -35,7 +35,7 @@ return array(
 	'USER_AUTH_ON' => true,
 	'USER_AUTH_TYPE' =>1,
 	'USER_AUTH_KEY' => 'uid',
-	'NOT_AUTH_MODULE' => 'Index,Product,Purchase,Supplier,GgsUsswSale,Metadata,WinitDeSale,WinitUsSale,Restock,Storage,Inbound,Outbound,Storage',
+	'NOT_AUTH_MODULE' => 'Product,Index,Purchase,Restock,Supplier,GgsUsswSale,SzSale,WinitDeSale,WinitUsSale,Storage,Inbound,Outbound,Postage',
 	'NOT_AUTH_ACTION' => 'login,logout',
 	'RBAC_ROLE_TABLE' => '3s_role',
 	'RBAC_USER_TABLE' => '3s_role_user',
