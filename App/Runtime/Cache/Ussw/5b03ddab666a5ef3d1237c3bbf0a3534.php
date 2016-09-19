@@ -61,7 +61,7 @@
 	</dt>
 	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
 </dl>
-<dl>
+<!-- <dl>
 	<dt>
 		<strong>缺货补货</strong>								
 	</dt>
@@ -69,7 +69,7 @@
 	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'US'));?>" >导出美国缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'DE'));?>" >导出德国缺货表</a></dd>
 	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
-</dl>
+</dl> -->
 
 		</div>
 	</li>
@@ -123,6 +123,16 @@
 </dl>
 <dl>
 	<dt>
+		<strong>缺货补货</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Purchase/Restock/importStorage');?>" >导出缺货表</a></dd>
+	<dd><a href="<?php echo U('Purchase/Restock/importStorage',array('country'=>'US'));?>" >导出美国缺货表</a></dd>
+	<dd><a href="<?php echo U('Purchase/Restock/importStorage',array('country'=>'DE'));?>" >导出德国缺货表</a></dd>
+	<dd><a href="<?php echo U('Purchase/Restock/findSzswOutOfStockItem');?>" >导出深圳缺货表</a></dd>
+	<dd><a href="<?php echo U('Purchase/Restock/index');?>" >补货表</a></dd>
+</dl>
+<dl>
+	<dt>
 		<i class="icon dropdown-s"></i><strong>供货商</strong>								
 	</dt>
 	<dd><a href="<?php echo U('Purchase/Supplier/index');?>" >供货商信息</a></dd>
@@ -159,6 +169,30 @@
 	<dd ><a href="<?php echo U('Ussw/Postage/priority');?>">USPS Priority</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Postage/fedexSmartPost');?>">Fedex Smart Post</a></dd>
 	<dd ><a href="<?php echo U('Ussw/Postage/fedexHomeDelivery');?>">Fedex Home Delivery</a></dd>
+</dl>
+
+		<div>
+	</li>
+	<li>
+		<a href="#" mark="ussw"><span>深圳仓</span></a>
+		<div class="subnav">
+			<dl>
+	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Inbound/simpleInbound');?>">单品入库</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Outbound/simpleOutbound');?>">单品出库</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Outbound/importEbayOrders');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Outbound/index');?>">全部出库单</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Storage/index');?>">库存信息</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Postage/eub');?>">EUB</a></dd>
 </dl>
 
 		<div>
@@ -234,7 +268,7 @@
 	<div id="ProductInfo" class="main">
 		<div class="tab-content">	
 			<div class="sidenav-hd"><strong>USPS First Class 邮费设置</strong></div>
-			<form method="POST" id="updateFirstClass" name="updateFirstClass" action="<?php echo U('Sale/GgsUsswSale/calUsswUspsFirstClassFee',array('weight'=>85,'l'=>18,'w'=>10,'h'=>4));?>">
+			<form method="POST" id="updateFirstClass" name="updateFirstClass" action="<?php echo U('Ussw/Postage/updateFirstClass');?>">
 			<div class="block-outer-hd" align="right">
 				<button class="btn btn-blue btn-s" id="savePurchaseItemInfo">保存</button>
 		    </div>

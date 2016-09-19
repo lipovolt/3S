@@ -42,7 +42,6 @@ class GgsUsswSaleAction extends CommonAction{
 			$usp = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
 			if($usp == null){
 				$this->addProductToUsp($p[C('DB_USSTORAGE_SKU')]);
-				$usp=$this->getUsp($p[C('DB_USSTORAGE_SKU')]);
 				$usp = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
 			}else{
 				$usp[C('DB_USSW_SALE_PLAN_COST')]=$this->calUsswSuggestCost($p[C('DB_USSTORAGE_SKU')]);
@@ -79,21 +78,26 @@ class GgsUsswSaleAction extends CommonAction{
 
 	public function confirmSuggest($id){
 		$data = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->find();
-		$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
-		if($data[C('DB_USSW_SALE_PLAN_ID_SUGGEST')]=='relisting'){
-			$data[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')] = intval($data[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')])+1;
-		}
+		if($data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_USSW_SALE_PLAN_SUGGEST')]!=null){
+			$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+			if($data[C('DB_USSW_SALE_PLAN_ID_SUGGEST')]=='relisting'){
+				$data[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')] = intval($data[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')])+1;
+			}
 
-		if($data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]==null){
-			$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('ymd',time());
+			if($data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]==null){
+				$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('ymd',time());
+			}else{
+				$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')].' | '.$data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+			}
+
+			$data[C('DB_USSW_SALE_PLAN_PRICE')] = $data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+			$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+			$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
+			M(C('DB_USSW_SALE_PLAN'))->save($data);
 		}else{
-			$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')].' | '.$data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+			$this->error('无法保存，当前产品没有销售建议');
 		}
-
-		$data[C('DB_USSW_SALE_PLAN_PRICE')] = $data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-		$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
-		$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
-		M(C('DB_USSW_SALE_PLAN'))->save($data);
+		
 		$this->redirect('usswSaleSuggest');
 	}
 
@@ -246,10 +250,6 @@ class GgsUsswSaleAction extends CommonAction{
 		$map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('between',array($startDate,$endDate));
 		$map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
 		return $usswOutboundItem->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
-	}
-
-	private function getUsp($sku){
-		return M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->select();
 	}
 
 	private function addProductToUsp($sku){

@@ -298,13 +298,11 @@ class RestockAction extends CommonAction{
 
 	public function findAllOutOfStockItem($dfa,$dfs){
 		if (!empty($_FILES)) {
-			$splitname = explode('.',$file['name']);
-			$filename = $splitname[0].'_'.time();
 			import('ORG.Net.UploadFile');
 			$config=array(
 			 'allowExts'=>array('xls'),
 			 'savePath'=>'./Public/upload/restock/',
-			 'saveRule'=>$filename,
+			 'saveRule'=>'winitStock'.'_'.time(),
 			);
 			$upload = new UploadFile($config);
 			if (!$upload->upload()) {

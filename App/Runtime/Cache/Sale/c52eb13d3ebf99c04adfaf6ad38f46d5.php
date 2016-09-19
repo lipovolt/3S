@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>深圳仓库存信息</title>
+<title>深圳仓销售建议参数</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -102,10 +102,12 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳直发 Ebay</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >美国销售表</a></dd>
-	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >德国销售表</a></dd>
-	<dd><a href="<?php echo U('Sale/SzSale/szswSuggest');?>" >深圳仓销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/szSalePlanMetadata');?>" >深圳仓销售基础表</a></dd>
 	<dd></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >美国销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usSuggest');?>" >美国销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >德国销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deSuggest');?>" >德国销售建议表</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/usTestCal');?>" >新产品美国试算</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/deTestCal');?>" >新产品德国试算</a></dd>
 </dl>
@@ -234,109 +236,102 @@
 			</div>
 		</div>
 	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
-		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>库存</strong></div>
+			<div class="sidenav-hd"><strong>销售</strong></div>
 			<div class="sidenav-bd">
 				<dl>
 	<dt>
-		<strong>美国仓库存</strong>								
+		<i class="icon dropdown-s"></i><strong>基本信息</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
+	<dd><a href="<?php echo U('Sale/Metadata/index');?>" >基本信息</a></dd>
 </dl>
 <dl>
 	<dt>
-		<strong>深圳仓库存</strong>								
+		<i class="icon dropdown-s"></i><strong>美国自建仓 Ebay Amazon</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSalePlanMetadata');?>" >美国自建仓销售基础表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/usswSaleSuggest');?>" >美国自建仓销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/index');?>" >美国自建仓销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/GgsUsswSale/ggsUsswItemTest');?>" >美国自建仓试算</a></dd>
 </dl>
-<!-- <dl>
+<dl>
 	<dt>
-		<strong>缺货补货</strong>								
+		<i class="icon dropdown-s"></i><strong>万邑通 Ebay</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
-	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'US'));?>" >导出美国缺货表</a></dd>
-	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'DE'));?>" >导出德国缺货表</a></dd>
-	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
-</dl> -->
-
+	<dd><a href="<?php echo U('Sale/WinitUsSale/index');?>" >美国万邑通销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/WinitDeSale/index');?>" >德国万邑通销售表</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>深圳直发 Ebay</strong>								
+	</dt>
+	<dd><a href="<?php echo U('Sale/SzSale/szSalePlanMetadata');?>" >深圳仓销售基础表</a></dd>
+	<dd></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >美国销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usSuggest');?>" >美国销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >德国销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deSuggest');?>" >德国销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usTestCal');?>" >新产品美国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deTestCal');?>" >新产品德国试算</a></dd>
+</dl>	
 			</div>
 		</div>
-	<div class="content">
-	<div id="Australia" class="main">
-		<form name="search_outbound" id="search_outbound" action="<?php echo U('Szsw/Storage/index');?>" method="POST">			
-		<div class="block-indent search-area">
-			<div class="form-group">
-				<label for="" class="control-label">关键字</label>
-				<div class="control-wrap">
-					<select name="keyword" id="keyword" data-value="">
-						<option value="sku">产品编码</option>
-						<option value="cname">产品中文名称</option>
-						<option value="ename">产品英文名称</option>
-					</select>
+		<div class="content">
+			<div class="tab-content">
+				<div class="block-hd">
+					<i class="icon import"></i>
+					<strong>深圳仓销售建议参数设置</strong>
 				</div>
-				<div class="control-wrap">
-					<input type="text" name="keywordValue" id="keywordValue" value="">
-				</div>
-			</div>
-			<button class="btn btn-s btn-blue" onclick="search_outbound.submit();">
-				<i class="icon search"></i>
-				<i class="vline-inline"></i>
-				<span>查询</span>
-			</button>
-        </div>
-    </form>
-		<div>
-			<div class="tab-content data-list">				
-							
 				<table id="tablelist" class="tablelist">
 					<tr>
-						<th>货位</th>
-					    <th>产品编码</th>					    
-					    <th><div class="tl">中文名称</div></th>	 
-						<th><div class="tr">历史入库</div></th>
-						<th><div class="tr">可用库存</div></th>
-						<th><div class="tr">待出库</div></th>
-						<th><div class="tr">待入库</div></th>
-						<th><div class="tr">历史销量</div></th>
-						<th><div class="t1">备注</div></th>
-						<th width="230">操作</th>
-					</tr>    
-					<tr>
-						<?php if(is_array($szstorage)): $i = 0; $__LIST__ = $szstorage;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><?php echo ($vo["position"]); ?></td>
-						<td><?php echo ($vo["sku"]); ?></td>						
-						<td><div class="tl"><?php echo ($vo["cname"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["cinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["ainventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["oinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["iinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["csales"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["remark"]); ?></div></td>
-						<td>
-							<a href="<?php echo U('Szsw/Storage/edit',array(C('DB_SZSTORAGE_ID')=>$vo[C('DB_SZSTORAGE_ID')]));?>">编辑</a>
-						</td>
-						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
-					</tr>						
+						<th><div class="tl">清货条件（天数）</div></th>
+						<th><div class="tl">重新刊登条件（天数）</div></th>
+						<th><div class="tl">调整周期（天数）</div></th>
+						<th><div class="tl">算法标准周期（天数）</div></th>
+						<th><div class="tl">10美元起始利润率</div></th>
+						<th><div class="tl">10-20美元起始利润率</div></th>
+						<th><div class="tl">20-30美元起始利润率</div></th>
+						<th><div class="tl">30-50美元起始利润率</div></th>
+						<th><div class="tl">50美元以上起始利润率</div></th>
+						<th><div class="tl">售价每次调整百分比</div></th>
+						<th><div class="tl">周期销量下限</div></th>
+						<th><div class="tl">销量下限替换分母</div></th>
+						<th><div class="tl">增长率波动范围±</div></th>
+						<th><div class="tl">操作</div></th>
+					</tr>
+					<?php if(is_array($data)): $i = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
+						<form method="POST" id="metadataUpdate" action="<?php echo U('Sale/SzSale/updataMetaDate');?>">
+							<td><div class="tl">
+							<input type="hidden" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_ID');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_ID')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_ID');?>"/>
+							<input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_CLEAR_NOD');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_CLEAR_NOD')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_CLEAR_NOD');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_RELISTING_NOD');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_RELISTING_NOD')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_RELISTING_NOD');?>"/></div></td>						
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_ADJUST_PERIOD');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_ADJUST_PERIOD')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_ADJUST_PERIOD');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_STANDARD_PERIOD');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_STANDARD_PERIOD')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_STANDARD_PERIOD');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SPR1');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_SPR1')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SPR1');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SPR2');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_SPR2')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SPR2');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SPR3');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_SPR3')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SPR3');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SPR4');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_SPR4')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SPR4');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SPR5');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_SPR5')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SPR5');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_PCR');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_PCR')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_PCR');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SQNR');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_SQNR')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_SQNR');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_DENOMINATOR');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_DENOMINATOR')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_DENOMINATOR');?>"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="<?php echo C('DB_SZ_SALE_PLAN_METADATA_GRFR');?>" value="<?php echo ($vo[C('DB_SZ_SALE_PLAN_METADATA_GRFR')]); ?>" id="<?php echo C('DB_SZ_SALE_PLAN_METADATA_GRFR');?>"/></div></td>
+							<td><div class="tl"><button class="btn btn-blue btn-s" id="saveMetadataInfo">保存</button></div></td>
+						</form>
+						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 								
 				</table>
 				<div class="result page" align="center"><?php echo ($page); ?></div>
-				<div class="tr">
-								
-					<!-- 分页开始  --> 
-										<!-- 分页 结束 -->	
-				</div>
 			</div>
 		</div>
 	</div>
 
 
-
-
-		</div>
 	</div>
-		
+	</div>
+	</div>
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
 		Powered by Shangsi CORPORATION. All &copy; Rights Reserved.

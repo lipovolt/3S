@@ -56,7 +56,7 @@ class OutboundAction extends CommonAction{
              $config=array(
                  'allowExts'=>array('xlsx','xls'),
                  'savePath'=>'./Public/upload/szEbayOrders/',
-                 'saveRule'=>I('post.sellerID').time(),
+                 'saveRule'=>I('post.sellerID').'_'.time(),
              );
              $upload = new UploadFile($config);
              if (!$upload->upload()) {

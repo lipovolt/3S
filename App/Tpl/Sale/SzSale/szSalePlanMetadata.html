@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>深圳仓销售建议参数</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>销售</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/saleMenu.html" />	
+			</div>
+		</div>
+		<div class="content">
+			<div class="tab-content">
+				<div class="block-hd">
+					<i class="icon import"></i>
+					<strong>深圳仓销售建议参数设置</strong>
+				</div>
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th><div class="tl">清货条件（天数）</div></th>
+						<th><div class="tl">重新刊登条件（天数）</div></th>
+						<th><div class="tl">调整周期（天数）</div></th>
+						<th><div class="tl">算法标准周期（天数）</div></th>
+						<th><div class="tl">10美元起始利润率</div></th>
+						<th><div class="tl">10-20美元起始利润率</div></th>
+						<th><div class="tl">20-30美元起始利润率</div></th>
+						<th><div class="tl">30-50美元起始利润率</div></th>
+						<th><div class="tl">50美元以上起始利润率</div></th>
+						<th><div class="tl">售价每次调整百分比</div></th>
+						<th><div class="tl">周期销量下限</div></th>
+						<th><div class="tl">销量下限替换分母</div></th>
+						<th><div class="tl">增长率波动范围±</div></th>
+						<th><div class="tl">操作</div></th>
+					</tr>
+					<volist name="data" id="vo">
+						<tr>
+						<form method="POST" id="metadataUpdate" action="{:U('Sale/SzSale/updataMetaDate')}">
+							<td><div class="tl">
+							<input type="hidden" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_ID')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_ID')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_ID')}"/>
+							<input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_CLEAR_NOD')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_CLEAR_NOD')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_CLEAR_NOD')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_RELISTING_NOD')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_RELISTING_NOD')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_RELISTING_NOD')}"/></div></td>						
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_ADJUST_PERIOD')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_ADJUST_PERIOD')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_ADJUST_PERIOD')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_STANDARD_PERIOD')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_STANDARD_PERIOD')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_STANDARD_PERIOD')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_SPR1')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_SPR1')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_SPR1')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_SPR2')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_SPR2')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_SPR2')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_SPR3')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_SPR3')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_SPR3')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_SPR4')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_SPR4')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_SPR4')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_SPR5')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_SPR5')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_SPR5')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_PCR')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_PCR')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_PCR')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_SQNR')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_SQNR')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_SQNR')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_DENOMINATOR')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_DENOMINATOR')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_DENOMINATOR')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_SZ_SALE_PLAN_METADATA_GRFR')}" value="{$vo[C('DB_SZ_SALE_PLAN_METADATA_GRFR')]}" id="{:C('DB_SZ_SALE_PLAN_METADATA_GRFR')}"/></div></td>
+							<td><div class="tl"><button class="btn btn-blue btn-s" id="saveMetadataInfo">保存</button></div></td>
+						</form>
+						</tr>	
+					</volist> 								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+
+
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

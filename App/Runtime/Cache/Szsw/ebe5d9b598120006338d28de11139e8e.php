@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>深圳仓库存信息</title>
+<title>中邮邮费设置</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -102,10 +102,8 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳直发 Ebay</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >美国销售表</a></dd>
-	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >德国销售表</a></dd>
-	<dd><a href="<?php echo U('Sale/SzSale/szswSuggest');?>" >深圳仓销售建议表</a></dd>
-	<dd></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >飞特小包美国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >飞特小包德国试算</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/usTestCal');?>" >新产品美国试算</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/deTestCal');?>" >新产品德国试算</a></dd>
 </dl>
@@ -237,104 +235,65 @@
 	<div class="area clearfix">
 		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>库存</strong></div>
+			<div class="sidenav-hd"><strong>深圳仓库存管理</strong></div>
 			<div class="sidenav-bd">
 				<dl>
-	<dt>
-		<strong>美国仓库存</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Storage/Storage/usstorage');?>"  mark="Outbound">自建仓库存</a></dd>
-	<dd><a href="<?php echo U('Storage/Storage/checkAinventory');?>"  mark="Outbound">检测库存</a></dd>
+	<dt><i class="icon dropdown-s"></i><strong>入库管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Inbound/simpleInbound');?>">单品入库</a></dd>
 </dl>
 <dl>
-	<dt>
-		<strong>深圳仓库存</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Storage/Storage/szstorage');?>"  mark="Outbound">深圳仓库存</a></dd>
+	<dt><i class="icon dropdown-s"></i><strong>出库管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Outbound/simpleOutbound');?>">单品出库</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Outbound/importEbayOrders');?>">导入ebay订单</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Outbound/index');?>">全部出库单</a></dd>
 </dl>
-<!-- <dl>
-	<dt>
-		<strong>缺货补货</strong>								
-	</dt>
-	<dd><a href="<?php echo U('Storage/Restock/importStorage');?>" >导出缺货表</a></dd>
-	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'US'));?>" >导出美国缺货表</a></dd>
-	<dd><a href="<?php echo U('Storage/Restock/importStorage',array('country'=>'DE'));?>" >导出德国缺货表</a></dd>
-	<dd><a href="<?php echo U('Storage/Restock/index');?>" >补货表</a></dd>
-</dl> -->
-
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>库存管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Storage/index');?>">库存信息</a></dd>
+</dl>
+<dl>
+	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
+	<dd ><a href="<?php echo U('Szsw/Postage/eub');?>">EUB</a></dd>
+	<dd ></dd>
+	<dd ><a href="<?php echo U('Szsw/Postage/cpc');?>">中邮分区</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Postage/cpf');?>">中邮运费</a></dd>
+</dl>
+	
 			</div>
 		</div>
 	<div class="content">
-	<div id="Australia" class="main">
-		<form name="search_outbound" id="search_outbound" action="<?php echo U('Szsw/Storage/index');?>" method="POST">			
-		<div class="block-indent search-area">
-			<div class="form-group">
-				<label for="" class="control-label">关键字</label>
-				<div class="control-wrap">
-					<select name="keyword" id="keyword" data-value="">
-						<option value="sku">产品编码</option>
-						<option value="cname">产品中文名称</option>
-						<option value="ename">产品英文名称</option>
-					</select>
-				</div>
-				<div class="control-wrap">
-					<input type="text" name="keywordValue" id="keywordValue" value="">
-				</div>
-			</div>
-			<button class="btn btn-s btn-blue" onclick="search_outbound.submit();">
-				<i class="icon search"></i>
-				<i class="vline-inline"></i>
-				<span>查询</span>
-			</button>
-        </div>
-    </form>
-		<div>
-			<div class="tab-content data-list">				
-							
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th>货位</th>
-					    <th>产品编码</th>					    
-					    <th><div class="tl">中文名称</div></th>	 
-						<th><div class="tr">历史入库</div></th>
-						<th><div class="tr">可用库存</div></th>
-						<th><div class="tr">待出库</div></th>
-						<th><div class="tr">待入库</div></th>
-						<th><div class="tr">历史销量</div></th>
-						<th><div class="t1">备注</div></th>
-						<th width="230">操作</th>
-					</tr>    
-					<tr>
-						<?php if(is_array($szstorage)): $i = 0; $__LIST__ = $szstorage;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
-						<td><?php echo ($vo["position"]); ?></td>
-						<td><?php echo ($vo["sku"]); ?></td>						
-						<td><div class="tl"><?php echo ($vo["cname"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["cinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["ainventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["oinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["iinventory"]); ?></div></td>
-						<td><div class="tr"><?php echo ($vo["csales"]); ?></div></td>
-						<td><div class="tl"><?php echo ($vo["remark"]); ?></div></td>
+	<div id="ProductInfo" class="main">
+		<div class="tab-content">	
+			<div class="sidenav-hd"><strong>中邮邮费设置</strong></div>
+			<form method="POST" id="updateFirstClass" name="updateFirstClass" action="<?php echo U('Szsw/Postage/saveCpf');?>">
+			<div class="block-outer-hd" align="right">
+				<button class="btn btn-blue btn-s" id="savePurchaseItemInfo">保存</button>
+				<a class="btn btn-blue btn-s" href="<?php echo U('Szsw/Postage/cpf',array('insert'=>true));?>">新增</a>
+		    </div>
+			<table id="tablelist" class="tablelist">
+				<tr>
+					<th>分区</th>
+				    <th>挂号/件</th>
+				    <th>邮费/公斤</th>
+				</tr>    
+				<tr>
+					<?php if(is_array($postage)): $i = 0; $__LIST__ = $postage;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): $mod = ($i % 2 );++$i;?><tr>
 						<td>
-							<a href="<?php echo U('Szsw/Storage/edit',array(C('DB_SZSTORAGE_ID')=>$vo[C('DB_SZSTORAGE_ID')]));?>">编辑</a>
+							<input type="hidden" id="id<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_ID')]); ?>" name="id<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_ID')]); ?>" value="<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_ID')]); ?>"> 
+							<input type="text" id="class<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_ID')]); ?>" name="class<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_ID')]); ?>" value="<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_CLASS_ID')]); ?>" style="width:60px;"/> 
 						</td>
+						<td><input type="text" id="register<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_ID')]); ?>" name="register<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_ID')]); ?>" value="<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_REGISTER')]); ?>" style="width:60px;"/> </td>
+						<td><input type="text" id="fee<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_ID')]); ?>" name="fee<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_ID')]); ?>" value="<?php echo ($vo[C('DB_SZ_POSTAGE_CPF_FEE')]); ?>" style="width:60px;"/> </td>
 						</tr><?php endforeach; endif; else: echo "" ;endif; ?> 		
-					</tr>						
-				</table>
-				<div class="result page" align="center"><?php echo ($page); ?></div>
-				<div class="tr">
-								
-					<!-- 分页开始  --> 
-										<!-- 分页 结束 -->	
-				</div>
-			</div>
+				</tr>								
+			</table>
+			</form>
+			<div class="result page" align="center"><?php echo ($page); ?></div>
 		</div>
 	</div>
 
 
-
-
-		</div>
+	</div>
 	</div>
 		
 	<!-- InstanceEndEditable -->

@@ -102,8 +102,12 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳直发 Ebay</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >飞特小包美国试算</a></dd>
-	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >飞特小包德国试算</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/szSalePlanMetadata');?>" >深圳仓销售基础表</a></dd>
+	<dd></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >美国销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/suggest',array('country'=>'us'));?>" >美国销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >德国销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/suggest',array('country'=>'de'));?>" >德国销售建议表</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/usTestCal');?>" >新产品美国试算</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/deTestCal');?>" >新产品德国试算</a></dd>
 </dl>
@@ -128,7 +132,7 @@
 	<dd><a href="<?php echo U('Purchase/Restock/importStorage');?>" >导出缺货表</a></dd>
 	<dd><a href="<?php echo U('Purchase/Restock/importStorage',array('country'=>'US'));?>" >导出美国缺货表</a></dd>
 	<dd><a href="<?php echo U('Purchase/Restock/importStorage',array('country'=>'DE'));?>" >导出德国缺货表</a></dd>
-	<dd><a href="<?php echo U('Purchase/Restock/findSzswOutOfStockItem',array('dfa'=>4,'dfs'=>60));?>" >导出深圳缺货表</a></dd>
+	<dd><a href="<?php echo U('Purchase/Restock/findSzswOutOfStockItem');?>" >导出深圳缺货表</a></dd>
 	<dd><a href="<?php echo U('Purchase/Restock/index');?>" >补货表</a></dd>
 </dl>
 <dl>
@@ -192,7 +196,10 @@
 </dl>
 <dl>
 	<dt><i class="icon dropdown-s"></i><strong>邮费管理</strong></dt>
-	<dd ><a href="#">EUB</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Postage/eub');?>">EUB</a></dd>
+	<dd ></dd>
+	<dd ><a href="<?php echo U('Szsw/Postage/cpc');?>">中邮分区</a></dd>
+	<dd ><a href="<?php echo U('Szsw/Postage/cpf');?>">中邮运费</a></dd>
 </dl>
 
 		<div>
