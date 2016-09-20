@@ -42,13 +42,16 @@
 		    </div>
 			<table id="tablelist" class="tablelist">
 				<tr>
+					<th>编号</th>		
 					<th>运输方式</th>					    
 				    <th>运费$</th>
 				</tr>    
 				<tr>
 					<volist name="postage" id="vo">
 						<tr>
-						<td><input type="hidden" id="id{$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')]}" name="id{$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')]}" value="{$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')]}"> {$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_NAME')]}</td>
+						<td><input type="hidden" id="id{$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')]}" name="id{$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')]}" value="{$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')]}">{$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')]} 
+						</td>
+						<td> {$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_NAME')]}</td>
 						<td><input type="text" id="fee{$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')]}" name="fee{$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')]}" value="{$vo[C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE')]}" style="width:60px;"/> </td>
 						</tr>	
 					</volist> 		

@@ -102,10 +102,12 @@
 	<dt>
 		<i class="icon dropdown-s"></i><strong>深圳直发 Ebay</strong>								
 	</dt>
-	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >美国销售表</a></dd>
-	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >德国销售表</a></dd>
-	<dd><a href="<?php echo U('Sale/SzSale/szswSuggest');?>" >深圳仓销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/szSalePlanMetadata');?>" >深圳仓销售基础表</a></dd>
 	<dd></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/usCal');?>" >美国销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/suggest',array('country'=>'us'));?>" >美国销售建议表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/deCal');?>" >德国销售表</a></dd>
+	<dd><a href="<?php echo U('Sale/SzSale/suggest',array('country'=>'de'));?>" >德国销售建议表</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/usTestCal');?>" >新产品美国试算</a></dd>
 	<dd><a href="<?php echo U('Sale/SzSale/deTestCal');?>" >新产品德国试算</a></dd>
 </dl>
