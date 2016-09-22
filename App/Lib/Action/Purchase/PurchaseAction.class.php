@@ -382,12 +382,12 @@ class PurchaseAction extends CommonAction{
         if($data[C('DB_RESTOCK_WAREHOUSE')]=='美自建仓' || $data[C('DB_RESTOCK_WAREHOUSE')]=='万邑通美西'){
             $data[C('DB_RESTOCK_TRANSPORT')] = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$data[C('DB_RESTOCK_SKU')]))->getField(C('DB_PRODUCT_TOUS'));
             $data[C('DB_RESTOCK_STATUS')] = '待发货';
-            $this->updateRestock($data);
+            $this->updateRestock($data,$newReceived);
         }
         if($data[C('DB_RESTOCK_WAREHOUSE')]=='万邑通德国'){
             $data[C('DB_RESTOCK_TRANSPORT')] = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$data[C('DB_RESTOCK_SKU')]))->getField(C('DB_PRODUCT_TODE'));
             $data[C('DB_RESTOCK_STATUS')] = '待发货';
-            $this->updateRestock($data);
+            $this->updateRestock($data,$newReceived);
         }
         if($data[C('DB_RESTOCK_WAREHOUSE')]=='深圳仓'){
             $this->updataSzStorage($data[C('DB_RESTOCK_SKU')],$newReceived);
@@ -409,12 +409,12 @@ class PurchaseAction extends CommonAction{
         }
     }
 
-    private function updateRestock($data){
+    private function updateRestock($data,$newReceived){
+
         $restock = M(C('DB_RESTOCK'));
         $restock->startTrans();
         $isInRestock = $restock->where(array(C('DB_RESTOCK_SKU')=>$data[C('DB_RESTOCK_SKU')],C('DB_RESTOCK_WAREHOUSE')=>$data[C('DB_RESTOCK_WAREHOUSE')],C('DB_RESTOCK_STATUS')=>$data[C('DB_RESTOCK_STATUS')]))->find();
-
-        if($isInRestock !==null || $isInRestock!==false){
+        if($isInRestock !=null && $isInRestock!=false){
             $data[C('DB_RESTOCK_QUANTITY')] = $isInRestock[C('DB_RESTOCK_QUANTITY')]+$newReceived;
             $restock->where(array(C('DB_RESTOCK_ID')=>$isInRestock[C('DB_RESTOCK_ID')]))->save($data);
         }else{
@@ -428,7 +428,7 @@ class PurchaseAction extends CommonAction{
         $status = '全部到货';
         $items = M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_PURCHASE_ID')=>$purchaseID))->select();
         foreach ($items as $key => $value) {
-            if($value[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')] != $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]){
+            if($value[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')] <= $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]){
                 $status = '部分到货';
             }
         }
