@@ -358,7 +358,7 @@ class PurchaseAction extends CommonAction{
                 }
             }
             
-            $this->success("已修改状态");
+            $this->redirect('index',array('status'=>'待确认'));
         }else{
             $this->error("状态无法更新");
         }
@@ -428,7 +428,7 @@ class PurchaseAction extends CommonAction{
         $status = '全部到货';
         $items = M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_PURCHASE_ID')=>$purchaseID))->select();
         foreach ($items as $key => $value) {
-            if($value[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')] <= $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]){
+            if($value[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')] < $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]){
                 $status = '部分到货';
             }
         }
