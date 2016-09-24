@@ -42,15 +42,19 @@
 						<label for="keyword" class="control-label">关键字</label>
 						<div class="control-wrap">
 							<select name="keyword" id="keyword" data-value="">
-								<option value="{:C('DB_PRODUCT_SKU')}">产品编码</option>
-								<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
+								<if condition="($keyword eq 'sku')"> 
+									<option value="{:C('DB_PRODUCT_SKU')}" selected="">产品编码</option>
+									<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
+								<else /> 
+									<option value="{:C('DB_PRODUCT_SKU')}">产品编码</option>
+									<option value="{:C('DB_PRODUCT_CNAME')}" selected="">产品名称</option>
+								</if>
 							</select>
 						</div>
 						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
+							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="{$keywordValue}">
 						</div>
 					</div>
-					<input type="hidden" name="country" value="122" />
 					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
 						<i class="icon search"></i>
 						<i class="vline-inline"></i>

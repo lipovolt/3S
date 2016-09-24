@@ -70,6 +70,8 @@ class WinitUsSaleAction extends CommonAction{
         	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')]*0.3937008,2);
         	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')]*0.3937008,2);
         }
+        $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
+        $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
         $this->assign('data',$data);
         $this->assign('page',$show);
         $this->display();

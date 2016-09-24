@@ -45,6 +45,8 @@ class SzSaleAction extends CommonAction{
         }
         else{
             $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+            $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
+            $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
             $this->suggest = $Data->where($where)->select();
             $this->assign('country',$country);
         }
@@ -474,6 +476,8 @@ class SzSaleAction extends CommonAction{
         	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')],2);
         	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')],2);
         }
+        $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
+        $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
         $this->assign('data',$data);
         $this->assign('page',$show);
         $this->display();
@@ -585,6 +589,8 @@ class SzSaleAction extends CommonAction{
         	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')],2);
         	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')],2);
         }
+        $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
+        $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
         $this->assign('data',$data);
         $this->assign('page',$show);
         $this->display();
