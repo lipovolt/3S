@@ -37,6 +37,8 @@ class StorageAction extends CommonAction{
                 $usstorage[$key][C('DB_USSTORAGE_ENAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_ENAME'));
               }
             }
+            $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
+            $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
             $this->assign('usstorage',$usstorage);
         }
         $this->display();

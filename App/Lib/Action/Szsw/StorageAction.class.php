@@ -29,6 +29,8 @@ class StorageAction extends CommonAction{
               $szstorage[$key]['iinventory'] = $this->getIInventory($value[C('DB_SZSTORAGE_SKU')]);
               $szstorage[$key]['oinventory'] = $this->getOInventory($value[C('DB_SZSTORAGE_SKU')]);
             }
+            $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
+            $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
             $this->assign('szstorage',$szstorage);
         }
         $this->display();
