@@ -265,12 +265,15 @@
 						<label for="keyword" class="control-label">关键字</label>
 						<div class="control-wrap">
 							<select name="keyword" id="keyword" data-value="">
-								<option value="<?php echo C('DB_PRODUCT_SKU');?>">产品编码</option>
-								<option value="<?php echo C('DB_PRODUCT_CNAME');?>">产品名称</option>
+								<?php if(($keyword == 'cname')): ?><option value="<?php echo C('DB_PRODUCT_SKU');?>">产品编码</option>
+									<option value="<?php echo C('DB_PRODUCT_CNAME');?>" selected="">产品名称</option>
+								<?php else: ?> 
+									<option value="<?php echo C('DB_PRODUCT_SKU');?>" selected="">产品编码</option>
+									<option value="<?php echo C('DB_PRODUCT_CNAME');?>">产品名称</option><?php endif; ?>
 							</select>
 						</div>
 						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="">
+							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="<?php echo ($keywordValue); ?>">
 						</div>
 					</div>
 					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>

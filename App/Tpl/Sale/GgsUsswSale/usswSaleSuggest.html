@@ -49,12 +49,12 @@ function save(){
 						<label for="keyword" class="control-label">关键字</label>
 						<div class="control-wrap">
 							<select name="keyword" id="keyword" data-value="">
-								<if condition="($keyword eq 'sku')"> 
-									<option value="{:C('DB_PRODUCT_SKU')}" selected="">产品编码</option>
-									<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
-								<else /> 
+								<if condition="($keyword eq 'cname')"> 
 									<option value="{:C('DB_PRODUCT_SKU')}">产品编码</option>
 									<option value="{:C('DB_PRODUCT_CNAME')}" selected="">产品名称</option>
+								<else /> 
+									<option value="{:C('DB_PRODUCT_SKU')}" selected="">产品编码</option>
+									<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
 								</if>
 							</select>
 						</div>

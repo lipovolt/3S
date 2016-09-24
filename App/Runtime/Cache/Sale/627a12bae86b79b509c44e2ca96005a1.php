@@ -330,11 +330,11 @@
 						<div class="control-wrap">
 
 							<select name="keyword" id="keyword" data-value="">
-								<?php if(($keyword == 'sku')): ?><option value="<?php echo C('DB_PRODUCT_SKU');?>" selected="">产品编码</option>
-									<option value="<?php echo C('DB_PRODUCT_CNAME');?>">产品名称</option>
+								<?php if(($keyword == 'cname')): ?><option value="<?php echo C('DB_PRODUCT_SKU');?>">产品编码</option>
+									<option value="<?php echo C('DB_PRODUCT_CNAME');?>" selected="">产品名称</option>
 								<?php else: ?> 
-									<option value="<?php echo C('DB_PRODUCT_SKU');?>">产品编码</option>
-									<option value="<?php echo C('DB_PRODUCT_CNAME');?>" selected="">产品名称</option><?php endif; ?>
+									<option value="<?php echo C('DB_PRODUCT_SKU');?>" selected="">产品编码</option>
+									<option value="<?php echo C('DB_PRODUCT_CNAME');?>">产品名称</option><?php endif; ?>
 
 							</select>
 
