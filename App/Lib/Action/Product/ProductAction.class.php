@@ -57,9 +57,8 @@ class ProductAction extends CommonAction{
                         break;
                     }      
                 }
-
                 //excel firt column name verify
-                for($c='A';$c<=$highestColumn;$c++){
+                for($c='A';$c!=$highestColumn;$c++){
                     $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
                 }
                 if($this->verifyImportedProductTemplateColumnName($firstRow)){    
@@ -188,8 +187,10 @@ class ProductAction extends CommonAction{
 
     private function verifyImportedProductTemplateColumnName($firstRow){
         for($c='A';$c<=max(array_keys(C('IMPORT_PRODUCT')));$c++){
-            if($firstRow[$c] != C('IMPORT_PRODUCT')[$c])
+            if($firstRow[$c] != C('IMPORT_PRODUCT')[$c]){
                 return false;
+            }
+                
         }
         return true;
     }
