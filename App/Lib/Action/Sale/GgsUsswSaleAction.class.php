@@ -367,7 +367,7 @@ class GgsUsswSaleAction extends CommonAction{
 			$p = I('post.price','','htmlspecialchars');
 			$usRate = I('post.saleprice','','htmlspecialchars')*0.05;
 			$usswFee = $this->calUsswSIOFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
-			$wayToUs = I('post.keyword','','htmlspecialchars');
+			$wayToUs = I('post.way-to-us','','htmlspecialchars');
 			$wayToUsFee = $wayToUs=="air"?$this->getUsswAirFirstTransportFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars')):$this->getUsswSeaFirstTransportFee(I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
 			$localShippingWay = $this->getUsswLocalShippingWay(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
 			$localShippingFee = $this->getUsswLocalShippingFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));

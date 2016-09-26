@@ -62,9 +62,14 @@
 						<td><div class="tl">{$testData['us-rate']}</div></td>
 						<td><div class="tl">{$testData['ussw-fee']}</div></td>
 						<td><div class="tl">
-							<select name="keyword" id="keyword" data-value="">
-								<option value="air">空运</option>
-								<option value="sea">海运</option>
+							<select name="way-to-us" id="way-to-us">
+								<if condition="($testData['way-to-us'] eq 'sea')"> 
+									<option value="air">空运</option>
+									<option value="sea" selected="">海运</option>
+								<else /> 
+									<option value="air" selected="">空运</option>
+									<option value="sea">海运</option>
+								</if>
 							</select></div></td>
 						<td><div class="tl">{$testData['way-to-us-fee']}</div></td>
 						<td><div class="tl">{$testData['local-shipping-way']}</div></td>
