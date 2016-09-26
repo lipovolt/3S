@@ -6,10 +6,19 @@ class RestockAction extends CommonAction{
 	public $indexOfOutOfStock;
 
 	public function index(){
-		$map[C('DB_RESTOCK_STATUS')] = array('neq','已发货');
-		$restock = M(C('DB_RESTOCK'))->where($map)->select();
-		$this->assign('restock',$restock);
-		$this->display();
+		if($_POST['keyword']==""){
+			$map[C('DB_RESTOCK_STATUS')] = array('neq','已发货');
+			$restock = M(C('DB_RESTOCK'))->where($map)->select();
+			$this->assign('restock',$restock);
+			$this->display();
+		}else{
+			$where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+            $this->restock = M(C('DB_RESTOCK'))->where($where)->select();
+            $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
+            $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
+            $this->display();
+		}
+		
 	}
 
 	public function exportRestock(){

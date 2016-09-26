@@ -60,7 +60,7 @@ class ProductAction extends CommonAction{
                     }      
                 }
                 //excel firt column name verify
-                for($c='A';$c!=$highestColumn;$c++){
+                for($c='A';$c<=$highestColumn;$c++){
                     $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
                 }
                 if($this->verifyImportedProductTemplateColumnName($firstRow)){    
