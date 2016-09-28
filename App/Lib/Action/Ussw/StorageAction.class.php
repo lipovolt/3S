@@ -4,7 +4,7 @@ class StorageAction extends CommonAction{
 
     public function index(){
         $this->setSaleStatus();
-    	if($_POST['keyword']==""){
+    	if($_POST['keyword']=="" && $_GET['sortword']==""){
             $Data = D("UsstorageView");
             import('ORG.Util.Page');
             $count = $Data->count();
@@ -20,8 +20,9 @@ class StorageAction extends CommonAction{
 
             $this->assign('usstorage',$usstorage);
             $this->assign('page',$show);
+            $this->display();
         }
-        else{
+        elseif($_POST['keyword']!="" && $_GET['sortword']==""){
             $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
             $usstorage = D('UsstorageView')->where($where)->select();
             foreach ($usstorage as $key => $value) {
@@ -31,15 +32,12 @@ class StorageAction extends CommonAction{
             $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
             $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
             $this->assign('usstorage',$usstorage);
+            $this->display();
         }
-        $this->display();
-    }
-
-    public function sort(){
-        if(IS_POST){
-            $sortword = I('post.sortword','','htmlspecialchars');
-            $sort = I('post.sort','','htmlspecialchars');
-            $Data = M(C('DB_USSTORAGE'));
+        elseif($_POST['keyword']=="" && $_GET['sortword']!=""){
+            $sortword = I('get.sortword','','htmlspecialchars');
+            $sort = I('get.sort','','htmlspecialchars');
+            $Data = D("UsstorageView");
             import('ORG.Util.Page');
             $count = $Data->count();
             $Page = new Page($count,20);            
@@ -50,7 +48,7 @@ class StorageAction extends CommonAction{
             $this->assign('sort',$sort); 
             $this->assign('usstorage',$usstorage);
             $this->assign('page',$show);
-            $this->display('index');
+            $this->display();
         }
     }
 
