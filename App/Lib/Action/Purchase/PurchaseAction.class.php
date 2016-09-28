@@ -278,6 +278,7 @@ class PurchaseAction extends CommonAction{
                     }
                     
                 }
+                $this->changeItemReceiveStatus($id);
                 $this->success('保存成功');
             }else{
                 $this->error('已完成的采购单，无法修改');
@@ -371,9 +372,7 @@ class PurchaseAction extends CommonAction{
         $purchaseItem->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->setField(C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY'),$receivedQuantity);
         $purchaseID = $purchaseItem->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->getField(C('DB_PURCHASE_ITEM_PURCHASE_ID'));
         $purchaseItem->commit();
-        $this->changeItemReceiveStatus($purchaseID);
-
-        
+                
         $data[C('DB_RESTOCK_CREATE_DATE')] = date("Y-m-d H:i:s" ,time());
         $data[C('DB_RESTOCK_SKU')] = $purchaseItem->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->getField(C('DB_PURCHASE_ITEM_SKU'));
         $data[C('DB_RESTOCK_MANAGER')] = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$data[C('DB_RESTOCK_SKU')]))->getField(C('DB_PRODUCT_MANAGER'));
@@ -427,7 +426,7 @@ class PurchaseAction extends CommonAction{
         $status = '全部到货';
         $items = M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_PURCHASE_ID')=>$purchaseID))->select();
         foreach ($items as $key => $value) {
-            if($value[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')] < $value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]){
+            if($value[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]<$value[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')]){
                 $status = '部分到货';
             }
         }
