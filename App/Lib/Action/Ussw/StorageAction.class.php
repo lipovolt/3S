@@ -5,21 +5,17 @@ class StorageAction extends CommonAction{
     public function index(){
         $this->setSaleStatus();
     	if($_POST['keyword']==""){
-            $Data = M(C('DB_USSTORAGE'));
+            $Data = D("UsstorageView");
             import('ORG.Util.Page');
             $count = $Data->count();
             $Page = new Page($count,20);            
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
             $usstorage = $Data->limit($Page->firstRow.','.$Page->listRows)->select();
-            $products = M(C('DB_PRODUCT'));
+            
             foreach ($usstorage as $key => $value) {
               $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
               $usstorage[$key][C('DB_USSTORAGE_IINVENTORY')] = $this->getIInventory($value[C('DB_USSTORAGE_SKU')]);
-              if($value[C('DB_USSTORAGE_CNAME')]==null){
-                $usstorage[$key][C('DB_USSTORAGE_CNAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
-                $usstorage[$key][C('DB_USSTORAGE_ENAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_ENAME'));
-              }
             }
 
             $this->assign('usstorage',$usstorage);
@@ -27,15 +23,10 @@ class StorageAction extends CommonAction{
         }
         else{
             $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
-            $usstorage = M(C('DB_USSTORAGE'))->where($where)->select();
-            $products = M(C('DB_PRODUCT'));
+            $usstorage = D('UsstorageView')->where($where)->select();
             foreach ($usstorage as $key => $value) {
               $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
               $usstorage[$key][C('DB_USSTORAGE_IINVENTORY')] = $this->getIInventory($value[C('DB_USSTORAGE_SKU')]);
-              if($value[C('DB_USSTORAGE_CNAME')]==null){
-                $usstorage[$key][C('DB_USSTORAGE_CNAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
-                $usstorage[$key][C('DB_USSTORAGE_ENAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_ENAME'));
-              }
             }
             $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
             $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
@@ -183,11 +174,11 @@ class StorageAction extends CommonAction{
         $usstorage->startTrans();
         $data = $usstorage->select();
         foreach ($data as $key => $value) {
-            if($value[C('DB_USSTORAGE_AINVENTORY')]==0 && $value[C('DB_USSTORAGE_SALE_STATUS')]!='已下架'){
+            if($value[C('DB_USSTORAGE_AINVENTORY')]<=1 && $value[C('DB_USSTORAGE_SALE_STATUS')]!='已下架'){
                 $saleStatus[C('DB_USSTORAGE_SALE_STATUS')]='待下架';
                 $usstorage->where(array(C('DB_USSTORAGE_ID')=>$value[C('DB_USSTORAGE_ID')]))->save($saleStatus);
             }
-            if($value[C('DB_USSTORAGE_AINVENTORY')]!=0 && $value[C('DB_USSTORAGE_SALE_STATUS')]=='待下架'){
+            if($value[C('DB_USSTORAGE_AINVENTORY')]>1 && $value[C('DB_USSTORAGE_SALE_STATUS')]=='待下架'){
                 $saleStatus[C('DB_USSTORAGE_SALE_STATUS')]=null;
                 $usstorage->where(array(C('DB_USSTORAGE_ID')=>$value[C('DB_USSTORAGE_ID')]))->save($saleStatus);
             }
@@ -207,15 +198,11 @@ class StorageAction extends CommonAction{
     }
 
     public function awaitingToStop(){
-        $usstorage = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SALE_STATUS')=>'待下架'))->select();
-        $products = M(C('DB_PRODUCT'));
+        $map[C('DB_USSTORAGE_SALE_STATUS')] = array('eq','待下架');
+        $usstorage = D("UsstorageView")->where($map)->select();
         foreach ($usstorage as $key => $value) {
           $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
           $usstorage[$key][C('DB_USSTORAGE_IINVENTORY')] = $this->getIInventory($value[C('DB_USSTORAGE_SKU')]);
-          if($value[C('DB_USSTORAGE_CNAME')]==null){
-            $usstorage[$key][C('DB_USSTORAGE_CNAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
-            $usstorage[$key][C('DB_USSTORAGE_ENAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_ENAME'));
-          }
         }
         $this->assign('usstorage',$usstorage);
         $this->display('index');
