@@ -301,7 +301,13 @@ class GgsUsswSaleAction extends CommonAction{
 
     	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee'];
-		$cost = $cost+$cost*0.18;
+		
+		$salePlan = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
+		if($salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=0 && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=null && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=''){
+			$cost = $cost+$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]*0.144+0.35;
+		}else{
+			$cost = $cost+$cost*0.18+0.35;
+		}
 		return $cost;
 
 	}
