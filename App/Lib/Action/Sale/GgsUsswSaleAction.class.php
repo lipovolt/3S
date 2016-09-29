@@ -121,6 +121,9 @@ class GgsUsswSaleAction extends CommonAction{
 			if($arr[0]=='id'){
 				$data[$arr[1]]['id']=$value; 
 			}
+			if($arr[0]=='sku'){
+				$data[$arr[1]]['sku']=$value; 
+			}
 			if($arr[0]=='sale_price'){
 				$data[$arr[1]]['sale_price']=$value; 
 			}
@@ -131,6 +134,7 @@ class GgsUsswSaleAction extends CommonAction{
 		$salePlan = M(C('DB_USSW_SALE_PLAN'));
 		$salePlan->startTrans();
 		foreach ($data as $key => $value) {
+			$value[C('DB_USSW_SALE_PLAN_COST')] = $this->calUsswSuggestCost($value['sku'],$value['sale_price']);
 			if($value['status']=="on"){
 				$value['status']=1;
 			}else{
@@ -290,7 +294,7 @@ class GgsUsswSaleAction extends CommonAction{
 		M(C('DB_USSW_SALE_PLAN'))->save($usp);
 	}
 
-	private function calUsswSuggestCost($sku){
+	private function calUsswSuggestCost($sku,$sale_price=null){
 		//计算产品美自建仓销售成本
 		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
     	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
@@ -303,13 +307,15 @@ class GgsUsswSaleAction extends CommonAction{
 		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee'];
 		
 		$salePlan = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
-		if($salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=0 && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=null && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=''){
+		if($sale_price!=null){
+			$cost = $cost+$sale_price*0.144+0.35;
+		}elseif($salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=0 && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=null && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=''){
 			$cost = $cost+$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]*0.144+0.35;
 		}else{
-			$cost = $cost+$cost*0.18+0.35;
+			$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
+			$cost = $cost+$tmp_sp*0.144+0.35;			
 		}
 		return $cost;
-
 	}
 
 	private function isUsswSaleInfoComplete($usp){
