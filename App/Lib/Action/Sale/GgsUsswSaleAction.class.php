@@ -272,7 +272,7 @@ class GgsUsswSaleAction extends CommonAction{
 		if($price==null || $price==0){
 			$price = $newUsp[C('DB_USSW_SALE_PLAN_COST')];
 		}
-		$newUsp[C('DB_USSW_SALE_PLAN_PRICE')] = $price;
+		$newUsp[C('DB_USSW_SALE_PLAN_PRICE')] = $this->calUsswInitialPrice($sku);
 		$newUsp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 		$newUsp[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
 		$newUsp[C('DB_USSW_SALE_PLAN_STATUS')] = 1;
@@ -316,6 +316,22 @@ class GgsUsswSaleAction extends CommonAction{
 			$cost = $cost+$tmp_sp*0.144+0.35;			
 		}
 		return $cost;
+	}
+
+	private function calUsswInitialPrice($sku){
+		//计算产品美自建仓初始售价
+		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
+    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
+    	$data[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
+    	$data['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+    	$data['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+    	$data['local-shipping-fee']=$this->getUsswLocalShippingFee($product['weight'],$product['length'],$product['width'],$product['height']);
+
+    	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
+		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee'];
+		
+		$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
+		return $tmp_sp;
 	}
 
 	private function isUsswSaleInfoComplete($usp){
