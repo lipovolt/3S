@@ -40,8 +40,8 @@ class SzSaleAction extends CommonAction{
             $show = $Page->show();
             $suggest = $Data->order('sku')->limit($Page->firstRow.','.$Page->listRows)->select();
             foreach ($suggest as $key => $value) {
-	        	$suggest[$key]['profit'] = $value[C('DB_SZ_SALE_PLAN_PRICE')] - $value[C('DB_SZ_SALE_PLAN_COST')];
-	        	$suggest[$key]['grate'] = round(($value[C('DB_SZ_SALE_PLAN_PRICE')] - $value[C('DB_SZ_SALE_PLAN_COST')]) / $value[C('DB_SZ_SALE_PLAN_PRICE')]*100,2);
+	        	$suggest[$key]['profit'] = $value[C('DB_SZ_US_SALE_PLAN_PRICE')] - $value[C('DB_SZ_US_SALE_PLAN_COST')];
+	        	$suggest[$key]['grate'] = round(($value[C('DB_SZ_US_SALE_PLAN_PRICE')] - $value[C('DB_SZ_US_SALE_PLAN_COST')]) / $value[C('DB_SZ_US_SALE_PLAN_PRICE')]*100,2);
 	        }
             $this->assign('suggest',$suggest);
             $this->assign('country',$country);
@@ -53,8 +53,8 @@ class SzSaleAction extends CommonAction{
             $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
             $this->suggest = $Data->where($where)->select();
             foreach ($suggest as $key => $value) {
-	        	$suggest[$key]['profit'] = $value[C('DB_SZ_SALE_PLAN_PRICE')] - $value[C('DB_SZ_SALE_PLAN_COST')];
-	        	$suggest[$key]['grate'] = round(($value[C('DB_SZ_SALE_PLAN_PRICE')] - $value[C('DB_SZ_SALE_PLAN_COST')]) / $value[C('DB_SZ_SALE_PLAN_PRICE')]*100,2);
+	        	$suggest[$key]['profit'] = $value[C('DB_SZ_US_SALE_PLAN_PRICE')] - $value[C('DB_SZ_US_SALE_PLAN_COST')];
+	        	$suggest[$key]['grate'] = round(($value[C('DB_SZ_US_SALE_PLAN_PRICE')] - $value[C('DB_SZ_US_SALE_PLAN_COST')]) / $value[C('DB_SZ_US_SALE_PLAN_PRICE')]*100,2);
 	        }
             $this->assign('country',$country);
             $this->assign('suggest',$suggest);
