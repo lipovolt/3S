@@ -10,7 +10,7 @@ class StorageAction extends CommonAction{
             $Page = new Page($count,20);            
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
-            $szstorage = $Data->limit($Page->firstRow.','.$Page->listRows)->select();
+            $szstorage = $Data->order('sku asc')->limit($Page->firstRow.','.$Page->listRows)->select();
 
             foreach ($szstorage as $key => $value) {
               $szstorage[$key]['cname'] = $this->getCname($value[C('DB_SZSTORAGE_SKU')]);

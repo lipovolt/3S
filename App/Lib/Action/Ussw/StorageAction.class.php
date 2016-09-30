@@ -11,7 +11,7 @@ class StorageAction extends CommonAction{
             $Page = new Page($count,20);            
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
-            $usstorage = $Data->limit($Page->firstRow.','.$Page->listRows)->select();
+            $usstorage = $Data->order('sku asc')->limit($Page->firstRow.','.$Page->listRows)->select();
             
             foreach ($usstorage as $key => $value) {
               $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
