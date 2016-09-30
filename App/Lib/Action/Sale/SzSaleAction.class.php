@@ -49,13 +49,13 @@ class SzSaleAction extends CommonAction{
         }
         else{
             $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
-            $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
-            $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
-            $this->suggest = $Data->where($where)->select();
+            $suggest = $Data->where($where)->select();
             foreach ($suggest as $key => $value) {
 	        	$suggest[$key]['profit'] = $value[C('DB_SZ_US_SALE_PLAN_PRICE')] - $value[C('DB_SZ_US_SALE_PLAN_COST')];
 	        	$suggest[$key]['grate'] = round(($value[C('DB_SZ_US_SALE_PLAN_PRICE')] - $value[C('DB_SZ_US_SALE_PLAN_COST')]) / $value[C('DB_SZ_US_SALE_PLAN_PRICE')]*100,2);
 	        }
+	        $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
+            $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
             $this->assign('country',$country);
             $this->assign('suggest',$suggest);
         }
