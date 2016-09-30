@@ -21,16 +21,25 @@ class GgsUsswSaleAction extends CommonAction{
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
             $suggest = $Data->order(C('DB_USSW_SALE_PLAN_SKU'))->limit($Page->firstRow.','.$Page->listRows)->select();
+            foreach ($suggest as $key => $value) {
+	        	$suggest[$key]['profit'] = $value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')];
+	        	$suggest[$key]['grate'] = round(($value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')]) / $value[C('DB_USSW_SALE_PLAN_PRICE')]*100,2);
+	        }
             $this->assign('suggest',$suggest);
             $this->assign('page',$show);
         }
         else{
             $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
-            $this->suggest = D("UsswSalePlanView")->where($where)->select();
+            $suggest = D("UsswSalePlanView")->where($where)->select();
+            foreach ($suggest as $key => $value) {
+	        	$suggest[$key]['profit'] = $value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')];
+	        	$suggest[$key]['grate'] = round(($value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')]) / $value[C('DB_USSW_SALE_PLAN_PRICE')]*100,2);
+	        }
+	        $this->assign('suggest',$suggest);
             $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
             $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
         }
-
+        
         $this->display();
 	}
 

@@ -85,6 +85,8 @@ function save(){
 						<th><div class="tl">价格轨迹</div></th>
 						<th><div class="tl">成本$</div></th>
 						<th><div class="tl">售价$</div></th>
+						<th><div class="tl">利润$</div></th>
+						<th><div class="tl">利润率</div></th>
 						<th><div class="tl">建议售价$</div></th>
 						<th><div class="tl">销售建议</div></th>
 						<th><div class="tl">开启关闭<br>自动建议</div></th>
@@ -103,6 +105,8 @@ function save(){
 						<input type="hidden" id="id-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="id-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" value="{$vo[C('DB_USSW_SALE_PLAN_ID')]}" />
 						<input type="hidden" id="sku-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="sku-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" value="{$vo[C('DB_USSW_SALE_PLAN_SKU')]}" />
 						<input id="sale_price-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name='sale_price-{$vo[C('DB_USSW_SALE_PLAN_ID')]}' type='text' value='{$vo[C('DB_USSW_SALE_PLAN_PRICE')]}' style="width:60px;"/></div></td>
+						<td><div class="tl">{$vo['profit']}</div></td>
+						<td><div class="tl">{$vo['grate']}%</div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_SUGGEST')]}</div></td>
 						<if condition="($vo[C('DB_USSW_SALE_PLAN_STATUS')] eq 1)"> <td><div class="tl"><input id="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" type='checkbox' checked /></div></td>

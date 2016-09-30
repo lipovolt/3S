@@ -39,6 +39,10 @@ class SzSaleAction extends CommonAction{
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
             $suggest = $Data->order('sku')->limit($Page->firstRow.','.$Page->listRows)->select();
+            foreach ($suggest as $key => $value) {
+	        	$suggest[$key]['profit'] = $value[C('DB_SZ_SALE_PLAN_PRICE')] - $value[C('DB_SZ_SALE_PLAN_COST')];
+	        	$suggest[$key]['grate'] = round(($value[C('DB_SZ_SALE_PLAN_PRICE')] - $value[C('DB_SZ_SALE_PLAN_COST')]) / $value[C('DB_SZ_SALE_PLAN_PRICE')]*100,2);
+	        }
             $this->assign('suggest',$suggest);
             $this->assign('country',$country);
             $this->assign('page',$show);
@@ -48,7 +52,12 @@ class SzSaleAction extends CommonAction{
             $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
             $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
             $this->suggest = $Data->where($where)->select();
+            foreach ($suggest as $key => $value) {
+	        	$suggest[$key]['profit'] = $value[C('DB_SZ_SALE_PLAN_PRICE')] - $value[C('DB_SZ_SALE_PLAN_COST')];
+	        	$suggest[$key]['grate'] = round(($value[C('DB_SZ_SALE_PLAN_PRICE')] - $value[C('DB_SZ_SALE_PLAN_COST')]) / $value[C('DB_SZ_SALE_PLAN_PRICE')]*100,2);
+	        }
             $this->assign('country',$country);
+            $this->assign('suggest',$suggest);
         }
         $this->display();
 	}
