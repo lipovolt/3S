@@ -285,8 +285,8 @@ class OutboundAction extends CommonAction{
             $szOutboundItem->add($value);
             //update sz usstorage
             $where = array(C('DB_SZSTORAGE_SKU')=>$sku);
-            $szstorage->where($where)->setDec(C('DB_SZSTORAGE_AINVENTORY'),$quantity);
-            $szstorage->where($where)->setInc(C('DB_SZSTORAGE_CSALES'),$quantity);
+            $szstorage->where($where)->setDec(C('DB_SZSTORAGE_AINVENTORY'),$value[C('DB_SZ_OUTBOUND_ITEM_QUANTITY')]);
+            $szstorage->where($where)->setInc(C('DB_SZSTORAGE_CSALES'),$value[C('DB_SZ_OUTBOUND_ITEM_QUANTITY')]);
         }
         $szOutboundItem->commit();
         $szstorage->commit();
