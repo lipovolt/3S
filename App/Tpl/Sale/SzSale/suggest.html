@@ -10,8 +10,10 @@
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <script type="text/javascript">
 function save(){
-	var myArray=new Array()
-	form.action="{:U('Sale/SzSale/updateSalePlan',array('country'=>$country))}"; 
+	var kw = document.getElementById('keyword').value;
+	var kwv = document.getElementById('keywordValue').value;
+	var c = '{$country}';
+	form.action="{:U('Sale/SzSale/updateSalePlan')}?country="+c+"&kw="+kw+"&kwv="+kwv;
 	form.submit();
 }
 </script>

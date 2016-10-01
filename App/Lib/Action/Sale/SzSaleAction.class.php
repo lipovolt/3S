@@ -25,14 +25,14 @@ class SzSaleAction extends CommonAction{
 		$this->display();
 	}
 
-	public function suggest($country){
+	public function suggest($country,$kw=null,$kwv=null){
 		if($country=='us'){
 			$Data = D("SzUsSalePlanView");
 		}
 		if($country=='de'){
 			$Data = D("SzDeSalePlanView");
 		}
-		if($_POST['keyword']==""){ 
+		if($_POST['keyword']=="" && $kwv==null){ 
             import('ORG.Util.Page');
             $count = $Data->count();
             $Page = new Page($count,20);            
@@ -48,14 +48,21 @@ class SzSaleAction extends CommonAction{
             $this->assign('page',$show);
         }
         else{
-            $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+        	if($_POST['keyword']==""){
+        		$keyword = $kw;
+        		$keywordValue = $kwv;
+        	}else{
+        		$keyword = I('post.keyword','','htmlspecialchars');
+        		$keywordValue = I('post.keywordValue','','htmlspecialchars');
+        	}
+            $where[$keyword] = array('like','%'.$keywordValue.'%');
             $suggest = $Data->where($where)->select();
             foreach ($suggest as $key => $value) {
 	        	$suggest[$key]['profit'] = $value[C('DB_SZ_US_SALE_PLAN_PRICE')] - $value[C('DB_SZ_US_SALE_PLAN_COST')];
 	        	$suggest[$key]['grate'] = round(($value[C('DB_SZ_US_SALE_PLAN_PRICE')] - $value[C('DB_SZ_US_SALE_PLAN_COST')]) / $value[C('DB_SZ_US_SALE_PLAN_PRICE')]*100,2);
 	        }
-	        $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
-            $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
+	        $this->assign('keyword',$keyword);
+            $this->assign('keywordValue',$keywordValue);
             $this->assign('country',$country);
             $this->assign('suggest',$suggest);
         }
@@ -290,7 +297,7 @@ class SzSaleAction extends CommonAction{
 		
 	}
 
-	public function updateSalePlan($country){
+	public function updateSalePlan($country,$kw=null,$kwv=null){
 		$data=null;
 		foreach ($_POST as $key => $value) {
 			$arr = explode("-",$key);
@@ -324,7 +331,7 @@ class SzSaleAction extends CommonAction{
 			$salePlan->save($value);
 		}
 		$salePlan->commit();
-		$this->redirect('suggest',array('country'=>$country));		
+		$this->redirect('suggest',array('country'=>$country,'kw'=>$kw,'kwv'=>$kwv));		
 	}
 
 

@@ -12,8 +12,8 @@ class GgsUsswSaleAction extends CommonAction{
         }
 	}
 
-	public function usswSaleSuggest(){
-		if($_POST['keyword']==""){
+	public function usswSaleSuggest($kw=null,$kwv=null){
+		if($_POST['keyword']=="" && $kwv==null){
             $Data = D("UsswSalePlanView");
             import('ORG.Util.Page');
             $count = $Data->count();
@@ -29,15 +29,22 @@ class GgsUsswSaleAction extends CommonAction{
             $this->assign('page',$show);
         }
         else{
-            $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+        	if($_POST['keyword']==""){
+        		$keyword = $kw;
+        		$keywordValue = $kwv;
+        	}else{
+        		$keyword = I('post.keyword','','htmlspecialchars');
+        		$keywordValue = I('post.keywordValue','','htmlspecialchars');
+        	}
+            $where[$keyword] = array('like','%'.$keywordValue.'%');
             $suggest = D("UsswSalePlanView")->where($where)->select();
             foreach ($suggest as $key => $value) {
 	        	$suggest[$key]['profit'] = $value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')];
 	        	$suggest[$key]['grate'] = round(($value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')]) / $value[C('DB_USSW_SALE_PLAN_PRICE')]*100,2);
 	        }
 	        $this->assign('suggest',$suggest);
-            $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
-            $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
+            $this->assign('keyword',$keyword);
+            $this->assign('keywordValue',$keywordValue);
         }
         
         $this->display();
@@ -123,7 +130,7 @@ class GgsUsswSaleAction extends CommonAction{
 		$this->success('保存成功');
 	}
 
-	public function updateUsswSalePlan(){
+	public function updateUsswSalePlan($kw=null,$kwv=null){
 		$data=null;
 		foreach ($_POST as $key => $value) {
 			$arr = explode("-",$key);
@@ -152,7 +159,7 @@ class GgsUsswSaleAction extends CommonAction{
 			$salePlan->save($value);
 		}
 		$salePlan->commit();
-		$this->redirect('usswSaleSuggest');		
+		$this->redirect('usswSaleSuggest',array('kw'=>$kw,'kwv'=>$kwv));		
 	}
 
 	private function calUsswSuggest($sku){
