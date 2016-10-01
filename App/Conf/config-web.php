@@ -25,6 +25,7 @@ return array(
 
 	//自定义SESSION 数据库存储
 	'SESSION_TYPE' => 'Db',
+	'SESSION_OPTIONS' => array('expire' =>10800),
 
 	// 加载扩展配置文件
 	'LOAD_EXT_CONFIG' => 'db,ui,importTemplate', 
