@@ -594,7 +594,7 @@ class SzSaleAction extends CommonAction{
 
 	private function getSzUsCost($data){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange+$data[C('DB_PRODUCT_SZ_US_SALE_PRICE')]*0.144+0.35;
+		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange+$data[C('DB_SZ_US_SALE_PLAN_PRICE')]*0.144+0.35;
 		return $c;
 	}
 
@@ -701,7 +701,7 @@ class SzSaleAction extends CommonAction{
 
 	private function getSzDeCost($data){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
-		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange+$data[C('DB_PRODUCT_SZ_DE_SALE_PRICE')]*0.144+0.35;
+		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange+$data[C('DB_SZ_DE_SALE_PLAN_PRICE')]*0.144+0.35;
 		return $c;
 	}
 
