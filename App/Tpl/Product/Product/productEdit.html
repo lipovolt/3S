@@ -82,26 +82,26 @@ function GenerateUpc(){
 							<div class="control-wrap">
 								<select name="{:C('DB_PRODUCT_MANAGER')}"  id="{:C('DB_PRODUCT_MANAGER')}">
 									<?php 
-										if($product[0][C('DB_PRODUCT_MANAGER')] == '张昱'){
+										if($product[0][C('DB_PRODUCT_MANAGER')] == 'Yellow River'){
 											echo '<option value="" >请选择</option>
-												<option value="张昱" selected>张昱</option>
-												<option value="杨杰" >杨杰</option>
-												<option value="王宁" >王宁</option>';
-										}elseif($product[0]['manager'] == '杨杰'){
+												<option value="Yellow River" selected>Yellow River</option>
+												<option value="Yangtze" >Yangtze</option>
+												<option value="Amur River" >Amur River</option>';
+										}elseif($product[0]['manager'] == 'Yangtze'){
 											echo '<option value="" >请选择</option>
-												<option value="张昱" >张昱</option>
-												<option value="杨杰" selected>杨杰</option>
-												<option value="王宁" >王宁</option>';
-										}elseif($product[0]['manager'] == '王宁'){
+												<option value="Yellow River" >Yellow River</option>
+												<option value="Yangtze" selected>Yangtze</option>
+												<option value="Amur River" >Amur River</option>';
+										}elseif($product[0]['manager'] == 'Amur River'){
 											echo '<option value="" >请选择</option>
-												<option value="张昱" >张昱</option>
-												<option value="杨杰" >杨杰</option>
-												<option value="王宁" selected>王宁</option>';
+												<option value="Yellow River" >Yellow River</option>
+												<option value="Yangtze" >Yangtze</option>
+												<option value="Amur River" selected>Amur River</option>';
 										}else{
 											echo '<option value="" selected>请选择</option>
-												<option value="张昱" >张昱</option>
-												<option value="杨杰" >杨杰</option>
-												<option value="王宁" >王宁</option>';
+												<option value="Yellow River" >Yellow River</option>
+												<option value="Yangtze" >Yangtze</option>
+												<option value="Amur River" >Amur River</option>';
 										}
 									?>							
 								</select>
