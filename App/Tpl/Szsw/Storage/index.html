@@ -8,6 +8,26 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript">
+function move(ainventory,sku,position){
+	var warehouse = prompt("仓库","");
+	if(warehouse != "万邑通德国" && warehouse != "万邑通美西" && warehouse != "美自建仓"){
+		alert("输入的仓库: "+warehouse+" 不存在！");
+		return false;
+	}
+	var quantity = prompt("数量","");
+	if(isNaN(quantity)){
+		alert("请输入数字！");
+		return false;
+	}
+	if(quantity>ainventory){
+		alert("可用数量： " + ainventory + " 小于转仓数量： " + quantity);
+		return false;
+	}
+	form.action="{:U('Szsw/Storage/moveTo')}?warehouse="+warehouse+"&quantity="+quantity+"&sku="+sku+"&position="+position;
+	form.submit();
+}
+</script>
 </head>
 <body>
 
@@ -68,7 +88,7 @@
     </form>
 		<div>
 			<div class="tab-content data-list">				
-							
+				<form name="form" action="#" method="POST">			
 				<table id="tablelist" class="tablelist">
 					<tr>
 						<th>货位</th>
@@ -96,11 +116,13 @@
 						<td><div class="tl">{$vo.remark}</div></td>
 						<td>
 							<a href="{:U('Szsw/Storage/edit',array(C('DB_SZSTORAGE_ID')=>$vo[C('DB_SZSTORAGE_ID')]))}">编辑</a>
+							<input class="btn btn-blue" type="button" onclick="move({$vo.ainventory},{$vo.sku},{$vo['position']==null?-1:$vo['position']})" value="转仓"/>
 						</td>
 						</tr>	
 					</volist> 		
 					</tr>						
 				</table>
+				</form>
 				<div class="result page" align="center">{$page}</div>
 				<div class="tr">
 								

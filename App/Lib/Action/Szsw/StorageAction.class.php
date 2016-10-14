@@ -77,6 +77,42 @@ class StorageAction extends CommonAction{
           $this->error('写入错误！');
        }
     }
+
+    public function moveTo($warehouse,$quantity,$sku,$position){
+      $szstorage = M(C('DB_SZSTORAGE'));
+      $restock = M(C('DB_RESTOCK'));
+      $map[C('DB_SZSTORAGE_SKU')]=array('eq',$sku);
+      if($position!=-1){
+        $map[C('DB_SZSTORAGE_POSITION')]=array('eq',$position);
+      }
+      $data = $szstorage->where($where)->find();
+      $data[C('DB_SZSTORAGE_AINVENTORY')]=$data[C('DB_SZSTORAGE_AINVENTORY')]-$quantity;
+      $data[C('DB_SZSTORAGE_CINVENTORY')]=$data[C('DB_SZSTORAGE_CINVENTORY')]-$quantity;
+      $result =  $szstorage->save($data);
+      if(false !== $result || 0 !== $result) {
+        $restockData[C('DB_RESTOCK_SKU')]=$sku;
+        $restockData[C('DB_RESTOCK_QUANTITY')]=$quantity;
+        $restockData[C('DB_RESTOCK_WAREHOUSE')]=$warehouse;
+        $product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
+        $restockData[C('DB_RESTOCK_MANAGER')]=$product[C('DB_PRODUCT_MANAGER')];
+        if($warehouse=='美自建仓' || $warehouse=='万邑通美西'){
+          $restockData[C('DB_RESTOCK_TRANSPORT')]=$product[C('DB_PRODUCT_TOUS')];
+        }
+        if($warehouse=='万邑通德国'){
+          $restockData[C('DB_RESTOCK_TRANSPORT')]=$product[C('DB_PRODUCT_TODE')];
+        }
+        $restockData[C('DB_RESTOCK_STATUS')]='待发货';
+        $result =  $restock->add($restockData);
+        if(false !== $result) {
+          $this->success('操作成功！');}
+        else{
+            $this->error('写入错误！');
+         }
+      }
+      else{
+          $this->error('写入错误！');
+       }
+    }
 }
 
 ?>
