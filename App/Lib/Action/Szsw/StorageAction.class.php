@@ -85,7 +85,7 @@ class StorageAction extends CommonAction{
       if($position!=-1){
         $map[C('DB_SZSTORAGE_POSITION')]=array('eq',$position);
       }
-      $data = $szstorage->where($where)->find();
+      $data = $szstorage->where($map)->find();
       $data[C('DB_SZSTORAGE_AINVENTORY')]=$data[C('DB_SZSTORAGE_AINVENTORY')]-$quantity;
       $data[C('DB_SZSTORAGE_CINVENTORY')]=$data[C('DB_SZSTORAGE_CINVENTORY')]-$quantity;
       $result =  $szstorage->save($data);
