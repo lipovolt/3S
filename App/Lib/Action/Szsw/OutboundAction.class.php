@@ -203,9 +203,9 @@ class OutboundAction extends CommonAction{
                     $this->display('importOutboundOrderError');
                 }else{
                     //无错误信息
-                    //更新已合并的订单数组到szsw_outbound 和 szstorage
+                    //更新已合并的订单数组到szsw_outbound 
                     $this->addOutboundOrder($this->mergeOrder($outboundOrder));                    
-                    //更新订单产品数组到szsw_outbound_item
+                    //更新订单产品数组到szsw_outbound_item 和 szstorage
                     $this->addOutboundItem($outboundOrderItems);                    
                     $this->success('导入成功！');
                 }
@@ -284,7 +284,7 @@ class OutboundAction extends CommonAction{
             $value[C('DB_SZ_OUTBOUND_ITEM_POSITION')] = $this->getPosition($value[C('DB_SZ_OUTBOUND_ITEM_SKU')]);
             $szOutboundItem->add($value);
             //update sz usstorage
-            $where = array(C('DB_SZSTORAGE_SKU')=>$sku);
+            $where = array(C('DB_SZSTORAGE_SKU')=>$value[C('DB_SZ_OUTBOUND_ITEM_SKU')]);
             $szstorage->where($where)->setDec(C('DB_SZSTORAGE_AINVENTORY'),$value[C('DB_SZ_OUTBOUND_ITEM_QUANTITY')]);
             $szstorage->where($where)->setInc(C('DB_SZSTORAGE_CSALES'),$value[C('DB_SZ_OUTBOUND_ITEM_QUANTITY')]);
         }
