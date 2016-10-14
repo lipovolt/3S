@@ -23,16 +23,16 @@ class PurchaseAction extends CommonAction{
                 $map1[C('DB_PURCHASE_ITEM_SKU')] = array('in',$skuarray);
                 $purchaseOrders = M(C('DB_PURCHASE_ITEM'))->distinct(true)->where($map1)->getField(C('DB_PURCHASE_ITEM_PURCHASE_ID'),true);
                 $map2[C('DB_PURCHASE_ID')] = array('in',$purchaseOrders);  
-                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where($map2)->select());
+                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->order('id desc')->where($map2)->select());
             }
             if($_POST['keyword']==C('DB_PURCHASE_MANAGER')){
-                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_MANAGER')=>I('post.keywordValue','','htmlspecialchars')))->select());
+                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->order('id desc')->where(array(C('DB_PURCHASE_MANAGER')=>I('post.keywordValue','','htmlspecialchars')))->select());
             }
             if($_POST['keyword']==C('DB_PURCHASE_ITEM_SKU')){
                 $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
                 $purchaseOrders = M(C('DB_PURCHASE_ITEM'))->distinct(true)->where($where)->getField(C('DB_PURCHASE_ITEM_PURCHASE_ID'),true);
                 $map[C('DB_PURCHASE_ID')] = array('in',$purchaseOrders);  
-                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->where($map)->select());
+                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->order('id desc')->where($map)->select());
             }
             $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
             $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
