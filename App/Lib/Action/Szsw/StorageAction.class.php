@@ -79,17 +79,22 @@ class StorageAction extends CommonAction{
     }
 
     public function moveTo($warehouse,$quantity,$sku,$position){
-      $szstorage = M(C('DB_SZSTORAGE'));
       $restock = M(C('DB_RESTOCK'));
-      $map[C('DB_SZSTORAGE_SKU')]=array('eq',$sku);
-      if($position!=-1){
-        $map[C('DB_SZSTORAGE_POSITION')]=array('eq',$position);
+      $data = $this->getSzStorage($sku,$position);
+      if($data==null){
+        $sku = $sku.'0';
+        $data=$this->getSzStorage($sku,$position);
       }
-      $data = $szstorage->where($map)->find();
+      if($data==null){
+        $this->error('无法转仓，货号： '.$sku.' 不在深圳仓！');
+      }
       $data[C('DB_SZSTORAGE_AINVENTORY')]=$data[C('DB_SZSTORAGE_AINVENTORY')]-$quantity;
       $data[C('DB_SZSTORAGE_CINVENTORY')]=$data[C('DB_SZSTORAGE_CINVENTORY')]-$quantity;
+      $szstorage = M(C('DB_SZSTORAGE'));
       $result =  $szstorage->save($data);
+      $result = true;
       if(false !== $result || 0 !== $result) {
+        $restockData[C('DB_RESTOCK_CREATE_DATE')]=date("Y-m-d H:i:s" ,time());
         $restockData[C('DB_RESTOCK_SKU')]=$sku;
         $restockData[C('DB_RESTOCK_QUANTITY')]=$quantity;
         $restockData[C('DB_RESTOCK_WAREHOUSE')]=$warehouse;
@@ -112,6 +117,19 @@ class StorageAction extends CommonAction{
       else{
           $this->error('写入错误！');
        }
+    }
+
+    private function getSzStorage($sku,$position=-1){
+      $map[C('DB_SZSTORAGE_SKU')]=array('eq',$sku);
+      if($position!=-1){
+        $map[C('DB_SZSTORAGE_POSITION')]=array('eq',$position);
+      }
+      $szstorage = M(C('DB_SZSTORAGE'));
+      $data = $szstorage->where($map)->find();
+      if($data==false || $data==null){
+        return null;
+      }
+      return $data;
     }
 }
 
