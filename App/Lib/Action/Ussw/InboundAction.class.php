@@ -3,7 +3,7 @@
 class InboundAction extends CommonAction{
 
 	public function index(){
-		$usswInOrders = M(C('DB_USSW_INBOUND'))->select();
+		$usswInOrders = M(C('DB_USSW_INBOUND'))->order('id desc')->select();
         import('ORG.Util.Page');
         foreach ($usswInOrders as $key => $value) {
             $Data[$key]=array(
