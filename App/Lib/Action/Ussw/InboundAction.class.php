@@ -165,7 +165,7 @@ class InboundAction extends CommonAction{
                         $sku = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
 
                         $restockRow = $restock->where(array(C('DB_RESTOCK_ID')=>$restockId))->find();
-                        if($restockRow == null || $restockRow[C('DB_RESTOCK_SKU')] != $sku){
+                        if($restockRow != null && $restockRow[C('DB_RESTOCK_SKU')] != $sku){
                             $errorInFile[$i]='产品编码与补货表不一致';
                         }                                     
                     }
