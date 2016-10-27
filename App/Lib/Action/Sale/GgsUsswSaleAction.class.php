@@ -761,7 +761,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPriorityExpressFlatFee($weight,$l,$w,$h){
-		if($weight <= 31751 and (($l<=24 and 2 * ($w + $h) <= 31) or ($l<=31 and 2 * ($w + $h) <= 24))){
+		if($weight <= 31751 and ((($l+$h/2)<=24 and ($w + $h) <= 31) or (($l+$h/2)<=31 and ($w + $h) <= 24))){
 			return 22.95;
 		}
 		else{
@@ -770,7 +770,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPriorityExpressLegalFee($weight,$l,$w,$h){
-		if($weight <= 31751 and (($l<=38 and 2 * ($w + $h) <= 24) or ($l<=24 and 2 * ($w + $h) <= 38))){
+		if($weight <= 31751 and ((($l+$h/2)<=38 and ($w + $h) <= 24) or (($l+$h/2)<=24 and ($w + $h) <= 38))){
 			return 22.95;
 		}
 		else{
@@ -817,7 +817,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPriorityFlatRateEnvelopeFee($weight,$l,$w,$h){
-		if ($weight <= 31751 and (($l <= 31 and 2*($w+$h) <= 24) or ($l <= 24 and 2*($w+$h) <= 31))){
+		if ($weight <= 31751 and ((($l+$h/2) <= 31 and ($w+$h) <= 24) or (($l+$h/2) <= 24 and ($w+$h) <= 31))){
 			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>4))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
 		}
 		else{
