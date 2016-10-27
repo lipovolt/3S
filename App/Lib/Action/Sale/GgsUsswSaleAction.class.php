@@ -317,10 +317,10 @@ class GgsUsswSaleAction extends CommonAction{
     	$data[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
     	$data['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$data['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
-    	$data['local-shipping-fee']=$this->getUsswLocalShippingFee($product['weight'],$product['length'],$product['width'],$product['height']);
+    	$data['local-shipping-fee1']=$this->getUsswLocalShippingFee1($product['weight'],$product['length'],$product['width'],$product['height']);
 
     	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee'];
+		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee1'];
 		
 		$salePlan = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
 		if($sale_price!=null){
@@ -341,10 +341,10 @@ class GgsUsswSaleAction extends CommonAction{
     	$data[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
     	$data['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$data['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
-    	$data['local-shipping-fee']=$this->getUsswLocalShippingFee($product['weight'],$product['length'],$product['width'],$product['height']);
+    	$data['local-shipping-fee1']=$this->getUsswLocalShippingFee1($product['weight'],$product['length'],$product['width'],$product['height']);
 
     	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee'];
+		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee1'];
 		
 		$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
 		return $tmp_sp;
@@ -413,8 +413,8 @@ class GgsUsswSaleAction extends CommonAction{
 			$usswFee = $this->calUsswSIOFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
 			$wayToUs = I('post.way-to-us','','htmlspecialchars');
 			$wayToUsFee = $wayToUs=="air"?$this->getUsswAirFirstTransportFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars')):$this->getUsswSeaFirstTransportFee(I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
-			$localShippingWay = $this->getUsswLocalShippingWay(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
-			$localShippingFee = $this->getUsswLocalShippingFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
+			$localShippingWay = $this->getUsswLocalShippingWay1(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
+			$localShippingFee = $this->getUsswLocalShippingFee1(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
 			$salePrice = I('post.saleprice','','htmlspecialchars');
 			$testCost = ($p+0.5)/6.35+$salePrice*0.05+$usswFee+$wayToUsFee+$localShippingFee+$salePrice*0.144+0.35;
 			$testData = array(
@@ -478,8 +478,12 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key][C('DB_PRODUCT_TOUS')]=$value[C('DB_PRODUCT_TOUS')];
         	$data[$key]['way-to-us-fee']=$value[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-way']=$this->getUsswLocalShippingWay($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-fee']=$this->getUsswLocalShippingFee($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way1']=$this->getUsswLocalShippingWay1($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee1']=$this->getUsswLocalShippingFee1($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way2']=$this->getUsswLocalShippingWay2($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee2']=$this->getUsswLocalShippingFee2($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way3']=$this->getUsswLocalShippingWay3($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee3']=$this->getUsswLocalShippingFee3($value['weight'],$value['length'],$value['width'],$value['height']);
         	$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]=M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_PRICE'));
         	$data[$key]['cost']=round($this->getUsswCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]-$data[$key]['cost'];
@@ -511,8 +515,12 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key][C('DB_PRODUCT_TOUS')]=$value[C('DB_PRODUCT_TOUS')];
         	$data[$key]['way-to-us-fee']=$data[$key][C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-way']=$this->getUsswLocalShippingWay($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-fee']=$this->getUsswLocalShippingFee($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way1']=$this->getUsswLocalShippingWay1($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee1']=$this->getUsswLocalShippingFee1($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way2']=$this->getUsswLocalShippingWay2($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee2']=$this->getUsswLocalShippingFee2($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way3']=$this->getUsswLocalShippingWay3($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee3']=$this->getUsswLocalShippingFee3($value['weight'],$value['length'],$value['width'],$value['height']);
         	$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]=M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_PRICE'));
         	$data[$key]['cost']=round($this->getUsswCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]-$data[$key]['cost'];
@@ -531,7 +539,7 @@ class GgsUsswSaleAction extends CommonAction{
 
 	private function getUsswCost($data){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee']+$data[C('DB_USSW_SALE_PLAN_PRICE')]*0.144+0.35;
+		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee1']+$data[C('DB_USSW_SALE_PLAN_PRICE')]*0.144+0.35;
 		return $c;
 	}
 
@@ -579,7 +587,7 @@ class GgsUsswSaleAction extends CommonAction{
 		return round(($l * $w * $h) / 1000000 * 220,2);
 	}
 
-	private function getUsswLocalShippingWay($weight,$l,$w,$h){
+	private function getUsswLocalShippingWay1($weight,$l,$w,$h){
 		$ways=array(
 				0=>'No way',
 				1=>'USPS First Class Mail',
@@ -615,7 +623,7 @@ class GgsUsswSaleAction extends CommonAction{
 		return $ways[$way];
 	}
 
-	private function getUsswLocalShippingFee($weight,$l,$w,$h){
+	private function getUsswLocalShippingFee1($weight,$l,$w,$h){
 		$fees=array(
 				0=>0,
 				1=>$this->calUsswUspsFirstClassFee($weight,$l,$w,$h),
@@ -635,6 +643,139 @@ class GgsUsswSaleAction extends CommonAction{
 			}
 		}
 		return $cheapest;
+	}
+
+	private function getUsswLocalShippingWay2($weight,$l,$w,$h){
+		$ways=array(
+				0=>'No way',
+				1=>'Priority Mail Flat Rate Envelope',
+				2=>'Priority Mail Small Flat Rate Box',
+				3=>'Priority Mail Medium Flat Rate Box',
+				4=>'Priority Mail Large Flat Rate Box',
+				5=>'Priority Mail Package',
+				6=>'Fedex Smart Post',
+				7=>'Fedex Home Delivery',
+				8=>'Priority Regional Box A'
+			);
+		$fees=array(
+				0=>0,
+				1=>$this->calUsswUspsPriorityFlatRateEnvelopeFee($weight,$l,$w,$h),
+				2=>$this->calUsswUspsPrioritySmallFlatRateBoxFee($weight,$l,$w,$h),
+				3=>$this->calUsswUspsPriorityMediumFlatRateBoxFee($weight,$l,$w,$h),
+				4=>$this->calUsswUspsPriorityLargeFlatRateBoxFee($weight,$l,$w,$h),
+				5=>$this->calUsswUspsPriorityPackageFee($weight,$l,$w,$h),
+				6=>$this->calUsswFedexSmartPostFee($weight,$l,$w,$h),
+				7=>$this->calUsswUspsFedexHomeDeliveryFee($weight,$l,$w,$h),
+				8=>$this->calUsswUspsPriorityRegionalBoxAFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		$way=0;
+		for ($i=0; $i < 8; $i++) { 
+			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+				$way = $i;
+			}
+		}
+		return $ways[$way];
+	}
+
+	private function getUsswLocalShippingFee2($weight,$l,$w,$h){
+		$fees=array(
+				0=>0,
+				1=>$this->calUsswUspsPriorityFlatRateEnvelopeFee($weight,$l,$w,$h),
+				2=>$this->calUsswUspsPrioritySmallFlatRateBoxFee($weight,$l,$w,$h),
+				3=>$this->calUsswUspsPriorityMediumFlatRateBoxFee($weight,$l,$w,$h),
+				4=>$this->calUsswUspsPriorityLargeFlatRateBoxFee($weight,$l,$w,$h),
+				5=>$this->calUsswUspsPriorityPackageFee($weight,$l,$w,$h),
+				6=>$this->calUsswFedexSmartPostFee($weight,$l,$w,$h),
+				7=>$this->calUsswUspsFedexHomeDeliveryFee($weight,$l,$w,$h),
+				8=>$this->calUsswUspsPriorityRegionalBoxAFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		for ($i=0; $i < 8; $i++) { 
+			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+			}
+		}
+		return $cheapest;
+	}
+
+	private function getUsswLocalShippingWay3($weight,$l,$w,$h){
+		$ways=array(
+				0=>'No way',
+				1=>'Priority Express-Package',
+				2=>'Priority Express-Flat Rate Envelope',
+				3=>'Priority Express-Legal Flat Rate Envelope'
+			);
+		$fees=array(
+				0=>0,
+				1=>$this->calUsswUspsPriorityExpressPackageFee($weight,$l,$w,$h),
+				2=>$this->calUsswUspsPriorityExpressFlatFee($weight,$l,$w,$h),
+				3=>$this->calUsswUspsPriorityExpressLegalFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		$way=0;
+		for ($i=0; $i < 8; $i++) { 
+			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+				$way = $i;
+			}
+		}
+		return $ways[$way];
+	}
+
+	private function getUsswLocalShippingFee3($weight,$l,$w,$h){
+		$fees=array(
+				0=>0,
+				1=>$this->calUsswUspsPriorityExpressPackageFee($weight,$l,$w,$h),
+				2=>$this->calUsswUspsPriorityExpressFlatFee($weight,$l,$w,$h),
+				3=>$this->calUsswUspsPriorityExpressLegalFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		for ($i=0; $i < 8; $i++) { 
+			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+			}
+		}
+		return $cheapest;
+	}
+
+	Private function calUsswUspsPriorityExpressPackageFee($weight,$l,$w,$h){
+		if($weight <= 31751 and ($l + 2 * ($w + $h)) <= 213){
+			if($weight<=226){
+				return 31.2;
+			}
+			elseif($weight>226 && $weight<=453){
+				return 36.6;
+			}
+			elseif($weight>453 && $weight<=906){
+				return 40.15;
+			}
+			elseif($weight>906){
+				return 40.15+ceil($weight/453)*6;
+			}
+		}
+		else{
+			return 0;
+		}
+	}
+
+	private function calUsswUspsPriorityExpressFlatFee($weight,$l,$w,$h){
+		if($weight <= 31751 and (($l<=24 and 2 * ($w + $h) <= 31) or ($l<=31 and 2 * ($w + $h) <= 24))){
+			return 22.95;
+		}
+		else{
+			return 0;
+		}
+	}
+
+	private function calUsswUspsPriorityExpressLegalFee($weight,$l,$w,$h){
+		if($weight <= 31751 and (($l<=38 and 2 * ($w + $h) <= 24) or ($l<=24 and 2 * ($w + $h) <= 38))){
+			return 22.95;
+		}
+		else{
+			return 0;
+		}
 	}
 
 	private function calUsswUspsFirstClassFee($weight,$l,$w,$h){
@@ -676,7 +817,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPriorityFlatRateEnvelopeFee($weight,$l,$w,$h){
-		if ($weight <= 31751 and $l <= 31 and $w+$h <= 24){
+		if ($weight <= 31751 and (($l <= 31 and 2*($w+$h) <= 24) or ($l <= 24 and 2*($w+$h) <= 31))){
 			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>4))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
 		}
 		else{
