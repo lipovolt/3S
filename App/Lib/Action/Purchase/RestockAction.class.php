@@ -666,25 +666,6 @@ class RestockAction extends CommonAction{
             $this->error("请选择上传的文件");
         }
     }
-
-    public function copyPurchaseLink(){
-    	$product = M(C('db_product'));
-    	$supplier = M(C('DB_SUPPLIER'));
-    	$product->starttrans();
-    	$supplier->starttrans();
-    	$p=$product->select();
-    	foreach ($p as $key => $value) {
-    		if($value[C('DB_PRODUCT_SUPPLIER')] != null){
-    			$link = $supplier->where(array('id'=>$value[C('DB_PRODUCT_SUPPLIER')]))->getField(C('DB_SUPPLIER_WEBSITE'));
-    			if($link != null){
-    				$product->where(array('sku'=>$value['sku']))->setField('purchase_link',$link);
-    			}
-    		}
-    	}
-    	$product->commit();
-    	$supplier->commit();
-    	$this->redirect('/Product/Product/productInfo');
-    }
 }
 
 ?>

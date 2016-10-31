@@ -88,13 +88,14 @@ class ProductAction extends CommonAction{
                             $data[C('db_product_incoming_day')]= $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
                             $data[C('db_product_manager')]= $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
                             $data[C('db_product_supplier')]=$objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
-                            $data[C('db_product_ggs_ussw_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
-                            $data[C('db_product_rc_winit_us_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue();
-                            $data[C('db_product_rc_winit_de_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("S".$i)->getValue();
-                            $data[C('db_product_ebay_com_best_match')]=$objPHPExcel->getActiveSheet()->getCell("T".$i)->getValue();
-                            $data[C('db_product_ebay_com_price_lowest')]=$objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
-                            $data[C('db_product_ebay_de_best_match')]=$objPHPExcel->getActiveSheet()->getCell("V".$i)->getValue();
-                            $data[C('db_product_ebay_de_price_lowest')]=$objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue();
+                            $data[C('db_product_purchase_link')]=$objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
+                            $data[C('db_product_ggs_ussw_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue();
+                            $data[C('db_product_rc_winit_us_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("S".$i)->getValue();
+                            $data[C('db_product_rc_winit_de_sale_price')]=$objPHPExcel->getActiveSheet()->getCell("T".$i)->getValue();
+                            $data[C('db_product_ebay_com_best_match')]=$objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
+                            $data[C('db_product_ebay_com_price_lowest')]=$objPHPExcel->getActiveSheet()->getCell("V".$i)->getValue();
+                            $data[C('db_product_ebay_de_best_match')]=$objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue();
+                            $data[C('db_product_ebay_de_price_lowest')]=$objPHPExcel->getActiveSheet()->getCell("X".$i)->getValue();
                             
                             $verifyError = $this->verifyProduct($data);
                             if($verifyError != null){
@@ -223,6 +224,10 @@ class ProductAction extends CommonAction{
             return '美国头程是必填项！';
         elseif($productToVerify[C('db_product_manager')] == null or $productToVerify[C('db_product_manager')] == '')
             return '产品经理是必填项！';
+        elseif($productToVerify[C('db_product_supplier')] == null or $productToVerify[C('db_product_supplier')] == '')
+            return '供货商编号是必填项';
+        elseif($productToVerify[C('db_product_purchase_link')] == null or $productToVerify[C('db_product_purchase_link')] == '')
+            return '采购链接是必填项';
         else
             return null;
     }
