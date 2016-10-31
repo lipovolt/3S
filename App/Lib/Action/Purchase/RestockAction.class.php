@@ -81,7 +81,8 @@ class RestockAction extends CommonAction{
 	        array('quantity','数量'),
 	        array('warehouse','仓库'),	        
 	        array('manager','产品经理'),
-	        array('supplier','供货商'),	        
+	        array('supplier','供货商'),
+	        array('purchase_link','采购链接'),	        
 	        );
 		$cellNum = count($xlsCell);
 		$dataNum = count($outOfStock);
@@ -470,6 +471,7 @@ class RestockAction extends CommonAction{
 		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $product[C('db_product_manager')];
 		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $product[C('DB_PRODUCT_PRICE')];
 		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $product[C('DB_PRODUCT_SUPPLIER')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['purchase_link'] = $product[C('DB_PRODUCT_PURCHASE_LINK')];
 		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
 		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
 	}
@@ -663,6 +665,25 @@ class RestockAction extends CommonAction{
         }else{
             $this->error("请选择上传的文件");
         }
+    }
+
+    public function copyPurchaseLink(){
+    	$product = M(C('db_product'));
+    	$supplier = M(C('DB_SUPPLIER'));
+    	$product->starttrans();
+    	$supplier->starttrans();
+    	$p=$product->select();
+    	foreach ($p as $key => $value) {
+    		if($value[C('DB_PRODUCT_SUPPLIER')] != null){
+    			$link = $supplier->where(array('id'=>$value[C('DB_PRODUCT_SUPPLIER')]))->getField(C('DB_SUPPLIER_WEBSITE'));
+    			if($link != null){
+    				$product->where(array('sku'=>$value['sku']))->setField('purchase_link',$link);
+    			}
+    		}
+    	}
+    	$product->commit();
+    	$supplier->commit();
+    	$this->redirect('/Product/Product/productInfo');
     }
 }
 

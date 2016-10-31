@@ -163,6 +163,7 @@ class ProductAction extends CommonAction{
         $data[C('db_product_ebay_com_price_lowest')] = I('post.'.C('db_product_ebay_com_price_lowest'),'','htmlspecialchars');
         $data[C('db_product_ebay_de_best_match')] = I('post.'.C('db_product_ebay_de_best_match'),'','htmlspecialchars');
         $data[C('db_product_ebay_de_price_lowest')] = I('post.'.C('db_product_ebay_de_price_lowest'),'','htmlspecialchars');
+        $data[C('db_product_purchase_link')] = I('post.'.C('db_product_purchase_link'),'','htmlspecialchars');
         $verifyError = $this->verifyProduct($data);
         
         if($verifyError != null){

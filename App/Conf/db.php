@@ -49,7 +49,8 @@ return array(
     `ebay_com_best` varchar(255) default null,
     `ebay_com_cheapest` varchar(255) default null,
     `ebay_de_best` varchar(255) default null,
-    `ebay_de_cheapest` varchar(255) default null
+    `ebay_de_cheapest` varchar(255) default null,
+    `purchase_link` varchar(255) default null
     ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;        
     */
 	'DB_PRODUCT' => 'product',
@@ -81,6 +82,7 @@ return array(
 	'DB_PRODUCT_EBAY_COM_PRICE_LOWEST' => 'ebay_com_cheapest',
 	'DB_PRODUCT_EBAY_DE_BEST_MATCH' => 'ebay_de_best',
 	'DB_PRODUCT_EBAY_DE_PRICE_LOWEST' => 'ebay_de_cheapest',
+	'DB_PRODUCT_PURCHASE_LINK' => 'purchase_link',
 
 	//session
 	/*创建session表
