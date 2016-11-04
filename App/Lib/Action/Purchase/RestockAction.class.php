@@ -650,6 +650,7 @@ class RestockAction extends CommonAction{
                 }
                 if($errorInFile != null){
                 	dump($errorInFile);
+                	die;
                 	$this->error('内容有错误，无法更新补货表发货状态');
                 }else{
                 	for($i=2;$i<=$highestRow;$i++){
