@@ -128,5 +128,26 @@ return array(
 		'A' => '补货表编号',
 		'B' => '状态', //部分发货，已发货
 		),
+
+	//update product packing weight length widht height from winit product template
+	'IMPORT_WINIT_PRODUCT' => array(
+		'A'=>'编码',
+		'B'=>'规格',
+		'C'=>'第三方商品编码',
+		'D'=>'中文名称',
+		'E'=>'英文名称',
+		'F'=>'注册重量(kg)',
+		'G'=>'重量体积固定',
+		'H'=>'注册长(cm)',
+		'I'=>'注册宽(cm)',
+		'J'=>'注册高(cm)',
+		'K'=>'注册体积(CBM)',
+		'L'=>'有品牌',
+		'M'=>'有电池',
+		'N'=>'商品展示页网址',
+		'O'=>'备注',
+		'P'=>'出口国家',
+		'Q'=>'出口申报价值(USD)',
+		),
 	);
 ?>

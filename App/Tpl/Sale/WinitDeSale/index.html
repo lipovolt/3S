@@ -81,10 +81,10 @@
 						<th><div class="tl">售价€</div></th>
 						<th><div class="tl">毛利润€</div></th>
 						<th><div class="tl">毛利率</div></th>
-						<th><div class="tl">重量g</div></th>
-						<th>长cm</th>
-						<th>宽cm</th>
-						<th><div class="tl">高cm</div></th>
+						<th><div class="tl">带包装重量g</div></th>
+						<th>包装长cm</th>
+						<th>包装宽cm</th>
+						<th><div class="tl">包装高cm</div></th>
 					</tr>
 					<volist name="data" id="vo">
 						<tr>
@@ -101,10 +101,10 @@
 						<td><div class="tl">{$vo[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]}</div></td>
 						<td><div class="tl">{$vo.gprofit}</div></td>
 						<td><div class="tl">{$vo.grate}</div></td>
-						<td><div class="tl">{$vo.weight}</div></td>
-						<td><div class="tl">{$vo.length}</div></td>
-						<td><div class="tl">{$vo.width}</div></td>
-						<td><div class="tl">{$vo.height}</div></td>
+						<td><div class="tl">{$vo.pweight}</div></td>
+						<td><div class="tl">{$vo.plength}</div></td>
+						<td><div class="tl">{$vo.pwidth}</div></td>
+						<td><div class="tl">{$vo.pheight}</div></td>
 						</tr>	
 					</volist> 								
 				</table>

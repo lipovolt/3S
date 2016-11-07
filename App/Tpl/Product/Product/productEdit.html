@@ -107,12 +107,24 @@ function GenerateUpc(){
 								</select>
 							</div>
 						</div>
-					</div>
-					<div class="item">
-                        <div class="form-group">
+						<div class="form-group">
 							<label for="price" class="control-label">采购价￥</label>
 							<div class="control-wrap">
 								<input type="text"  id="{:C('DB_PRODUCT_PRICE')}" name="{:C('DB_PRODUCT_PRICE')}" value="{$product[0][C('DB_PRODUCT_PRICE')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+                        <div class="form-group">
+							<label for="Name" class="control-label">中文名称</label>
+							<div class="control-wrap">
+								<input type="text" name="{:C('DB_PRODUCT_CNAME')}" id="{:C('DB_PRODUCT_CNAME')}" value="{$product[0][C('DB_PRODUCT_CNAME')]}"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="EName" class="control-label">英文名称</label>
+							<div class="control-wrap">
+								<input type="text" name="{:C('DB_PRODUCT_ENAME')}" id="{:C('DB_PRODUCT_ENAME')}" value="{$product[0][C('DB_PRODUCT_ENAME')]}"/>
 							</div>
 						</div>
 						<div class="form-group checkbox">
@@ -148,46 +160,66 @@ function GenerateUpc(){
 					</div>
 					<div class="item">
 						<div class="form-group">
-							<label for="Name" class="control-label">中文名称</label>
-							<div class="control-wrap">
-								<input type="text" name="{:C('DB_PRODUCT_CNAME')}" id="{:C('DB_PRODUCT_CNAME')}" value="{$product[0][C('DB_PRODUCT_CNAME')]}" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="EName" class="control-label">英文名称</label>
-							<div class="control-wrap">
-								<input type="text" name="{:C('DB_PRODUCT_ENAME')}" id="{:C('DB_PRODUCT_ENAME')}" value="{$product[0][C('DB_PRODUCT_ENAME')]}" />
-							</div>
-						</div>
-					</div>
-					<div class="item">
-                        <div class="form-group">
-							<label for="weight" class="control-label">重量g</label>
-							<div class="control-wrap">
-								<input type="text"  id="{:C('DB_PRODUCT_WEIGHT')}" name="{:C('DB_PRODUCT_WEIGHT')}" value="{$product[0][C('DB_PRODUCT_WEIGHT')]}" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label for="length" class="control-label">长cm</label>
+							<label for="length" class="control-label">产品长cm</label>
 							<div class="control-wrap">
 								<input type="text"  id="{:C('DB_PRODUCT_LENGTH')}" name="{:C('DB_PRODUCT_LENGTH')}" value="{$product[0][C('DB_PRODUCT_LENGTH')]}" />
 							</div>
 						</div>
-					</div>
-                    <div class="item">
-                        <div class="form-group">
-							<label for="width" class="control-label">宽cm</label>
+						<div class="form-group">
+							<label for="width" class="control-label">产品宽cm</label>
 							<div class="control-wrap">
 								<input type="text"  id="{:C('DB_PRODUCT_WIDTH')}" name="{:C('DB_PRODUCT_WIDTH')}" value="{$product[0][C('DB_PRODUCT_WIDTH')]}" />
 							</div>
 						</div>
                         <div class="form-group">
-							<label for="height" class="control-label">高cm</label>
+							<label for="height" class="control-label">产品高cm</label>
 							<div class="control-wrap">
 								<input type="text"  id="{:C('DB_PRODUCT_HEIGHT')}" name="{:C('DB_PRODUCT_HEIGHT')}" value="{$product[0][C('DB_PRODUCT_HEIGHT')]}" />
 							</div>
 						</div>
-                    </div>
+					</div>
+                    <div class="item">
+						<div class="form-group">
+							<label for="length" class="control-label">包装长cm</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_PRODUCT_PLENGTH')}" name="{:C('DB_PRODUCT_PLENGTH')}" value="{$product[0][C('DB_PRODUCT_PLENGTH')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="width" class="control-label">包装宽cm</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_PRODUCT_PWIDTH')}" name="{:C('DB_PRODUCT_PWIDTH')}" value="{$product[0][C('DB_PRODUCT_PWIDTH')]}" />
+							</div>
+						</div>
+                        <div class="form-group">
+							<label for="height" class="control-label">包装高cm</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_PRODUCT_PHEIGHT')}" name="{:C('DB_PRODUCT_PHEIGHT')}" value="{$product[0][C('DB_PRODUCT_PHEIGHT')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="weight" class="control-label">产品重量g</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_PRODUCT_WEIGHT')}" name="{:C('DB_PRODUCT_WEIGHT')}" value="{$product[0][C('DB_PRODUCT_WEIGHT')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="weight" class="control-label">带包装重量g</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_PRODUCT_PWEIGHT')}" name="{:C('DB_PRODUCT_PWEIGHT')}" value="{$product[0][C('DB_PRODUCT_PWEIGHT')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="weight" class="control-label">包装备注</label>
+							<div class="control-wrap">
+								<textarea  type="text"  id="{:C('DB_PRODUCT_PREMARK')}" name="{:C('DB_PRODUCT_PREMARK')}">{$product[0][C('DB_PRODUCT_PREMARK')]}</textarea>
+							</div>
+						</div>
+					</div>	
                     <div class="item">
                         <div class="form-group">
 							<label for="way-to-de" class="control-label">德国头程方式</label>

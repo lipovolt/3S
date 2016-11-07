@@ -25,7 +25,7 @@ class ProductAction extends CommonAction{
 
     public function productBatchAdd(){
         $this->display();
-     }
+    }
 
     public function batchAdd(){
         if (!empty($_FILES)) {
@@ -147,6 +147,11 @@ class ProductAction extends CommonAction{
         $data[C('db_product_length')] = I('post.'.C('db_product_length'),'','htmlspecialchars');
         $data[C('db_product_width')] = I('post.'.C('db_product_width'),'','htmlspecialchars');
         $data[C('db_product_height')] = I('post.'.C('db_product_height'),'','htmlspecialchars');
+         $data[C('db_product_pweight')] = I('post.'.C('db_product_pweight'),'','htmlspecialchars');
+        $data[C('db_product_plength')] = I('post.'.C('db_product_plength'),'','htmlspecialchars');
+        $data[C('db_product_pwidth')] = I('post.'.C('db_product_pwidth'),'','htmlspecialchars');
+        $data[C('db_product_pheight')] = I('post.'.C('db_product_pheight'),'','htmlspecialchars');
+        $data[C('db_product_premark')] = I('post.'.C('db_product_premark'),'','htmlspecialchars');
         $data[C('db_product_battery')] = I('post.'.C('db_product_battery'),'','htmlspecialchars');
         $data[C('db_product_tode')] = I('post.'.C('db_product_tode'),'','htmlspecialchars');
         $data[C('db_product_tous')] = I('post.'.C('db_product_tous'),'','htmlspecialchars');
@@ -208,14 +213,6 @@ class ProductAction extends CommonAction{
             return '英文名称是必填项！';
         elseif($productToVerify[C('db_product_price')] == null or $productToVerify[C('db_product_price')] == '')
             return '采购价是必填项！';
-        elseif($productToVerify[C('db_product_weight')] == null or $productToVerify[C('db_product_weight')] == '')
-            return '重量是必填项！';
-        elseif($productToVerify[C('db_product_length')] == null or $productToVerify[C('db_product_length')] == '')
-            return '长度是必填项！';
-        elseif($productToVerify[C('db_product_width')] == null or $productToVerify[C('db_product_width')] == '')
-            return '宽度是必填项！';
-        elseif($productToVerify[C('db_product_height')] == null or $productToVerify[C('db_product_height')] == '')
-            return '高度是必填项！';
         elseif($productToVerify[C('db_product_battery')] == null or $productToVerify[C('db_product_battery')] == '')
             return '电池属性是必填项！';
         elseif($productToVerify[C('db_product_tode')] == null or $productToVerify[C('db_product_tode')] == '')
@@ -230,6 +227,100 @@ class ProductAction extends CommonAction{
             return '采购链接是必填项';
         else
             return null;
+    }
+
+    public function updateWinitProductList(){
+        $this->display();
+    }
+
+    public function updateWinitProductInfo(){
+        if (!empty($_FILES) && I('post.country','','htmlspecialchars') != "unSelected") {
+            import('ORG.Net.UploadFile');
+             $config=array(
+                 'allowExts'=>array('xlsx','xls'),
+                 'savePath'=>'./Public/upload/',
+                 'saveRule'=>'time',
+             );
+             $upload = new UploadFile($config);
+             if (!$upload->upload()) {
+                 $this->error($upload->getErrorMsg());
+             } else {
+                 $info = $upload->getUploadFileInfo();
+                 
+             }
+         
+             vendor("PHPExcel.PHPExcel");
+                $file_name=$info[0]['savepath'].$info[0]['savename'];
+                $objReader = PHPExcel_IOFactory::createReader('Excel5');
+                $objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+                $sheet = $objPHPExcel->getSheet(0);
+                $highestRow = $sheet->getHighestRow(); // 取得总行数
+                $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+                for ($i=$highestRow; $i >0 ; $i--) { 
+                    if($sheet->getCell("A".$i) == null or $sheet->getCell("A".$i) =='')
+                        $highestRow = $i;
+                    else{
+                        $highestRow = $i;
+                        break;
+                    }      
+                }
+                //excel firt column name verify
+                for($c='A';$c<='Q';$c++){
+                    $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+                }
+                if($this->verifyImportedWinitProductTemplateColumnName($firstRow)){    
+                    $products = M(C('db_product'));
+                    $products-> startTrans();
+                    for($i=2;$i<=$highestRow;$i++)
+                    {   
+                        if($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()==''){
+                            break;
+                        }else{
+                            $data=null;
+                            
+                            if(I('post.country','','htmlspecialchars')=="de"){
+                                $data[C('db_product_sku')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),"utf-8","auto"); 
+                                $data[C('db_product_pweight')] = $objPHPExcel->getActiveSheet()->getCell("T".$i)->getValue()*1000;
+                                $data[C('db_product_plength')] = $objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
+                                $data[C('db_product_pwidth')]= $objPHPExcel->getActiveSheet()->getCell("V".$i)->getValue();
+                                $data[C('db_product_pheight')]= $objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue();
+                                $data[C('db_product_detariff')]= $objPHPExcel->getActiveSheet()->getCell("AC".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AC".$i)->getValue();
+                            }elseif(I('post.country','','htmlspecialchars')=="us"){
+                                $data[C('db_product_sku')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),"utf-8","auto"); 
+                                $data[C('db_product_ustariff')]= $objPHPExcel->getActiveSheet()->getCell("AC".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AC".$i)->getValue();
+                            }                           
+                            
+                            if($products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->find() != null){
+                                $result = $products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->save($data);
+                            }
+                        }
+                         
+                    } 
+                    $products->commit();
+                    if(false !== $result || 0 !== $result){
+                        $this->success('导入成功！');
+                    }else{
+                        $this->error("导入不成功！请重新上传。");
+                    }
+                }else{
+                    $this->error("模板错误，请检查模板！");
+                }
+                
+                
+         }else
+             {
+                 $this->error("请选择上传的文件和国家");
+             } 
+    }
+
+    private function verifyImportedWinitProductTemplateColumnName($firstRow){
+        for($c='A';$c<=max(array_keys(C('IMPORT_WINIT_PRODUCT')));$c++){
+            if($firstRow[$c] != C('IMPORT_WINIT_PRODUCT')[$c]){ 
+                return false;
+            }      
+        }
+        return true;
     }
 }
 

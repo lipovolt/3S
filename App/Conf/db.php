@@ -32,6 +32,11 @@ return array(
     `length` decimal(5,2) default 0,
     `width` decimal(5,2) default 0,
     `height` decimal(5,2) default 0,
+    `pweight` smallint(6) default 0,
+    `plength` decimal(5,2) default 0,
+    `pwidth` decimal(5,2) default 0,
+    `pheight` decimal(5,2) default 0,
+    `premark` varchar(255) default null,
     `battery` varchar(10) default null,
     `tode` varchar(10) default null,
     `tous` varchar(10) default null,
@@ -64,6 +69,11 @@ return array(
 	'DB_PRODUCT_LENGTH' => 'length',
 	'DB_PRODUCT_WIDTH' => 'width',
 	'DB_PRODUCT_HEIGHT' => 'height',
+	'DB_PRODUCT_PWEIGHT' => 'pweight',
+	'DB_PRODUCT_PLENGTH' => 'plength',
+	'DB_PRODUCT_PWIDTH' => 'pwidth',
+	'DB_PRODUCT_PHEIGHT' => 'pheight',
+	'DB_PRODUCT_PREMARK' => 'premark',
 	'DB_PRODUCT_BATTERY' => 'battery', //不带电，内置电，纯电
 	'DB_PRODUCT_TODE' => 'tode', //空运，海运，无
 	'DB_PRODUCT_TOUS' => 'tous', //空运，海运，无
