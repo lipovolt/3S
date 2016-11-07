@@ -141,7 +141,7 @@ class OutboundAction extends CommonAction{
                         if($saleNo!=$objPHPExcel->getActiveSheet()->getCell("A".($i-1))->getValue()){ 
                         //判断是否跟上一行订单号相同，不相同的话，需要创建新出库单
                             $outboundOrder[$j][C('DB_USSW_OUTBOUND_MARKET_NO')] = $saleNo;
-                            $outboundOrder[$j][C('DB_USSW_OUTBOUND_STATUS')] = '待出库';
+                            $outboundOrder[$j][C('DB_USSW_OUTBOUND_STATUS')] = '已出库';
                             $outboundOrder[$j][C('DB_USSW_OUTBOUND_CREATE_TIME')]= Date('Y-m-d H:i:s');
                             $outboundOrder[$j][C('DB_USSW_OUTBOUND_MARKET')] = 'ebay.com';
                             $outboundOrder[$j][C('DB_USSW_OUTBOUND_SELLER_ID')] = I('post.sellerID','','htmlspecialchars');
@@ -321,7 +321,7 @@ class OutboundAction extends CommonAction{
                     $usswOutbound->commit();
                     $usswOutboundItem->commit();
                     $usstorage->commit();
-                    $this->success('导入成功！');
+                    $this->exportPackingList($filteredOutboundOrder);
                 }
             }else{
                 $this->error("模板不正确，请检查");
@@ -417,6 +417,82 @@ class OutboundAction extends CommonAction{
         else{
             return true;
         }
+    }
+
+    public function exportPackingList($outboundOrder){
+        $xlsName  = "Packinglist";
+        $xlsCell  = array(
+            array(C('DB_USSW_OUTBOUND_ITEM_MARKET_NO'),'平台订单号'),
+            array(C('DB_USSW_OUTBOUND_BUYER_NAME'),'收货人'),
+            array(C('DB_USSW_OUTBOUND_BUYER_ADDRESS1'),'收货地址1'),
+            array(C('DB_USSW_OUTBOUND_BUYER_ADDRESS2'),'收货地址2'),
+            array(C('DB_USSW_OUTBOUND_BUYER_CITY'),'城市'),
+            array(C('DB_USSW_OUTBOUND_BUYER_STATE'),'州'),
+            array(C('DB_USSW_OUTBOUND_BUYER_COUNTRY'),'国家'),
+            array(C('DB_USSW_OUTBOUND_BUYER_ZIP'),'邮编'),
+            array(C('DB_USSW_OUTBOUND_ITEM_POSITION'),'货位'),
+            array(C('DB_USSW_OUTBOUND_ITEM_SKU'),'产品编码'),
+            array(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'),'数量') 
+            );
+        $this->exportExcel($xlsName,$xlsCell,$this->getPackingList($outboundOrder));
+    }
+    
+    public function exportExcel($expTitle,$expCellName,$expTableData){
+        $fileName = $expTitle.date('_Ymd');
+        $cellNum = count($expCellName);
+        $dataNum = count($expTableData);
+        vendor("PHPExcel.PHPExcel");
+
+        $objPHPExcel = new PHPExcel();
+        $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
+
+        for($i=0;$i<$cellNum;$i++){
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i].'1', $expCellName[$i][1]); 
+        } 
+
+        for($i=0;$i<$dataNum;$i++){
+            for($j=0;$j<$cellNum;$j++){
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $expTableData[$i][$expCellName[$j][0]]);
+            }             
+        }  
+
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="'.$xlsTitle.'.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
+        $objWriter->save('php://output');
+        exit;   
+    }
+
+    private function getPackingList($outboundOrder){
+        $i=0;
+        $obo=M(C('DB_USSW_OUTBOUND'));
+        $oboi=M(C('DB_USSW_OUTBOUND_ITEM'));
+        foreach ($outboundOrder as $key => $value) {
+            $order=$obo->where(array(C('DB_USSW_OUTBOUND_MARKET_NO')=>$value[C('DB_USSW_OUTBOUND_MARKET_NO')]))->find();
+            $items=$oboi->where(array(C('DB_USSW_OUTBOUND_ITEM_OOID')=>$order[C('DB_USSW_OUTBOUND_ID')]))->select();
+            $data[$i][C('DB_USSW_OUTBOUND_MARKET_NO')]=$value[C('DB_USSW_OUTBOUND_MARKET_NO')];
+            $data[$i][C('DB_USSW_OUTBOUND_BUYER_NAME')]=$order[C('DB_USSW_OUTBOUND_BUYER_NAME')];
+            $data[$i][C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')]=$order[C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')];
+            $data[$i][C('DB_USSW_OUTBOUND_BUYER_ADDRESS2')]=$order[C('DB_USSW_OUTBOUND_BUYER_ADDRESS2')];
+            $data[$i][C('DB_USSW_OUTBOUND_BUYER_CITY')]=$order[C('DB_USSW_OUTBOUND_BUYER_CITY')];
+            $data[$i][C('DB_USSW_OUTBOUND_BUYER_STATE')]=$order[C('DB_USSW_OUTBOUND_BUYER_STATE')];
+            $data[$i][C('DB_USSW_OUTBOUND_BUYER_COUNTRY')]=$order[C('DB_USSW_OUTBOUND_BUYER_COUNTRY')];
+            $data[$i][C('DB_USSW_OUTBOUND_BUYER_ZIP')]=$order[C('DB_USSW_OUTBOUND_BUYER_ZIP')];
+            foreach ($items as $keyItem => $valueItem) {
+                $data[$i][C('DB_USSW_OUTBOUND_ITEM_POSITION')]=$valueItem[C('DB_USSW_OUTBOUND_ITEM_POSITION')];
+                $data[$i][C('DB_USSW_OUTBOUND_ITEM_SKU')]=$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')];
+                $data[$i][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')]=$valueItem[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
+                $i=$i+1;
+            }
+        }
+        return $data;
+    }
+
+    public function packing($sid){
+        $map['DB_USSW_OUTBOUND_MARKET_NO']=array('egt',$sid);
+        $orders = M(C('DB_USSW_OUTBOUND'))->where($map)->select();
+        $this->exportPackingList($orders);
     }
 }
 

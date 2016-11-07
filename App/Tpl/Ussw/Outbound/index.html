@@ -20,6 +20,11 @@ function del()
         return false;
     }
 }
+function packingList(){
+	var sid = prompt("起始订单号","");
+	form.action="{:U('Ussw/Outbound/packing')}?sid="+sid;
+	form.submit();
+}
 </script>
 </head>
 <body>
@@ -73,7 +78,9 @@ function del()
 			</div>
 		</form>
 		<div>
-			<div class="tab-content">	
+			<div class="tab-content">
+				<form name="form" id="search_product" action="#" method="POST">
+				<input class="btn btn-s btn-blue" type="button" onclick="packingList()" value="导出包货单"/>
 				<table id="tablelist" class="tablelist">
 					<tr>
 						<th><div class="tl">出库单编号</div></th>
@@ -97,6 +104,7 @@ function del()
 					</volist> 								
 				</table>
 				<div class="result page" align="center">{$page}</div>
+				</form>
 			</div>
 		</div>
 	</div>

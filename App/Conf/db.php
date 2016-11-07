@@ -248,7 +248,7 @@ return array(
 	'DB_USSW_OUTBOUND_BUYER_CITY' => 'buyer_city',
 	'DB_USSW_OUTBOUND_BUYER_STATE' => 'buyer_state',
 	'DB_USSW_OUTBOUND_BUYER_COUNTRY' => 'buyer_country',
-	'DB_USSW_OUTBOUND_BUYER_ZIP' => 'buyer_ZIP',
+	'DB_USSW_OUTBOUND_BUYER_ZIP' => 'buyer_zip',
 
 	//ussw_outbound_item
 	/*

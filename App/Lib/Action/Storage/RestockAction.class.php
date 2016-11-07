@@ -13,8 +13,6 @@ class RestockAction extends CommonAction{
 	}
 
 	public function exportRestock(){
-		$this->getIInventory('1269');
-
 		$xlsName  = "restock";
         $xlsCell  = array(
 	        array(C('DB_RESTOCK_ID'),'补货编号'),
