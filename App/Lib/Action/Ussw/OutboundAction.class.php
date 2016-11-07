@@ -10,7 +10,7 @@ class OutboundAction extends CommonAction{
             $Page = new Page($count,20);            
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
-            $outboundOrders = $Data->limit($Page->firstRow.','.$Page->listRows)->select();
+            $outboundOrders = $Data->order('id desc')->limit($Page->firstRow.','.$Page->listRows)->select();
             $this->assign('outboundOrders',$outboundOrders);
             $this->assign('page',$show);
         }
