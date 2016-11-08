@@ -89,7 +89,7 @@ function packingList(){
 						<th><div class="tl">发货方式</div></th>
 						<th><div class="tl">追踪号</div></th>
 						<th><div class="tl">下单时间</div></th>
-						<th width="230">操作</th>
+						<!-- <th width="230">操作</th> -->
 					</tr>
 					<volist name="outboundOrders" id="vo">
 						<tr>
@@ -99,7 +99,7 @@ function packingList(){
 						<td><div class="tl">{$vo[C('DB_USSW_OUTBOUND_SHIPPING_WAY')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_OUTBOUND_TRACKING_NUMBER')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_OUTBOUND_CREATE_TIME')]}</div></td>
-						<td><a href="{:U('Ussw/Outbound/confirmOutboundOrder',array('id'=>$vo['id']))}">确认出库</a></td>
+						<!-- <td><a href="{:U('Ussw/Outbound/confirmOutboundOrder',array('id'=>$vo['id']))}">确认出库</a></td> -->
 						</tr>	
 					</volist> 								
 				</table>

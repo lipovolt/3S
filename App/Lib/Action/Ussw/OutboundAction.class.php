@@ -303,6 +303,7 @@ class OutboundAction extends CommonAction{
                         $rows = $usstorage->where($map)->select();
                         $difference = $value[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
                         //更新库存信息
+                        /*更新出库信息到待出库，然后需要手动点击确认出库
                         foreach ($rows as $key => $row) {
                             if($row[C('DB_USSTORAGE_AINVENTORY')]>=$difference){
                                 $data[C('DB_USSTORAGE_AINVENTORY')] = $row[C('DB_USSTORAGE_AINVENTORY')] - $difference;
@@ -316,6 +317,12 @@ class OutboundAction extends CommonAction{
                                 $usstorage->where(array(C('DB_USSTORAGE_ID')=>$row[C('DB_USSTORAGE_ID')]))->save($data);
                             }
 
+                        }*/
+                        //更新库存信息到已出库，不需手动点击确认出库
+                        foreach ($rows as $key => $row) {
+                            $data[C('DB_USSTORAGE_AINVENTORY')] = $row[C('DB_USSTORAGE_AINVENTORY')] - $difference;
+                            $data[C('DB_USSTORAGE_CSALES')] = $row[C('DB_USSTORAGE_CSALES')] + $difference;
+                            $usstorage->where(array(C('DB_USSTORAGE_ID')=>$row[C('DB_USSTORAGE_ID')]))->save($data);
                         }
                     }
                     $usswOutbound->commit();
