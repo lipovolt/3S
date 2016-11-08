@@ -497,7 +497,7 @@ class OutboundAction extends CommonAction{
     }
 
     public function packing($sid){
-        $map[C('DB_USSW_OUTBOUND_MARKET_NO')]=array('egt',$sid);
+        $map[C('DB_USSW_OUTBOUND_ID')]=array('egt',$sid);
         $orders = M(C('DB_USSW_OUTBOUND'))->where($map)->select();
         $this->exportPackingList($orders);
     }

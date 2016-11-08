@@ -21,7 +21,7 @@ function del()
     }
 }
 function packingList(){
-	var sid = prompt("起始订单号","");
+	var sid = prompt("起始出库单编号","");
 	form.action="{:U('Ussw/Outbound/packing')}?sid="+sid;
 	form.submit();
 }
