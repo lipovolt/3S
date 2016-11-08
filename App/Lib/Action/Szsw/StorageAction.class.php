@@ -80,10 +80,10 @@ class StorageAction extends CommonAction{
 
     public function moveTo($warehouse,$quantity,$sku,$position){
       $restock = M(C('DB_RESTOCK'));
-      $data = $this->getSzStorage($sku,$position);
+      $data = $this->getSzStorage($sku);
       if($data==null){
         $sku = $sku.'0';
-        $data=$this->getSzStorage($sku,$position);
+        $data=$this->getSzStorage($sku);
       }
       if($data==null){
         $this->error('无法转仓，货号： '.$sku.' 不在深圳仓！');
@@ -119,11 +119,8 @@ class StorageAction extends CommonAction{
        }
     }
 
-    private function getSzStorage($sku,$position=-1){
+    private function getSzStorage($sku){
       $map[C('DB_SZSTORAGE_SKU')]=array('eq',$sku);
-      if($position!=-1){
-        $map[C('DB_SZSTORAGE_POSITION')]=array('eq',$position);
-      }
       $szstorage = M(C('DB_SZSTORAGE'));
       $data = $szstorage->where($map)->find();
       if($data==false || $data==null){
