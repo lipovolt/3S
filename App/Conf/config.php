@@ -7,7 +7,7 @@ return array(
 	'APP_DEBUG' => True,
 
 	//开启应用分组
-	'APP_GROUP_LIST' => 'Admin,Index,Product,Purchase,Sale,Storage,Ussw,Szsw',
+	'APP_GROUP_LIST' => 'Admin,Index,Product,Purchase,Sale,Storage,Ussw,Szsw,Todo',
 	'DEFAULT_GROUP' => 'Index',
 
 	//定义数据库连接参数
@@ -45,7 +45,7 @@ return array(
 	'USER_AUTH_ON' => true,
 	'USER_AUTH_TYPE' =>1,
 	'USER_AUTH_KEY' => 'uid',
-	'NOT_AUTH_MODULE' => 'Product,Index,Purchase,Sale,Storage,Ussw,Szsw',
+	'NOT_AUTH_MODULE' => 'Product,Index,Purchase,Sale,Storage,Ussw,Szsw,Todo',
 	'NOT_AUTH_ACTION' => 'login,logout',
 	'RBAC_ROLE_TABLE' => '3s_role',
 	'RBAC_USER_TABLE' => '3s_role_user',

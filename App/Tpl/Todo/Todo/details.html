@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>任务详情</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>任务</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/todo.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form method="POST" id="edit_productInfo" action="{:U('Todo/Todo/update')}">
+		<div class="inline-block block-indent">
+			<div class="item">
+				<div class="form-group">
+					<label for="sku" class="control-label">任务编号</label>
+					<div class="control-wrap">
+						<input type="text" value="{$task[C('DB_TODO_ID')]}" readonly="true"/>
+						<input type="hidden" name="{:C('DB_TODO_ID')}" value="{$task[C('DB_TODO_ID')]}" id="ProductCode"  />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="length" class="control-label">创建时间</label>
+					<div class="control-wrap">
+						<input type="text"  id="{:C('DB_TODO_CTIME')}" name="{:C('DB_TODO_CTIME')}" value="{$task[C('DB_TODO_CTIME')]}" />
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="width" class="control-label">完成时间</label>
+					<div class="control-wrap">
+						<input type="text"  id="{:C('DB_TODO_DTIME')}" name="{:C('DB_TODO_DTIME')}" value="{$task[C('DB_TODO_DTIME')]}" />
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="manager" class="control-label">创建人</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_TODO_CREATER')}"  id="{:C('DB_TODO_CREATER')}">
+						<?php 
+							if($task[C('DB_TODO_CREATER')] == '孙志磊'){
+								echo '<option value="张昱" >张昱</option>
+									<option value="孙志磊" selected>孙志磊</option>
+									<option value="郑德杰" >郑德杰</option>	
+									<option value="彭莉明" >彭莉明</option>
+									<option value="Jade" >Jade</option>';
+							}elseif($task[C('DB_TODO_CREATER')] == '郑德杰'){
+								echo '<option value="张昱" >张昱</option>
+									<option value="孙志磊" >孙志磊</option>
+									<option value="郑德杰" selected>郑德杰</option>	
+									<option value="彭莉明" >彭莉明</option>
+									<option value="Jade" >Jade</option>';
+							}elseif($task[C('DB_TODO_CREATER')] == '彭莉明'){
+								echo '<option value="张昱" >张昱</option>
+									<option value="孙志磊" >孙志磊</option>
+									<option value="郑德杰" >郑德杰</option>	
+									<option value="彭莉明" selected>彭莉明</option>
+									<option value="Jade" >Jade</option>';
+							}elseif($task[C('DB_TODO_CREATER')] == 'Jade'){
+								echo '<option value="张昱" >张昱</option>
+									<option value="孙志磊" >孙志磊</option>
+									<option value="郑德杰" >郑德杰</option>	
+									<option value="彭莉明" >彭莉明</option>
+									<option value="Jade" selected>Jade</option>';
+							}else{
+								echo '<option value="张昱" selected>张昱</option>
+									<option value="孙志磊" >孙志磊</option>
+									<option value="郑德杰" >郑德杰</option>	
+									<option value="彭莉明" >彭莉明</option>
+									<option value="Jade" >Jade</option>';
+							}
+						?>							
+					</select>
+				</div>
+			</div>
+			<div class="form-group checkbox">
+				<label for="IsBattery" class="control-label">责任人</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_TODO_PERSON')}"  id="{:C('DB_TODO_PERSON')}">
+						<?php 
+							if($task[C('DB_TODO_PERSON')] == '孙志磊'){
+								echo '<option value="张昱" >张昱</option>
+									<option value="孙志磊" selected>孙志磊</option>
+									<option value="郑德杰" >郑德杰</option>	
+									<option value="彭莉明" >彭莉明</option>
+									<option value="Jade" >Jade</option>';
+							}elseif($task[C('DB_TODO_PERSON')] == '郑德杰'){
+								echo '<option value="张昱" >张昱</option>
+									<option value="孙志磊" >孙志磊</option>
+									<option value="郑德杰" selected>郑德杰</option>	
+									<option value="彭莉明" >彭莉明</option>
+									<option value="Jade" >Jade</option>';
+							}elseif($task[C('DB_TODO_PERSON')] == '彭莉明'){
+								echo '<option value="张昱" >张昱</option>
+									<option value="孙志磊" >孙志磊</option>
+									<option value="郑德杰" >郑德杰</option>	
+									<option value="彭莉明" selected>彭莉明</option>
+									<option value="Jade" >Jade</option>';
+							}elseif($task[C('DB_TODO_PERSON')] == 'Jade'){
+								echo '<option value="张昱" >张昱</option>
+									<option value="孙志磊" >孙志磊</option>
+									<option value="郑德杰" >郑德杰</option>	
+									<option value="彭莉明" >彭莉明</option>
+									<option value="Jade" selected>Jade</option>';
+							}else{
+								echo '<option value="张昱" selected>张昱</option>
+									<option value="孙志磊" >孙志磊</option>
+									<option value="郑德杰" >郑德杰</option>	
+									<option value="彭莉明" >彭莉明</option>
+									<option value="Jade" >Jade</option>';
+							}
+						?>							
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="width" class="control-label">状态</label>
+					<div class="control-wrap">
+						<select name="{:C('DB_TODO_STATUS')}"  id="{:C('DB_TODO_STATUS')}">
+							<?php 
+								if($task[C('DB_TODO_STATUS')]== 0){
+									echo '<option value="0" selected>待处理</option>
+										<option value="1" >已处理</option>';
+								}else{
+									echo '<option value="0" >待处理</option>
+										<option value="1" selected>已处理</option>';
+								}
+							?>						
+						</select>
+					</div>
+				</div>						
+			</div>
+			<div class="item">
+				<div class="form-group">
+					<label for="weight" class="control-label">待办事项</label>
+					<div class="control-wrap">
+						<textarea  type="text"  id="{:C('DB_TODO_TASK')}" name="{:C('DB_TODO_TASK')}">{$task[C('DB_TODO_TASK')]}</textarea>
+					</div>
+				</div>
+			</div>
+			<div class="item">
+				<div class="form-group">
+					<label for="weight" class="control-label">备注</label>
+					<div class="control-wrap">
+						<textarea  type="text"  id="{:C('DB_TODO_REMARK')}" name="{:C('DB_TODO_REMARK')}">{$task[C('DB_TODO_REMARK')]}</textarea>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+		<div class="item tc"><input type='hidden' name='ProductID' value='1030634'>
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+			<button class="btn btn-blue btn-s" id="saveProductInfo" name="saveProductInfo">保存	</button>
+		</div>
+	</form> 
+	</div>
+
+
+		</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

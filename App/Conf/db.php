@@ -935,5 +935,30 @@ return array(
 	'DB_ROLE_USER_ROLE_ID' => 'role_id',
 	'DB_ROLE_USER_USER_ID' => 'user_id',
 
+
+
+	/*
+	Todo
+	任务表
+	CREATE TABLE IF NOT EXISTS `3s_todo` (
+	  `id` smallint(6) unsigned primary key not null auto_increment,
+	  `ctime` timestamp default NOW(),
+	  `dtime` timestamp default null,
+	  `creater` varchar(20) NOT NULL,
+	  `person` varchar(20) NOT NULL,
+	  `status` tinyint(1) unsigned DEFAULT NULL,
+	  `task` varchar(255) DEFAULT NULL,
+	  `remark` varchar(255) DEFAULT NULL
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
+	*/
+	'DB_TODO' => 'todo',
+	'DB_TODO_ID' => 'id',
+	'DB_TODO_CTIME' => 'ctime',
+	'DB_TODO_DTIME' => 'dtime',
+	'DB_TODO_CREATER' => 'creater',
+	'DB_TODO_PERSON' => 'person',
+	'DB_TODO_STATUS' => 'status',
+	'DB_TODO_TASK' => 'task',
+	'DB_TODO_REMARK' => 'remark',
 	);
 ?>
