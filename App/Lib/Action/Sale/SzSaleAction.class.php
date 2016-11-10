@@ -247,8 +247,8 @@ class SzSaleAction extends CommonAction{
 		if($country=='de'){
 			$table=M(C('DB_SZ_DE_SALE_PLAN'));
 		}
+		$data = $table->where(array(C('DB_SZ_US_SALE_PLAN_ID')=>$id))->find();
 		if($data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] !=null){
-			$data = $table->where(array(C('DB_SZ_US_SALE_PLAN_ID')=>$id))->find();
 			$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 			if($data[C('DB_SZ_US_SALE_PLAN_ID_SUGGEST')]=='relisting'){
 				$data[C('DB_SZ_US_SALE_PLAN_RELISTING_TIMES')] = intval($data[C('DB_SZ_US_SALE_PLAN_RELISTING_TIMES')])+1;

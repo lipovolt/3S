@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>任务详情</title>
+<title>待办事项编辑</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -28,7 +28,7 @@
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>任务</strong></div>
+			<div class="sidenav-hd"><strong>待办事项</strong></div>
 			<div class="sidenav-bd">
 				<include file="./Public/Tpl/todo.html" />	
 			</div>
@@ -39,7 +39,7 @@
 		<div class="inline-block block-indent">
 			<div class="item">
 				<div class="form-group">
-					<label for="sku" class="control-label">任务编号</label>
+					<label for="sku" class="control-label">事项编号</label>
 					<div class="control-wrap">
 						<input type="text" value="{$task[C('DB_TODO_ID')]}" readonly="true"/>
 						<input type="hidden" name="{:C('DB_TODO_ID')}" value="{$task[C('DB_TODO_ID')]}" id="ProductCode"  />

@@ -13,7 +13,7 @@ class TodoAction extends CommonAction{
             $task = $Data->order('id desc')->limit($Page->firstRow.','.$Page->listRows)->select();    
         }
         else{
-            $map[I('post.keyword','','htmlspecialchars')] = array('like',I('post.keywordValue','','htmlspecialchars'));
+            $map[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
             $map[I('post.skeyword','','htmlspecialchars')] = array('eq',I('post.skeywordValue','','htmlspecialchars'));
             $task = $Data->order('id desc')->where($map)->limit($Page->firstRow.','.$Page->listRows)->select();
             $this->assign('keyword', I('post.keyword','','htmlspecialchars'));

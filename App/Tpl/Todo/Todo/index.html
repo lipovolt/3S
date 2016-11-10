@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>任务</title>
+<title>待办事项</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -28,7 +28,7 @@
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>任务</strong></div>
+			<div class="sidenav-hd"><strong>待办事项</strong></div>
 			<div class="sidenav-bd">
 				<include file="./Public/Tpl/todo.html" />	
 			</div>
@@ -45,15 +45,15 @@
 								<if condition="($keyword eq 'creater')"> 
 									<option value="{:C('DB_TODO_CREATER')}" selected="">创建人</option>
 									<option value="{:C('DB_TODO_PERSON')}">责任人</option>
-									<option value="{:C('DB_TODO_TASK')}" >任务</option>
+									<option value="{:C('DB_TODO_TASK')}" >事项</option>
 								<elseif condition="$keyword eq 'task'"/>
 									<option value="{:C('DB_TODO_CREATER')}">创建人</option>
 									<option value="{:C('DB_TODO_PERSON')}">责任人</option>
-									<option value="{:C('DB_TODO_TASK')}" selected="">任务</option>
+									<option value="{:C('DB_TODO_TASK')}" selected="">事项</option>
 								<else /> 
 									<option value="{:C('DB_TODO_CREATER')}">创建人</option>
 									<option value="{:C('DB_TODO_PERSON')}" selected="">责任人</option>
-									<option value="{:C('DB_TODO_TASK')}">任务</option>
+									<option value="{:C('DB_TODO_TASK')}">事项</option>
 								</if>
 							</select>
 						</div>
