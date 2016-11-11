@@ -84,6 +84,7 @@
 						</td>	
 						<td>
 							<if condition='$vo["lock"]'><a href="{:U('Admin/Rbac/unlockUser',array(uid=>$vo[C('DB_3S_USER_ID')]))}">解锁</a><else /><a href="{:U('Admin/Rbac/lockUser',array(uid=>$vo[C('DB_3S_USER_ID')]))}">锁定</a></if>
+							<a href="{:U('Admin/Rbac/deleteUser',array(uid=>$vo[C('DB_3S_USER_ID')]))}">删除</a>
 						</td>
 						</tr>	
 					</volist> 								
