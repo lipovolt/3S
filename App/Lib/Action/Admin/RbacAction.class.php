@@ -27,6 +27,13 @@ class RbacAction extends CommonAction{
 		$this->display();
 	}
 
+	//删除用户
+	public function deleteUser($uid){
+		$user = M(C('DB_3S_USER'));
+		$user->where(array(C('DB_3S_USER_ID')=>$uid))->delete();
+		$this->success('已删除',U('Admin/Rbac/index'));
+	}
+
 	//添加用户表单处理
 	public function addUserHandle(){
 		$user = array(
