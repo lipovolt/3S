@@ -114,7 +114,7 @@ class RbacAction extends CommonAction{
 		$rid = I('rid',0,'intval');
 		$access = M(C('DB_ACCESS'));
 		$access->starttrans();
-		$access->where(array(C('DB_ROLE_ID')=>$rid))->delete();
+		$access->where(array(C('DB_ACCESS_ROLE_ID')=>$rid))->delete();
 		$data = array();
 		foreach ($_POST[C('DB_ACCESS')] as $key => $value) {
 			$tmp = explode('_',$value);
