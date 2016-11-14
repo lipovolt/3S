@@ -69,6 +69,10 @@ class TodoAction extends CommonAction{
         }
     }
 
+    public function newThing(){
+        $this->display();
+    }
+
     Public function changeStatus($id){
         $status = M(C('DB_TODO'))->where(array(C('DB_TODO_ID')=>$id))->getField(C('DB_TODO_STATUS'));
         if($status==0){
