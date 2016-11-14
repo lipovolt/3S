@@ -2,15 +2,24 @@
 
 class TodoAction extends CommonAction{
 
-    public function index(){
+    public function index($keyword=null,$keywordValue=null,$skeywordValue=null){
         $Data=M(C('DB_TODO'));
         import('ORG.Util.Page');
         $count = $Data->count();
         $Page = new Page($count,20);            
         $Page->setConfig('header', '条数据');
         $show = $Page->show();
-        if($_POST['keyword']==""){
-            $task = $Data->order('id desc')->limit($Page->firstRow.','.$Page->listRows)->select();    
+        if($_POST['keyword']=="" || $_POST['keyword']==null){
+            if($keyword!=null){
+                $map[$keyword] = array('like','%'.$keywordValue.'%');
+                $map[C('DB_TODO_STATUS')] = array('eq',$skeywordValue);
+                $task = $Data->order('id desc')->where($map)->limit($Page->firstRow.','.$Page->listRows)->select();
+                $this->assign('keyword', $keyword);
+                $this->assign('keywordValue', $keywordValue);
+                $this->assign('skeywordValue', $skeywordValue);
+            }else{
+                $task = $Data->order('id desc')->limit($Page->firstRow.','.$Page->listRows)->select();
+            }  
         }
         else{
             $map[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
@@ -73,7 +82,7 @@ class TodoAction extends CommonAction{
         $this->display();
     }
 
-    Public function changeStatus($id){
+    Public function changeStatus($id,$kw=null,$kwv=null,$skwv=null){
         $status = M(C('DB_TODO'))->where(array(C('DB_TODO_ID')=>$id))->getField(C('DB_TODO_STATUS'));
         if($status==0){
             $data[C('DB_TODO_STATUS')]=1;
@@ -84,7 +93,7 @@ class TodoAction extends CommonAction{
         }
         $data[C('DB_TODO_ID')]=$id;
         if(M(C('DB_TODO'))->save($data)!==false){
-            $this->success('保存成功');
+            $this->success('保存成功',U('Todo/Todo/index',array('keyword'=>$kw,'keywordValue'=>$kwv,'skeywordValue'=>$skwv)));
         }else{
             $this->error('保存失败');
         }

@@ -8,79 +8,85 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript">
+function changeStatus(id){
+	var kw = document.getElementById('keyword').value;
+	var kwv = document.getElementById('keywordValue').value;
+	var skwv = document.getElementById('skeywordValue').value;
+	window.location.href="{:U('Todo/Todo/changeStatus')}?id="+id+"&kw="+kw+"&kwv="+kwv+"&skwv="+skwv;
+}
+</script>
 </head>
 <body>
-
-	<div class="header">
+<div class="header">
 		<div class="top">
 			<div class="area">
 				<span>
-					<include file="./Public/Tpl/header.html" />
+					<include file="./Public/Tpl/header.html" /></include></span>
 			</div>
 		</div>		
 		<div class="nav">
 			<div class="area">
-				<include file="./Public/Tpl/top.html" />
+				<include file="./Public/Tpl/top.html" /></include>
 			</div>
 		</div>
-	</div>	
-	
-    <!-- InstanceBeginEditable name="左边栏" -->
-	<div class="area clearfix">
-		<div class="sidenav">
-			<div class="sidenav-hd"><strong>待办事项</strong></div>
-			<div class="sidenav-bd">
-				<include file="./Public/Tpl/todo.html" />	
-			</div>
+</div>
+<!-- InstanceBeginEditable name="左边栏" -->
+<div class="area clearfix">
+	<div class="sidenav">
+		<div class="sidenav-hd"><strong>待办事项</strong></div>
+		<div class="sidenav-bd">
+			<include file="./Public/Tpl/todo.html" /></include>
 		</div>
+	</div>
 	<div class="content">
-	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="{:U('Todo/Todo/index')}" method="POST">
-			<div class="search-area">
-				<div class="item">
-					<div class="form-group">
-						<label for="keyword" class="control-label">关键字</label>
-						<div class="control-wrap">
-							<select name="keyword" id="keyword" data-value="">
-								<if condition="($keyword eq 'creater')"> 
-									<option value="{:C('DB_TODO_CREATER')}" selected="">创建人</option>
-									<option value="{:C('DB_TODO_PERSON')}">责任人</option>
-									<option value="{:C('DB_TODO_TASK')}" >事项</option>
-								<elseif condition="$keyword eq 'task'"/>
-									<option value="{:C('DB_TODO_CREATER')}">创建人</option>
-									<option value="{:C('DB_TODO_PERSON')}">责任人</option>
-									<option value="{:C('DB_TODO_TASK')}" selected="">事项</option>
-								<else /> 
-									<option value="{:C('DB_TODO_CREATER')}">创建人</option>
-									<option value="{:C('DB_TODO_PERSON')}" selected="">责任人</option>
-									<option value="{:C('DB_TODO_TASK')}">事项</option>
-								</if>
-							</select>
+		<div id="ProductInfo" class="main">
+			 <form name="search_product" id="search_product" action="{:U('Todo/Todo/index')}" method="POST">
+				<div class="search-area">
+					<div class="item">
+						<div class="form-group">
+							<label for="keyword" class="control-label">关键字</label>
+							<div class="control-wrap">
+								<select name="keyword" id="keyword" data-value="">
+									<if condition="($keyword eq 'creater')"> 
+										<option value="{:C('DB_TODO_CREATER')}" selected="">创建人</option>
+										<option value="{:C('DB_TODO_PERSON')}">责任人</option>
+										<option value="{:C('DB_TODO_TASK')}" >事项</option>
+									<elseif condition="$keyword eq 'task'"/>
+										<option value="{:C('DB_TODO_CREATER')}">创建人</option>
+										<option value="{:C('DB_TODO_PERSON')}">责任人</option>
+										<option value="{:C('DB_TODO_TASK')}" selected="">事项</option>
+									<else /> 
+										<option value="{:C('DB_TODO_CREATER')}">创建人</option>
+										<option value="{:C('DB_TODO_PERSON')}" selected="">责任人</option>
+										<option value="{:C('DB_TODO_TASK')}">事项</option>
+									</if>
+								</select>
+							</div>
+							<div class="control-wrap">
+								<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="{$keywordValue}">
+							</div>
 						</div>
-						<div class="control-wrap">
-							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="{$keywordValue}">
+						<div class="form-group">
+							<label for="lskeyword" class="control-label">状态</label>
+							<input type="hidden" class="form-control"  name="skeyword" id="skeyword" value="status">
+							<div class="control-wrap">
+								<select name="skeywordValue" id="skeywordValue" data-value="">
+									<if condition="($skeywordValue eq '1')"> 
+										<option value="1" selected="">已处理</option>
+										<option value="0">待处理</option>
+									<else /> 
+										<option value="1">已处理</option>
+										<option value="0" selected="">待处理</option>
+									</if>
+								</select>
+							</div>
 						</div>
-					</div>
-					<div class="form-group">
-						<label for="lskeyword" class="control-label">状态</label>
-						<input type="hidden" class="form-control"  name="skeyword" id="skeyword" value="status">
-						<div class="control-wrap">
-							<select name="skeywordValue" id="skeywordValue" data-value="">
-								<if condition="($skeyword eq '1')"> 
-									<option value="1" selected="">已处理</option>
-									<option value="0">待处理</option>
-								<else /> 
-									<option value="1">已处理</option>
-									<option value="0" selected="">待处理</option>
-								</if>
-							</select>
-						</div>
-					</div>
-					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
-				</div>			
-			</div>
-		</form>
-		<div>
+						<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
+					</div>			
+				</div>
+			</form>
+	
 			<div class="tab-content">
 				<div class="form-group">
 					<a class="btn btn-blue btn-s" href="{:U('Todo/Todo/newThing')}" >
@@ -92,7 +98,7 @@
 						<th><div class="tl">编号</div></th>
 						<th><div class="tl">创建时间</div></th>
 						<th><div class="tl">完成时间</div></th>
-						<th><div class="tl">创建人</th>
+						<th><div class="tl">创建人</div></th>
 						<th><div class="tl">责任人</div></th>
 						<th><div class="tl">状态</div></th>
 						<th><div class="tl">待办事项</div></th>
@@ -101,58 +107,54 @@
 					</tr>
 					<volist name="task" id="vo">
 						<tr>
-						<td><div class="tl">{$vo[C('DB_TODO_ID')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_TODO_CTIME')]}</div></td>						
-						<td><div class="tl">{$vo[C('DB_TODO_DTIME')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_TODO_CREATER')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_TODO_PERSON')]}</div></td>
-						<td><div class="tl">
-							<?php 
-								if($vo[C('DB_TODO_STATUS')]== 0){
-									echo '待处理';
-								}else{
-									echo '已处理';
-								}
-							?>
-						</div></td>
-						<td><div class="tl">{$vo[C('DB_TODO_TASK')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_TODO_REMARK')]}</div></td>
-						<td><div class="tl">
-							<a href="{:U('Todo/Todo/details',array('id'=>$vo['id']))}">编辑</a>		
-							<a href="{:U('Todo/Todo/changeStatus',array('id'=>$vo['id']))}">
+							<td><div class="tl">{$vo[C('DB_TODO_ID')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_TODO_CTIME')]}</div></td>						
+							<td><div class="tl">{$vo[C('DB_TODO_DTIME')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_TODO_CREATER')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_TODO_PERSON')]}</div></td>
+							<td><div class="tl">
 								<?php 
 									if($vo[C('DB_TODO_STATUS')]== 0){
-										echo '已处理';
-									}else{
 										echo '待处理';
+									}else{
+										echo '已处理';
 									}
 								?>
-							</a>
-							<!-- <a href="{:U('Todo/Todo/remove',array('id'=>$vo['id']))}">删除</a> -->
-							<a href="{:U('Todo/Todo/remove',array('id'=>$vo['id']))}"
-								onclick="
-									if(confirm('确定要删除吗?')){
-										return true;
-									}else{
-										return false;
-									}
-									">删除
-							</a>
-
-						</div></td>	
+							</div></td>
+							<td><div class="tl">{$vo[C('DB_TODO_TASK')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_TODO_REMARK')]}</div></td>
+							<td><div class="tl">
+								<a href="{:U('Todo/Todo/details',array('id'=>$vo['id']))}">编辑</a>
+								<a href="javascript:void(0);" onclick="changeStatus({$vo['id']})">
+									<?php 
+										if($vo[C('DB_TODO_STATUS')]== 0){
+											echo '已处理';
+										}else{
+											echo '待处理';
+										}
+									?>
+								</a>
+								<a href="{:U('Todo/Todo/remove',array('id'=>$vo['id']))}"
+									onclick="
+										if(confirm('确定要删除吗?')){
+											return true;
+										}else{
+											return false;
+										}
+										">删除
+								</a>
+							</div></td>
 						</tr>	
-					</volist> 								
+					</volist>
 				</table>
 				<div class="result page" align="center">{$page}</div>
 			</div>
 		</div>
 	</div>
-	</div>
-	</div>
-	</div>
-	<!-- InstanceEndEditable -->
-	<div class="area footer">
-		<include file="./Public/Tpl/footer.html" />
-	</div> 
-</body>
+</div>
+<!-- InstanceEndEditable -->
+<div class="area footer">
+	<include file="./Public/Tpl/footer.html" />
+</div>
+</body> 
 <!-- InstanceEnd --></html>
