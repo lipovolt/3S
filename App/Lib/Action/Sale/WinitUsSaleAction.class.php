@@ -109,12 +109,13 @@ class WinitUsSaleAction extends CommonAction{
 	}
 
 	private function getWinitAirFirstTransportFee($weight,$l,$w,$h){
-		if(($weight/1000)>=($l * $w * $h / 6000)){
+		/*if(($weight/1000)>=($l * $w * $h / 6000)){
 			return round($weight / 1000 * 5.8,2);
 		}
 		else{
 			return round(($l * $w * $h) / 6000 * 5.8,2);
-		}	
+		}*/	
+		return round($weight / 1000 * 5.8,2);
 	}
 
 	private function getWinitSeaFirstTransportFee($l,$w,$h){
