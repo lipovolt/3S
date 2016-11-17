@@ -41,7 +41,20 @@ function checkForm()
 {
 	var status = document.getElementById("status").innerText;
     if(status.trim()==("待确认") || status.trim()=="待付款"){
-    	return true;
+    	
+    	var warehouse =  document.getElementsByName("warehouse[]");
+    	var bo = true;
+    	for(var i = 0; i < warehouse.length; i++){
+    		if(!in_warehouse(warehouse[i].value)){
+    			bo=false;
+    		}
+    	}
+    	if(bo){
+    		return true;
+    	}else{
+    		alert('仓库名称不正确。 正确名称： 美自建仓，深圳仓，万邑通美西，万邑通德国');
+    		return false;
+    	}    	
     }else{
     	alert("已付款采购单只更新到货数量！");
     	return false;
@@ -63,6 +76,17 @@ function checkNewReceived()
     }
     return returnValue;
 }
+
+function in_warehouse(search){
+	var warehouses = Array('美自建仓','深圳仓','万邑通德国','万邑通美西');
+    for(var i in warehouses){
+        if(warehouses[i]==search){
+            return true;
+        }
+    }
+    return false;
+}
+
 </script>
 
 <!--基本信息-->
@@ -251,7 +275,8 @@ function checkNewReceived()
 				<td><input id="{:C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')]}"></input></td>
 				<td><input id="{:C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]}" readonly="readonly"></input></td>
 				<td><input id="new_received_quantity[{$k.value}]" name="new_received_quantity[{$k.value}]" value="0"></input></td>
-				<td><input id="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_WAREHOUSE')]}"></input>
+				<td>
+					<input id="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_WAREHOUSE')]}"></input>
 				</td>
 				<td>
 					<a class="btn btn-blue btn-s-auto " href="{:U('Purchase/Purchase/deletePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]))}" onclick="return checkForm()">删除</a>
