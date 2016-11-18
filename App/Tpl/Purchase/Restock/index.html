@@ -163,8 +163,14 @@
 							<a class="btn-blue btn-s" href="{:U('Purchase/Restock/editRestockOrder',array('id'=>$vo[C('DB_RESTOCK_ID')]))}" >
 								<span>编辑</span>
 							</a>
-							<a class="btn-blue btn-s" href="{:U('Purchase/Restock/deleteRestockOrder',array('id'=>$vo[C('DB_RESTOCK_ID')]))}" >
-								<span>删除</span>
+							<a class="btn-blue btn-s" href="{:U('Purchase/Restock/deleteRestockOrder',array('id'=>$vo[C('DB_RESTOCK_ID')]))}"
+								onclick="
+									if(confirm('确定要删除吗?')){
+										return true;
+									}else{
+										return false;
+									}
+									">删除
 							</a>
 						</div></td>
 						</tr>	
