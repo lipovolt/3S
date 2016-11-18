@@ -877,7 +877,7 @@ return array(
 	节点表
 	CREATE TABLE IF NOT EXISTS `3s_node` (
 	  `id` smallint(6) unsigned NOT NULL AUTO_INCREMENT,
-	  `name` varchar(20) NOT NULL,
+	  `name` varchar(50) NOT NULL,
 	  `title` varchar(50) DEFAULT NULL,
 	  `status` tinyint(1) DEFAULT '0',
 	  `remark` varchar(255) DEFAULT NULL,

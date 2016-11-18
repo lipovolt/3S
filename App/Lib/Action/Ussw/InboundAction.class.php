@@ -206,7 +206,9 @@ class InboundAction extends CommonAction{
                         foreach ($data as $key => $value){
                             $restockQuantity = $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->getField(C('DB_RESTOCK_QUANTITY'));
                             if($restockQuantity <= $value[C('DB_USSW_INBOUND_ITEM_DQUANTITY')]){
-                                $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->setField(C('DB_RESTOCK_STATUS'),'已发货');
+                                $tmp[C('DB_RESTOCK_STATUS')] = '已发货';
+                                $tmp[C('DB_RESTOCK_SHIPPING_DATE')] = date("Y-m-d H:i:s" ,time());
+                                $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->save($tmp);
                             }else{
                                 $rest = $restockQuantity - $value[C('DB_USSW_INBOUND_ITEM_DQUANTITY')];
                                 $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_USSW_INBOUND_ITEM_RESTOCK_ID')]))->setField(C('DB_RESTOCK_QUANTITY'),$rest);

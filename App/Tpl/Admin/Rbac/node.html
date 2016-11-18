@@ -111,7 +111,7 @@
 									<td><div class="tl">{$method[C('DB_NODE_REMARK')]}</div></td>
 									<td>
 										<a href="{:U('Admin/Rbac/updateNode',array(C('DB_NODE_PID')=>$method[C('DB_NODE_ID')],C('DB_NODE_LEVEL')=>3))}">修改</a>
-										<a href="{:U('Admin/Rbac/deleteNode',array(C('DB_NODE_PID')=>$method[C('DB_NODE_ID')],C('DB_NODE_LEVEL')=>3))}">删除</a>
+										<a href="{:U('Admin/Rbac/deleteNode',array(C('DB_NODE_ID')=>$method[C('DB_NODE_ID')]))}">删除</a>
 									</td>
 								</tr>
 							</volist>

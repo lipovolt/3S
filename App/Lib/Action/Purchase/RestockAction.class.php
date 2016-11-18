@@ -12,7 +12,17 @@ class RestockAction extends CommonAction{
 			$this->assign('restock',$restock);
 			$this->display();
 		}else{
-			$where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+			if($_POST['keyword']=="country"){
+				if($_POST['keywordValue']=="美国"){
+					$where[C('DB_RESTOCK_WAREHOUSE')]=array('in', '美自建仓,万邑通美西');
+				}
+				elseif($_POST['keywordValue']=="德国"){
+					$where[C('DB_RESTOCK_WAREHOUSE')]=array('eq', '万邑通德国');
+				}
+				
+			}else{
+				$where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+			}
             $this->restock = M(C('DB_RESTOCK'))->where($where)->select();
             $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
             $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
@@ -22,8 +32,6 @@ class RestockAction extends CommonAction{
 	}
 
 	public function exportRestock(){
-		$this->getIInventory('1269');
-
 		$xlsName  = "restock";
         $xlsCell  = array(
 	        array(C('DB_RESTOCK_ID'),'补货编号'),
@@ -655,8 +663,9 @@ class RestockAction extends CommonAction{
                 }else{
                 	for($i=2;$i<=$highestRow;$i++){
                 		$id = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-                		$status = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
-	                	$restock->where(array(C('DB_RESTOCK_ID')=>$id))->setField(C('DB_RESTOCK_STATUS'),$status);
+                		$tmp[C('DB_RESTOCK_STATUS')] = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+                		$tmp[C('DB_RESTOCK_SHIPPING_DATE')] = date("Y-m-d H:i:s" ,time());
+	                	$restock->where(array(C('DB_RESTOCK_ID')=>$id))->save($tmp);
 	                }
 	                $this->success('导入成功！');
                 }
@@ -666,6 +675,122 @@ class RestockAction extends CommonAction{
         }else{
             $this->error("请选择上传的文件");
         }
+    }
+
+    public function deleteRestockOrder($id){
+    	if(M(C('DB_RESTOCK'))->where(array(C('DB_RESTOCK_ID')=>$id))->delete()!=false){
+    		$this->success('已删除');
+    	}else{
+    		$this->error('删除失败');
+    	}
+    }
+
+    public function newRestockOrder(){
+    	$this->display();	
+    }
+
+    public function newRestockOrderHandle(){
+    	$product=M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>I(C('DB_RESTOCK_SKU'))))->find();
+    	if($product==null){
+    		$this->error('产品编码 '.I(C('DB_RESTOCK_SKU')).'不在产品列表');
+    	}
+    	$data[C('DB_RESTOCK_SKU')]=I(C('DB_RESTOCK_SKU'));
+    	$data[C('DB_RESTOCK_STATUS')]='待发货';
+    	$data[C('DB_RESTOCK_CREATE_DATE')]=date("Y-m-d H:i:s" ,time());
+    	$data[C('DB_RESTOCK_QUANTITY')]=I(C('DB_RESTOCK_QUANTITY'));
+    	$data[C('DB_RESTOCK_WAREHOUSE')]=I(C('DB_RESTOCK_WAREHOUSE'));
+    	$data[C('DB_RESTOCK_MANAGER')]=$product[C('DB_PRODUCT_MANAGER')];
+    	$data[C('DB_RESTOCK_TRANSPORT')]=I(C('DB_RESTOCK_WAREHOUSE'))=='万邑通德国'?$product[C('DB_PRODUCT_TODE')]:$product[C('DB_PRODUCT_TOUS')];
+    	if(M(C('DB_RESTOCK'))->add($data)!=false){
+    		$this->success('添加成功',U('Purchase/Restock/index'));
+    	}else{
+    		$this->error('添加失败');
+    	}
+    }
+
+    public function exportInvoice(){
+		$xlsName  = "Invoice";
+        $xlsCell  = array(
+	        array(C('DB_RESTOCK_ID'),'补货编号'),
+	        array(C('DB_RESTOCK_SKU'),'产品编码'),
+	        array(C('DB_PRODUCT_ENAME'),'英文名称'),
+	        array(C('DB_PRODUCT_PRICE'),'采购价'),
+	        array(C('DB_RESTOCK_QUANTITY'),'数量'),
+	        array('sum','总价')
+	        );
+        $invoices = D("InvoiceView");
+        foreach ($_POST['cb'] as $key => $value) {
+        	$tmp = $invoices->where(array(C('DB_RESTOCK_ID')=>$value))->find();
+        	$tmp['sum']=$tmp[C('DB_PRODUCT_PRICE')]*$tmp[C('DB_RESTOCK_QUANTITY')];
+        	$xlsData[$key]=$tmp;
+	    }
+        $this->exportExcel($xlsName,$xlsCell,$xlsData);
+    }
+
+    public function winitOutConfirme(){
+    	if($this->allIsWinitRestockOrder($_POST['cb'])){
+    		$restock = M(C('DB_RESTOCK'));
+    		$restock->startTrans();
+    		foreach ($_POST['cb'] as $key => $value) {
+    			$restock->where(array(C('DB_RESTOCK_ID')=>$value))->setField(C('DB_RESTOCK_STATUS'),'已发货');
+    		}
+    		$restock->commit();
+    		$this->redirect(U('Purchase/Restock/index','','',1));
+    	}
+    }
+
+    private function allIsWinitRestockOrder($outboundOrders){
+    	$restock=M(C('DB_RESTOCK'));
+    	$restock->startTrans();
+    	foreach ($outboundOrders as $key => $value) {
+    		$result = $restock->where(array(C('DB_RESTOCK_ID')=>$value))->find();
+    		if( $result== null || $result == false){
+    			$restock->commit();
+    			$this->error('补货单号： '.$value.' 查询不到！请检查。', U('Purchase/Restock/index'));
+    			return false;
+    		}elseif($result[C('DB_RESTOCK_WAREHOUSE')] != '万邑通德国' && $result[C('DB_RESTOCK_WAREHOUSE')] != '万邑通美西' ){
+    			$restock->commit();
+    			$this->error('补货单号： '.$value.' 不是发往万邑通仓库。', U('Purchase/Restock/index'));
+    			return false;
+    		}
+    	}
+    	$restock->commit();
+    	return true;
+    }
+
+    public function editRestockOrder($id){
+    	$this->restockOrder=M(C('DB_RESTOCK'))->where(array(C('DB_RESTOCK_ID')=>$id))->find();
+    	$this->display();
+    }
+
+    public function editRestockOrderHandle(){
+    	$result = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$_POST[C('DB_RESTOCK_SKU')]))->find();
+    	if($_POST[C('DB_RESTOCK_SKU')]==null || $_POST[C('DB_RESTOCK_SKU')]==''){
+    		$this->error('产品编码缺失');
+    	}
+    	if($result == false || $result==null){
+    		$this->error('产品编码错误，不在产品列表');
+    	}
+    	if($_POST[C('DB_RESTOCK_QUANTITY')]<=0){
+    		$this->error('补货数量不能小于0');
+    	}
+    	if($_POST[C('DB_RESTOCK_WAREHOUSE')]==null ||$_POST[C('DB_RESTOCK_WAREHOUSE')]==''){
+    		$this->error('请选择目的仓库');
+    	}
+    	if($_POST[C('DB_RESTOCK_TRANSPORT')]==null ||$_POST[C('DB_RESTOCK_TRANSPORT')]==''){
+    		$this->error('请选择运输方式');
+    	}
+    	if($_POST[C('DB_RESTOCK_STATUS')]==null ||$_POST[C('DB_RESTOCK_STATUS')]==''){
+    		$this->error('请选择状态');
+    	}
+    	if($_POST[C('DB_RESTOCK_STATUS')]=='待发货'){
+    		$_POST[C('DB_RESTOCK_SHIPPING_DATE')]=null;
+    	}
+    	if($_POST[C('DB_RESTOCK_STATUS')]=='已发货'){
+    		$_POST[C('DB_RESTOCK_SHIPPING_DATE')]=date("Y-m-d H:i:s" ,time());
+    	}
+    	M(C('DB_RESTOCK'))->where(array(C('DB_RESTOCK_ID')=>$_POST[C('DB_RESTOCK_ID')]))->save($_POST);
+    	$this->redirect(U('Purchase/Restock/index','','',1));
     }
 }
 

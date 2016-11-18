@@ -1,0 +1,144 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>编辑补货单</title>	
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__Css/zh-cn.css">
+</head>
+<body>
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>
+	 <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>采购管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/purchaseMenu.html" />	
+			</div>
+		</div>
+		<div class="content">
+			<div class="form-group">
+				<label class="control-label">添加补货单</label>
+			</div>
+			<div id="ProductInfo" class="main">
+				<form action="{:U('Purchase/Restock/editRestockOrderHandle')}" method="post">
+					<div class="block-outer BaseInfo">
+						<div class="block-outer-bd">
+							<div class="inline-block block-indent">
+								<div class="item">
+									<div class="form-group">
+										<label class="control-label">补货单号:</label>
+										<div class="control-wrap">
+											<label class="control-label">{$restockOrder[C('DB_RESTOCK_ID')]}</label>
+											<input type="hidden" name="{:C('DB_RESTOCK_ID')}" value="{$restockOrder[C('DB_RESTOCK_ID')]}" id="{:C('DB_RESTOCK_ID')}"/>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label">产品编码:</label>
+										<div class="control-wrap">
+											<input type="text" name="{:C('DB_RESTOCK_SKU')}" value="{$restockOrder[C('DB_RESTOCK_SKU')]}" id="{:C('DB_RESTOCK_SKU')}"/>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label">数量:</label>
+										<div class="control-wrap">
+											<input type="text" name="{:C('DB_RESTOCK_QUANTITY')}" value="{$restockOrder[C('DB_RESTOCK_QUANTITY')]}" id="{:C('DB_RESTOCK_QUANTITY')}"/>
+										</div>
+									</div>
+								</div>
+								<div class="item">
+									<div class="form-group">
+										<label class="control-label">仓库:</label>
+										<div id="roles">
+											<select name="{:C('DB_RESTOCK_WAREHOUSE')}" id="{:C('DB_RESTOCK_WAREHOUSE')}" data-value="">
+												<if condition="($restockOrder[C('DB_RESTOCK_WAREHOUSE')] eq '美自建仓')"> 
+													<option value="">请选择仓库</option>
+													<option value="美自建仓" selected>美自建仓</option>
+													<option value="万邑通德国">万邑通德国</option>
+													<option value="万邑通美西">万邑通美西</option>
+												<elseif condition="($restockOrder[C('DB_RESTOCK_WAREHOUSE')] eq '万邑通德国')"/>
+													<option value="">请选择仓库</option>
+													<option value="美自建仓">美自建仓</option>
+													<option value="万邑通德国" selected>万邑通德国</option>
+													<option value="万邑通美西">万邑通美西</option>	
+												<elseif condition="($restockOrder[C('DB_RESTOCK_WAREHOUSE')] eq '万邑通美西')"/>
+													<option value="">请选择仓库</option>
+													<option value="美自建仓">美自建仓</option>
+													<option value="万邑通德国">万邑通德国</option>
+													<option value="万邑通美西" selected>万邑通美西</option>	
+												<else /> 
+													<option value="" selected>请选择仓库</option>
+													<option value="美自建仓">美自建仓</option>
+													<option value="万邑通德国">万邑通德国</option>
+													<option value="万邑通美西">万邑通美西</option>
+												</if>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label">运输方式:</label>
+										<div id="roles">
+											<select name="{:C('DB_RESTOCK_TRANSPORT')}" id="{:C('DB_RESTOCK_TRANSPORT')}" data-value="">
+												<if condition="($restockOrder[C('DB_RESTOCK_TRANSPORT')] eq '空运')"> 
+													<option value="">请选择运输方式</option>
+													<option value="空运" selected>空运</option>
+													<option value="海运">海运</option>
+												<elseif condition="($restockOrder[C('DB_RESTOCK_TRANSPORT')] eq '海运')"/>
+													<option value="">请选择运输方式</option>
+													<option value="空运">空运</option>
+													<option value="海运" selected>海运</option>
+												<else /> 
+													<option value="" selected>请选择运输方式</option>
+													<option value="空运">空运</option>
+													<option value="海运">海运</option>
+												</if>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="control-label">状态:</label>
+										<div id="roles">
+											<select name="{:C('DB_RESTOCK_STATUS')}" id="{:C('DB_RESTOCK_STATUS')}" data-value="">
+												<if condition="($restockOrder[C('DB_RESTOCK_STATUS')] eq '已发货')"> 
+													<option value="">请选择转态</option>
+													<option value="已发货" selected>已发货</option>
+													<option value="待发货">待发货</option>
+												<elseif condition="($restockOrder[C('DB_RESTOCK_STATUS')] eq '待发货')"/>
+													<option value="">请选择转态</option>
+													<option value="已发货">已发货</option>
+													<option value="待发货" selected>待发货</option>
+												<else /> 
+													<option value="" selected>请选择转态</option>
+													<option value="已发货">已发货</option>
+													<option value="待发货">待发货</option>
+												</if>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div id="buttons">
+									<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+									<button class="btn btn-blue btn-s" id="saveRestock">保存</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

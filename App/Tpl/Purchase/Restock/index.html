@@ -8,6 +8,49 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script language="javascript">
+	function  cli(Obj){
+		var collid = document.getElementById("all");
+		var coll = document.getElementsByName(Obj);
+		if (collid.checked){
+		    for(var i = 0; i < coll.length; i++)
+		       coll[i].checked = true;
+		}else{
+		    for(var i = 0; i < coll.length; i++)
+			    coll[i].checked = false;
+		}
+	}
+	function eInvoice(){
+		var coll = document.getElementsByName("cb[]");
+		var bo = false;
+		for(var i = 0; i < coll.length; i++){
+			if(coll[i].checked){
+				bo=true;
+			}
+		}
+		if(bo){
+			form.action="{:U('Purchase/Restock/exportInvoice')}";
+			form.submit();
+		}else{
+			alert('请选择需要导出的补货单');
+		}	
+	}
+	function winitOutConfirme(){
+		var coll = document.getElementsByName("cb[]");
+		var bo = false;
+		for(var i = 0; i < coll.length; i++){
+			if(coll[i].checked){
+				bo=true;
+			}
+		}
+		if(bo){
+			form.action="{:U('Purchase/Restock/winitOutConfirme')}";
+			form.submit();
+		}else{
+			alert('请选择需要导出的补货单');
+		}	
+	}
+</script>
 </head>
 <body>
 
@@ -46,14 +89,17 @@
 									<option value="{:C('DB_RESTOCK_STATUS')}" selected="">状态</option>
 									<option value="{:C('DB_RESTOCK_WAREHOUSE')}">仓库</option>
 									<option value="{:C('DB_PRODUCT_SKU')}" >产品编码</option>
+									<option value="country" >国家</option>
 								<elseif condition="$keyword eq 'warehouse'"/>
 									<option value="{:C('DB_RESTOCK_STATUS')}">状态</option>
 									<option value="{:C('DB_RESTOCK_WAREHOUSE')}" selected="">仓库</option>
 									<option value="{:C('DB_PRODUCT_SKU')}" >产品编码</option>
+									<option value="country" >国家</option>
 								<else /> 
 									<option value="{:C('DB_RESTOCK_STATUS')}">状态</option>
 									<option value="{:C('DB_RESTOCK_WAREHOUSE')}">仓库</option>
 									<option value="{:C('DB_PRODUCT_SKU')}" selected="">产品编码</option>
+									<option value="country" >国家</option>
 								</if>
 							</select>
 						</div>
@@ -67,16 +113,25 @@
 		</form>
 		<div>
 			<div class="tab-content">
+				<form name="form" id="search_product" action="#" method="POST">
 				<div class="form-group">
 					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/importRestock')}" >
-						<span>导入</span>
+						<span>导入表格更新</span>
 					</a>
 					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/exportRestock')}" >
 						<span>导出</span>
 					</a>
+					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/newRestockOrder')}" >
+						<span>新增补货单</span>
+					</a>
+					<input class="btn btn-s btn-blue" type="button" onclick="eInvoice();" value="导出发票"/>
+					<input class="btn btn-s btn-blue" type="button" onclick="winitOutConfirme();" value="万邑通确认发货"/>
 				</div>
 				<table id="tablelist" class="tablelist">
 					<tr>
+						<th><div class="tl">
+							<input type="checkbox" id="all" value="" onclick="cli('cb[]');">
+						</div></th>
 						<th><div class="tl">编号</div></th>
 						<th><div class="tl">创建时间</div></th>
 						<th><div class="tl">发货时间</div></th>
@@ -87,9 +142,13 @@
 						<th><div class="tl">运输方式</div></th>
 						<th><div class="tl">状态</div></th>
 						<th><div class="tl">备注</div></th>
+						<th><div class="tl">操作</div></th>
 					</tr>
 					<volist name="restock" id="vo">
 						<tr>
+						<td><div class="tl">
+							<input type="checkbox" name="cb[]" value="{$vo[C('DB_RESTOCK_ID')]}">
+						</div></td>
 						<td><div class="tl">{$vo[C('DB_RESTOCK_ID')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_RESTOCK_CREATE_DATE')]}</div></td>						
 						<td><div class="tl">{$vo[C('DB_RESTOCK_SHIPPING_DATE')]}</div></td>
@@ -100,9 +159,18 @@
 						<td><div class="tl">{$vo[C('DB_RESTOCK_TRANSPORT')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_RESTOCK_STATUS')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_RESTOCK_REMARK')]}</div></td>
+						<td><div class="tl">
+							<a class="btn-blue btn-s" href="{:U('Purchase/Restock/editRestockOrder',array('id'=>$vo[C('DB_RESTOCK_ID')]))}" >
+								<span>编辑</span>
+							</a>
+							<a class="btn-blue btn-s" href="{:U('Purchase/Restock/deleteRestockOrder',array('id'=>$vo[C('DB_RESTOCK_ID')]))}" >
+								<span>删除</span>
+							</a>
+						</div></td>
 						</tr>	
 					</volist> 								
 				</table>
+				</form>
 				<div class="result page" align="center">{$page}</div>
 			</div>
 		</div>

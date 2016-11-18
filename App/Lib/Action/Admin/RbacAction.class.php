@@ -97,6 +97,15 @@ class RbacAction extends CommonAction{
 		}
 	}
 
+	//删除节点
+	public function deleteNode($id){
+		if(M(C('DB_NODE'))->where(array(C('DB_NODE_ID')=>$id))->delete()){
+			$this->success('删除成功',U('Admin/Rbac/node'));
+		}else{
+			$this->error('删除失败');
+		}
+	}
+
 	//权限配置列表
 	public function access(){
 		$rid = I(C('DB_ROLE_ID'),0,'intval');
