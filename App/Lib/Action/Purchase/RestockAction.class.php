@@ -337,6 +337,7 @@ class RestockAction extends CommonAction{
 			$GLOBALS["outOfStock"] = null;
 			$GLOBALS["indexOfOutOfStock"] = 0;
 			$this->findUsswOutOfStockItem($dfa,$dfs); 
+			$this->findSzswOutOfStockItem(); 
 
 			for ($sheetId=0; $sheetId < 2; $sheetId++) { 
 				$objPHPExcel->setActiveSheetIndex($sheetId);
@@ -451,17 +452,27 @@ class RestockAction extends CommonAction{
 			$product = M(C('db_product'))->where(array(C('db_product_sku')=>$szsv[C('DB_SZSTORAGE_SKU')]))->find();
 			if($product!=null){
 				$msq = $this->getSzsw30DaysSales($szsv[C('DB_SZSTORAGE_SKU')]);
-				$dayAvailableForSale=($szsv[C('DB_SZSTORAGE_AINVENTORY')]+$this->getSzIinventory($szsv[C('DB_SZSTORAGE_SKU')]))/($msq/30);
-				$roos = $this->reallyOutOfStock('深圳仓',$szsv[C('DB_USSTORAGE_SKU')]);
-				if($product[C('DB_PRODUCT_TOUS')]!='无' && $dayAvailableForSale<3 && $roos){				
-					$this->addRestockOrder('深圳仓',ceil(($dfa-$dayAvailableForSale)*$msq/30),$product);
+				if($msq != null && $szsv[C('DB_SZSTORAGE_AINVENTORY')] > 0){
+					$dayAvailableForSale=($szsv[C('DB_SZSTORAGE_AINVENTORY')]+$this->getSzIinventory($szsv[C('DB_SZSTORAGE_SKU')]))/($msq/30);
+					$roos = $this->reallyOutOfStock('深圳仓',$szsv[C('DB_USSTORAGE_SKU')]);
+					if($product[C('DB_PRODUCT_TOUS')]!='无' && $dayAvailableForSale<3 && $roos){				
+						$this->addRestockOrder('深圳仓',ceil((3-$dayAvailableForSale)*($msq/30)),$product);
+					}
+				}elseif ($msq == null && $szsv[C('DB_SZSTORAGE_AINVENTORY')] == 0) {
+					if($product[C('DB_PRODUCT_TOUS')]!='无'){				
+						$this->addRestockOrder('深圳仓',0,$product);
+					}
 				}
+				
 			}			
-		}
+		} 
+	}
 
+	public function exportSzOutOfStock(){
+		$this->findSzswOutOfStockItem();
 		F('out',$GLOBALS["outOfStock"]);
 		$this->assign('outofstock',$GLOBALS["outOfStock"]);
-		$this->display('exportOutOfStock');  
+		$this->display('exportOutOfStock'); 
 	}
 
 	private function getSzIinventory($sku){
