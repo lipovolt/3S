@@ -81,21 +81,17 @@ class StorageAction extends CommonAction{
     }
 
     private function get30DaysSales($sku){
-        $timestart = date("Y-m-d H:i:s",strtotime("last month"));
-        $outbound = M(C('DB_USSW_OUTBOUND'))->where(C('DB_USSW_OUTBOUND_CREATE_TIME')>=$timestart)->select();
-        $outbounditem = M(C('DB_USSW_OUTBOUND_ITEM'));
-        $sku30daysales = 0;
-        foreach ($outbound as $ok => $ov) {
-          $items = $outbounditem->where(array(C('DB_USSW_OUTBOUND_ITEM_OOID')=>$ov[C('DB_USSW_OUTBOUND_ID')]))->select();
-          foreach ($items as $ik => $iv) {
-            if($iv[C('DB_USSW_OUTBOUND_ITEM_SKU')] == $sku)
-                $sku30daysales = $sku30daysales + $iv[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
-          }
+        $map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('gt',date("Y-m-d H:i:s",strtotime("last month")));
+        $map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
+        $result = D("UsswOutboundView")->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
+        if($result!=null){
+            return $result;
+        }else{
+            return 0;
         }
-        return $sku30daysales;
     }
 
-    public function export(){
+    public function exportUsStorage(){
         $xlsName  = "usstorage";
         $xlsCell  = array(
             array(C('DB_USSTORAGE_ID'),'库存编号'),
@@ -109,14 +105,13 @@ class StorageAction extends CommonAction{
             array(C('DB_USSTORAGE_OINVENTORY'),'待出库'),
             array(C('DB_USSTORAGE_IINVENTORY'),'在途库存'),
             array(C('DB_USSTORAGE_CSALES'),'累计销量'),
-            array('30dayssales','30天销量'), 
-            array(C('DB_USSTORAGE_REMARK'),'备注')  
+            array(C('DB_PRODUCT_PRICE'),'采购价¥'),
+            array(C('DB_PRODUCT_WEIGHT'),'重量¥')  
             );
-        $xlsModel = M(C('DB_USSTORAGE'));
-        $xlsData  = $xlsModel->select();
-        foreach ($xlsData as $key => $value) {
+        $xlsData  = D("UsstorageView")->order(C('DB_USSTORAGE_SKU'))->select();
+        /*foreach ($xlsData as $key => $value) {
             $xlsData[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
-        }
+        }*/
         $this->exportExcel($xlsName,$xlsCell,$xlsData);
     }
     
@@ -150,21 +145,14 @@ class StorageAction extends CommonAction{
     }
 
     private function getIInventory($sku){
-        $iinventory = 0;
-        $inbound = M(C('DB_USSW_INBOUND'));
-        $inbounditems = M(C('DB_USSW_INBOUND_ITEM'));
-        $ioids = $inbounditems->where(array(C('DB_USSW_INBOUND_ITEM_SKU')=>$sku))->select();
-        
-        foreach ($ioids as $ok => $ov) {
-          $status = $inbound->where(array(C('DB_USSW_INBOUND_ID')=>$ov[C('DB_USSW_INBOUND_ITEM_IOID')]))->getField(C('DB_USSW_INBOUND_STATUS'));
-          if($status=='待入库'){
-            $map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
-            $map[C('DB_USSW_INBOUND_ITEM_IOID')] = array('eq',$ov[C('DB_USSW_INBOUND_ITEM_IOID')]);
-            $tmpquantity = $inbounditems->where($map)->getField(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
-            $iinventory = $iinventory + intval($tmpquantity);
-          }
-        } 
-        return $iinventory;
+        $map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
+        $map[C('DB_USSW_INBOUND_STATUS')] = '待入库';
+        $result = D("UsswInboundView")->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
+        if($result!=null){
+            return $result;
+        }else{
+            return 0;
+        }
     }
 
     private function setSaleStatus(){
