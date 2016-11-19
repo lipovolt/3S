@@ -110,6 +110,11 @@
 									<option value="{:C('DB_RESTOCK_WAREHOUSE')}" selected="">仓库</option>
 									<option value="{:C('DB_PRODUCT_SKU')}" >产品编码</option>
 									<option value="country" >国家</option>
+								<elseif condition="$keyword eq 'country'"/>
+									<option value="{:C('DB_RESTOCK_STATUS')}">状态</option>
+									<option value="{:C('DB_RESTOCK_WAREHOUSE')}">仓库</option>
+									<option value="{:C('DB_PRODUCT_SKU')}" >产品编码</option>
+									<option value="country" selected="">国家</option>
 								<else /> 
 									<option value="{:C('DB_RESTOCK_STATUS')}">状态</option>
 									<option value="{:C('DB_RESTOCK_WAREHOUSE')}">仓库</option>

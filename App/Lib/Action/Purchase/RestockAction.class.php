@@ -19,11 +19,14 @@ class RestockAction extends CommonAction{
 				elseif($_POST['keywordValue']=="德国"){
 					$where[C('DB_RESTOCK_WAREHOUSE')]=array('eq', '万邑通德国');
 				}
+				$where[C('DB_RESTOCK_STATUS')] = array('neq','已发货');
+				$restock = M(C('DB_RESTOCK'))->order(C('DB_RESTOCK_SKU'))->where($where)->select();
 				
 			}else{
 				$where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+				$restock = M(C('DB_RESTOCK'))->where($where)->select();
 			}
-            $this->restock = M(C('DB_RESTOCK'))->where($where)->select();
+            $this->assign('restock', $restock);
             $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
             $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
             $this->display();
