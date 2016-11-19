@@ -738,7 +738,7 @@ class RestockAction extends CommonAction{
         $this->exportExcel($xlsName,$xlsCell,$xlsData);
     }
 
-   public function winitInboundList(){
+   public function exportWIL(){
    		$xlsName  = "WinitInbound";
         $xlsCell  = array(
 	        array(C('DB_RESTOCK_ID'),'补货编号'),
