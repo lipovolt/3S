@@ -51,18 +51,20 @@
 		}	
 	}
 	function winitOutConfirme(){
-		var coll = document.getElementsByName("cb[]");
-		var bo = false;
-		for(var i = 0; i < coll.length; i++){
-			if(coll[i].checked){
-				bo=true;
+		if(confirm("确认要标记出库么？")){
+			var coll = document.getElementsByName("cb[]");
+			var bo = false;
+			for(var i = 0; i < coll.length; i++){
+				if(coll[i].checked){
+					bo=true;
+				}
 			}
-		}
-		if(bo){
-			form.action="{:U('Purchase/Restock/winitOutConfirme')}";
-			form.submit();
-		}else{
-			alert('请选择需要导出的补货单');
+			if(bo){
+				form.action="{:U('Purchase/Restock/winitOutConfirme')}";
+				form.submit();
+			}else{
+				alert('请选择需要导出的补货单');
+			}
 		}	
 	}
 </script>
