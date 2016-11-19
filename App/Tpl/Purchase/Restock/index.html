@@ -35,6 +35,21 @@
 			alert('请选择需要导出的补货单');
 		}	
 	}
+	function wInbound(){
+		var coll = document.getElementsByName("cb[]");
+		var bo = false;
+		for(var i = 0; i < coll.length; i++){
+			if(coll[i].checked){
+				bo=true;
+			}
+		}
+		if(bo){
+			form.action="{:U('Purchase/Restock/winitInboundList')}";
+			form.submit();
+		}else{
+			alert('请选择需要导出的补货单');
+		}	
+	}
 	function winitOutConfirme(){
 		var coll = document.getElementsByName("cb[]");
 		var bo = false;
@@ -115,16 +130,11 @@
 			<div class="tab-content">
 				<form name="form" id="search_product" action="#" method="POST">
 				<div class="form-group">
-					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/importRestock')}" >
-						<span>导入表格更新</span>
-					</a>
-					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/exportRestock')}" >
-						<span>导出</span>
-					</a>
-					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/newRestockOrder')}" >
-						<span>新增补货单</span>
-					</a>
-					<input class="btn btn-s btn-blue" type="button" onclick="eInvoice();" value="导出发票"/>
+					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/importRestock')}" >导入表格更新状态</a>
+					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/exportRestock')}" >导出</a>
+					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/newRestockOrder')}" >新增补货单	</a>
+					<input class="btn btn-s btn-blue" type="button" onclick="eInvoice();" value="导出美国发票"/>
+					<input class="btn btn-s btn-blue" type="button" onclick="wInbound();" value="导出万邑通入库单"/>
 					<input class="btn btn-s btn-blue" type="button" onclick="winitOutConfirme();" value="万邑通确认发货"/>
 				</div>
 				<table id="tablelist" class="tablelist">

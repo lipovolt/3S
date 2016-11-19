@@ -738,6 +738,18 @@ class RestockAction extends CommonAction{
         $this->exportExcel($xlsName,$xlsCell,$xlsData);
     }
 
+   public function winitInboundList(){
+   		$xlsName  = "WinitInbound";
+        $xlsCell  = array(
+	        array(C('DB_RESTOCK_ID'),'补货编号'),
+	        array(C('DB_RESTOCK_SKU'),'产品编码'),
+	        array(C('DB_RESTOCK_QUANTITY'),'数量')
+	        );
+        $map[C('DB_RESTOCK_ID')] = array('in',$_POST['cb']);
+        $xlsData = M(C('DB_RESTOCK'))->where($map)->select();
+        $this->exportExcel($xlsName,$xlsCell,$xlsData);
+   }
+
     public function winitOutConfirme(){
     	if($this->allIsWinitRestockOrder($_POST['cb'])){
     		$restock = M(C('DB_RESTOCK'));
