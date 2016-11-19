@@ -103,22 +103,32 @@
 								<if condition="($keyword eq 'status')"> 
 									<option value="{:C('DB_RESTOCK_STATUS')}" selected="">状态</option>
 									<option value="{:C('DB_RESTOCK_WAREHOUSE')}">仓库</option>
-									<option value="{:C('DB_PRODUCT_SKU')}" >产品编码</option>
+									<option value="{:C('DB_RESTOCK_SKU')}" >产品编码</option>
+									<option value="{:C('DB_RESTOCK_ID')}">补货单号</option>
 									<option value="country" >国家</option>
 								<elseif condition="$keyword eq 'warehouse'"/>
 									<option value="{:C('DB_RESTOCK_STATUS')}">状态</option>
 									<option value="{:C('DB_RESTOCK_WAREHOUSE')}" selected="">仓库</option>
-									<option value="{:C('DB_PRODUCT_SKU')}" >产品编码</option>
+									<option value="{:C('DB_RESTOCK_SKU')}" >产品编码</option>
+									<option value="{:C('DB_RESTOCK_ID')}">补货单号</option>
 									<option value="country" >国家</option>
 								<elseif condition="$keyword eq 'country'"/>
 									<option value="{:C('DB_RESTOCK_STATUS')}">状态</option>
 									<option value="{:C('DB_RESTOCK_WAREHOUSE')}">仓库</option>
-									<option value="{:C('DB_PRODUCT_SKU')}" >产品编码</option>
+									<option value="{:C('DB_RESTOCK_SKU')}" >产品编码</option>
+									<option value="{:C('DB_RESTOCK_ID')}">补货单号</option>
 									<option value="country" selected="">国家</option>
+								<elseif condition="$keyword eq 'id'"/>
+									<option value="{:C('DB_RESTOCK_STATUS')}">状态</option>
+									<option value="{:C('DB_RESTOCK_WAREHOUSE')}">仓库</option>
+									<option value="{:C('DB_RESTOCK_SKU')}" >产品编码</option>
+									<option value="{:C('DB_RESTOCK_ID')}" selected="">补货单号</option>
+									<option value="country">国家</option>
 								<else /> 
 									<option value="{:C('DB_RESTOCK_STATUS')}">状态</option>
 									<option value="{:C('DB_RESTOCK_WAREHOUSE')}">仓库</option>
-									<option value="{:C('DB_PRODUCT_SKU')}" selected="">产品编码</option>
+									<option value="{:C('DB_RESTOCK_SKU')}" selected="">产品编码</option>
+									<option value="{:C('DB_RESTOCK_ID')}">补货单号</option>
 									<option value="country" >国家</option>
 								</if>
 							</select>
