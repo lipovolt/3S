@@ -268,7 +268,7 @@ class SzSaleAction extends CommonAction{
 			$this->error('无法保存，当前产品没有销售建议');
 		}
 		
-		$this->redirect('suggest',array('country'=>$country));
+		$this->success('修改成功');
 	}
 
 	public function ignoreSuggest($id,$country){
@@ -283,7 +283,7 @@ class SzSaleAction extends CommonAction{
 		$data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
 		$data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = null;
 		$table->save($data);
-		$this->redirect('suggest',array('country'=>$country));
+		$this->success('修改成功');
 	}
 
 	private function updateUsp($usp,$country){
@@ -331,7 +331,7 @@ class SzSaleAction extends CommonAction{
 			$salePlan->save($value);
 		}
 		$salePlan->commit();
-		$this->redirect('suggest',array('country'=>$country,'kw'=>$kw,'kwv'=>$kwv));		
+		$this->success('修改已保存');		
 	}
 
 
@@ -787,6 +787,57 @@ class SzSaleAction extends CommonAction{
 			$this->testData=$initData;
 			$this->display();
 		}
+	}
+
+	public function bIgnoreHandle($country){
+		if($country=='us'){
+			$table=M(C('DB_SZ_US_SALE_PLAN'));
+		}
+		if($country=='de'){
+			$table=M(C('DB_SZ_DE_SALE_PLAN'));
+		}
+		$table->startTrans();
+		foreach ($_POST['cb'] as $key => $value) {
+			$data[C('DB_SZ_US_SALE_PLAN_ID')] = $value;
+			$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+			$data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
+			$data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = null;
+			$table->save($data);
+		}
+		$table->commit();
+		$this->success('修改成功');
+	}
+
+	public function bModifyHandle($country){
+		if($country=='us'){
+			$table=M(C('DB_SZ_US_SALE_PLAN'));
+		}
+		if($country=='de'){
+			$table=M(C('DB_SZ_DE_SALE_PLAN'));
+		}
+		$table->startTrans();
+		foreach ($_POST['cb'] as $key => $value) {
+			$data = $table->where(array(C('DB_SZ_US_SALE_PLAN_ID')=>$value))->find();
+			if($data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] !=null){
+				$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+				if($data[C('DB_SZ_US_SALE_PLAN_ID_SUGGEST')]=='relisting'){
+					$data[C('DB_SZ_US_SALE_PLAN_RELISTING_TIMES')] = intval($data[C('DB_SZ_US_SALE_PLAN_RELISTING_TIMES')])+1;
+				}
+
+				if($data[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')]==null){
+					$data[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_SZ_US_SALE_PLAN_PRICE')].' '.date('ymd',time());
+				}else{
+					$data[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')].' | '.$data[C('DB_SZ_US_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+				}
+
+				$data[C('DB_SZ_US_SALE_PLAN_PRICE')] = $data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')];
+				$data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
+				$data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = null;
+				$table->save($data);
+			}
+		}
+		$table->commit();
+		$this->success('修改成功');
 	}
 }
 

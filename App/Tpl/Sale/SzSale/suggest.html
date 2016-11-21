@@ -16,6 +16,51 @@ function save(){
 	form.action="{:U('Sale/SzSale/updateSalePlan')}?country="+c+"&kw="+kw+"&kwv="+kwv;
 	form.submit();
 }
+function  cli(Obj){
+	var collid = document.getElementById("all");
+	var coll = document.getElementsByName(Obj);
+	if (collid.checked){
+	    for(var i = 0; i < coll.length; i++)
+	       coll[i].checked = true;
+	}else{
+	    for(var i = 0; i < coll.length; i++)
+		    coll[i].checked = false;
+	}
+}
+function bIgnore(){
+	if(confirm("确认批量忽略么？")){
+		var coll = document.getElementsByName("cb[]");
+		var bo = false;
+		for(var i = 0; i < coll.length; i++){
+			if(coll[i].checked){
+				bo=true;
+			}
+		}
+		if(bo){
+			form.action="{:U('Sale/SzSale/bIgnoreHandle',array('country'=>$country))}";
+			form.submit();
+		}else{
+			alert('请选择需要批量忽略的建议！');
+		}
+	}	
+}
+function bModify(){
+	if(confirm("确认批量修改么？")){
+		var coll = document.getElementsByName("cb[]");
+		var bo = false;
+		for(var i = 0; i < coll.length; i++){
+			if(coll[i].checked){
+				bo=true;
+			}
+		}
+		if(bo){
+			form.action="{:U('Sale/SzSale/bModifyHandle',array('country'=>$country))}";
+			form.submit();
+		}else{
+			alert('请选择需要批量修改的建议！');
+		}
+	}	
+}
 </script>
 </head>
 <body>
@@ -84,10 +129,15 @@ function save(){
 		<div>
 			<div class="tab-content">
 				<form name="form" id="search_product" action="#" method="POST">
-				<a class="btn btn-s btn-blue" href="{:U('Sale/SzSale/getSuggest',array('country'=>$country))}">更新建议</a>
-				<input class="btn btn-s btn-blue" type="button" onclick="save()" value="保存售价和自动建议状态" style="width:200px;"/>
+				<a class="btn btn-s btn-blue" href="{:U('Sale/SzSale/getSuggest',array('country'=>$country))}">更新建议（全部）</a>
+				<input class="btn btn-s btn-blue" type="button" onclick="save()" value="保存售价和自动建议状态（全部）" style="width:200px;"/>
+				<input class="btn btn-s btn-blue" type="button" onclick="bIgnore()" value="批量忽略（选择的建议）" style="width:200px;"/>
+				<input class="btn btn-s btn-blue" type="button" onclick="bModify()" value="批量已修改（选择的建议）" style="width:200px;"/>
 				<table id="tablelist" class="tablelist">
 					<tr>
+						<th><div class="tl">
+							<input type="checkbox" id="all" value="" onclick="cli('cb[]');">
+						</div></th>
 						<th width="66">产品编码</th>
 						<th><div class="tl">中文名称</div></th>
 						<th><div class="tl">首次销售时间</div></th>
@@ -114,6 +164,9 @@ function save(){
 					</tr>
 					<volist name="suggest" id="vo">
 						<tr>
+						<td><div class="tl">
+							<input type="checkbox" name="cb[]" value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}">
+						</div></td>
 						<td><div class="tl">{$vo[C('DB_SZ_US_SALE_PLAN_SKU')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_PRODUCT_CNAME')]}</div></td>						
 						<td><div class="tl">{$vo[C('DB_SZ_US_SALE_PLAN_FIRST_DATE')]|substr=0,10}</div></td>
