@@ -69,7 +69,7 @@ class SzSaleAction extends CommonAction{
         $this->display();
 	}
 
-	public function getSuggest($country){
+	public function getSuggest($country,$kw=null,$kwv=null){
 		import('ORG.Util.Date');// 导入日期类
 		$Date = new Date();
 		if($country=='us'){
@@ -115,7 +115,7 @@ class SzSaleAction extends CommonAction{
 				}
 			}
 		}
-		$this->redirect('suggest',array('country'=>$country));
+		$this->redirect('suggest',array('country'=>$country,'kw'=>$kw,'kwv'=>$kwv));
 	}
 
 	private function isSaleInfoComplete($usp){
@@ -180,8 +180,9 @@ class SzSaleAction extends CommonAction{
 	private function calUsSuggestCost($sku,$sale_price){
 		//计算产品美自建仓销售成本
 		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
+		$sp = M(C('DB_SZ_US_SALE_PLAN'))->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$sku))->find();
     	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
-    	$data['way-to-us-fee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+    	$data['way-to-us-fee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
     	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['way-to-us-fee'])/$exchange;
 		if($sale_price!=null){
@@ -197,8 +198,9 @@ class SzSaleAction extends CommonAction{
 	private function calDeSuggestCost($sku,$sale_price){
 		//计算产品美自建仓销售成本
 		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
+		$sp = M(C('DB_SZ_DE_SALE_PLAN'))->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$sku))->find();
     	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
-    	$data['way-to-de-fee']=$this->getSzDeShippingFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+    	$data['way-to-de-fee']=$this->getSzDeShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
     	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
 		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['way-to-de-fee'])/$exchange;
 		if($sale_price!=null){
@@ -308,7 +310,7 @@ class SzSaleAction extends CommonAction{
 		foreach ($_POST['id'] as $key => $value) {
 			$data[C('DB_SZ_US_SALE_PLAN_ID')]=$value;
 			$data[C('DB_SZ_US_SALE_PLAN_PRICE')]=$_POST['sale_price'][$key];
-			$data[C('DB_SZ_US_SALE_PLAN_COST')] = $this->calSuggestCost($_POST['sku'][$key],$country,$_POST['sale_price'][$key]);
+			/*$data[C('DB_SZ_US_SALE_PLAN_COST')] = $this->calSuggestCost($_POST['sku'][$key],$country,$_POST['sale_price'][$key]);*/
 			if($_POST['register']==null){
 				$data[C('DB_SZ_US_SALE_PLAN_REGISTER')]=0;
 			}else{
@@ -322,7 +324,7 @@ class SzSaleAction extends CommonAction{
 			$salePlan->save($data);
 		}
 		$salePlan->commit();
-		$this->success('修改已保存');		
+		$this->redirect('getSuggest',array('country'=>$country,'kw'=>$kw,'kwv'=>$kwv));
 	}
 
 
@@ -799,8 +801,9 @@ class SzSaleAction extends CommonAction{
 
 	private function getSzUsCost($data){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange+$data[C('DB_SZ_US_SALE_PLAN_PRICE')]*0.144+0.35;
-		return $c;
+		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange;
+		$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
+		return $cost+$tmp_sp*0.144+0.35;
 	}
 
 	private function getSzDeSaleInfo(){
@@ -1034,8 +1037,10 @@ class SzSaleAction extends CommonAction{
 
 	private function getSzDeCost($data){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
-		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange+$data[C('DB_SZ_DE_SALE_PLAN_PRICE')]*0.144+0.35;
-		return $c;
+		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange;
+		$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
+		$cost = $cost+$tmp_sp*0.144+0.35;
+		return $cost;
 	}
 
 	public function usTestCal(){
