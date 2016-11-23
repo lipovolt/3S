@@ -16,8 +16,8 @@ function save(){
 	form.action="{:U('Sale/SzSale/updateSalePlan')}?country="+c+"&kw="+kw+"&kwv="+kwv;
 	form.submit();
 }
-function  cli(Obj){
-	var collid = document.getElementById("all");
+function  cli(all,Obj){
+	var collid = document.getElementById(all);
 	var coll = document.getElementsByName(Obj);
 	if (collid.checked){
 	    for(var i = 0; i < coll.length; i++)
@@ -130,13 +130,13 @@ function bModify(){
 			<div class="tab-content">
 				<form name="form" id="search_product" action="#" method="POST">
 				<a class="btn btn-s btn-blue" href="{:U('Sale/SzSale/getSuggest',array('country'=>$country))}">更新建议（全部）</a>
-				<input class="btn btn-s btn-blue" type="button" onclick="save()" value="保存售价和自动建议状态（全部）" style="width:200px;"/>
-				<input class="btn btn-s btn-blue" type="button" onclick="bIgnore()" value="批量忽略（选择的建议）" style="width:200px;"/>
-				<input class="btn btn-s btn-blue" type="button" onclick="bModify()" value="批量已修改（选择的建议）" style="width:200px;"/>
+				<input class="btn btn-s btn-blue" type="button" onclick="save()" value="保存修改（全部）" style="width:120px;"/>
+				<input class="btn btn-s btn-blue" type="button" onclick="bIgnore()" value="批量忽略（选择的）" style="width:150px;"/>
+				<input class="btn btn-s btn-blue" type="button" onclick="bModify()" value="批量已修改（选择的）" style="width:150px;"/>
 				<table id="tablelist" class="tablelist">
 					<tr>
 						<th><div class="tl">
-							<input type="checkbox" id="all" value="" onclick="cli('cb[]');">
+							<input type="checkbox" id="all" value="" onclick="cli('all','cb[]');">
 						</div></th>
 						<th width="66">产品编码</th>
 						<th><div class="tl">中文名称</div></th>
@@ -159,7 +159,12 @@ function bModify(){
 							<th><div class="tl">建议售价€</div></th>
 							<th><div class="tl">销售建议€</div></th>
 						</if>
-						<th><div class="tl">开启关闭<br>自动建议</div></th>
+						<th><div class="tl">挂号
+							<input type="checkbox" id="allRegister" value="" onclick="cli('allRegister','register[]');">
+						</div></th>
+						<th><div class="tl">自动建议
+							<input type="checkbox" id="allStatus" value="" onclick="cli('allStatus','status[]');">
+						</div></th>
 						<th><div class="tl">操作</div></th>
 					</tr>
 					<volist name="suggest" id="vo">
@@ -175,15 +180,22 @@ function bModify(){
 						<td><div class="tl">{$vo[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_SZ_US_SALE_PLAN_COST')]}</div></td>
 						<td><div class="tl">
+						<input type="hidden" name="id[]" value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" />
+						<input type="hidden" name="sku[]" value="{$vo[C('DB_SZ_US_SALE_PLAN_SKU')]}" />
+						<input name='sale_price[]' type='text' value='{$vo[C('DB_SZ_US_SALE_PLAN_PRICE')]}' style="width:60px;"/></div></td>
+						<!-- <td><div class="tl">
 						<input type="hidden" id="id-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" name="id-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" />
 						<input type="hidden" id="sku-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" name="sku-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" value="{$vo[C('DB_SZ_US_SALE_PLAN_SKU')]}" />
-						<input id="sale_price-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" name='sale_price-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}' type='text' value='{$vo[C('DB_SZ_US_SALE_PLAN_PRICE')]}' style="width:60px;"/></div></td>
+						<input id="sale_price-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" name='sale_price-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}' type='text' value='{$vo[C('DB_SZ_US_SALE_PLAN_PRICE')]}' style="width:60px;"/></div></td> -->
 						<td><div class="tl">{$vo['profit']}</div></td>
 						<td><div class="tl">{$vo['grate']}%</div></td>
 						<td><div class="tl">{$vo[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_SZ_US_SALE_PLAN_SUGGEST')]}</div></td>
-						<if condition="($vo[C('DB_SZ_US_SALE_PLAN_STATUS')] eq 1)"> <td><div class="tl"><input id="status-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" name="status-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" type='checkbox' checked /></div></td>
-						<else /> <td><div class="tl"><input id="status-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" name="status-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" type='checkbox' /></div></td>
+						<if condition="($vo[C('DB_SZ_US_SALE_PLAN_REGISTER')] eq 1)"> <td><div class="tl"><input name="register[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" checked/></div></td>
+						<else /> <td><div class="tl"><input name="register[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}"/></div></td>
+						</if>
+						<if condition="($vo[C('DB_SZ_US_SALE_PLAN_STATUS')] eq 1)"> <td><div class="tl"><input name="status[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" checked /></div></td>
+						<else /> <td><div class="tl"><input name="status[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}"/></div></td>
 						</if>
 						<td>
 							<a href="{:U('Sale/SzSale/confirmSuggest',array('id'=>$vo['id'],'country'=>$country))}">已修改</a>

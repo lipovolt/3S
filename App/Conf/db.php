@@ -662,7 +662,8 @@ return array(
 	`sale_price` decimal(5,2) default null,
 	`suggested_price` decimal(5,2) default null,
 	`suggest` varchar(20) default null,
-	`status` tinyint(1) default 1
+	`status` tinyint(1) default 1,
+	`register` tinyint(1) default 1
 	) engine=myisam default charset=utf8;	
 	*/
 	'DB_SZ_US_SALE_PLAN' => 'sz_us_sale_plan',
@@ -677,6 +678,7 @@ return array(
 	'DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
 	'DB_SZ_US_SALE_PLAN_SUGGEST' => 'suggest', //clear,us_relisting,us_price_up, ,us_price_down,de_relisting,de_price_up, ,de_price_down,complete_product_info,complete_sale_info,null
 	'DB_SZ_US_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+	'DB_SZ_US_SALE_PLAN_REGISTER' => 'register', //register shipping. 1=yes,0=no
 
 
 	//sz_sale_plan
@@ -692,7 +694,8 @@ return array(
 	`sale_price` decimal(5,2) default null,
 	`suggested_price` decimal(5,2) default null,
 	`suggest` varchar(20) default null,
-	`status` tinyint(1) default 1
+	`status` tinyint(1) default 1,
+	`register` tinyint(1) default 1
 	) engine=myisam default charset=utf8;	
 	*/
 	'DB_SZ_DE_SALE_PLAN' => 'sz_de_sale_plan',
@@ -707,6 +710,7 @@ return array(
 	'DB_SZ_DE_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
 	'DB_SZ_DE_SALE_PLAN_SUGGEST' => 'suggest', //clear,us_relisting,us_price_up, ,us_price_down,de_relisting,de_price_up, ,de_price_down,complete_product_info,complete_sale_info,null
 	'DB_SZ_DE_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+	'DB_SZ_DE_SALE_PLAN_REGISTER' => 'register', //register shipping. 1=yes,0=no
 
 
 

@@ -298,22 +298,6 @@ class SzSaleAction extends CommonAction{
 	}
 
 	public function updateSalePlan($country,$kw=null,$kwv=null){
-		$data=null;
-		foreach ($_POST as $key => $value) {
-			$arr = explode("-",$key);
-			if($arr[0]=='id'){
-				$data[$arr[1]]['id']=$value; 
-			}
-			if($arr[0]=='sku'){
-				$data[$arr[1]]['sku']=$value; 
-			}
-			if($arr[0]=='sale_price'){
-				$data[$arr[1]]['sale_price']=$value; 
-			}
-			if($arr[0]=='status'){
-				$data[$arr[1]]['status']=$value; 
-			}
-		}
 		if($country=='us'){
 			$salePlan = M(C('DB_SZ_US_SALE_PLAN'));
 		}
@@ -321,14 +305,21 @@ class SzSaleAction extends CommonAction{
 			$salePlan = M(C('DB_SZ_DE_SALE_PLAN'));
 		}
 		$salePlan->startTrans();
-		foreach ($data as $key => $value) {
-			$value[C('DB_SZ_US_SALE_PLAN_COST')] = $this->calSuggestCost($value['sku'],$country,$value['sale_price']);
-			if($value['status']=="on"){
-				$value['status']=1;
+		foreach ($_POST['id'] as $key => $value) {
+			$data[C('DB_SZ_US_SALE_PLAN_ID')]=$value;
+			$data[C('DB_SZ_US_SALE_PLAN_PRICE')]=$_POST['sale_price'][$key];
+			$data[C('DB_SZ_US_SALE_PLAN_COST')] = $this->calSuggestCost($_POST['sku'][$key],$country,$_POST['sale_price'][$key]);
+			if($_POST['register']==null){
+				$data[C('DB_SZ_US_SALE_PLAN_REGISTER')]=0;
 			}else{
-				$value['status']=0;
+				$data[C('DB_SZ_US_SALE_PLAN_REGISTER')]=array_search($value, $_POST['register'])===false?0:1;
 			}
-			$salePlan->save($value);
+			if($_POST['status']==null){
+				$data[C('DB_SZ_US_SALE_PLAN_STATUS')]=0;
+			}else{
+				$data[C('DB_SZ_US_SALE_PLAN_STATUS')]=array_search($value, $_POST['status'])===false?0:1;
+			}
+			$salePlan->save($data);
 		}
 		$salePlan->commit();
 		$this->success('修改已保存');		
@@ -487,6 +478,7 @@ class SzSaleAction extends CommonAction{
 
 	private function getSzUsSaleInfo(){
 		$products = M(C('DB_PRODUCT'));
+		$szUsSalePlan = M(C('DB_SZ_US_SALE_PLAN'));
         import('ORG.Util.Page');
         $count = $products->count();
         $Page = new Page($count,20);           
@@ -494,11 +486,16 @@ class SzSaleAction extends CommonAction{
         $show = $Page->show();
         $tpl = $products->order(C('DB_PRODUCT_SKU'))->limit($Page->firstRow.','.$Page->listRows)->select();
         foreach ($tpl as $key=>$value) {
+        	$sp=$szUsSalePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->find();
         	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
         	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
         	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
-        	$data[$key]['shipping-way']=$this->getSzUsShippingWay($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['shipping-fee']=$this->getSzUsShippingFee($value['weight'],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['shipping-way']=$this->getSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+        	$data[$key]['shipping-fee']=round($this->getSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
+        	$data[$key]['flt-shipping-way']=$this->getFlytSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+        	$data[$key]['flt-shipping-fee']=round($this->getFlytSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
+        	$data[$key]['wedo-shipping-way']=$this->getWedoSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+        	$data[$key]['wedo-shipping-fee']=round($this->getWedoSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
         	$data[$key][C('DB_SZ_US_SALE_PLAN_PRICE')]=M(C('DB_SZ_US_SALE_PLAN'))->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_SZ_US_SALE_PLAN_PRICE'));
         	$data[$key]['cost']=round($this->getSzUsCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key][C('DB_SZ_US_SALE_PLAN_PRICE')]-$data[$key]['cost'];
@@ -515,6 +512,7 @@ class SzSaleAction extends CommonAction{
 
 	private function getSzUsKeywordSaleInfo(){
 		$products = M(C('DB_PRODUCT'));
+		$szUsSalePlan = M(C('DB_SZ_US_SALE_PLAN'));
         import('ORG.Util.Page');
         $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
         $count = $products->where($where)->count();
@@ -523,11 +521,16 @@ class SzSaleAction extends CommonAction{
         $show = $Page->show();        
         $tpl = $products->limit($Page->firstRow.','.$Page->listRows)->where($where)->select();
         foreach ($tpl as $key=>$value) {
+        	$sp=$szUsSalePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->find();
         	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
         	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
         	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
-        	$data[$key]['shipping-way']=$this->getSzUsShippingWay($value[C('DB_PRODUCT_WEIGHT')]);
-        	$data[$key]['shipping-fee']=$this->getSzUsShippingFee($value['weight']);
+        	$data[$key]['shipping-way']=$this->getSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+        	$data[$key]['shipping-fee']=round($this->getSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
+        	$data[$key]['flt-shipping-way']=$this->getFlytSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+        	$data[$key]['flt-shipping-fee']=round($this->getFlytSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
+        	$data[$key]['wedo-shipping-way']=$this->getWedoSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+        	$data[$key]['wedo-shipping-fee']=round($this->getWedoSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
         	$data[$key][C('DB_SZ_US_SALE_PLAN_PRICE')]=M(C('DB_SZ_US_SALE_PLAN'))->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_SZ_US_SALE_PLAN_PRICE'));
         	$data[$key]['cost']=round($this->getSzUsCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key][C('DB_SZ_US_SALE_PLAN_PRICE')]-$data[$key]['cost'];
@@ -544,35 +547,181 @@ class SzSaleAction extends CommonAction{
         $this->display();
 	}
 
-
-	private function getSzUsShippingWay($weight,$l,$w,$h){
-		if($weight<=2000 and $l<=60 and ($l+$w+$h)<=90){
-			return 'Flyt EUB';
-		}
-		elseif($weight<=2000){
-			return 'Flyt China Post';
-		}
-		else{
-			return 'No Way';
+	private function getSzUsShippingWay($weight,$l,$w,$h,$register){
+		if($register || $register ==1){
+			return $this->getSzUsRsw($weight,$l,$w,$h);
+		}else{
+			return $this->getSzUsSw($weight,$l,$w,$h);
 		}
 	}
 
-	private function getSzUsShippingFee($weight,$l,$w,$h){
-		if($weight<=2000 and $l<=60 and ($l+$w+$h)<=90){
-			return round($this->calFlytEubFee($weight,$l,$w,$h),2);
+	private function getSzUsShippingFee($weight,$l,$w,$h,$register){
+		if($register || $register==1){
+			return $this->getSzUsRsf($weight,$l,$w,$h);
+		}else{
+			return $this->getSzUsSf($weight,$l,$w,$h);
 		}
-		elseif($weight<=2000){
-			return round($this->calFlytCprUsFee($weight,$l,$w,$h),2);
+	}
+
+	private function getSzUsRsw($weight,$l,$w,$h){
+		$ways=array(
+				0=>'No way',
+				1=>'飞特EUB',
+				2=>'飞特中邮挂号',
+				3=>'运德南京EUB',
+				4=>'运德漳州挂号',
+				5=>'运德广州挂号'
+			);
+		$fees=array(
+				0=>0,
+				1=>$this->calFlytEubFee($weight,$l,$w,$h),
+				2=>$this->calFlytCprUsFee($weight,$l,$w,$h),
+				3=>$this->calWedoNjEubFee($weight,$l,$w,$h),
+				4=>$this->calWedoZzCprUsFee($weight,$l,$w,$h),
+				5=>$this->calWedoGzCprUsFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		$way=0;
+		for ($i=0; $i < 6; $i++) { 
+			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+				$way = $i;
+			}
 		}
-		else{
-			return 0;
+		return $ways[$way];
+	}
+
+	private function getSzUsRsf($weight,$l,$w,$h){
+		$fees=array(
+				0=>0,
+				1=>$this->calFlytEubFee($weight,$l,$w,$h),
+				2=>$this->calFlytCprUsFee($weight,$l,$w,$h),
+				3=>$this->calWedoNjEubFee($weight,$l,$w,$h),
+				4=>$this->calWedoZzCprUsFee($weight,$l,$w,$h),
+				5=>$this->calWedoGzCprUsFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		for ($i=0; $i < 6; $i++) { 
+			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+			}
 		}
+		return $cheapest;
+	}
+
+	private function getSzUsSw($weight,$l,$w,$h){
+		$ways=array(
+				0=>'No way',
+				1=>'飞特中邮',
+				2=>'运德漳州平邮',
+				3=>'运德广州平邮'
+			);
+		$fees=array(
+				0=>0,
+				1=>$this->calFlytCpUsFee($weight,$l,$w,$h),
+				2=>$this->calWedoZzCpUsFee($weight,$l,$w,$h),
+				3=>$this->calWedoGzCpUsFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		$way=0;
+		for ($i=0; $i < 4; $i++) { 
+			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+				$way = $i;
+			}
+		}
+		return $ways[$way];
+	}
+
+	private function getSzUsSf($weight,$l,$w,$h){
+		$fees=array(
+				0=>0,
+				1=>$this->calFlytCpUsFee($weight,$l,$w,$h),
+				2=>$this->calWedoZzCpUsFee($weight,$l,$w,$h),
+				3=>$this->calWedoGzCpUsFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		for ($i=0; $i < 4; $i++) { 
+			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+			}
+		}
+		return $cheapest;
+	}
+
+	private function getFlytSzUsShippingWay($weight,$l,$w,$h,$register){
+		if($register){
+			return "飞特EUB";
+		}else{
+			return "飞特中邮平邮";
+		}
+	}
+
+	private function getFlytSzUsShippingFee($weight,$l,$w,$h,$register){
+		if($register){
+			return $this->calFlytEubFee($weight,$l,$w,$h);
+		}else{
+			return $this->calFlytCpUsFee($weight,$l,$w,$h);
+		}
+	}
+
+	private function getWedoSzUsShippingWay($weight,$l,$w,$h,$register){
+		if($register){
+			return "运德南京EUB";
+		}else{
+			return $this->getWedoSzUsSw($weight,$l,$w,$h);
+		}
+	}
+
+	private function getWedoSzUsShippingFee($weight,$l,$w,$h,$register){
+		if($register){
+			return $this->calWedoNjEubFee($weight,$l,$w,$h);
+		}else{
+			return $this->getWedoSzUsSf($weight,$l,$w,$h);
+		}
+	}
+
+	private function getWedoSzUsSw($weight,$l,$w,$h){
+		$ways=array(
+				0=>'No way',
+				1=>'运德漳州平邮',
+				2=>'运德广州平邮'
+			);
+		$fees=array(
+				0=>0,
+				1=>$this->calWedoZzCpUsFee($weight,$l,$w,$h),
+				2=>$this->calWedoGzCpUsFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		$way=0;
+		for ($i=0; $i < 3; $i++) { 
+			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+				$way = $i;
+			}
+		}
+		return $ways[$way];
+	}
+
+	private function getWedoSzUsSf(){
+		$fees=array(
+				0=>0,
+				1=>$this->calWedoZzCpUsFee($weight,$l,$w,$h),
+				2=>$this->calWedoGzCpUsFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		for ($i=0; $i < 3; $i++) { 
+			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+			}
+		}
+		return $cheapest;
 	}
 
 	private function calFlytEubFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
 			if($weight>0 and $weight<=200){
-				return 9+$weight*0.08;
+				return $weight<50?9+50*0.08:9+$weight*0.08;
 			}
 			else{
 				return 9+$weight*0.075;
@@ -584,10 +733,66 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function calFlytCprUsFee($weight,$l,$w,$h){
-		if ($weight <= 2000){
+		if ($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return 8+90.5*$weight/1000;
 		}
 		else{
+			return 0;
+		}
+	}
+
+	private function calFlytCpUsFee($weight,$l,$w,$h){
+		if ($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
+			return 90.5*$weight/1000;
+		}
+		else{
+			return 0;
+		}
+	}
+
+	private function calWedoNjEubFee($weight,$l,$w,$h){
+		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
+			if($weight>0 and $weight<=200){
+				return $weight<50?(7.92+50*0.0704):(7.92+$weight*0.0704);
+			}
+			else{
+				return 7.92+$weight*0.066;
+			}
+		}
+		else{
+			return 0;
+		}
+	}
+
+	private function calWedoZzCprUsFee($weight,$l,$w,$h){
+		if ($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
+			return 8+90.5*$weight/1000;
+		}
+		else{
+			return 0;
+		}
+	}
+
+	private function calWedoZzCpUsFee($weight,$l,$w,$h){
+		if($weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
+			return $weight<50?50*0.085:$weight*0.085;
+		}else{
+			return 0;
+		}
+	}
+
+	private function calWedoGzCpUsFee($weight,$l,$w,$h){
+		if($weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
+			return $weight<50?50*0.0905:$weight*0.0905;
+		}else{
+			return 0;
+		}
+	}
+
+	private function calWedoGzCprUsFee($weight,$l,$w,$h){
+		if($weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
+			return $weight<50?8+50*0.0905:8+$weight*0.0905;
+		}else{
 			return 0;
 		}
 	}
@@ -600,6 +805,7 @@ class SzSaleAction extends CommonAction{
 
 	private function getSzDeSaleInfo(){
 		$products = M(C('DB_PRODUCT'));
+		$deSalePlan = M(C('DB_SZ_DE_SALE_PLAN'));
         import('ORG.Util.Page');
         $count = $products->count();
         $Page = new Page($count,20);           
@@ -607,11 +813,16 @@ class SzSaleAction extends CommonAction{
         $show = $Page->show();
         $tpl = $products->order(C('DB_PRODUCT_SKU'))->limit($Page->firstRow.','.$Page->listRows)->select();
         foreach ($tpl as $key=>$value) {
+        	$sp=$deSalePlan->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->find();
         	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
         	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
         	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
-        	$data[$key]['shipping-way']=$this->getSzDeShippingWay($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['shipping-fee']=$this->getSzDeShippingFee($value['weight'],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['shipping-way']=$this->getSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
+        	$data[$key]['shipping-fee']=round($this->getSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
+        	$data[$key]['flt-shipping-way']=$this->getFlytSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
+        	$data[$key]['flt-shipping-fee']=round($this->getFlytSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
+        	$data[$key]['wedo-shipping-way']=$this->getWedoSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
+        	$data[$key]['wedo-shipping-fee']=round($this->getWedoSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
         	$data[$key][C('DB_SZ_DE_SALE_PLAN_PRICE')]=M(C('DB_SZ_DE_SALE_PLAN'))->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_SZ_DE_SALE_PLAN_PRICE'));
         	$data[$key]['cost']=round($this->getSzDeCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key][C('DB_SZ_DE_SALE_PLAN_PRICE')]-$data[$key]['cost'];
@@ -628,6 +839,7 @@ class SzSaleAction extends CommonAction{
 
 	private function getSzDeKeywordSaleInfo(){
 		$products = M(C('DB_PRODUCT'));
+		$deSalePlan = M(C('DB_SZ_DE_SALE_PLAN'));
         import('ORG.Util.Page');
         $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
         $count = $products->where($where)->count();
@@ -636,11 +848,16 @@ class SzSaleAction extends CommonAction{
         $show = $Page->show();        
         $tpl = $products->limit($Page->firstRow.','.$Page->listRows)->where($where)->select();
         foreach ($tpl as $key=>$value) {
+        	$sp=$deSalePlan->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->find();
         	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
         	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
         	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
-        	$data[$key]['shipping-way']=$this->getSzDeShippingWay($value[C('DB_PRODUCT_WEIGHT')]);
-        	$data[$key]['shipping-fee']=$this->getSzDeShippingFee($value['weight']);
+        	$data[$key]['shipping-way']=$this->getSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
+        	$data[$key]['shipping-fee']=round($this->getSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
+        	$data[$key]['flt-shipping-way']=$this->getFlytSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
+        	$data[$key]['flt-shipping-fee']=round($this->getFlytSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
+        	$data[$key]['wedo-shipping-way']=$this->getWedoSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
+        	$data[$key]['wedo-shipping-fee']=round($this->getWedoSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
         	$data[$key][C('DB_SZ_DE_SALE_PLAN_PRICE')]=M(C('DB_SZ_DE_SALE_PLAN'))->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_SZ_DE_SALE_PLAN_PRICE'));
         	$data[$key]['cost']=round($this->getSzDeCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key][C('DB_SZ_DE_SALE_PLAN_PRICE')]-$data[$key]['cost'];
@@ -657,31 +874,129 @@ class SzSaleAction extends CommonAction{
         $this->display();
 	}
 
-	private function getSzDeShippingWay($weight,$l,$w,$h){
-		if($weight<=2000 and $l<=60 and ($l+$w+$h)<=90){
-			return 'Flyt HK-DE';
-		}
-		elseif($weight<=2000){
-			return 'Flyt China Post';
-		}
-		else{
-			return 'No Way';
+	private function getSzDeShippingWay($weight,$l,$w,$h,$register){
+		if($register||$register==1){
+			return $this->getSzDeRsw($weight,$l,$w,$h);
+		}else{
+			return $this->getSzDeSw($weight,$l,$w,$h);
 		}
 	}
 
-	private function getSzDeShippingFee($weight,$l,$w,$h){
-		if($weight<=2000 and $l<=60 and ($l+$w+$h)<=90){
-			return round($this->calFlytHkDeFee($weight,$l,$w,$h),2);
-		}
-		elseif($weight<=2000){
-			return round($this->calFlytCprDeFee($weight,$l,$w,$h),2);
-		}
-		else{
-			return 0;
+	private function getSzDeShippingFee($weight,$l,$w,$h,$register){
+		if($register||$register==1){
+			return $this->getSzDeRsf($weight,$l,$w,$h);
+		}else{
+			return $this->getSzDeSf($weight,$l,$w,$h);
 		}
 	}
 
-	private function calFlytHkDeFee($weight,$l,$w,$h){
+	private function getSzDeRsw($weight,$l,$w,$h){
+		$ways=array(
+				0=>'No way',
+				1=>'飞特香港德国专线挂号',
+				2=>'运德德国小包（香港）挂号'
+			);
+		$fees=array(
+				0=>0,
+				1=>$this->calFlytHDRFee($weight,$l,$w,$h),
+				2=>$this->calWedoHDRFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		$way=0;
+		for ($i=0; $i < 3; $i++) { 
+			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+				$way = $i;
+			}
+		}
+		return $ways[$way];
+	}
+
+	private function getSzDeRsf($weight,$l,$w,$h){
+		$fees=array(
+				0=>0,
+				1=>$this->calFlytHDRFee($weight,$l,$w,$h),
+				2=>$this->calWedoHDRFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		for ($i=0; $i < 3; $i++) { 
+			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+			}
+		}
+		return $cheapest;
+	}
+
+	private function getSzDeSw($weight,$l,$w,$h){
+		$ways=array(
+				0=>'No way',
+				1=>'飞特香港德国专线平邮',
+				2=>'运德德国小包（香港）平邮'
+			);
+		$fees=array(
+				0=>0,
+				1=>$this->calFlytHDFee($weight,$l,$w,$h),
+				2=>$this->calWedoHDFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		$way=0;
+		for ($i=0; $i < 3; $i++) { 
+			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+				$way = $i;
+			}
+		}
+		return $ways[$way];
+	}
+
+	private function getSzDeSf($weight,$l,$w,$h){
+		$fees=array(
+				0=>0,
+				1=>$this->calFlytHDFee($weight,$l,$w,$h),
+				2=>$this->calWedoHDFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		for ($i=0; $i < 3; $i++) { 
+			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+			}
+		}
+		return $cheapest;
+	}
+
+	private function getFlytSzDeShippingWay($weight,$l,$w,$h,$register){
+		if($register){
+			return "飞特香港德国专线挂号";
+		}else{
+			return "飞特香港德国专线平邮";
+		}
+	}
+
+	private function getFlytSzDeShippingFee($weight,$l,$w,$h,$register){
+		if($register){
+			return $this->calFlytHDRFee($weight,$l,$w,$h);
+		}else{
+			return $this->calFlytHDFee($weight,$l,$w,$h);
+		}
+	}
+
+	private function getWedoSzDeShippingWay($weight,$l,$w,$h,$register){
+		if($register){
+			return "运德德国小包（香港）挂号";
+		}else{
+			return "运德德国小包（香港）平邮";
+		}
+	}
+
+	private function getWedoSzDeShippingFee($weight,$l,$w,$h,$register){
+		if($register){
+			return $this->calWedoHDRFee($weight,$l,$w,$h);
+		}else{
+			return $this->calWedoHDFee($weight,$l,$w,$h);
+		}
+	}
+
+	private function calFlytHDRFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return 13+79*$weight/1000;
 		}
@@ -690,9 +1005,27 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
-	private function calFlytCprDeFee($weight,$l,$w,$h){
-		if ($weight <= 2000){
-			return 8+81*$weight/1000;
+	private function calFlytHDFee($weight,$l,$w,$h){
+		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
+			return 79*$weight/1000;
+		}
+		else{
+			return 0;
+		}
+	}
+
+	private function calWedoHDRFee($weight,$l,$w,$h){
+		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
+			return 15.12+55.96*$weight/1000;
+		}
+		else{
+			return 0;
+		}
+	}
+
+	private function calWedoHDFee($weight,$l,$w,$h){
+		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
+			return 4.29+87.03*$weight/1000;
 		}
 		else{
 			return 0;
