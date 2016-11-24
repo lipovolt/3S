@@ -70,6 +70,11 @@ class SzSaleAction extends CommonAction{
 	}
 
 	public function getSuggest($country,$kw=null,$kwv=null){
+		$this->getSuggestHandle($country,$kw,$kwv);
+		$this->redirect('suggest',array('country'=>$country,'kw'=>$kw,'kwv'=>$kwv));
+	}
+
+	private function getSuggestHandle($country,$kw=null,$kwv=null){
 		import('ORG.Util.Date');// 导入日期类
 		$Date = new Date();
 		if($country=='us'){
@@ -115,7 +120,6 @@ class SzSaleAction extends CommonAction{
 				}
 			}
 		}
-		$this->redirect('suggest',array('country'=>$country,'kw'=>$kw,'kwv'=>$kwv));
 	}
 
 	private function isSaleInfoComplete($usp){
@@ -324,7 +328,8 @@ class SzSaleAction extends CommonAction{
 			$salePlan->save($data);
 		}
 		$salePlan->commit();
-		$this->redirect('getSuggest',array('country'=>$country,'kw'=>$kw,'kwv'=>$kwv));
+		$this->getSuggestHandle($country,$kw,$kwv);
+		$this->success('保存成功！');
 	}
 
 
