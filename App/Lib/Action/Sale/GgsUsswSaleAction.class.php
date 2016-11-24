@@ -52,6 +52,11 @@ class GgsUsswSaleAction extends CommonAction{
 
 
 	public function calUsswSaleInfo(){
+		$this->calUsswSaleInfoHandle();
+		$this->redirect('usswSaleSuggest');
+	}
+
+	private function calUsswSaleInfoHandle(){
 		import('ORG.Util.Date');// 导入日期类
 		$Date = new Date();
 
@@ -93,7 +98,6 @@ class GgsUsswSaleAction extends CommonAction{
 				}
 			}
 		}
-		$this->redirect('usswSaleSuggest');
 	}
 
 	public function confirmSuggest($id){
@@ -200,6 +204,7 @@ class GgsUsswSaleAction extends CommonAction{
 			$salePlan->save($value);
 		}
 		$salePlan->commit();
+		$this->calUsswSaleInfoHandle();
 		$this->success('修改已保存');		
 	}
 
