@@ -494,6 +494,7 @@ class SzSaleAction extends CommonAction{
         $tpl = $products->order(C('DB_PRODUCT_SKU'))->limit($Page->firstRow.','.$Page->listRows)->select();
         foreach ($tpl as $key=>$value) {
         	$sp=$szUsSalePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->find();
+        	dump($value);die;
         	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
         	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
         	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
@@ -710,7 +711,7 @@ class SzSaleAction extends CommonAction{
 		return $ways[$way];
 	}
 
-	private function getWedoSzUsSf(){
+	private function getWedoSzUsSf($weight,$l,$w,$h){
 		$fees=array(
 				0=>0,
 				1=>$this->calWedoZzCpUsFee($weight,$l,$w,$h),
