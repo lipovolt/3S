@@ -426,7 +426,7 @@ class OutboundAction extends CommonAction{
         }
     }
 
-    public function exportPackingList($outboundOrder){
+    private function exportPackingList($outboundOrder){
         $xlsName  = "Packinglist";
         $xlsCell  = array(
             array(C('DB_USSW_OUTBOUND_ITEM_MARKET_NO'),'平台订单号'),

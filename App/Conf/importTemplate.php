@@ -77,11 +77,6 @@ return array(
 		'AA' => 'Feedback left',
 		'AB' => 'Feedback received',
 		'AC' => 'Notes to yourself',
-		'AD' => 'PayPal Transaction ID',
-		'AE' => 'Shipping Service',
-		'AF' => 'Cash on delivery option',
-		'AG' => 'Transaction ID',
-		'AH' => 'Order ID',
 		),
 
 	//Purchase order template
