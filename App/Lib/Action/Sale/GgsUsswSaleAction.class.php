@@ -370,12 +370,12 @@ class GgsUsswSaleAction extends CommonAction{
 		
 		$salePlan = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
 		if($sale_price!=null){
-			$cost = $cost+$sale_price*0.144+0.35;
+			$cost = $cost+$sale_price*0.129+0.3;
 		}elseif($salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=0 && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=null && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=''){
-			$cost = $cost+$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]*0.144+0.35;
+			$cost = $cost+$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]*0.129+0.3;
 		}else{
-			$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
-			$cost = $cost+$tmp_sp*0.144+0.35;			
+			$tmp_sp = ($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.129);
+			$cost = $cost+$tmp_sp*0.129+0.3;			
 		}
 		return $cost;
 	}
@@ -392,7 +392,7 @@ class GgsUsswSaleAction extends CommonAction{
     	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee1'];
 		
-		$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
+		$tmp_sp = ($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.129);
 		return $tmp_sp;
 	}
 
@@ -462,7 +462,8 @@ class GgsUsswSaleAction extends CommonAction{
 			$localShippingWay = $this->getUsswLocalShippingWay1(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
 			$localShippingFee = $this->getUsswLocalShippingFee1(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
 			$salePrice = I('post.saleprice','','htmlspecialchars');
-			$testCost = ($p+0.5)/6.35+$salePrice*0.05+$usswFee+$wayToUsFee+$localShippingFee+$salePrice*0.144+0.35;
+			$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USDTORMB'));
+			$testCost = ($p+0.5)/$exchange+$salePrice*0.05+$usswFee+$wayToUsFee+$localShippingFee+$salePrice*0.129+0.3;
 			$testData = array(
 						'price'=>$p,
 						'us-rate'=>$usRate,
@@ -585,7 +586,7 @@ class GgsUsswSaleAction extends CommonAction{
 
 	private function getUsswCost($data){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee1']+$data[C('DB_USSW_SALE_PLAN_PRICE')]*0.144+0.35;
+		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee1']+$data[C('DB_USSW_SALE_PLAN_PRICE')]*0.129+0.3;
 		return $c;
 	}
 

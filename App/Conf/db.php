@@ -951,8 +951,8 @@ return array(
 	  `creater` varchar(20) NOT NULL,
 	  `person` varchar(20) NOT NULL,
 	  `status` tinyint(1) unsigned DEFAULT NULL,
-	  `task` varchar(255) DEFAULT NULL,
-	  `remark` varchar(255) DEFAULT NULL
+	  `task` varchar(500) DEFAULT NULL,
+	  `remark` varchar(500) DEFAULT NULL
 	) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
 	*/
 	'DB_TODO' => 'todo',

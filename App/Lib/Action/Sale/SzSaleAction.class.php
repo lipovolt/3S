@@ -91,7 +91,7 @@ class SzSaleAction extends CommonAction{
 				$this->addProductToUsp($p[C('DB_SZSTORAGE_SKU')],$country);
 				$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$p[C('DB_SZSTORAGE_SKU')]))->find();
 			}else{
-				$usp[C('DB_SZ_US_SALE_PLAN_COST')]=$this->calSuggestCost($p[C('DB_SZSTORAGE_SKU')],$country);
+				$usp[C('DB_SZ_US_SALE_PLAN_COST')]=$this->calSuggestCost($p[C('DB_SZSTORAGE_SKU')],$country,$usp[C('DB_SZ_US_SALE_PLAN_PRICE')]);
 				$this->updateUsp($usp,$country);
 				$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$p[C('DB_SZSTORAGE_SKU')]))->find();
 			}
@@ -189,13 +189,20 @@ class SzSaleAction extends CommonAction{
     	$data['way-to-us-fee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
     	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['way-to-us-fee'])/$exchange;
-		if($sale_price!=null){
-			$cost = $cost + $sale_price*0.144+0.35;
+		if($sale_price==null || $sale_price==0){
+			$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.139);
+			if($tmp_sp<12){
+				$cost = $cost + $tmp_sp*0.15+0.05;
+			}else{
+				$cost = $cost+$tmp_sp*0.139+0.3;
+			}
 		}else{
-			$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
-			$cost = $cost+$tmp_sp*0.144+0.35;
+			if($sale_price<12){
+				$cost = $cost + $sale_price*0.15+0.05;
+			}else{
+				$cost = $cost + $sale_price*0.139+0.3;
+			}
 		}
-		
 		return $cost;
 	}
 
@@ -207,11 +214,19 @@ class SzSaleAction extends CommonAction{
     	$data['way-to-de-fee']=$this->getSzDeShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
     	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
 		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['way-to-de-fee'])/$exchange;
-		if($sale_price!=null){
-			$cost = $cost + $sale_price*0.144+0.35;
+		if($sale_price==null || $sale_price==0){
+			$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.139);
+			if($tmp_sp<12){
+				$cost = $cost + $tmp_sp*0.15+0.05;
+			}else{
+				$cost = $cost+$tmp_sp*0.139+0.3;
+			}
 		}else{
-			$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
-			$cost = $cost+$tmp_sp*0.144+0.35;
+			if($sale_price<12){
+				$cost = $cost + $sale_price*0.15+0.05;
+			}else{
+				$cost = $cost + $sale_price*0.139+0.3;
+			}
 		}
 		return $cost;
 	}
@@ -232,7 +247,7 @@ class SzSaleAction extends CommonAction{
     	$data['way-to-us-fee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['way-to-us-fee'])/$exchange;
-		$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
+		$tmp_sp = ($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.139);
 		return $tmp_sp;
 	}
 
@@ -242,7 +257,7 @@ class SzSaleAction extends CommonAction{
     	$data['way-to-de-fee']=$this->getSzDeShippingFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
 		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['way-to-de-fee'])/$exchange;
-		$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
+		$tmp_sp = ($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.139);
 		return $tmp_sp;
 	}
 
@@ -807,8 +822,15 @@ class SzSaleAction extends CommonAction{
 	private function getSzUsCost($data){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange;
-		$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
-		return $cost+$tmp_sp*0.144+0.35;
+		if($data[C('DB_SZ_US_SALE_PLAN_PRICE')]==null || $data[C('DB_SZ_US_SALE_PLAN_PRICE')]==0){
+			$data[C('DB_SZ_US_SALE_PLAN_PRICE')] =($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.139);
+		}
+		if($data[C('DB_SZ_US_SALE_PLAN_PRICE')]<12){
+			$cost = $cost+$data[C('DB_SZ_US_SALE_PLAN_PRICE')]*0.15+0.05;
+		}else{
+			$cost = $cost+$data[C('DB_SZ_US_SALE_PLAN_PRICE')]*0.139+0.3;
+		}
+		return $cost;
 	}
 
 	private function getSzDeSaleInfo(){
@@ -1043,8 +1065,14 @@ class SzSaleAction extends CommonAction{
 	private function getSzDeCost($data){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
 		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange;
-		$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.144);
-		$cost = $cost+$tmp_sp*0.144+0.35;
+		if($data[C('DB_SZ_DE_SALE_PLAN_PRICE')]==null || $data[C('DB_SZ_DE_SALE_PLAN_PRICE')]==0){
+			$data[C('DB_SZ_DE_SALE_PLAN_PRICE')] = ($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.139);
+		}
+		if($data[C('DB_SZ_DE_SALE_PLAN_PRICE')]<12){
+			$cost = $cost + $data[C('DB_SZ_DE_SALE_PLAN_PRICE')]*0.15+0.05;
+		}else{
+			$cost = $cost+$data[C('DB_SZ_DE_SALE_PLAN_PRICE')]*0.139+0.3;
+		}
 		return $cost;
 	}
 
@@ -1054,7 +1082,13 @@ class SzSaleAction extends CommonAction{
 			$shippingWay = $this->getSzUsShippingWay(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'),I('post.register','','htmlspecialchars'));
 			$shippingFee = $this->getSzUsShippingFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'),I('post.register','','htmlspecialchars'));
 			$salePrice = I('post.saleprice','','htmlspecialchars');
-			$testCost = ($p+0.5+$shippingFee)/6.35+$salePrice*0.144+0.35;
+			$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USDTORMB'));
+			if($salePrice<12){
+				$testCost = ($p+0.5+$shippingFee)/$exchange +$salePrice*0.15+0.05;
+			}else{
+				$testCost = ($p+0.5+$shippingFee)/$exchange +$salePrice*0.139+0.3;
+			}
+			
 			$testData = array(
 						'price'=>$p,
 						'shipping-way'=>$shippingWay,
@@ -1096,7 +1130,12 @@ class SzSaleAction extends CommonAction{
 			$shippingWay = $this->getSzDeShippingWay(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'),I('post.register','','htmlspecialchars'));
 			$shippingFee = $this->getSzDeShippingFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'),I('post.register','','htmlspecialchars'));
 			$salePrice = I('post.saleprice','','htmlspecialchars');
-			$testCost = ($p+0.5+$shippingFee)/7+$salePrice*0.144+0.35;
+			$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
+			if($saleprice<12){
+				$testCost = ($p+0.5+$shippingFee)/$exchange+$salePrice*0.15+0.05;
+			}else{
+				$testCost = ($p+0.5+$shippingFee)/$exchange+$salePrice*0.139+0.3;
+			}
 			$testData = array(
 						'price'=>$p,
 						'shipping-way'=>$shippingWay,
