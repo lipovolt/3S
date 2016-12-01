@@ -765,7 +765,7 @@ class SzSaleAction extends CommonAction{
 
 	private function calFlytCpUsFee($weight,$l,$w,$h){
 		if ($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 90.5*$weight/1000;
+			return $weight<50?50*90.5:90.5*$weight/1000;
 		}
 		else{
 			return 0;
