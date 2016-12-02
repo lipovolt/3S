@@ -40,35 +40,31 @@
 				<div class="form-group">
 					<label for="pQuantity" class="control-label">入库单号 {$orderID}</label>
 				</div>
-				
+				<form name="form" id="search_product" action="{:U('Ussw/Inbound/bUpdateConfirmedQuantity')}" method="POST">
+				<input class="btn btn-s btn-blue" type="button" onclick="submit();" value="批量保存"/>
 				<table id="tablelist" class="tablelist">
 					<tr>
 						<th><div class="tl">产品编号</div></th>
 						<th><div class="tl">预报数量</div></th>
 						<th><div class="tl">确认数量</div></th>
-						<th><div class="tl">操作</div></th>
-					</tr>
-						
+					</tr>	
 					<volist name="items" id="vo">
-						<form method="POST" id="edit_productInfo" action="{:U('Ussw/Inbound/updateConfirmedQuantity')}">
-						<input type="hidden"  id="{:C('DB_USSW_INBOUND_ITEM_ID')}" name="{:C('DB_USSW_INBOUND_ITEM_ID')}" value="{$vo[C('DB_USSW_INBOUND_ITEM_ID')]}" />
 						<tr>
-						<td><div class="tl"><input type="text"  id="{:C('DB_USSW_INBOUND_ITEM_SKU')}" name="{:C('DB_USSW_INBOUND_ITEM_SKU')}" value="{$vo[C('DB_USSW_INBOUND_ITEM_SKU')]}" style="width:80px;"/></div></td>
+						<td><div class="tl">
+							<input type="hidden"  id="{:C('DB_USSW_INBOUND_ITEM_ID')}" name="id[]" value="{$vo[C('DB_USSW_INBOUND_ITEM_ID')]}" />
+							{$vo[C('DB_USSW_INBOUND_ITEM_SKU')]}
+						</div></td>
 						<td><div class="tl">{$vo[C('DB_USSW_INBOUND_ITEM_DQUANTITY')]}</div></td>				
 						<td><div class="tl">
 							<?php echo $vo[C('DB_USSW_INBOUND_ITEM_DQUANTITY')]!=$vo[C('DB_USSW_INBOUND_ITEM_CQUANTITY')]?'<font style="color:#F00;">':'' ;?>
-							<input type="text"  id="{:C('DB_USSW_INBOUND_ITEM_CQUANTITY')}" name="{:C('DB_USSW_INBOUND_ITEM_CQUANTITY')}" value="{$vo[C('DB_USSW_INBOUND_ITEM_CQUANTITY')]}" />
+							<input type="text"  id="{:C('DB_USSW_INBOUND_ITEM_CQUANTITY')}" name="cQuantity[]" value="{$vo[C('DB_USSW_INBOUND_ITEM_CQUANTITY')]}" />
 							<?php echo $vo[C('DB_USSW_INBOUND_ITEM_DQUANTITY')]!=$vo[C('DB_USSW_INBOUND_ITEM_CQUANTITY')]?'</font>':'';?>
 						</div>
 						</td>
-						<td><div class="tl">
-								<button class="btn btn-blue btn-s" id="saveCQuantity">保存</button>
-								</div></td>
-						</tr>
-						</form>		
-					</volist>
-											
+						</tr>	
+					</volist>				
 				</table>
+				</form>
 				<div class="result page" align="center">{$page}</div>
 			</div>
 		</div>
