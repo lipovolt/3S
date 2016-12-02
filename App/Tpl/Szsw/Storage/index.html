@@ -10,6 +10,7 @@
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <script type="text/javascript">
 function move(ainventory,sku,position){
+	position = position==''?-1:position;
 	var warehouse = prompt("仓库","");
 	if(warehouse != "万邑通德国" && warehouse != "万邑通美西" && warehouse != "美自建仓"){
 		alert("输入的仓库: "+warehouse+" 不存在！");
@@ -117,7 +118,7 @@ function move(ainventory,sku,position){
 						<td><div class="tl">{$vo.remark}</div></td>
 						<td>
 							<a href="{:U('Szsw/Storage/edit',array(C('DB_SZSTORAGE_ID')=>$vo[C('DB_SZSTORAGE_ID')]))}">编辑</a>
-							<input class="btn btn-blue" type="button" onclick="move({$vo.ainventory},{$vo.sku},{$vo['position']==null?-1:$vo['position']})" value="转仓"/>
+							<input class="btn btn-blue" type="button" onclick="move({$vo.ainventory},{$vo.sku},'{$vo.position}')" value="转仓"/>
 						</td>
 						</tr>	
 					</volist> 		
