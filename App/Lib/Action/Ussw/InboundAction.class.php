@@ -430,7 +430,11 @@ class InboundAction extends CommonAction{
         }
     }
 
-    public function bUpdateConfirmedQuantity(){
+    public function bUpdateConfirmedQuantity($orderID){
+        $inStatus = M(C('DB_USSW_INBOUND'))->where(array(C('DB_USSW_INBOUND_ID')=>$orderID))->getField(C('DB_USSW_INBOUND_STATUS'));
+        if($inStatus=='已入库'){
+            $this->error('该单已完成入库，无法更新！');
+        }
         $usswInboundOrder = M(C('DB_USSW_INBOUND_ITEM'));
         $usswInboundOrder->startTrans();
         $restock = M(C('DB_RESTOCK'));
