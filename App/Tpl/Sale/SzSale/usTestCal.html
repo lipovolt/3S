@@ -68,8 +68,13 @@
 						<td><div class="tl"><input type="text" style="width:50px;" name="height" value="{$testData['height']}" id="height"/></div></td>
 						<td><div class="tl">
 							<select name="register"  id="register">
-								<option value="0" selected>否</option>
-								<option value="1" >是</option>							
+								<if condition="($testData['register'] eq '1')"> 
+									<option value="0">否</option>
+									<option value="1" selected>是</option>
+								<else /> 
+									<option value="0" selected>否</option>
+									<option value="1">是</option>
+								</if>						
 							</select>
 						</div></td>
 						<td>

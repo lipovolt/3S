@@ -1100,7 +1100,8 @@ class SzSaleAction extends CommonAction{
 						'weight'=>I('post.weight','','htmlspecialchars'),
 						'length'=>I('post.length','','htmlspecialchars'),
 						'width'=>I('post.width','','htmlspecialchars'),
-						'height'=>I('post.height','','htmlspecialchars')
+						'height'=>I('post.height','','htmlspecialchars'),
+						'register'=>I('post.register','','htmlspecialchars')
 					);
 			$this->testData=$testData;
 			$this->display();
@@ -1147,7 +1148,8 @@ class SzSaleAction extends CommonAction{
 						'weight'=>I('post.weight','','htmlspecialchars'),
 						'length'=>I('post.length','','htmlspecialchars'),
 						'width'=>I('post.width','','htmlspecialchars'),
-						'height'=>I('post.height','','htmlspecialchars')
+						'height'=>I('post.height','','htmlspecialchars'),
+						'register'=>I('post.register','','htmlspecialchars')
 					);
 			$this->testData=$testData;
 			$this->display();

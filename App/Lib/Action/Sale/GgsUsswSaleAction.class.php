@@ -1132,6 +1132,225 @@ class GgsUsswSaleAction extends CommonAction{
 			return 0;
 		}
 	}
+
+	public function fileExchange($account,$country=null){
+		$this->assign('account',$account);
+		$this->assign('country',$country);
+		$this->display();
+	}
+
+	public function fileExchangeHandle($account,$country=null){
+		if (!empty($_FILES)) {
+			import('ORG.Net.UploadFile');
+			$config=array(
+			 'allowExts'=>array('xls'),
+			 'savePath'=>'./Public/upload/fileExchange/',
+			 'saveRule'=>'ebayFileExchange'.'_'.time(),
+			);
+			$upload = new UploadFile($config);
+			if (!$upload->upload()) {
+				$this->error($upload->getErrorMsg());
+			}else {
+				$info = $upload->getUploadFileInfo();                 
+			}
+			vendor("PHPExcel.PHPExcel");
+			$file_name=$info[0]['savepath'].$info[0]['savename'];
+
+			$objReader = PHPExcel_IOFactory::createReader('Excel5');
+			$objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+			$sheetnames = $objPHPExcel->getSheetNames();
+
+			//creat excel writer
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			
+
+			$objPHPExcel->setActiveSheetIndex(0);
+			$sheet = $objPHPExcel->getSheet(0);
+			$highestRow = $sheet->getHighestRow(); // 取得总行数
+			$highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+			//excel first column name verify
+            for($c='A';$c<=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+            }
+
+            if($this->verifyFxtcn($firstRow)){
+            	$storageTable=M($this->getStorageTableName($account));
+            	$salePlanTable=M($this->getSalePlanTableName($account,$country));
+
+                for($i=2;$i<=$highestRow;$i++){
+                	$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
+
+                	$data[$i-2][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+        			$data[$i-2][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+        			$data[$i-2][$firstRow['C']]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+        			$data[$i-2][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+        			$data[$i-2][$firstRow['E']]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
+        			$data[$i-2][$firstRow['F']]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+        			$data[$i-2][$firstRow['G']]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+                	$data[$i-2][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+                	$data[$i-2][$firstRow['I']]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+        			$data[$i-2][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+        			$data[$i-2][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+
+                	if(count($splitSku)==1){
+                		//Single sku
+                		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][1]))->find();
+                		$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+                		$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+                		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
+                		if($splitSku[0][1]==1){
+                			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
+                			$data[$i-2]['Ainventory']=$ainventory;
+                		}else{
+                			//Single sku and multiple sale quantity
+                			$data[$i-2]['Ainventory']=intval($ainventory/$splitSku[0][1]);
+                		}
+
+                	}else{
+                		//Multiple sku
+                		$data[$i-2]['Ainventory']=65536;
+                		foreach ($splitSku as $key => $skuQuantity){
+                			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
+                			if($skuQuantity[1]==1){
+                				//Multiple sku and Single sale quantity
+                				if($ainventory<$data[$i-2]['Ainventory']){
+                					$data[$i-2]['Ainventory']=$ainventory;
+                				}
+                			}else{
+                				//Multiple sku and Multiple sale quantity
+                				if(intval($ainventory/$skuQuantity[1])<$data[$i-2]['Ainventory']){
+                					$data[$i-2]['Ainventory']=intval($ainventory/$skuQuantity[1]);
+                				}
+                			}
+                		}
+                	}                 
+                }
+                $excelCellName[0]=$objPHPExcel->getActiveSheet()->getCell("A1")->getValue();
+                $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
+                $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
+                $excelCellName[3]=$objPHPExcel->getActiveSheet()->getCell("D1")->getValue();
+                $excelCellName[4]=$objPHPExcel->getActiveSheet()->getCell("E1")->getValue();
+                $excelCellName[5]=$objPHPExcel->getActiveSheet()->getCell("F1")->getValue();
+                $excelCellName[6]='SuggestPrice';
+                $excelCellName[7]='Suggest';
+                $excelCellName[8]=$objPHPExcel->getActiveSheet()->getCell("H1")->getValue();
+                $excelCellName[9]='Ainventory';
+                $excelCellName[10]=$objPHPExcel->getActiveSheet()->getCell("I1")->getValue();
+                $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("J1")->getValue();
+                $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("K1")->getValue();
+                $this->exportFileExchangeExcel('GgsFileExchange',$excelCellName,$data); 
+            }else{
+                $this->error("模板错误，请检查模板！");
+            }   
+        }else{
+            $this->error("请选择上传的文件");
+        }
+	}
+
+	//Verify imported file exchange template column name
+	private function verifyFxtcn($firstRow){
+        for($c='B';$c<=max(array_keys(C('IMPORT_EBAY_FXT')));$c++){
+            if($firstRow[$c] != C('IMPORT_EBAY_FXT')[$c])
+                return false;
+        }
+        return true;
+    }
+
+    //Split sku according to | and *, then return a 2d array. 
+    private function splitSku($sku){
+    	$skuDepart = explode("|",$sku);
+    	foreach ($skuDepart as $key => $departedSku) {
+            $skuQuantityDepart = explode("*",$departedSku);
+            if(count($skuQuantityDepart)==1){
+                $splitSku[$key][0]=$skuQuantityDepart[0];
+                $splitSku[$key][1]=1;
+            }else{
+                $splitSku[$key][0]=$skuQuantityDepart[0];
+                $splitSku[$key][1]=$skuQuantityDepart[1];
+            }
+        }
+        return $splitSku;
+    }
+
+    //Return the storage table name according to the account
+    private function getStorageTableName($account){
+    	switch ($account) {
+    		case 'greatgoodshop':
+    			return C('DB_USSTORAGE');
+    			break;
+    		case 'vtkg5755':
+    			return C('DB_SZSTORAGE');
+    			break;
+    		default:
+    			return null;
+    			break;
+    	}
+    }
+
+    //Return the sale plan table name according to the account
+    private function getSalePlanTableName($account,$country=null){
+    	switch ($account) {
+    		case 'greatgoodshop':
+    			return C('DB_USSW_SALE_PLAN');
+    			break;
+    		case 'vtkg5755':
+    			switch ($country) {
+    				case 'us':
+    					return C('DB_SZ_US_SALE_PLAN');
+    					break;
+    				case 'de':
+    					return C('DB_SZ_DE_SALE_PLAN');
+    					break;
+    				default:
+    					return null;
+    					break;
+    			}
+    			break;
+    		default:
+    			return null;
+    			break;
+    	}
+    }
+
+    private function exportFileExchangeExcel($expTitle,$expCellName,$expTableData){
+        $fileName = $expTitle.date('_Ymd');
+        $cellNum = count($expCellName);
+        $dataNum = count($expTableData);
+        vendor("PHPExcel.PHPExcel");
+
+        $objPHPExcel = new PHPExcel();
+        $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
+
+        for($i=0;$i<$cellNum;$i++){
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i].'1', $expCellName[$i]); 
+        } 
+
+        for($i=0;$i<$dataNum;$i++){
+            for($j=0;$j<$cellNum;$j++){
+            	if($i>0 && $expTableData[$i][$expCellName[6]] !=null && $expTableData[$i][$expCellName[5]]!=$expTableData[$i][$expCellName[6]]){
+            		$objPHPExcel->getActiveSheet()->getStyle( 'F'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'F'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+            		$objPHPExcel->getActiveSheet()->getStyle( 'G'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'G'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+            	}
+            	if($i>0 && $expTableData[$i][$expCellName[9]]!=null && $expTableData[$i][$expCellName[8]]!=$expTableData[$i][$expCellName[9]]){
+            		$objPHPExcel->getActiveSheet()->getStyle( 'I'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'I'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+            		$objPHPExcel->getActiveSheet()->getStyle( 'J'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'J'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+            	}
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $expTableData[$i][$expCellName[$j]]);
+            }             
+        }  
+
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="'.$xlsTitle.'.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
+        $objWriter->save('php://output');
+        exit;   
+    }
 }
 
 ?>

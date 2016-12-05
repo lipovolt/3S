@@ -144,5 +144,21 @@ return array(
 		'P'=>'出口国家',
 		'Q'=>'出口申报价值(USD)',
 		),
+
+	//update ebay file exchange template column name
+	'IMPORT_EBAY_FXT' => array(
+		'A'=>'Action',
+		'B'=>'ItemID',
+		'C'=>'Title',
+		'D'=>'SiteID',
+		'E'=>'Currency',
+		'F'=>'StartPrice',
+		'G'=>'BuyItNowPrice',
+		'H'=>'Quantity',
+		'I'=>'Relationship',
+		'J'=>'RelationshipDetails',
+		'K'=>'CustomLabel',
+		),
 	);
+
 ?>
