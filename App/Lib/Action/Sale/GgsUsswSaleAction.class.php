@@ -1195,7 +1195,7 @@ class GgsUsswSaleAction extends CommonAction{
 
                 	if(count($splitSku)==1){
                 		//Single sku
-                		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][1]))->find();
+                		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][0]))->find();
                 		$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
                 		$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
                 		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
