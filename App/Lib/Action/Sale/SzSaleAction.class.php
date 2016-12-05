@@ -755,7 +755,7 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function calFlytCprUsFee($weight,$l,$w,$h){
-		if ($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
+		if ($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return 8+90.5*$weight/1000;
 		}
 		else{
@@ -764,7 +764,7 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function calFlytCpUsFee($weight,$l,$w,$h){
-		if ($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
+		if ($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return $weight<50?50*90.5:90.5*$weight/1000;
 		}
 		else{
@@ -773,8 +773,8 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function calWedoNjEubFee($weight,$l,$w,$h){
-		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			if($weight>0 and $weight<=200){
+		if($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
+			if($weight<=200){
 				return $weight<50?(7.92+50*0.0704):(7.92+$weight*0.0704);
 			}
 			else{
@@ -787,7 +787,7 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function calWedoZzCprUsFee($weight,$l,$w,$h){
-		if ($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
+		if ($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return 8+90.5*$weight/1000;
 		}
 		else{
@@ -796,7 +796,7 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function calWedoZzCpUsFee($weight,$l,$w,$h){
-		if($weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
+		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return $weight<50?50*0.085:$weight*0.085;
 		}else{
 			return 0;
@@ -804,7 +804,7 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function calWedoGzCpUsFee($weight,$l,$w,$h){
-		if($weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
+		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return $weight<50?50*0.0905:$weight*0.0905;
 		}else{
 			return 0;
@@ -812,7 +812,7 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function calWedoGzCprUsFee($weight,$l,$w,$h){
-		if($weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
+		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return $weight<50?8+50*0.0905:8+$weight*0.0905;
 		}else{
 			return 0;

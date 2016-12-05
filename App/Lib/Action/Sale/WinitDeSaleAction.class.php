@@ -81,7 +81,7 @@ class WinitDeSaleAction extends CommonAction{
 		//月仓储费=立方米*每日每立方租金*30天
 		$monthlyStorageFee = ($l*$w*$h)/1000000*1.2*30;
 		$itemInOutFee = 0;
-		if($weight <= 500){
+		if($weight>0 And $weight <= 500){
 			$itemInOutFee = 0.17 + 0.04;
 		}
 		elseif($weight>500 and $weight <= 1000){
@@ -171,7 +171,7 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	private function calWinitPostSmallFee($weight,$l,$w,$h){
-		if($weight <= 500 and $l >=10 and $l<=353 and $w>=7 and $w<=25 and $h>0 and $h<=2){
+		if($weight>0 And $weight <= 500 and $l >=10 and $l<=353 and $w>=7 and $w<=25 and $h>0 and $h<=2){
 			return 1.67;
 		}else{
 			return 0;
@@ -179,7 +179,7 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	private function calWinitPostLargeFee($weight,$l,$w,$h){
-		if($weight <= 1000 and $l >=10 and $l<=353 and $w>=7 and $w<=30 and $h>0 and $h<=15){
+		if($weight>0 And $weight <= 1000 and $l >=10 and $l<=353 and $w>=7 and $w<=30 and $h>0 and $h<=15){
 			if($weight>=0 and $weight<=500){
 				return 2.06;
 			}
@@ -196,7 +196,7 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	private function calWinitDPDSmallFee($weight,$l,$w,$h){
-		if($weight <= 3000 and $l<=50 and $l>=16 and $w>=11 and $h>=2 and ($l + 2 * ($w + $h))<=110){
+		if($weight>0 And $weight <= 3000 and $l<=50 and $l>=16 and $w>=11 and $h>=2 and ($l + 2 * ($w + $h))<=110){
 			return 3.32;
 		}
 		else{
@@ -205,7 +205,7 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	private function calWinitDPDNormalFee($weight,$l,$w,$h){
-		if($weight <= 31500 and $l<=175 and $l>=16 and $w>=11 and $h>=2 and ($l + 2 * ($w + $h))<=300){
+		if($weight>0 And $weight <= 31500 and $l<=175 and $l>=16 and $w>=11 and $h>=2 and ($l + 2 * ($w + $h))<=300){
 			return 3.75;
 		}else{
 			return 0;
@@ -214,7 +214,7 @@ class WinitDeSaleAction extends CommonAction{
 
 	private function calWinitDHLFee($weight,$l,$w,$h){
 		$fee = 0;
-		if($weight <= 31500 and $l<=200 and $w<=200 and $h<=200 and $l>=15 and $w>=11 and $h>=1 and ($l + 2 * ($w + $h))<=360){
+		if($weight>0 And $weight <= 31500 and $l<=200 and $w<=200 and $h<=200 and $l>=15 and $w>=11 and $h>=1 and ($l + 2 * ($w + $h))<=360){
 			if($weight>0 and $weight<=1000){
 				$fee = 3.28;
 			}elseif($weight>1000 and $weight<=5000){

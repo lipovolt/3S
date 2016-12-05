@@ -594,7 +594,7 @@ class GgsUsswSaleAction extends CommonAction{
 		//月仓储费=立方米*每日每立方租金*30天
 		$monthlyStorageFee = ($l*$w*$h)/1000000*1.2*30;
 		$itemInOutFee = 0;
-		if($weight <= 500){
+		if($weight>0 And $weight <= 500){
 			$itemInOutFee = 0.18 + 0.05;
 		}
 		elseif($weight>500 and $weight <= 1000){
@@ -788,7 +788,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	Private function calUsswUspsPriorityExpressPackageFee($weight,$l,$w,$h){
-		if($weight <= 31751 and ($l + 2 * ($w + $h)) <= 213){
+		if($weight>0 And $weight <= 31751 and ($l + 2 * ($w + $h)) <= 213){
 			if($weight<=226){
 				return 31.2;
 			}
@@ -808,7 +808,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPriorityExpressFlatFee($weight,$l,$w,$h){
-		if($weight <= 31751 and ((($l+$h/2)<=24 and ($w + $h) <= 31) or (($l+$h/2)<=31 and ($w + $h) <= 24))){
+		if($weight>0 And $weight <= 31751 and ((($l+$h/2)<=24 and ($w + $h) <= 31) or (($l+$h/2)<=31 and ($w + $h) <= 24))){
 			return 22.95;
 		}
 		else{
@@ -817,7 +817,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPriorityExpressLegalFee($weight,$l,$w,$h){
-		if($weight <= 31751 and ((($l+$h/2)<=38 and ($w + $h) <= 24) or (($l+$h/2)<=24 and ($w + $h) <= 38))){
+		if($weight>0 And $weight <= 31751 and ((($l+$h/2)<=38 and ($w + $h) <= 24) or (($l+$h/2)<=24 and ($w + $h) <= 38))){
 			return 22.95;
 		}
 		else{
@@ -826,8 +826,8 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsFirstClassFee($weight,$l,$w,$h){
-		if($weight <= 453 And ($l + 2 * ($w + $h)) <= 210){
-			if($weight>=0 and $weight<85){
+		if($weight>0 And $weight <= 453 And ($l + 2 * ($w + $h)) <= 210){
+			if($weight<85){
 				return M(C('DB_USSW_POSTAGE_FIRSTCLASS'))->where(array(C('DB_USSW_POSTAGE_FIRSTCLASS_GR')=>85))->getField(C('DB_USSW_POSTAGE_FIRSTCLASS_FEE'));
 			}
 			elseif($weight>=85 and $weight<226){
@@ -864,7 +864,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPriorityFlatRateEnvelopeFee($weight,$l,$w,$h){
-		if ($weight <= 31751 and ((($l+$h/2) <= 31 and ($w+$h) <= 24) or (($l+$h/2) <= 24 and ($w+$h) <= 31))){
+		if ($weight>0 And $weight <= 31751 and ((($l+$h/2) <= 31 and ($w+$h) <= 24) or (($l+$h/2) <= 24 and ($w+$h) <= 31))){
 			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>4))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
 		}
 		else{
@@ -873,7 +873,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPriorityRegionalBoxAFee($weight,$l,$w,$h){
-		if ($weight <= 31751 and $l <= 25 and $w <= 17 and $h <= 12){
+		if ($weight>0 And $weight <= 31751 and $l <= 25 and $w <= 17 and $h <= 12){
 			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>6))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
 		}
 		else{
@@ -882,7 +882,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPrioritySmallFlatRateBoxFee($weight,$l,$w,$h){
-		if ($weight <= 31751 and $l <= 21.5 and $w <= 13.3 and $h <= 4){
+		if ($weight>0 And $weight <= 31751 and $l <= 21.5 and $w <= 13.3 and $h <= 4){
 			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>1))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
 		}
 		else{
@@ -891,7 +891,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}	
 
 	private function calUsswUspsPriorityMediumFlatRateBoxFee($weight,$l,$w,$h){
-		if ($weight <= 31751 and (($l <= 34 and $w <= 29 and $h <= 8) Or ($l <= 27 and $w <= 21 and $h <= 13))){
+		if ($weight>0 And $weight <= 31751 and (($l <= 34 and $w <= 29 and $h <= 8) Or ($l <= 27 and $w <= 21 and $h <= 13))){
 			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>2))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
 		}
 		else{
@@ -900,7 +900,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPriorityLargeFlatRateBoxFee($weight,$l,$w,$h){
-		if ($weight <= 31751 And $l <= 30 And $w <= 30 And $h <= 15){
+		if ($weight>0 And $weight <= 31751 And $l <= 30 And $w <= 30 And $h <= 15){
 			return M(C('DB_USSW_POSTAGE_PRIORITYFLATRATE'))->where(array(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_ID')=>3))->getField(C('DB_USSW_POSTAGE_PRIORITYFLATRATE_FEE'));
 		}
 		else{
@@ -909,8 +909,8 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsPriorityPackageFee($weight,$l,$w,$h){
-		if($weight <= 31751 and ($l + 2 * ($w + $h)) <= 274){
-			if($weight>=0 and $weight<453){
+		if($weight>0 And $weight <= 31751 and ($l + 2 * ($w + $h)) <= 274){
+			if($weight<453){
 				return M(C('DB_USSW_POSTAGE_PRIORITY'))->where(array(C('DB_USSW_POSTAGE_PRIORITY_GR')=>453))->getField(C('DB_USSW_POSTAGE_PRIORITY_FEE'));
 			}
 			elseif($weight>=453 and $weight<907){
@@ -993,8 +993,8 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswFedexSmartPostFee($weight,$l,$w,$h){
-		if($weight <= 31751 and ($l + $w + $h) <= 325 and  $l > 16 and $w > 11 and $h > 2.5 ){
-			if($weight>=0 and $weight<453){
+		if($weight>0 and $weight <= 31751 and ($l + $w + $h) <= 325 and  $l > 16 and $w > 11 and $h > 2.5 ){
+			if($weight<453){
 				return M(C('DB_USSW_POSTAGE_FEDEX_SMART'))->where(array(C('DB_USSW_POSTAGE_FEDEX_SMART_GR')=>453))->getField(C('DB_USSW_POSTAGE_FEDEX_SMART_FEE'));
 			}
 			elseif($weight>=453 and $weight<907){
@@ -1077,8 +1077,8 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswUspsFedexHomeDeliveryFee($weight,$l,$w,$h){
-		if($weight <= 31751 and ($l + $w + $h) <= 325 and  $l > 16 and $w > 11 and $h > 2.5 ){
-			if($weight>=0 and $weight<453){
+		if($weight>0 and $weight <= 31751 and ($l + $w + $h) <= 325 and  $l > 16 and $w > 11 and $h > 2.5 ){
+			if($weight<453){
 				return M(C('DB_USSW_POSTAGE_FEDEX_HOME'))->where(array(C('DB_USSW_POSTAGE_FEDEX_HOME_GR')=>453))->getField(C('DB_USSW_POSTAGE_FEDEX_HOME_FEE'));
 			}
 			elseif($weight>=4536 and $weight<=4989){

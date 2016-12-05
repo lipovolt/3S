@@ -81,7 +81,7 @@ class WinitUsSaleAction extends CommonAction{
 		//月仓储费=立方米*每日每立方租金*30天
 		$monthlyStorageFee = ($l*$w*$h)/1000000*1.2*30;
 		$itemInOutFee = 0;
-		if($weight <= 500){
+		if($weight>0 And $weight <= 500){
 			$itemInOutFee = 0.18 + 0.05;
 		}
 		elseif($weight>500 and $weight <= 1000){
@@ -167,7 +167,7 @@ class WinitUsSaleAction extends CommonAction{
 
 	private function calWinitUspsFirstClassFee($weight,$l,$w,$h){
 		if($weight <= 453 And ($l + 2 * ($w + $h)) <= 274){
-			if($weight>=0 and $weight<85){
+			if($weight>0 and $weight<85){
 				return 2.8;
 			}
 			elseif($weight>=85 and $weight<113){
@@ -217,7 +217,7 @@ class WinitUsSaleAction extends CommonAction{
 
 	private function calWinitUPSSurePostFee($weight,$l,$w,$h){
 		if($weight <= 4082 and $l<= 86 and $w<=43 and $l*$w*$h/1000000<=0.028){
-			if($weight>=0 and $weight<453){
+			if($weight>0 and $weight<453){
 				return 6.28;
 			}
 			elseif($weight>=453 and $weight<907){
@@ -253,7 +253,7 @@ class WinitUsSaleAction extends CommonAction{
 
 	private function calWinitUspsPriorityPackageFee($weight,$l,$w,$h){
 		if($weight <= 11340 and ($l + 2 * ($w + $h)) <= 274){
-			if($weight>=0 and $weight<453){
+			if($weight>0 and $weight<453){
 				return 7.66;
 			}
 			elseif($weight>=453 and $weight<907){
@@ -342,7 +342,7 @@ class WinitUsSaleAction extends CommonAction{
 			$weight = $vWeight;
 		}
 		if($weight <= 68040 and $l<=274.32){
-			if($weight>=0 and $weight<453){
+			if($weight>0 and $weight<453){
 				$fee = 9.88;
 			}
 			elseif($weight>=453 and $weight<907){
