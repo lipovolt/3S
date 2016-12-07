@@ -99,8 +99,8 @@ class WinitUsSaleAction extends CommonAction{
 		elseif($weight>20000 and $weight <= 30000){
 			$itemInOutFee = 1.82 + 0.36;
 		}
-		elseif((1.82 + (Int(($weight - 30000) / 10000) + 1) * 0.91 + 0.36 + (Int((weight - 30000) / 10000) + 1) * 0.18) < (18.2 + 1.8) ){
-			$itemInOutFee = 1.82 + (Int((weight - 30000) / 10000) + 1) * 0.91 + 0.36 + (Int((weight - 30000) / 10000) + 1) * 0.18;
+		elseif((1.82 + (floatval(($weight - 30000) / 10000) + 1) * 0.91 + 0.36 + (floatval((weight - 30000) / 10000) + 1) * 0.18) < (18.2 + 1.8) ){
+			$itemInOutFee = 1.82 + (floatval((weight - 30000) / 10000) + 1) * 0.91 + 0.36 + (floatval((weight - 30000) / 10000) + 1) * 0.18;
 		}
 		else{
 			$itemInOutFee = 18.2 + 1.8;
