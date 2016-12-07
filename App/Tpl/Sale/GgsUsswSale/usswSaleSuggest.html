@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>美自建仓销售建议</title>
+<title>美自建仓{$account}销售建议</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -12,8 +12,7 @@
 function save(){
 	var kw = document.getElementById('keyword').value;
 	var kwv = document.getElementById('keywordValue').value;
-	var c = '{$country}';
-	form.action="{:U('Sale/GgsUsswSale/updateUsswSalePlan')}?kw="+kw+"&kwv="+kwv;
+	form.action="{:U('Sale/GgsUsswSale/updateUsswSalePlan',array('account'=>$account))}?kw="+kw+"&kwv="+kwv;
 	form.submit();
 }
 function  cli(Obj){
@@ -37,7 +36,7 @@ function bIgnore(){
 			}
 		}
 		if(bo){
-			form.action="{:U('Sale/GgsUsswSale/bIgnoreHandle')}";
+			form.action="{:U('Sale/GgsUsswSale/bIgnoreHandle',array('account'=>$account))}";
 			form.submit();
 		}else{
 			alert('请选择需要批量忽略的建议！');
@@ -54,7 +53,7 @@ function bModify(){
 			}
 		}
 		if(bo){
-			form.action="{:U('Sale/GgsUsswSale/bModifyHandle')}";
+			form.action="{:U('Sale/GgsUsswSale/bModifyHandle',array('account'=>$account))}";
 			form.submit();
 		}else{
 			alert('请选择需要批量修改的建议！');
@@ -90,6 +89,7 @@ function bModify(){
 		<div class="content">
 	<div id="ProductInfo" class="main">
 		<form name="search_product" id="search_product" action="{:U('Sale/GgsUsswSale/usswSaleSuggest')}" method="POST">
+		<input type="hidden" name="account" value="{$account}">
 			<div class="search-area">
 				<div class="item">
 					<div class="form-group">
@@ -119,8 +119,9 @@ function bModify(){
 		</form>
 		<div>
 			<div class="tab-content">
+			<div align="center" style="font-size:x-large; color: red">美自建仓 {$market} {$account} 销售建议表</div><br />
 				<form name="form" id="search_product" action="#" method="POST">
-				<a class="btn btn-s btn-blue" href="{:U('Sale/GgsUsswSale/calUsswSaleInfo')}">更新建议（全部）</a>
+				<a class="btn btn-s btn-blue" href="{:U('Sale/GgsUsswSale/calUsswSaleInfo',array('account'=>$account))}">更新建议（全部）</a>
 				<input class="btn btn-s btn-blue" type="button" onclick="save()" value="保存售价和自动建议状态（全部）" style="width:200px;"/>
 				<input class="btn btn-s btn-blue" type="button" onclick="bIgnore()" value="批量忽略（选择的建议）" style="width:200px;"/>
 				<input class="btn btn-s btn-blue" type="button" onclick="bModify()" value="批量已修改（选择的建议）" style="width:200px;"/>
@@ -168,8 +169,8 @@ function bModify(){
 						<else /> <td><div class="tl"><input id="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" type='checkbox' /></div></td>
 						</if>
 						<td>
-							<a href="{:U('Sale/GgsUsswSale/confirmSuggest',array('id'=>$vo['id']))}">已修改</a>
-							<a href="{:U('Sale/GgsUsswSale/ignoreSuggest',array('id'=>$vo['id']))}">忽略</a>
+							<a href="{:U('Sale/GgsUsswSale/confirmSuggest',array('account'=>$account,'id'=>$vo['id']))}">已修改</a>
+							<a href="{:U('Sale/GgsUsswSale/ignoreSuggest',array('account'=>$account,'id'=>$vo['id']))}">忽略</a>
 						</td>
 						</tr>	
 					</volist> 								

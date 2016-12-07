@@ -2,19 +2,19 @@
 
 class GgsUsswSaleAction extends CommonAction{
 
-	public function index(){
+	public function index($account){
 		if($_POST['keyword']==""){
-			$this->getUsswSaleInfo();
+			$this->getUsswSaleInfo($account);
         }
         else{
 
-            $this->getUsswKeywordSaleInfo();
+            $this->getUsswKeywordSaleInfo($account);
         }
 	}
 
-	public function usswSaleSuggest($kw=null,$kwv=null){
+	public function usswSaleSuggest($account,$kw=null,$kwv=null){
 		if($_POST['keyword']=="" && $kwv==null){
-            $Data = D("UsswSalePlanView");
+            $Data = D($this->getSalePlanViewModel($account));
             import('ORG.Util.Page');
             $count = $Data->count();
             $Page = new Page($count,20);            
@@ -22,7 +22,7 @@ class GgsUsswSaleAction extends CommonAction{
             $show = $Page->show();
             $suggest = $Data->order(C('DB_USSW_SALE_PLAN_SKU'))->limit($Page->firstRow.','.$Page->listRows)->select();
             foreach ($suggest as $key => $value) {
-	        	$suggest[$key]['profit'] = $value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')];
+	        	$suggest[$key]['profit'] = round(($value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')]),2);
 	        	$suggest[$key]['grate'] = round(($value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')]) / $value[C('DB_USSW_SALE_PLAN_PRICE')]*100,2);
 	        }
             $this->assign('suggest',$suggest);
@@ -37,7 +37,7 @@ class GgsUsswSaleAction extends CommonAction{
         		$keywordValue = I('post.keywordValue','','htmlspecialchars');
         	}
             $where[$keyword] = array('like','%'.$keywordValue.'%');
-            $suggest = D("UsswSalePlanView")->where($where)->select();
+            $suggest = D($this->getSalePlanViewModel($account))->where($where)->select();
             foreach ($suggest as $key => $value) {
 	        	$suggest[$key]['profit'] = $value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')];
 	        	$suggest[$key]['grate'] = round(($value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')]) / $value[C('DB_USSW_SALE_PLAN_PRICE')]*100,2);
@@ -46,62 +46,68 @@ class GgsUsswSaleAction extends CommonAction{
             $this->assign('keyword',$keyword);
             $this->assign('keywordValue',$keywordValue);
         }
-        
+        $this->assign('market',$this->getMarketByAccount($account));
+        $this->assign('account',$account);
         $this->display();
 	}
 
 
-	public function calUsswSaleInfo(){
-		$this->calUsswSaleInfoHandle();
-		$this->redirect('usswSaleSuggest');
+	public function calUsswSaleInfo($account){
+		$this->calUsswSaleInfoHandle($account);
+		$this->redirect('usswSaleSuggest',array('account'=>$account));
 	}
 
-	private function calUsswSaleInfoHandle(){
+	private function calUsswSaleInfoHandle($account){
 		import('ORG.Util.Date');// 导入日期类
 		$Date = new Date();
-
-
 		$usswProduct = M(C('DB_USSTORAGE'))->distinct(true)->field(C('DB_USSTORAGE_SKU'))->select();
-
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error("无法找到匹配的销售表！");
+		}
 		foreach ($usswProduct as $key => $p) {
-			$usp = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
+			$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
 			if($usp == null){
-				$this->addProductToUsp($p[C('DB_USSTORAGE_SKU')]);
-				$usp = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
+				$this->addProductToUsp($account,$p[C('DB_USSTORAGE_SKU')]);
+				$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
 			}else{
-				$usp[C('DB_USSW_SALE_PLAN_COST')]=$this->calUsswSuggestCost($p[C('DB_USSTORAGE_SKU')]);
-				$this->updateUsp($usp);
-				$usp = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
+				$usp[C('DB_USSW_SALE_PLAN_COST')]=$this->calUsswSuggestCost($account,$p[C('DB_USSTORAGE_SKU')]);
+				$this->updateUsp($account,$usp);
+				$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
 			}
 			if(!$this->isProductInfoComplete($p[C('DB_USSTORAGE_SKU')])){
 				//产品信息不全，建议完善产品信息,退出循环
 				$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 				$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = 'complete_product_info';
-				$this->updateUsp($usp);
-				$usp = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
+				$this->updateUsp($account,$usp);
+				$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
 			}elseif(!$this->isUsswSaleInfoComplete($usp)){
 				//无法计算，建议完善销售信息，退出循环
 				$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 				$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = 'complete_sale_info';
-				$this->updateUsp($usp);
-				$usp = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
+				$this->updateUsp($account,$usp);
+				$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
 			}else{
-				$lastModifyDate = M('ussw_sale_plan')->where(array('sku'=>$p['sku']))->getField('last_modify_date');
+				$lastModifyDate = $salePlanTable->where(array('sku'=>$p['sku']))->getField('last_modify_date');
 				$adjustPeriod = M(C('DB_USSW_SALE_PLAN_METADATA'))->where(array('id'=>1))->getField('adjust_period');
 				if(-($Date->dateDiff($lastModifyDate))>$adjustPeriod){
 					//开始计算该产品的销售建议
 					$suggest=null;
-					$suggest = $this->calUsswSuggest($p[C('DB_USSTORAGE_SKU')]);
+					$suggest = $this->calUsswSuggest($account,$p[C('DB_USSTORAGE_SKU')]);
 					$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
 					$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_USSW_SALE_PLAN_SUGGEST')];
-					$this->updateUsp($usp);
+					$this->updateUsp($account,$usp);
 				}
 			}
 		}
 	}
 
-	public function confirmSuggest($id){
-		$data = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->find();
+	public function confirmSuggest($account,$id){
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
+		$data = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->find();
 		if($data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_USSW_SALE_PLAN_SUGGEST')]!=null){
 			$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 			if($data[C('DB_USSW_SALE_PLAN_ID_SUGGEST')]=='relisting'){
@@ -117,7 +123,7 @@ class GgsUsswSaleAction extends CommonAction{
 			$data[C('DB_USSW_SALE_PLAN_PRICE')] = $data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
 			$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 			$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
-			M(C('DB_USSW_SALE_PLAN'))->save($data);
+			$salePlanTable->save($data);
 		}else{
 			$this->error('无法保存，当前产品没有销售建议');
 		}
@@ -125,25 +131,31 @@ class GgsUsswSaleAction extends CommonAction{
 		$this->success('保存成功');
 	}
 
-	public function bIgnoreHandle(){
-		$table=M(C('DB_USSW_SALE_PLAN'));
-		$table->startTrans();
+	public function bIgnoreHandle($account){
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
+		$salePlanTable->startTrans();
 		foreach ($_POST['cb'] as $key => $value) {
-			$data[C('DB_USSW_SALE_PLAN_ID')] = $id;
+			$data[C('DB_USSW_SALE_PLAN_ID')] = $value;
 			$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 			$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 			$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
-			$table->save($data);
+			$salePlanTable->save($data);
 		}
-		$table->commit();
+		$salePlanTable->commit();
 		$this->success('修改成功');
 	}
 
-	public function bModifyHandle(){
-		$table=M(C('DB_USSW_SALE_PLAN'));
-		$table->startTrans();
+	public function bModifyHandle($account){
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
+		$salePlanTable->startTrans();
 		foreach ($_POST['cb'] as $key => $value) {
-			$data = $table->where(array(C('DB_USSW_SALE_PLAN_ID')=>$value))->find();
+			$data = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_ID')=>$value))->find();
 			if($data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_USSW_SALE_PLAN_SUGGEST')]!=null){
 				$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 				if($data[C('DB_USSW_SALE_PLAN_ID_SUGGEST')]=='relisting'){
@@ -159,24 +171,32 @@ class GgsUsswSaleAction extends CommonAction{
 				$data[C('DB_USSW_SALE_PLAN_PRICE')] = $data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
 				$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 				$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
-				M(C('DB_USSW_SALE_PLAN'))->save($data);
+				$salePlanTable->save($data);
 			}
 		}
-		$table->commit();
+		$salePlanTable->commit();
 		$this->success('修改成功');
 	}
 
-	public function ignoreSuggest($id){
+	public function ignoreSuggest($account,$id){
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
 		$data[C('DB_USSW_SALE_PLAN_ID')] = $id;
 		$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 		$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 		$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
-		M(C('DB_USSW_SALE_PLAN'))->save($data);
+		$salePlanTable->save($data);
 		$this->success('保存成功');
 	}
 
-	public function updateUsswSalePlan($kw=null,$kwv=null){
+	public function updateUsswSalePlan($account, $kw=null,$kwv=null){
 		$data=null;
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
 		foreach ($_POST as $key => $value) {
 			$arr = explode("-",$key);
 			if($arr[0]=='id'){
@@ -192,25 +212,28 @@ class GgsUsswSaleAction extends CommonAction{
 				$data[$arr[1]]['status']=$value; 
 			}
 		}
-		$salePlan = M(C('DB_USSW_SALE_PLAN'));
-		$salePlan->startTrans();
+		$salePlanTable->startTrans();
 		foreach ($data as $key => $value) {
-			$value[C('DB_USSW_SALE_PLAN_COST')] = $this->calUsswSuggestCost($value['sku'],$value['sale_price']);
+			$value[C('DB_USSW_SALE_PLAN_COST')] = $this->calUsswSuggestCost($account,$value['sku'],$value['sale_price']);
 			if($value['status']=="on"){
 				$value['status']=1;
 			}else{
 				$value['status']=0;
 			}
-			$salePlan->save($value);
+			$salePlanTable->save($value);
 		}
-		$salePlan->commit();
-		$this->calUsswSaleInfoHandle();
+		$salePlanTable->commit();
+		$this->calUsswSaleInfoHandle($account);
 		$this->success('修改已保存');		
 	}
 
-	private function calUsswSuggest($sku){
+	private function calUsswSuggest($account,$sku){
 		//返回数组包含销售建议和价格
-		$saleplan = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
+		$saleplan = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
 		$cost = $saleplan[C('DB_USSW_SALE_PLAN_COST')];
 		$price = $saleplan[C('DB_USSW_SALE_PLAN_PRICE')];
 		$status = $saleplan[C('DB_USSW_SALE_PLAN_STATUS')];
@@ -239,15 +262,15 @@ class GgsUsswSaleAction extends CommonAction{
 		$standard_period = $metadata[C('DB_USSW_SALE_PLAN_METADATA_STANDARD_PERIOD')];	
 
 		$startDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
-		$asqsq = intval($this->calUsswSaleQuantity($sku,$startDate))*intval($standard_period)/intval($adjust_period);
+		$asqsq = intval($this->calUsswSaleQuantity($account,$sku,$startDate))*intval($standard_period)/intval($adjust_period);
 		$startDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period*2);
 		$endDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
-		$lspsq = $this->calUsswSaleQuantity($sku,$startDate,$endDate)*$standard_period/$adjust_period;
+		$lspsq = $this->calUsswSaleQuantity($account,$sku,$startDate,$endDate)*$standard_period/$adjust_period;
 
 		//检查是否需要重新刊登
 		if($asqsq==0){
 			$startDate = date('Y-m-d H:i:s',time()-60*60*24*$relisting_nod);
-			$relistingNodSaleQuantity = $this->calUsswSaleQuantity($sku,$startDate);
+			$relistingNodSaleQuantity = $this->calUsswSaleQuantity($account,$sku,$startDate);
 			if($relistingNodSaleQuantity==0){
 				$sugg=null;
 				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost+$cost*$this->getCostClass($cost)/100;
@@ -259,7 +282,7 @@ class GgsUsswSaleAction extends CommonAction{
 		//检查是否需要清货清货
 		if($asqsq==0){
 			$startDate = date('Y-m-d H:i:s',time()-60*60*24*$clear_nod);
-			$clearNodSaleQuantity = $this->calUsswSaleQuantity($sku,$startDate);
+			$clearNodSaleQuantity = $this->calUsswSaleQuantity($account,$sku,$startDate);
 			if($clearNodSaleQuantity==0){
 				$sugg=null;
 				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
@@ -313,33 +336,38 @@ class GgsUsswSaleAction extends CommonAction{
 			return $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR5')];
 	}
 
-	private function calUsswSaleQuantity($sku, $startDate, $endDate=null){
+	private function calUsswSaleQuantity($account, $sku, $startDate, $endDate=null){
 		if($endDate==null)
 			$endDate = date('Y-m-d H:i:s',time());
 		$usswOutboundItem = D("UsswOutboundView");
 		$map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('between',array($startDate,$endDate));
 		$map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
+		$map[C('DB_USSW_OUTBOUND_SELLER_ID')] = array('eq',$account);
 		return $usswOutboundItem->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
 	}
 
-	private function addProductToUsp($sku){
+	private function addProductToUsp($account,$sku){
 		//添加产品到ussw_sale_plan表
 		$newUsp[C('DB_USSW_SALE_PLAN_SKU')] = $sku;
 		$newUsp[C('DB_USSW_SALE_PLAN_FIRST_DATE')] = date('Y-m-d H:i:s',time()); 
 		$newUsp[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time()); 
 		$newUsp[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')] = 0; 
 		$newUsp[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =null;
-		$newUsp[C('DB_USSW_SALE_PLAN_COST')] = $this->calUsswSuggestCost($sku);
+		$newUsp[C('DB_USSW_SALE_PLAN_COST')] = $this->calUsswSuggestCost($account,$sku);
 		$price =  M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_GGS_USSW_SALE_PRICE'));
 		if($price==null || $price==0){
 			$price = $newUsp[C('DB_USSW_SALE_PLAN_COST')];
 		}
-		$newUsp[C('DB_USSW_SALE_PLAN_PRICE')] = $this->calUsswInitialPrice($sku);
+		$newUsp[C('DB_USSW_SALE_PLAN_PRICE')] = $this->calUsswInitialPrice($account,$sku);
 		$newUsp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 		$newUsp[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
 		$newUsp[C('DB_USSW_SALE_PLAN_STATUS')] = 1;
 
-		M(C('DB_USSW_SALE_PLAN'))->add($newUsp);
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
+		$salePlanTable->add($newUsp);
 	}
 
 	private function inUsstorage($sku){
@@ -351,36 +379,59 @@ class GgsUsswSaleAction extends CommonAction{
         }
 	}
 
-	private function updateUsp($usp){
+	private function updateUsp($account,$usp){
 		//更新产品自建仓销售建议
-		M(C('DB_USSW_SALE_PLAN'))->save($usp);
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
+		$salePlanTable->save($usp);
 	}
 
-	private function calUsswSuggestCost($sku,$sale_price=null){
+	private function calUsswSuggestCost($account,$sku,$sale_price=null){
 		//计算产品美自建仓销售成本
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
 		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
     	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
     	$data[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
     	$data['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$data['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$data['local-shipping-fee1']=$this->getUsswLocalShippingFee1($product['weight'],$product['length'],$product['width'],$product['height']);
-
-    	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee1'];
 		
-		$salePlan = M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
+		$salePlan = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
 		if($sale_price!=null){
-			$cost = $cost+$sale_price*0.129+0.3;
+			if($this->getMarketByAccount($account)=='ebay'){
+				return $this->getUsswEbayCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$sale_price);
+			}
+			if($this->getMarketByAccount($account)=='amazon'){
+				return $this->getUsswAmazonCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$sale_price);
+			}
+			$this->error('无法找到与 '.$account.' 匹配的平台！不能计算销售建议表成本！');
 		}elseif($salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=0 && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=null && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=''){
-			$cost = $cost+$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]*0.129+0.3;
+			if($this->getMarketByAccount($account)=='ebay'){
+				return $this->getUsswEbayCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]);
+			}
+			if($this->getMarketByAccount($account)=='amazon'){
+				return $this->getUsswAmazonCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]);
+			}
+			$this->error('无法找到与 '.$account.' 匹配的平台！不能计算销售建议表成本！');
 		}else{
-			$tmp_sp = ($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.129);
-			$cost = $cost+$tmp_sp*0.129+0.3;			
+			if($this->getMarketByAccount($account)=='ebay'){
+				$tmpSalePrice = $this->getUsswEbayISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1']);
+				return $this->getUsswEbayCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]);
+			}
+			if($this->getMarketByAccount($account)=='amazon'){
+				$tmpSalePrice = $this->getUsswAmazonISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1']);
+				return $this->getUsswAmazonCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$tmpSalePrice);
+			}
+			$this->error('无法找到与 '.$account.' 匹配的平台！不能计算销售建议表成本！');			
 		}
-		return $cost;
 	}
 
-	private function calUsswInitialPrice($sku){
+	private function calUsswInitialPrice($account,$sku){
 		//计算产品美自建仓初始售价
 		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
     	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
@@ -389,11 +440,13 @@ class GgsUsswSaleAction extends CommonAction{
     	$data['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$data['local-shipping-fee1']=$this->getUsswLocalShippingFee1($product['weight'],$product['length'],$product['width'],$product['height']);
 
-    	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee1'];
-		
-		$tmp_sp = ($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.129);
-		return $tmp_sp;
+    	if($this->getMarketByAccount($account)=='ebay'){
+			return $this->getUsswEbayISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1']);
+		}
+		if($this->getMarketByAccount($account)=='amazon'){
+			return $this->getUsswAmazonISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1']);
+		}
+		$this->error('无法找到与 '.$account.' 匹配的平台！不能计算初始售价！');
 	}
 
 	private function isUsswSaleInfoComplete($usp){
@@ -455,15 +508,14 @@ class GgsUsswSaleAction extends CommonAction{
 	public function ggsUsswItemTest(){
 		if($this->isPost()){
 			$p = I('post.price','','htmlspecialchars');
-			$usRate = I('post.saleprice','','htmlspecialchars')*0.05;
+			$usRate = $p*1.2*0.05;
 			$usswFee = $this->calUsswSIOFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
 			$wayToUs = I('post.way-to-us','','htmlspecialchars');
 			$wayToUsFee = $wayToUs=="air"?$this->getUsswAirFirstTransportFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars')):$this->getUsswSeaFirstTransportFee(I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
 			$localShippingWay = $this->getUsswLocalShippingWay1(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
 			$localShippingFee = $this->getUsswLocalShippingFee1(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
 			$salePrice = I('post.saleprice','','htmlspecialchars');
-			$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USDTORMB'));
-			$testCost = ($p+0.5)/$exchange+$salePrice*0.05+$usswFee+$wayToUsFee+$localShippingFee+$salePrice*0.129+0.3;
+			$testCost = $this->getUsswEbayCost($p,0.05,$usswFee,$wayToUsFee,$localShippingFee,$salePrice);
 			$testData = array(
 						'price'=>$p,
 						'us-rate'=>$usRate,
@@ -509,8 +561,12 @@ class GgsUsswSaleAction extends CommonAction{
 
 	}
 
-	private function getUsswSaleInfo(){
+	private function getUsswSaleInfo($account){
 		$products = M(C('DB_PRODUCT'));
+		$salePlanTable=M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
         import('ORG.Util.Page');
         $count = $products->count();
         $Page = new Page($count);            
@@ -531,8 +587,16 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['local-shipping-fee2']=$this->getUsswLocalShippingFee2($value['pweight'],$value['length'],$value['width'],$value['height']);
         	$data[$key]['local-shipping-way3']=$this->getUsswLocalShippingWay3($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key]['local-shipping-fee3']=$this->getUsswLocalShippingFee3($value['pweight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]=M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_PRICE'));
-        	$data[$key]['cost']=round($this->getUsswCost($data[$key]),2);
+        	$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_PRICE'));
+        	if($this->getMarketByAccount($account)=='ebay'){
+        		$data[$key]['cost']=$this->getUsswEbayCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_USTARIFF')],$data[$key]['ussw-fee'],$data[$key]['way-to-us-fee'],$data[$key]['local-shipping-fee1'],$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]);
+        	}
+        	elseif($this->getMarketByAccount($account)=='amazon'){
+        		$data[$key]['cost']=$this->getUsswAmazonCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_USTARIFF')],$data[$key]['ussw-fee'],$data[$key]['way-to-us-fee'],$data[$key]['local-shipping-fee1'],$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]);
+        	}else{
+        		$this->error('无法找到与 '.$account.' 匹配的平台！不能显示销售表！');
+        	}
+        	
         	$data[$key]['gprofit']=$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]*100,2).'%';
         	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')]*0.0352740,2);
@@ -540,13 +604,19 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')]*0.3937008,2);
         	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')]*0.3937008,2);
         }
+        $this->assign('market',$this->getMarketByAccount($account));
+        $this->assign('account',$account);
         $this->assign('data',$data);
         $this->assign('page',$show);
         $this->display();
 	}
 
-	private function getUsswKeywordSaleInfo(){
+	private function getUsswKeywordSaleInfo($account){
 		$products = M(C('DB_PRODUCT'));
+		$salePlanTable=M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
         import('ORG.Util.Page');
         $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
         $count = $products->where($where)->count();
@@ -568,8 +638,15 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['local-shipping-fee2']=$this->getUsswLocalShippingFee2($value['pweight'],$value['length'],$value['width'],$value['height']);
         	$data[$key]['local-shipping-way3']=$this->getUsswLocalShippingWay3($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key]['local-shipping-fee3']=$this->getUsswLocalShippingFee3($value['pweight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]=M(C('DB_USSW_SALE_PLAN'))->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_PRICE'));
-        	$data[$key]['cost']=round($this->getUsswCost($data[$key]),2);
+        	$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_PRICE'));
+        	if($this->getMarketByAccount($account)=='ebay'){
+        		$data[$key]['cost']=$this->getUsswEbayCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_USTARIFF')],$data[$key]['ussw-fee'],$data[$key]['way-to-us-fee'],$data[$key]['local-shipping-fee1'],$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]);
+        	}
+        	elseif($this->getMarketByAccount($account)=='amazon'){
+        		$data[$key]['cost']=$this->getUsswAmazonCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_USTARIFF')],$data[$key]['ussw-fee'],$data[$key]['way-to-us-fee'],$data[$key]['local-shipping-fee1'],$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]);
+        	}else{
+        		$this->error('无法找到与 '.$account.' 匹配的平台！不能显示销售表！');
+        	}
         	$data[$key]['gprofit']=$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]*100,2).'%';
         	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')]*0.0352740,2);
@@ -577,6 +654,8 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')]*0.3937008,2);
         	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')]*0.3937008,2);
         }
+        $this->assign('market',$this->getMarketByAccount($account));
+        $this->assign('account',$account);
         $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
         $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
         $this->assign('data',$data);
@@ -584,10 +663,30 @@ class GgsUsswSaleAction extends CommonAction{
         $this->display();
 	}
 
-	private function getUsswCost($data){
+	//calculate ebay cost according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee) $sPrice(sale price)
+	private function getUsswEbayCost($pPrice,$tariff,$wFee,$tFee,$sFee,$sPrice){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_USTARIFF')]+$data['ussw-fee']+$data['way-to-us-fee']+$data['local-shipping-fee1']+$data[C('DB_USSW_SALE_PLAN_PRICE')]*0.129+0.3;
-		return $c;
+		return round((($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee+$sPrice*0.129+0.3),2);
+	}
+
+	//calculate amazon cost according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee) $sPrice(sale price)
+	private function getUsswAmazonCost($pPrice,$tariff,$wFee,$tFee,$sFee,$sPrice){
+		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
+		return round((($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee+$sPrice*0.15),2);
+	}
+
+	//calculate ebay initial sale price according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee)
+	private function getUsswEbayISP($pPrice,$tariff,$wFee,$tFee,$sFee){
+		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
+		$cost = ($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee;
+		return round ((($cost+0.3)*(1+$this->getCostClass($cost)/100))/(1-0.129*(1+$this->getCostClass($cost)/100)),2);
+	}
+
+	//calculate amazon initial sale price according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee)
+	private function getUsswAmazonISP($pPrice,$tariff,$wFee,$tFee,$sFee){
+		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
+		$cost = ($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee;
+		return round(($cost*(1+$this->getCostClass($cost)/100))/(1-0.15*(1+$this->getCostClass($cost)/100)),2);
 	}
 
 	private function calUsswSIOFee($weight,$l,$w,$h){
@@ -612,8 +711,8 @@ class GgsUsswSaleAction extends CommonAction{
 		elseif($weight>20000 and $weight <= 30000){
 			$itemInOutFee = 1.82 + 0.36;
 		}
-		elseif((1.82 + (Int(($weight - 30000) / 10000) + 1) * 0.91 + 0.36 + (Int((weight - 30000) / 10000) + 1) * 0.18) < (18.2 + 1.8) ){
-			$itemInOutFee = 1.82 + (Int((weight - 30000) / 10000) + 1) * 0.91 + 0.36 + (Int((weight - 30000) / 10000) + 1) * 0.18;
+		elseif((1.82 + (round(($weight - 30000) / 10000) + 1) * 0.91 + 0.36 + (round((weight - 30000) / 10000) + 1) * 0.18) < (18.2 + 1.8) ){
+			$itemInOutFee = 1.82 + (round((weight - 30000) / 10000) + 1) * 0.91 + 0.36 + (round((weight - 30000) / 10000) + 1) * 0.18;
 		}
 		else{
 			$itemInOutFee = 18.2 + 1.8;
@@ -1133,13 +1232,24 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 	}
 
-	public function fileExchange($account,$country=null){
+	public function fileExchange($account){
+		$this->assign('market',$this->getMarketByAccount($account));
 		$this->assign('account',$account);
-		$this->assign('country',$country);
 		$this->display();
 	}
 
-	public function fileExchangeHandle($account,$country=null){
+	public function fileExchangeHandle($account){
+		if($this->getMarketByAccount($account)=='ebay'){
+			$this->ebayFileExchangeHandle($account);
+		}elseif($this->getMarketByAccount($account)=='amazon'){
+			$this->amazonFileExchangeHandle($account);
+		}else{
+			$this->error('无法找到与 '.$account.' 匹配的平台');
+		}
+
+	}
+
+	private function ebayFileExchangeHandle($account){
 		if (!empty($_FILES)) {
 			import('ORG.Net.UploadFile');
 			$config=array(
@@ -1174,9 +1284,9 @@ class GgsUsswSaleAction extends CommonAction{
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
 
-            if($this->verifyFxtcn($firstRow)){
+            if($this->verifyEbayFxtcn($firstRow)){
             	$storageTable=M($this->getStorageTableName($account));
-            	$salePlanTable=M($this->getSalePlanTableName($account,$country));
+            	$salePlanTable=M($this->getSalePlanTableName($account));
 
                 for($i=2;$i<=$highestRow;$i++){
                 	$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
@@ -1249,12 +1359,16 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	//Verify imported file exchange template column name
-	private function verifyFxtcn($firstRow){
+	private function verifyEbayFxtcn($firstRow){
         for($c='B';$c<=max(array_keys(C('IMPORT_EBAY_FXT')));$c++){
             if($firstRow[$c] != C('IMPORT_EBAY_FXT')[$c])
                 return false;
         }
         return true;
+    }
+
+    private function amazonFileExchangeHandle($account){
+    	$this->error('功能待完善');
     }
 
     //Split sku according to | and *, then return a 2d array. 
@@ -1282,6 +1396,9 @@ class GgsUsswSaleAction extends CommonAction{
     		case 'vtkg5755':
     			return C('DB_SZSTORAGE');
     			break;
+    		case 'lipovolt':
+    			return C('DB_USSTORAGE');
+    			break;
     		default:
     			return null;
     			break;
@@ -1289,23 +1406,43 @@ class GgsUsswSaleAction extends CommonAction{
     }
 
     //Return the sale plan table name according to the account
-    private function getSalePlanTableName($account,$country=null){
+    private function getSalePlanTableName($account){
     	switch ($account) {
     		case 'greatgoodshop':
     			return C('DB_USSW_SALE_PLAN');
     			break;
-    		case 'vtkg5755':
-    			switch ($country) {
-    				case 'us':
-    					return C('DB_SZ_US_SALE_PLAN');
-    					break;
-    				case 'de':
-    					return C('DB_SZ_DE_SALE_PLAN');
-    					break;
-    				default:
-    					return null;
-    					break;
-    			}
+    		case 'lipovolt':
+    			return C('DB_USSW_SALE_PLAN2');
+    			break;
+    		default:
+    			return null;
+    			break;
+    	}
+    }
+
+    //Return the sale plan view model according to the account
+    private function getSalePlanViewModel($account){
+    	switch ($account) {
+    		case 'greatgoodshop':
+    			return 'UsswSalePlanView';
+    			break;
+    		case 'lipovolt':
+    			return 'UsswSalePlan2View';
+    			break;
+    		default:
+    			return null;
+    			break;
+    	}
+    }
+
+    //Return the sale plan view model according to the account
+    private function getMarketByAccount($account){
+    	switch ($account) {
+    		case 'greatgoodshop':
+    			return 'ebay';
+    			break;
+    		case 'lipovolt':
+    			return 'amazon';
     			break;
     		default:
     			return null;
