@@ -131,7 +131,7 @@ class GgsUsswSaleAction extends CommonAction{
 		$this->success('保存成功');
 	}
 
-	public function bIgnoreHandle($account){
+	public function bIgnoreHandle($account,$kw=null,$kwv=null){
 		$salePlanTable = M($this->getSalePlanTableName($account));
 		if($salePlanTable==null){
 			$this->error('无法找到匹配的销售表！');
@@ -145,7 +145,7 @@ class GgsUsswSaleAction extends CommonAction{
 			$salePlanTable->save($data);
 		}
 		$salePlanTable->commit();
-		$this->success('修改成功');
+		$this->success('修改成功',U('usswSaleSuggest',array('account'=>$account,'kw'=>$kw,'kwv'=>$kwv)));	
 	}
 
 	public function bModifyHandle($account){
@@ -224,7 +224,7 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 		$salePlanTable->commit();
 		$this->calUsswSaleInfoHandle($account);
-		$this->success('修改已保存');		
+		$this->success('修改已保存',U('usswSaleSuggest',array('account'=>$account,'kw'=>$kw,'kwv'=>$kwv)));		
 	}
 
 	private function calUsswSuggest($account,$sku){

@@ -28,6 +28,8 @@ function  cli(Obj){
 }
 function bIgnore(){
 	if(confirm("确认批量忽略么？")){
+		var kw = document.getElementById('keyword').value;
+		var kwv = document.getElementById('keywordValue').value;
 		var coll = document.getElementsByName("cb[]");
 		var bo = false;
 		for(var i = 0; i < coll.length; i++){
@@ -36,7 +38,7 @@ function bIgnore(){
 			}
 		}
 		if(bo){
-			form.action="{:U('Sale/GgsUsswSale/bIgnoreHandle',array('account'=>$account))}";
+			form.action="{:U('Sale/GgsUsswSale/bIgnoreHandle',array('account'=>$account))}?kw="+kw+"&kwv="+kwv;
 			form.submit();
 		}else{
 			alert('请选择需要批量忽略的建议！');
@@ -45,6 +47,8 @@ function bIgnore(){
 }
 function bModify(){
 	if(confirm("确认批量修改么？")){
+		var kw = document.getElementById('keyword').value;
+		var kwv = document.getElementById('keywordValue').value;
 		var coll = document.getElementsByName("cb[]");
 		var bo = false;
 		for(var i = 0; i < coll.length; i++){
@@ -53,7 +57,7 @@ function bModify(){
 			}
 		}
 		if(bo){
-			form.action="{:U('Sale/GgsUsswSale/bModifyHandle',array('account'=>$account))}";
+			form.action="{:U('Sale/GgsUsswSale/bModifyHandle',array('account'=>$account))}?kw="+kw+"&kwv="+kwv;
 			form.submit();
 		}else{
 			alert('请选择需要批量修改的建议！');
