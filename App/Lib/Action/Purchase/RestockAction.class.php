@@ -455,7 +455,7 @@ class RestockAction extends CommonAction{
 			$product = M(C('db_product'))->where(array(C('db_product_sku')=>$szsv[C('DB_SZSTORAGE_SKU')]))->find();
 			if($product!=null){
 				$msq = $this->getSzsw30DaysSales($szsv[C('DB_SZSTORAGE_SKU')]);
-				if($msq != null && $szsv[C('DB_SZSTORAGE_AINVENTORY')] > 0){
+				if($msq != null){
 					$dayAvailableForSale=($szsv[C('DB_SZSTORAGE_AINVENTORY')]+$this->getSzIinventory($szsv[C('DB_SZSTORAGE_SKU')]))/($msq/30);
 					$roos = $this->reallyOutOfStock('深圳仓',$szsv[C('DB_USSTORAGE_SKU')]);
 					if($product[C('DB_PRODUCT_TOUS')]!='无' && $dayAvailableForSale<3 && $roos){				
