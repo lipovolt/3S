@@ -77,14 +77,10 @@
 						</if>
 						<th><div class="tl">其他方式</div></th>
 						<th><div class="tl">其他运费￥</div></th>
-						<if condition="($country eq 'us')"> 
-							<th><div class="tl">成本$</div></th>
-							<th><div class="tl">售价$</div></th>
-							<th><div class="tl">毛利润$</div></th>
-						<elseif condition="($country eq 'de')"/>
+						<if condition="($country eq 'de')"> 
 							<th><div class="tl">成本€</div></th>
 							<th><div class="tl">售价€</div></th>
-							<th><div class="tl">毛利润€</div></th>
+							<th><div class="tl">毛利润€</div></th>							
 						<else /> 
 							<th><div class="tl">成本$</div></th>
 							<th><div class="tl">售价$</div></th>

@@ -153,7 +153,7 @@ class SzSaleAction extends CommonAction{
 			$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
 			$sp = M(C('DB_SZ_US_SALE_PLAN'))->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$sku))->find();
 	    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
-	    	$data['globalShippingFee']=$this->getSzGlobalShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+	    	$data['globalShippingFee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
 			return $this->getWishCost($data[C('DB_PRODUCT_PRICE')],$data['globalShippingFee'],$sale_price);
 		}
 		return null;
@@ -173,7 +173,7 @@ class SzSaleAction extends CommonAction{
 		}
 		if($account=="zuck"){
 			$register = M(C('DB_SZ_WISH_SALE_PLAN'))->where(array(C('DB_SZ_WISH_SALE_PLAN_SKU')=>$sku))->getField(C('DB_SZ_WISH_SALE_PLAN_REGISTER'));
-			$shippingFee=$this->getSzGlobalShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]);
+			$shippingFee=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],1);
 			return $this->calWishInitialPrice($product[C('DB_PRODUCT_PRICE')],$shippingFee);
 		}
 		return null;
@@ -408,19 +408,24 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function getSzUsShippingWay($weight,$l,$w,$h,$register){
+		/*//计算出不同物流深圳发美国的最低运费方式
 		if($register || $register ==1){
 			return $this->getSzUsRsw($weight,$l,$w,$h);
 		}else{
 			return $this->getSzUsSw($weight,$l,$w,$h);
-		}
+		}*/
+		return "运德南京EUB";
 	}
 
 	private function getSzUsShippingFee($weight,$l,$w,$h,$register){
+		/*//计算出不同物流深圳发美国的最低运费
 		if($register || $register==1){
 			return $this->getSzUsRsf($weight,$l,$w,$h);
 		}else{
 			return $this->getSzUsSf($weight,$l,$w,$h);
-		}
+		}*/
+		$fee = $this->calWedoNjEubFee($weight,$l,$w,$h);
+		return $fee==0?65536:$fee;
 	}
 
 	private function getSzUsRsw($weight,$l,$w,$h){
@@ -683,9 +688,11 @@ class SzSaleAction extends CommonAction{
 
 		//计算出当前合作物流的深圳发德国发货运费
 		if($register||$register==1){
-			return $this->calWedoHDRFee($weight,$l,$w,$h);
+			$fee=$this->calWedoHDRFee($weight,$l,$w,$h);
+			return $fee==0?65536:$fee;
 		}else{
-			return $this->calWedoHDFee($weight,$l,$w,$h);
+			$fee=$this->calWedoHDFee($weight,$l,$w,$h);
+			return $fee==0?65536:$fee;
 		}
 	}
 
@@ -1027,8 +1034,8 @@ class SzSaleAction extends CommonAction{
         		$data[$key]['global_shipping_fee']=round($this->getSzGlobalShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
         		$data[$key]['cost']=$this->getSzDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key]['local_shipping_fee'],$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]);
         	}elseif($account=="zuck"){
-        		$data[$key]['global_shipping_way']=$this->getSzGlobalShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
-        		$data[$key]['global_shipping_fee']=round($this->getSzGlobalShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
+        		$data[$key]['global_shipping_way']=$this->getSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],1);
+        		$data[$key]['global_shipping_fee']=round($this->getSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],1),2);
         		$data[$key]['cost']=$this->getWishCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key]['global_shipping_fee'],$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]);
         	}
         	
@@ -1057,7 +1064,7 @@ class SzSaleAction extends CommonAction{
     	elseif($account=="vtkg5755" && $country=="de")
     		return C('DB_SZ_DE_SALE_PLAN');
     	elseif($account=="zuck")
-    		return C('DB_SZ_ZUCK_SALE_PLAN');
+    		return C('DB_SZ_WISH_SALE_PLAN');
     	else{
     		$this->error('账号'.$account.'无法比配到相应的销售表！');
     	}
