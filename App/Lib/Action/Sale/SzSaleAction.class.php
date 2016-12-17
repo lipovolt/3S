@@ -347,7 +347,7 @@ class SzSaleAction extends CommonAction{
 		$szOutboundItem = D("SzOutboundView");
 		$map[C('DB_SZ_OUTBOUND_CREATE_TIME')] = array('between',array($startDate,$endDate));
 		$map[C('DB_SZ_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
-		$map[C('DB_SZ_OUTBOUND_ACCOUNT')] = array('eq',$account);
+		$map[C('DB_SZ_OUTBOUND_SELLER_ID')] = array('eq',$account);
 		if($country=='us'){
 			$map[C('DB_SZ_OUTBOUND_BUYER_COUNTRY')] = array('in',array('United States','US','USA','Vereinigte Staaten','Vereinigte Staaten von Amerika'));
 		}

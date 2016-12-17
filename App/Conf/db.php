@@ -439,7 +439,6 @@ return array(
 	/*创建深圳仓出库表
 	create table if not exists `3s_sz_outbound`(
 	`id` smallint(6) unsigned primary key not null auto_increment,
-	`account` varchar(20) default null,
 	`market` varchar(20) default null,
 	`market_no` varchar(20) default null,
 	`status` varchar(10) default null,
@@ -462,7 +461,6 @@ return array(
 	*/
 	'DB_SZ_OUTBOUND' => 'sz_outbound',
 	'DB_SZ_OUTBOUND_ID' => 'id',
-	'DB_SZ_OUTBOUND_ACCOUNT' => 'account',
 	'DB_SZ_OUTBOUND_MARKET' => 'market',
 	'DB_SZ_OUTBOUND_MARKET_NO' => 'market_no',
 	'DB_SZ_OUTBOUND_STATUS' => 'status', //待出库，已出库
