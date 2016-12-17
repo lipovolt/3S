@@ -27,17 +27,24 @@
 	</dt>
 	<dd><a href="{:U('Sale/SzSale/szSalePlanMetadata')}" >销售基础表</a></dd>
 	<dd></dd>
-	<dd><a href="{:U('Sale/SzSale/usCal')}" >美国销售表</a></dd>
-	<dd><a href="{:U('Sale/SzSale/suggest',array('country'=>'us'))}" >美国销售建议表</a></dd>
-	<dd><a href="{:U('Sale/SzSale/deCal')}" >德国销售表</a></dd>
-	<dd><a href="{:U('Sale/SzSale/suggest',array('country'=>'de'))}" >德国销售建议表</a></dd>
+	<dd><a href="{:U('Sale/SzSale/suggest',array('account'=>'vtkg5755','country'=>'us'))}" >美国销售建议表</a></dd>
+	<dd><a href="{:U('Sale/SzSale/index',array('account'=>'vtkg5755','country'=>'us'))}" >美国销售表</a></dd>
+	<dd><a href="{:U('Sale/SzSale/suggest',array('account'=>'vtkg5755','country'=>'de'))}" >德国销售建议表</a></dd>
+	<dd><a href="{:U('Sale/SzSale/index',array('account'=>'vtkg5755','country'=>'de'))}" >德国销售表</a></dd>
 </dl>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>Amazon lipovolt 销售</strong>								
 	</dt>
-	<dd></dd>
 	<dd><a href="{:U('Sale/GgsUsswSale/fileExchange',array('account'=>'lipovolt'))}" >File exchange</a></dd>
+	<dd></dd>
 	<dd><a href="{:U('Sale/GgsUsswSale/usswSaleSuggest',array('account'=>'lipovolt'))}" >销售建议表</a></dd>
 	<dd><a href="{:U('Sale/GgsUsswSale/index',array('account'=>'lipovolt'))}" >销售表</a></dd>
 </dl>
+<!-- <dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>Wish zuck 销售</strong>								
+	</dt>
+	<dd><a href="{:U('Sale/SzSale/suggest',array('account'=>'zuck'))}" >销售建议表</a></dd>
+	<dd><a href="{:U('Sale/SzSale/index',array('account'=>'zuck'))}" >销售表</a></dd>
+</dl> -->

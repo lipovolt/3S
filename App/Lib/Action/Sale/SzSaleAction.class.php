@@ -2,36 +2,13 @@
 
 class SzSaleAction extends CommonAction{
 
-	public function usCal(){
-		if($_POST['keyword']==""){
-			$this->getSzUsSaleInfo();
-        }
-        else{           
-            $this->getSzUsKeywordSaleInfo();
-        }
-	}
-
-	public function deCal(){
-		if($_POST['keyword']==""){
-			$this->getSzDeSaleInfo();
-        }
-        else{           
-            $this->getSzDeKeywordSaleInfo();
-        }
-	}
-
 	public function szSalePlanMetadata(){
 		$this->data=M(C('DB_SZ_SALE_PLAN_METADATA'))->select();
 		$this->display();
 	}
 
-	public function suggest($country,$kw=null,$kwv=null){
-		if($country=='us'){
-			$Data = D("SzUsSalePlanView");
-		}
-		if($country=='de'){
-			$Data = D("SzDeSalePlanView");
-		}
+	public function suggest($account,$country=null,$kw=null,$kwv=null){
+		$Data=D($this->getSalePlanViewModelName($account,$country));
 		if($_POST['keyword']=="" && $kwv==null){ 
             import('ORG.Util.Page');
             $count = $Data->count();
@@ -43,6 +20,7 @@ class SzSaleAction extends CommonAction{
 	        	$suggest[$key]['profit'] = $value[C('DB_SZ_US_SALE_PLAN_PRICE')] - $value[C('DB_SZ_US_SALE_PLAN_COST')];
 	        	$suggest[$key]['grate'] = round(($value[C('DB_SZ_US_SALE_PLAN_PRICE')] - $value[C('DB_SZ_US_SALE_PLAN_COST')]) / $value[C('DB_SZ_US_SALE_PLAN_PRICE')]*100,2);
 	        }
+	        
             $this->assign('suggest',$suggest);
             $this->assign('country',$country);
             $this->assign('page',$show);
@@ -66,46 +44,43 @@ class SzSaleAction extends CommonAction{
             $this->assign('country',$country);
             $this->assign('suggest',$suggest);
         }
+        $this->assign('account',$account);
+	    $this->assign('market',$this->getMarketByAccountCountry($account,$country));
         $this->display();
 	}
 
-	public function getSuggest($country,$kw=null,$kwv=null){
-		$this->getSuggestHandle($country,$kw,$kwv);
-		$this->redirect('suggest',array('country'=>$country,'kw'=>$kw,'kwv'=>$kwv));
+	public function getSuggest($account,$country=null,$kw=null,$kwv=null){
+		$this->getSuggestHandle($account,$country);
+		$this->success('更新成功！', U('suggest',array('account'=>$account,'country'=>$country,'kw'=>$kw,'kwv'=>$kwv)));
 	}
 
-	private function getSuggestHandle($country,$kw=null,$kwv=null){
+	private function getSuggestHandle($account,$country=null){
 		import('ORG.Util.Date');// 导入日期类
 		$Date = new Date();
-		if($country=='us'){
-			$salePlan = D("SzUsSalePlanView");
-		}
-		if($country=='de'){
-			$salePlan = D("SzDeSalePlanView");
-		}
-
+		$salePlan=M($this->getSalePlanTableName($account,$country));
 		$szProduct = M(C('DB_SZSTORAGE'))->distinct(true)->field(C('DB_SZSTORAGE_SKU'))->select();
 		foreach ($szProduct as $key => $p) {
 			$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$p[C('DB_SZSTORAGE_SKU')]))->find();
 			if($usp == null){
-				$this->addProductToUsp($p[C('DB_SZSTORAGE_SKU')],$country);
+				$this->addProductToUsp($p[C('DB_SZSTORAGE_SKU')],$account,$country);
 				$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$p[C('DB_SZSTORAGE_SKU')]))->find();
 			}else{
-				$usp[C('DB_SZ_US_SALE_PLAN_COST')]=$this->calSuggestCost($p[C('DB_SZSTORAGE_SKU')],$country,$usp[C('DB_SZ_US_SALE_PLAN_PRICE')]);
-				$this->updateUsp($usp,$country);
+				
+				$usp[C('DB_SZ_US_SALE_PLAN_COST')]=$this->calSuggestCost($p[C('DB_SZSTORAGE_SKU')],$account,$country,$usp[C('DB_SZ_US_SALE_PLAN_PRICE')]);
+				$salePlan->save($usp);
 				$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$p[C('DB_SZSTORAGE_SKU')]))->find();
 			}
 			if(!$this->isProductInfoComplete($p[C('DB_SZSTORAGE_SKU')])){
 				//产品信息不全，建议完善产品信息,退出循环
 				$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
 				$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = 'complete_product_info';
-				$this->updateUsp($usp,$country);
+				$salePlan->save($usp);
 				$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$p[C('DB_SZSTORAGE_SKU')]))->find();
 			}elseif(!$this->isSaleInfoComplete($usp)){
 				//无法计算，建议完善销售信息，退出循环
 				$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
 				$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = 'complete_sale_info';
-				$this->updateUsp($usp,$country);
+				$salePlan->save($usp);
 				$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$p[C('DB_SZSTORAGE_SKU')]))->find();
 			}else{
 				$lastModifyDate = $salePlan->where(array('sku'=>$p['sku']))->getField('last_modify_date');
@@ -113,10 +88,10 @@ class SzSaleAction extends CommonAction{
 				if(-($Date->dateDiff($lastModifyDate))>$adjustPeriod){
 					//开始计算该产品的销售建议
 					$suggest=null;
-					$suggest = $this->calSuggest($p[C('DB_SZSTORAGE_SKU')],$country);
+					$suggest = $this->calSuggest($p[C('DB_SZSTORAGE_SKU')],$account,$country);
 					$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')];
 					$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_SZ_US_SALE_PLAN_SUGGEST')];
-					$this->updateUsp($usp,$country);
+					$salePlan->save($usp);
 				}
 			}
 		}
@@ -143,131 +118,90 @@ class SzSaleAction extends CommonAction{
 		return true;
 	}
 
-	private function addProductToUsp($sku,$country){
+	private function addProductToUsp($sku,$account,$country=null){
 		//添加产品到sale_plan表
-		if($country=='us'){
-			$salePlan = M(C('DB_SZ_US_SALE_PLAN'));
-			$field = C('DB_PRODUCT_SZ_US_SALE_PRICE');
-		}
-		if($country=='de'){
-			$salePlan = M(C('DB_SZ_DE_SALE_PLAN'));
-			$field = C('DB_PRODUCT_SZ_DE_SALE_PRICE');
-		}
+		$salePlan=M($this->getSalePlanTableName($account,$country));
 		$newUsp[C('DB_SZ_US_SALE_PLAN_SKU')] = $sku;
 		$newUsp[C('DB_SZ_US_SALE_PLAN_FIRST_DATE')] = date('Y-m-d H:i:s',time()); 
 		$newUsp[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time()); 
 		$newUsp[C('DB_SZ_US_SALE_PLAN_RELISTING_TIMES')] = 0; 
 		$newUsp[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')] =null;
-		$newUsp[C('DB_SZ_US_SALE_PLAN_COST')] = $this->calSuggestCost($sku,$country);
-		$price =  M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField($field);
-		if($price==null || $price==0){
-			$price = $this->calInitialPrice($sku,$country);
-		}
-		$newUsp[C('DB_SZ_US_SALE_PLAN_PRICE')] = $price;
+		$newUsp[C('DB_SZ_US_SALE_PLAN_PRICE')] = $this->calInitialPrice($sku,$account,$country);
+		$newUsp[C('DB_SZ_US_SALE_PLAN_COST')] = $this->calSuggestCost($sku,$account,$country,$newUsp[C('DB_SZ_US_SALE_PLAN_PRICE')] );
 		$newUsp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
 		$newUsp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = null;
 		$newUsp[C('DB_SZ_US_SALE_PLAN_STATUS')] = 1;
-
 		$salePlan->add($newUsp);
 	}
 
-	private function calSuggestCost($sku,$country,$sale_price=null){
-		if($country == 'us'){
-			return $this->calUsSuggestCost($sku,$sale_price);
+	private function calSuggestCost($sku,$account,$country,$sale_price=null){
+		if($account=="vtkg5755" && $country == 'us'){
+			$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
+			$sp = M(C('DB_SZ_US_SALE_PLAN'))->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$sku))->find();
+	    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
+	    	$data['way-to-us-fee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+			return $this->getSzUsCost($data[C('DB_PRODUCT_PRICE')],$data['way-to-us-fee'],$sale_price);
 		}
-		if($country == 'de'){
-			return $this->calDeSuggestCost($sku,$sale_price);
+		if($account=="vtkg5755" && $country == 'de'){
+			$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
+			$sp = M(C('DB_SZ_DE_SALE_PLAN'))->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$sku))->find();
+	    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
+	    	$data['way-to-de-fee']=$this->getSzDeShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
+			return $this->getSzDeCost($data[C('DB_PRODUCT_PRICE')],$data['way-to-de-fee'],$sale_price);
 		}
-		return null;
-	}
-
-	private function calUsSuggestCost($sku,$sale_price){
-		//计算产品美自建仓销售成本
-		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
-		$sp = M(C('DB_SZ_US_SALE_PLAN'))->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$sku))->find();
-    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
-    	$data['way-to-us-fee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
-    	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['way-to-us-fee'])/$exchange;
-		if($sale_price==null || $sale_price==0){
-			$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.139);
-			if($tmp_sp<12){
-				$cost = $cost + $tmp_sp*0.15+0.05;
-			}else{
-				$cost = $cost+$tmp_sp*0.139+0.3;
-			}
-		}else{
-			if($sale_price<12){
-				$cost = $cost + $sale_price*0.15+0.05;
-			}else{
-				$cost = $cost + $sale_price*0.139+0.3;
-			}
-		}
-		return $cost;
-	}
-
-	private function calDeSuggestCost($sku,$sale_price){
-		//计算产品美自建仓销售成本
-		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
-		$sp = M(C('DB_SZ_DE_SALE_PLAN'))->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$sku))->find();
-    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
-    	$data['way-to-de-fee']=$this->getSzDeShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
-    	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
-		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['way-to-de-fee'])/$exchange;
-		if($sale_price==null || $sale_price==0){
-			$tmp_sp = ($cost+0.35)/(1/(1+$this->getCostClass($cost)/100)-0.139);
-			if($tmp_sp<12){
-				$cost = $cost + $tmp_sp*0.15+0.05;
-			}else{
-				$cost = $cost+$tmp_sp*0.139+0.3;
-			}
-		}else{
-			if($sale_price<12){
-				$cost = $cost + $sale_price*0.15+0.05;
-			}else{
-				$cost = $cost + $sale_price*0.139+0.3;
-			}
-		}
-		return $cost;
-	}
-
-	private function calInitialPrice($sku,$country){
-		if($country == 'us'){
-			return $this->calUsInitialPrice($sku);
-		}
-		if($country == 'de'){
-			return $this->calDeInitialPrice($sku);
+		if($account=="zuck"){
+			$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
+			$sp = M(C('DB_SZ_US_SALE_PLAN'))->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$sku))->find();
+	    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
+	    	$data['globalShippingFee']=$this->getSzGlobalShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+			return $this->getWishCost($data[C('DB_PRODUCT_PRICE')],$data['globalShippingFee'],$sale_price);
 		}
 		return null;
 	}
 
-	private function calUsInitialPrice($sku){
+	private function calInitialPrice($sku,$account,$country=null){
 		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
-    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
-    	$data['way-to-us-fee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
-    	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['way-to-us-fee'])/$exchange;
-		$tmp_sp = ($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.139);
-		return $tmp_sp;
+		if($account=="vtkg5755" && $country == 'us'){
+			$register = M(C('DB_SZ_US_SALE_PLAN'))->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$sku))->getField(C('DB_SZ_US_SALE_PLAN_REGISTER'));
+			$shippingFee=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$register);
+			return $this->calUsInitialPrice($product[C('DB_PRODUCT_PRICE')],$shippingFee);
+		}
+		if($account=="vtkg5755" && $country == 'de'){
+			$register = M(C('DB_SZ_DE_SALE_PLAN'))->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$sku))->getField(C('DB_SZ_DE_SALE_PLAN_REGISTER'));
+			$shippingFee=$this->getSzDeShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$register);
+			return $this->calDeInitialPrice($product[C('DB_PRODUCT_PRICE')],$shippingFee);
+		}
+		if($account=="zuck"){
+			$register = M(C('DB_SZ_WISH_SALE_PLAN'))->where(array(C('DB_SZ_WISH_SALE_PLAN_SKU')=>$sku))->getField(C('DB_SZ_WISH_SALE_PLAN_REGISTER'));
+			$shippingFee=$this->getSzGlobalShippingFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]);
+			return $this->calWishInitialPrice($product[C('DB_PRODUCT_PRICE')],$shippingFee);
+		}
+		return null;
 	}
 
-	private function calDeInitialPrice($sku){
-		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
-    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
-    	$data['way-to-de-fee']=$this->getSzDeShippingFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
-    	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
-		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['way-to-de-fee'])/$exchange;
-		$tmp_sp = ($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.139);
-		return $tmp_sp;
+	private function calUsInitialPrice($productPrice,$shippingFee){
+		$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USDTORMB'));
+		$cost = ($productPrice+0.5+$shippingFee)/$exchange;
+		$salePrice = (($cost+0.3)*(1+$this->getCostClass($cost)/100))/(1-(1+$this->getCostClass($cost)/100)*0.139);
+		return round($salePrice,2);
 	}
 
-	public function confirmSuggest($id,$country){
-		if($country=='us'){
-			$table=M(C('DB_SZ_US_SALE_PLAN'));
-		}
-		if($country=='de'){
-			$table=M(C('DB_SZ_DE_SALE_PLAN'));
-		}
+	private function calDeInitialPrice($productPrice,$shippingFee){
+		$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_EURTORMB'));
+		$cost = ($productPrice+0.5+$shippingFee)/$exchange;
+		$salePrice = (($cost+0.3)*(1+$this->getCostClass($cost)/100))/(1-(1+$this->getCostClass($cost)/100)*0.139);
+		return round($salePrice,2);
+	}
+
+	private function calWishInitialPrice($productPrice,$shippingFee){
+		$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USDTORMB'));
+		$cost = ($productPrice+0.5+$shippingFee)/$exchange;
+		$salePrice = ($cost*(1+$this->getCostClass($cost)/100))/(1-(1+$this->getCostClass($cost)/100)*0.16);
+		return round($salePrice,2);
+	}
+
+	public function confirmSuggest($id,$account,$country=null){
+		$table=M($this->getSalePlanTableName($account,$country));
 		$data = $table->where(array(C('DB_SZ_US_SALE_PLAN_ID')=>$id))->find();
 		if($data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] !=null){
 			$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
@@ -292,13 +226,8 @@ class SzSaleAction extends CommonAction{
 		$this->success('修改成功');
 	}
 
-	public function ignoreSuggest($id,$country){
-		if($country=='us'){
-			$table=M(C('DB_SZ_US_SALE_PLAN'));
-		}
-		if($country=='de'){
-			$table=M(C('DB_SZ_DE_SALE_PLAN'));
-		}
+	public function ignoreSuggest($id,$account,$country=null){
+		$table=M($this->getSalePlanTableName($account,$country));
 		$data = $table->where(array(C('DB_SZ_US_SALE_PLAN_ID')=>$id))->find();
 		$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 		$data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
@@ -307,24 +236,8 @@ class SzSaleAction extends CommonAction{
 		$this->success('修改成功');
 	}
 
-	private function updateUsp($usp,$country){
-		//更新产品自建仓销售建议
-		if($country=='us'){
-			M(C('DB_SZ_US_SALE_PLAN'))->save($usp);
-		}
-		if($country=='de'){
-			M(C('DB_SZ_DE_SALE_PLAN'))->save($usp);
-		}
-		
-	}
-
-	public function updateSalePlan($country,$kw=null,$kwv=null){
-		if($country=='us'){
-			$salePlan = M(C('DB_SZ_US_SALE_PLAN'));
-		}
-		if($country=='de'){
-			$salePlan = M(C('DB_SZ_DE_SALE_PLAN'));
-		}
+	public function updateSalePlan($account,$country=null,$kw=null,$kwv=null){
+		$salePlan=M($this->getSalePlanTableName($account,$country));
 		$salePlan->startTrans();
 		foreach ($_POST['id'] as $key => $value) {
 			$data[C('DB_SZ_US_SALE_PLAN_ID')]=$value;
@@ -343,19 +256,14 @@ class SzSaleAction extends CommonAction{
 			$salePlan->save($data);
 		}
 		$salePlan->commit();
-		$this->getSuggestHandle($country,$kw,$kwv);
-		$this->success('保存成功！');
+		$this->getSuggestHandle($account,$country);
+		$this->success('保存成功！', U('suggest',array('account'=>$account,'country'=>$country,'kw'=>$kw,'kwv'=>$kwv)));
 	}
 
 
-	private function calSuggest($sku,$country){
+	private function calSuggest($sku,$account,$country){
 		//返回数组包含销售建议和价格
-		if($country=='us'){
-			$salePlanTable = M(C('DB_SZ_US_SALE_PLAN'));
-		}
-		if($country=='de'){
-			$salePlanTable = M(C('DB_SZ_DE_SALE_PLAN'));
-		}
+		$salePlanTable=M($this->getSalePlanTableName($account,$country));
 		$saleplan = $salePlanTable->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$sku))->find();
 		$cost = $saleplan[C('DB_SZ_US_SALE_PLAN_COST')];
 		$price = $saleplan[C('DB_SZ_US_SALE_PLAN_PRICE')];
@@ -380,15 +288,15 @@ class SzSaleAction extends CommonAction{
 		$standard_period = $metadata[C('DB_SZ_SALE_PLAN_METADATA_STANDARD_PERIOD')];	
 
 		$startDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
-		$asqsq = intval($this->calSaleQuantity($sku,$country,$startDate))*intval($standard_period)/intval($adjust_period);
+		$asqsq = intval($this->calSaleQuantity($sku,$account,$country,$startDate))*intval($standard_period)/intval($adjust_period);
 		$startDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period*2);
 		$endDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
-		$lspsq = $this->calSaleQuantity($sku,$country,$startDate,$endDate)*$standard_period/$adjust_period;
+		$lspsq = $this->calSaleQuantity($sku,$account,$country,$startDate,$endDate)*$standard_period/$adjust_period;
 
 		//检查是否需要重新刊登
 		if($asqsq==0){
 			$startDate = date('Y-m-d H:i:s',time()-60*60*24*$relisting_nod);
-			$relistingNodSaleQuantity = $this->calSaleQuantity($sku,$country,$startDate);
+			$relistingNodSaleQuantity = $this->calSaleQuantity($sku,$account,$country,$startDate);
 			if($relistingNodSaleQuantity==0){
 				$sugg=null;
 				$sugg[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = $cost+$cost*$this->getCostClass($cost)/100;
@@ -400,7 +308,7 @@ class SzSaleAction extends CommonAction{
 		//检查是否需要清货
 		if($asqsq==0){
 			$startDate = date('Y-m-d H:i:s',time()-60*60*24*$clear_nod);
-			$clearNodSaleQuantity = $this->calSaleQuantity($sku,$country,$startDate);
+			$clearNodSaleQuantity = $this->calSaleQuantity($sku,$account,$country,$startDate);
 			if($clearNodSaleQuantity==0){
 				$sugg=null;
 				$sugg[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
@@ -433,12 +341,13 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
-	private function calSaleQuantity($sku, $country, $startDate, $endDate=null){
+	private function calSaleQuantity($sku, $account, $country, $startDate, $endDate=null){
 		if($endDate==null)
 			$endDate = date('Y-m-d H:i:s',time());
 		$szOutboundItem = D("SzOutboundView");
 		$map[C('DB_SZ_OUTBOUND_CREATE_TIME')] = array('between',array($startDate,$endDate));
 		$map[C('DB_SZ_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
+		$map[C('DB_SZ_OUTBOUND_ACCOUNT')] = array('eq',$account);
 		if($country=='us'){
 			$map[C('DB_SZ_OUTBOUND_BUYER_COUNTRY')] = array('in',array('United States','US','USA','Vereinigte Staaten','Vereinigte Staaten von Amerika'));
 		}
@@ -496,77 +405,6 @@ class SzSaleAction extends CommonAction{
             }
 
 		}
-	}
-
-	private function getSzUsSaleInfo(){
-		$products = M(C('DB_PRODUCT'));
-		$szUsSalePlan = M(C('DB_SZ_US_SALE_PLAN'));
-        import('ORG.Util.Page');
-        $count = $products->count();
-        $Page = new Page($count,20);           
-        $Page->setConfig('header', '条数据');
-        $show = $Page->show();
-        $tpl = $products->order(C('DB_PRODUCT_SKU'))->limit($Page->firstRow.','.$Page->listRows)->select();
-        foreach ($tpl as $key=>$value) {
-        	$sp=$szUsSalePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->find();
-        	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
-        	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
-        	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
-        	$data[$key]['shipping-way']=$this->getSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
-        	$data[$key]['shipping-fee']=round($this->getSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
-        	$data[$key]['flt-shipping-way']=$this->getFlytSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
-        	$data[$key]['flt-shipping-fee']=round($this->getFlytSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
-        	$data[$key]['wedo-shipping-way']=$this->getWedoSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
-        	$data[$key]['wedo-shipping-fee']=round($this->getWedoSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
-        	$data[$key][C('DB_SZ_US_SALE_PLAN_PRICE')]=M(C('DB_SZ_US_SALE_PLAN'))->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_SZ_US_SALE_PLAN_PRICE'));
-        	$data[$key]['cost']=round($this->getSzUsCost($data[$key]),2);
-        	$data[$key]['gprofit']=$data[$key][C('DB_SZ_US_SALE_PLAN_PRICE')]-$data[$key]['cost'];
-        	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_SZ_US_SALE_PLAN_PRICE')]*100,2).'%';
-        	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')],2);
-        	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')],2);
-        	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')],2);
-        	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')],2);
-        }
-        $this->assign('data',$data);
-        $this->assign('page',$show);
-        $this->display();
-	}
-
-	private function getSzUsKeywordSaleInfo(){
-		$products = M(C('DB_PRODUCT'));
-		$szUsSalePlan = M(C('DB_SZ_US_SALE_PLAN'));
-        import('ORG.Util.Page');
-        $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
-        $count = $products->where($where)->count();
-        $Page = new Page($count);            
-        $Page->setConfig('header', '条数据');
-        $show = $Page->show();        
-        $tpl = $products->limit($Page->firstRow.','.$Page->listRows)->where($where)->select();
-        foreach ($tpl as $key=>$value) {
-        	$sp=$szUsSalePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->find();
-        	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
-        	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
-        	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
-        	$data[$key]['shipping-way']=$this->getSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
-        	$data[$key]['shipping-fee']=round($this->getSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
-        	$data[$key]['flt-shipping-way']=$this->getFlytSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
-        	$data[$key]['flt-shipping-fee']=round($this->getFlytSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
-        	$data[$key]['wedo-shipping-way']=$this->getWedoSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
-        	$data[$key]['wedo-shipping-fee']=round($this->getWedoSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
-        	$data[$key][C('DB_SZ_US_SALE_PLAN_PRICE')]=M(C('DB_SZ_US_SALE_PLAN'))->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_SZ_US_SALE_PLAN_PRICE'));
-        	$data[$key]['cost']=round($this->getSzUsCost($data[$key]),2);
-        	$data[$key]['gprofit']=$data[$key][C('DB_SZ_US_SALE_PLAN_PRICE')]-$data[$key]['cost'];
-        	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_SZ_US_SALE_PLAN_PRICE')]*100,2).'%';
-        	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')],2);
-        	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')],2);
-        	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')],2);
-        	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')],2);
-        }
-        $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
-        $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
-        $this->assign('data',$data);
-        $this->assign('page',$show);
-        $this->display();
 	}
 
 	private function getSzUsShippingWay($weight,$l,$w,$h,$register){
@@ -819,104 +657,35 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
-	private function getSzUsCost($data){
-		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange;
-		if($data[C('DB_SZ_US_SALE_PLAN_PRICE')]==null || $data[C('DB_SZ_US_SALE_PLAN_PRICE')]==0){
-			$data[C('DB_SZ_US_SALE_PLAN_PRICE')] =($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.139);
-		}
-		if($data[C('DB_SZ_US_SALE_PLAN_PRICE')]<12){
-			$cost = $cost+$data[C('DB_SZ_US_SALE_PLAN_PRICE')]*0.15+0.05;
-		}else{
-			$cost = $cost+$data[C('DB_SZ_US_SALE_PLAN_PRICE')]*0.139+0.3;
-		}
-		return $cost;
-	}
-
-	private function getSzDeSaleInfo(){
-		$products = M(C('DB_PRODUCT'));
-		$deSalePlan = M(C('DB_SZ_DE_SALE_PLAN'));
-        import('ORG.Util.Page');
-        $count = $products->count();
-        $Page = new Page($count,20);           
-        $Page->setConfig('header', '条数据');
-        $show = $Page->show();
-        $tpl = $products->order(C('DB_PRODUCT_SKU'))->limit($Page->firstRow.','.$Page->listRows)->select();
-        foreach ($tpl as $key=>$value) {
-        	$sp=$deSalePlan->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->find();
-        	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
-        	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
-        	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
-        	$data[$key]['shipping-way']=$this->getSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
-        	$data[$key]['shipping-fee']=round($this->getSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
-        	$data[$key]['flt-shipping-way']=$this->getFlytSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
-        	$data[$key]['flt-shipping-fee']=round($this->getFlytSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
-        	$data[$key]['wedo-shipping-way']=$this->getWedoSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
-        	$data[$key]['wedo-shipping-fee']=round($this->getWedoSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
-        	$data[$key][C('DB_SZ_DE_SALE_PLAN_PRICE')]=M(C('DB_SZ_DE_SALE_PLAN'))->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_SZ_DE_SALE_PLAN_PRICE'));
-        	$data[$key]['cost']=round($this->getSzDeCost($data[$key]),2);
-        	$data[$key]['gprofit']=$data[$key][C('DB_SZ_DE_SALE_PLAN_PRICE')]-$data[$key]['cost'];
-        	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_SZ_DE_SALE_PLAN_PRICE')]*100,2).'%';
-        	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')],2);
-        	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')],2);
-        	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')],2);
-        	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')],2);
-        }
-        $this->assign('data',$data);
-        $this->assign('page',$show);
-        $this->display();
-	}
-
-	private function getSzDeKeywordSaleInfo(){
-		$products = M(C('DB_PRODUCT'));
-		$deSalePlan = M(C('DB_SZ_DE_SALE_PLAN'));
-        import('ORG.Util.Page');
-        $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
-        $count = $products->where($where)->count();
-        $Page = new Page($count);            
-        $Page->setConfig('header', '条数据');
-        $show = $Page->show();        
-        $tpl = $products->limit($Page->firstRow.','.$Page->listRows)->where($where)->select();
-        foreach ($tpl as $key=>$value) {
-        	$sp=$deSalePlan->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->find();
-        	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
-        	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
-        	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
-        	$data[$key]['shipping-way']=$this->getSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
-        	$data[$key]['shipping-fee']=round($this->getSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
-        	$data[$key]['flt-shipping-way']=$this->getFlytSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
-        	$data[$key]['flt-shipping-fee']=round($this->getFlytSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
-        	$data[$key]['wedo-shipping-way']=$this->getWedoSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
-        	$data[$key]['wedo-shipping-fee']=round($this->getWedoSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]),2);
-        	$data[$key][C('DB_SZ_DE_SALE_PLAN_PRICE')]=M(C('DB_SZ_DE_SALE_PLAN'))->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_SZ_DE_SALE_PLAN_PRICE'));
-        	$data[$key]['cost']=round($this->getSzDeCost($data[$key]),2);
-        	$data[$key]['gprofit']=$data[$key][C('DB_SZ_DE_SALE_PLAN_PRICE')]-$data[$key]['cost'];
-        	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_SZ_DE_SALE_PLAN_PRICE')]*100,2).'%';
-        	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')],2);
-        	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')],2);
-        	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')],2);
-        	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')],2);
-        }
-        $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
-        $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
-        $this->assign('data',$data);
-        $this->assign('page',$show);
-        $this->display();
-	}
-
 	private function getSzDeShippingWay($weight,$l,$w,$h,$register){
+		/*//计算出不同物流深圳发德国的最低运费方式
 		if($register||$register==1){
 			return $this->getSzDeRsw($weight,$l,$w,$h);
 		}else{
 			return $this->getSzDeSw($weight,$l,$w,$h);
+		}*/
+
+		//计算出当前合作物流的深圳发德国发货方式
+		if($register||$register==1){
+			return "运德德国小包（香港）挂号";
+		}else{
+			return "运德德国小包（香港）平邮";
 		}
 	}
 
 	private function getSzDeShippingFee($weight,$l,$w,$h,$register){
+		/*//计算出不同物流深圳发德国的最低运费
 		if($register||$register==1){
 			return $this->getSzDeRsf($weight,$l,$w,$h);
 		}else{
 			return $this->getSzDeSf($weight,$l,$w,$h);
+		}*/
+
+		//计算出当前合作物流的深圳发德国发货运费
+		if($register||$register==1){
+			return $this->calWedoHDRFee($weight,$l,$w,$h);
+		}else{
+			return $this->calWedoHDFee($weight,$l,$w,$h);
 		}
 	}
 
@@ -1062,18 +831,39 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
-	private function getSzDeCost($data){
-		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
-		$cost = ($data[C('DB_PRODUCT_PRICE')]+0.5+$data['shipping-fee'])/$exchange;
-		if($data[C('DB_SZ_DE_SALE_PLAN_PRICE')]==null || $data[C('DB_SZ_DE_SALE_PLAN_PRICE')]==0){
-			$data[C('DB_SZ_DE_SALE_PLAN_PRICE')] = ($cost+0.3)/(1/(1+$this->getCostClass($cost)/100)-0.139);
-		}
-		if($data[C('DB_SZ_DE_SALE_PLAN_PRICE')]<12){
-			$cost = $cost + $data[C('DB_SZ_DE_SALE_PLAN_PRICE')]*0.15+0.05;
+	private function getSzGlobalShippingWay($weight,$l,$w,$h,$register){
+		//计算出当前合作物流的深圳发全球发货方式
+		if($register||$register==1){
+			return "运德漳州/广州挂号";
 		}else{
-			$cost = $cost+$data[C('DB_SZ_DE_SALE_PLAN_PRICE')]*0.139+0.3;
+			return "运德漳州/广州平邮";
 		}
-		return $cost;
+	}
+
+	private function getSzGlobalShippingFee($weight,$l,$w,$h,$register){
+		//计算出当前合作物流的深圳发全球发货运费
+		if($register||$register==1){
+			return $this->calWedoZprFee($weight,$l,$w,$h);
+		}else{
+			return $this->calWedoZpFee($weight,$l,$w,$h);
+		}
+	}
+
+	private function calWedoZprFee($weight,$l,$w,$h){
+		if ($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
+			return 8+100*$weight/1000;
+		}
+		else{
+			return 65536;
+		}
+	}
+
+	private function calWedoZpFee($weight,$l,$w,$h){
+		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
+			return $weight<50?50*0.1:$weight*0.1;
+		}else{
+			return 65536;
+		}
 	}
 
 	public function usTestCal(){
@@ -1082,12 +872,7 @@ class SzSaleAction extends CommonAction{
 			$shippingWay = $this->getSzUsShippingWay(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'),I('post.register','','htmlspecialchars'));
 			$shippingFee = $this->getSzUsShippingFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'),I('post.register','','htmlspecialchars'));
 			$salePrice = I('post.saleprice','','htmlspecialchars');
-			$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USDTORMB'));
-			if($salePrice<12){
-				$testCost = ($p+0.5+$shippingFee)/$exchange +$salePrice*0.15+0.05;
-			}else{
-				$testCost = ($p+0.5+$shippingFee)/$exchange +$salePrice*0.139+0.3;
-			}
+			$testCost = $this->getSzUsCost($p,$shippingFee,$salePrice);
 			
 			$testData = array(
 						'price'=>$p,
@@ -1131,12 +916,7 @@ class SzSaleAction extends CommonAction{
 			$shippingWay = $this->getSzDeShippingWay(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'),I('post.register','','htmlspecialchars'));
 			$shippingFee = $this->getSzDeShippingFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'),I('post.register','','htmlspecialchars'));
 			$salePrice = I('post.saleprice','','htmlspecialchars');
-			$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
-			if($saleprice<12){
-				$testCost = ($p+0.5+$shippingFee)/$exchange+$salePrice*0.15+0.05;
-			}else{
-				$testCost = ($p+0.5+$shippingFee)/$exchange+$salePrice*0.139+0.3;
-			}
+			$testCost = $this->getSzUsCost($p,$shippingFee,$salePrice);
 			$testData = array(
 						'price'=>$p,
 						'shipping-way'=>$shippingWay,
@@ -1173,13 +953,8 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
-	public function bIgnoreHandle($country){
-		if($country=='us'){
-			$table=M(C('DB_SZ_US_SALE_PLAN'));
-		}
-		if($country=='de'){
-			$table=M(C('DB_SZ_DE_SALE_PLAN'));
-		}
+	public function bIgnoreHandle($account,$country,$kw,$kwv){
+		$table=M($this->getSalePlanTableName($account,$country));
 		$table->startTrans();
 		foreach ($_POST['cb'] as $key => $value) {
 			$data[C('DB_SZ_US_SALE_PLAN_ID')] = $value;
@@ -1189,16 +964,11 @@ class SzSaleAction extends CommonAction{
 			$table->save($data);
 		}
 		$table->commit();
-		$this->success('修改成功');
+		$this->success('修改成功',U('suggest',array('account'=>$account, 'country'=>$country, 'kw'=>$kw,'kwv'=>$kwv)));
 	}
 
-	public function bModifyHandle($country){
-		if($country=='us'){
-			$table=M(C('DB_SZ_US_SALE_PLAN'));
-		}
-		if($country=='de'){
-			$table=M(C('DB_SZ_DE_SALE_PLAN'));
-		}
+	public function bModifyHandle($account,$country,$kw,$kwv){
+		$table=M($this->getSalePlanTableName($account,$country));
 		$table->startTrans();
 		foreach ($_POST['cb'] as $key => $value) {
 			$data = $table->where(array(C('DB_SZ_US_SALE_PLAN_ID')=>$value))->find();
@@ -1221,8 +991,155 @@ class SzSaleAction extends CommonAction{
 			}
 		}
 		$table->commit();
-		$this->success('修改成功');
+		$this->success('修改成功',U('suggest',array('account'=>$account,'country'=>$country, 'kw'=>$kw,'kwv'=>$kwv)));
 	}
+
+	public function index($account,$country=null,$kw=null,$kwv=null){
+		$products = M(C('DB_PRODUCT'));
+		$salePlan = M($this->getSalePlanTableName($account,$country));
+        import('ORG.Util.Page');
+        $count = $products->count();
+        $Page = new Page($count,20);           
+        $Page->setConfig('header', '条数据');
+        $show = $Page->show();
+        if($_POST==null){
+        	$tpl = $products->order(C('DB_PRODUCT_SKU'))->limit($Page->firstRow.','.$Page->listRows)->select();
+        }else{
+        	$where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+        	$tpl = $products->order(C('DB_PRODUCT_SKU'))->limit($Page->firstRow.','.$Page->listRows)->where($where)->select();
+        }
+        foreach ($tpl as $key=>$value) {
+        	$sp=$salePlan->where(array(C('DB_SZ_WISH_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->find();
+        	$data[$key][C('DB_PRODUCT_SKU')]=$value[C('DB_PRODUCT_SKU')];
+        	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
+        	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
+        	$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]=$salePlan->where(array(C('DB_SZ_WISH_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_SZ_WISH_SALE_PLAN_PRICE'));
+        	if($account=="vtkg5755" && $country=="us"){
+        		$data[$key]['local_shipping_way']=$this->getSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+        		$data[$key]['local_shipping_fee']=round($this->getSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
+        		$data[$key]['global_shipping_way']=$this->getSzGlobalShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+        		$data[$key]['global_shipping_fee']=round($this->getSzGlobalShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
+        		$data[$key]['cost']=$this->getSzUsCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key]['local_shipping_fee'],$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]);
+        	}elseif($account=="vtkg5755" && $country=="de"){
+        		$data[$key]['local_shipping_way']=$this->getSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+        		$data[$key]['local_shipping_fee']=round($this->getSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
+        		$data[$key]['global_shipping_way']=$this->getSzGlobalShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+        		$data[$key]['global_shipping_fee']=round($this->getSzGlobalShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
+        		$data[$key]['cost']=$this->getSzDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key]['local_shipping_fee'],$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]);
+        	}elseif($account=="zuck"){
+        		$data[$key]['global_shipping_way']=$this->getSzGlobalShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+        		$data[$key]['global_shipping_fee']=round($this->getSzGlobalShippingFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
+        		$data[$key]['cost']=$this->getWishCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key]['global_shipping_fee'],$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]);
+        	}
+        	
+        	
+        	$data[$key]['gprofit']=round($data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]-$data[$key]['cost'],2);
+        	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]*100,2).'%';
+        	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')],2);
+        	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')],2);
+        	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')],2);
+        	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')],2);
+        }
+        $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
+        $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
+        $this->assign('data',$data);
+        $this->assign('market',$this->getMarketByAccountCountry($account,$country));
+        $this->assign('account',$account);
+        $this->assign('country',$this->getCountryCName($country));
+        $this->assign('page',$show);
+        $this->display();
+	}
+
+	//Return the sale plan table name according to the account
+    private function getSalePlanTableName($account,$country){
+    	if($account=="vtkg5755" && $country=="us")
+    		return C('DB_SZ_US_SALE_PLAN');
+    	elseif($account=="vtkg5755" && $country=="de")
+    		return C('DB_SZ_DE_SALE_PLAN');
+    	elseif($account=="zuck")
+    		return C('DB_SZ_ZUCK_SALE_PLAN');
+    	else{
+    		$this->error('账号'.$account.'无法比配到相应的销售表！');
+    	}
+    }
+
+    //Return the sale plan table view model name according to the account
+    private function getSalePlanViewModelName($account,$country){
+    	if($account=="vtkg5755" && $country=="us")
+    		return "SzUsSalePlanView";
+    	elseif($account=="vtkg5755" && $country=="de")
+    		return "SzDeSalePlanView";
+    	elseif($account=="zuck")
+    		return "SzWishSalePlanView";
+    	else{
+    		$this->error('账号'.$account.'无法比配到相应的销售视图表！');
+    	}
+    }
+
+    private function getCountryCName($country){
+    	switch ($country) {
+    		case 'us':
+    			return "美国";
+    			break;
+    		case 'de':
+    			return "德国";
+    			break;
+    		default:
+    			return null;
+    			break;
+    	}
+    }
+
+    //Return the sale plan view model according to the account
+    private function getMarketByAccountCountry($account,$country=null){
+    	if($account=="vtkg5755" && $country=="us")
+    		return "ebay.com";
+    	elseif ($account=="vtkg5755" && $country=="de") 
+    		return "ebay.de";
+    	elseif ($account=="zuck") 
+    		return "wish.com";
+    	else
+    		$this->error('无法根据'.$account.'和'.$country.'匹配出销售平台');
+    }
+
+    //Calculate item cost for wish $productPrice=product purchase RMB price,$shippingFee=shipping RMB cost,$salePrice=sale price on wish USD
+    private function getWishCost($productPrice,$shippingFee,$salePrice){
+    	$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USDTORMB'));
+    	if($salePrice==null || $salePrice==0){
+			$salePrice = $this->calWishInitialPrice($productPrice,$shippingFee);
+		}
+		return round((($productPrice+0.5+$shippingFee)/$exchange + $salePrice*0.16),2);
+    }
+
+    //Calculate item cost for Germany $productPrice=product purchase RMB price,$shippingFee=shipping RMB cost,$salePrice=sale price on wish USD
+    private function getSzDeCost($productPrice,$shippingFee,$salePrice){
+    	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
+		$cost = ($productPrice+0.5+$shippingFee)/$exchange;
+		if($salePrice==null || $salePrice==0){
+			$salePrice = $this->calDeInitialPrice($productPrice,$shippingFee);
+		}
+		if($salePrice<12){
+			$cost = $cost + $salePrice*0.16+0.05;
+		}else{
+			$cost = $cost+$salePrice*0.139+0.3;
+		}
+		return round($cost,2);
+    }
+
+    //Calculate item cost for United States $productPrice=product purchase RMB price,$shippingFee=shipping RMB cost,$salePrice=sale price on wish USD
+    private function getSzUsCost($productPrice,$shippingFee,$salePrice){
+    	$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
+		$cost = ($productPrice+0.5+$shippingFee)/$exchange;
+		if($salePrice==null || $salePrice==0){
+			$salePrice = $this->calUsInitialPrice($productPrice,$shippingFee);
+		}
+		if($salePrice<12){
+			$cost = $cost+$salePrice*0.16+0.05;
+		}else{
+			$cost = $cost+$salePrice*0.139+0.3;
+		}
+		return round($cost,2);
+    }
 }
 
 ?>

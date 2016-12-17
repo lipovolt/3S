@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>深圳直发美国试算</title>
+<title>深圳直发{$market}{$account}{$country}销售表</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -35,7 +35,7 @@
 		</div>
 		<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="{:U('Sale/SzSale/usCal')}" method="POST">
+		<form name="search_product" id="search_product" action="{:U('Sale/SzSale/index',array('account'=>$account,'country'=>$country))}" method="POST">
 			<div class="search-area">
 				<div class="item">
 					<div class="form-group">
@@ -65,47 +65,56 @@
 		</form>
 		<div>
 			<div class="tab-content">	
+				<div align="center" style="font-size:x-large; color: red"> {$account} {$market} 销售表</div>
 				<table id="tablelist" class="tablelist">
 					<tr>
 						<th width="66">产品编码</th>
 						<th><div class="tl">中文名称</div></th>
 						<th><div class="tl">采购价￥</div></th>
-						<th><div class="tl">飞特方式</div></th>
-						<th><div class="tl">飞特运费￥</div></th>
-						<th><div class="tl">运德方式</div></th>
-						<th><div class="tl">运德运费￥</div></th>
-						<th><div class="tl">成本$</div></th>
-						<th><div class="tl">售价$</div></th>
-						<th><div class="tl">毛利润$</div></th>
+						<if condition="($country neq null)"> 
+							<th><div class="tl">{$country}方式</div></th>
+							<th><div class="tl">{$country}运费￥</div></th>
+						</if>
+						<th><div class="tl">其他方式</div></th>
+						<th><div class="tl">其他运费￥</div></th>
+						<if condition="($country eq 'us')"> 
+							<th><div class="tl">成本$</div></th>
+							<th><div class="tl">售价$</div></th>
+							<th><div class="tl">毛利润$</div></th>
+						<elseif condition="($country eq 'de')"/>
+							<th><div class="tl">成本€</div></th>
+							<th><div class="tl">售价€</div></th>
+							<th><div class="tl">毛利润€</div></th>
+						<else /> 
+							<th><div class="tl">成本$</div></th>
+							<th><div class="tl">售价$</div></th>
+							<th><div class="tl">毛利润$</div></th>
+						</if>
 						<th><div class="tl">毛利率</div></th>
 						<th><div class="tl">重量g</div></th>
+						<th><div class="tl">长cm</div></th>
+						<th><div class="tl">宽cm</div></th>
+						<th><div class="tl">高cm</div></th>
 					</tr>
 					<volist name="data" id="vo">
 						<tr>
 						<td><div class="tl">{$vo[C('DB_PRODUCT_SKU')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_PRODUCT_CNAME')]}</div></td>						
 						<td><div class="tl">{$vo[C('DB_PRODUCT_PRICE')]}</div></td>
-						<td><div class="tl">
-							<?php echo $vo['flt-shipping-fee'] < $vo['wedo-shipping-fee']?'<font style="color:#F00;">':'' ;?>{$vo.flt-shipping-way}
-							<?php echo $vo['flt-shipping-fee'] < $vo['wedo-shipping-fee']?'</font>':'' ;?>
-						</div></td>
-						<td><div class="tl">
-							<?php echo $vo['flt-shipping-fee'] < $vo['wedo-shipping-fee']?'<font style="color:#F00;">':'' ;?>{$vo['flt-shipping-fee']}
-							<?php echo $vo['flt-shipping-fee'] < $vo['wedo-shipping-fee']?'</font>':'' ;?>
-						</div></td>
-						<td><div class="tl">
-							<?php echo $vo['flt-shipping-fee'] >= $vo['wedo-shipping-fee']?'<font style="color:#F00;">':'' ;?>{$vo['wedo-shipping-way']}
-							<?php echo $vo['flt-shipping-fee'] < $vo['wedo-shipping-fee']?'</font>':'' ;?>
-						</div></td>
-						<td><div class="tl">
-							<?php echo $vo['flt-shipping-fee'] >= $vo['wedo-shipping-fee']?'<font style="color:#F00;">':'' ;?>{$vo['wedo-shipping-fee']}
-							<?php echo $vo['flt-shipping-fee'] < $vo['wedo-shipping-fee']?'</font>':'' ;?>
-						</div></td>
+						<if condition="($country neq null)"> 
+							<td><div class="tl">{$vo['local_shipping_way']}</div></td>
+							<td><div class="tl">{$vo['local_shipping_fee']}</div></td>
+						</if>
+						<td><div class="tl">{$vo['global_shipping_way']}</div></td>
+						<td><div class="tl">{$vo['global_shipping_fee']}</div></td>
 						<td><div class="tl">{$vo.cost}</div></td>
 						<td><div class="tl">{$vo[C('DB_SZ_US_SALE_PLAN_PRICE')]}</div></td>
 						<td><div class="tl">{$vo.gprofit}</div></td>
 						<td><div class="tl">{$vo.grate}</div></td>
 						<td><div class="tl">{$vo.weight}</div></td>
+						<td><div class="tl">{$vo.length}</div></td>
+						<td><div class="tl">{$vo.width}</div></td>
+						<td><div class="tl">{$vo.height}</div></td>
 						</tr>	
 					</volist> 								
 				</table>

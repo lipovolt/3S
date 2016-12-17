@@ -439,6 +439,7 @@ return array(
 	/*创建深圳仓出库表
 	create table if not exists `3s_sz_outbound`(
 	`id` smallint(6) unsigned primary key not null auto_increment,
+	`account` varchar(20) default null,
 	`market` varchar(20) default null,
 	`market_no` varchar(20) default null,
 	`status` varchar(10) default null,
@@ -461,6 +462,7 @@ return array(
 	*/
 	'DB_SZ_OUTBOUND' => 'sz_outbound',
 	'DB_SZ_OUTBOUND_ID' => 'id',
+	'DB_SZ_OUTBOUND_ACCOUNT' => 'account',
 	'DB_SZ_OUTBOUND_MARKET' => 'market',
 	'DB_SZ_OUTBOUND_MARKET_NO' => 'market_no',
 	'DB_SZ_OUTBOUND_STATUS' => 'status', //待出库，已出库
@@ -814,6 +816,36 @@ return array(
 	'DB_SZ_SALE_PLAN_METADATA_GRFR' =>'grfr',//growth rate fluctuation range
 	'DB_SZ_SALE_PLAN_METADATA_STANDARD_PERIOD' =>'standard_period',//the sale quantity of adjust period should be change to sale quantity of standard period
 
+	//sz_wish_sale_plan
+	/*
+	create table if not exists `3s_sz_wish_sale_plan`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`sku` varchar(10) not null,
+	`first_sale_date` timestamp default NOW(),
+	`last_modify_date` datetime default null,
+	`relisting_times` smallint(6) default 0,
+	`price_note` varchar(255) default null,
+	`cost` decimal(5,2) default null,
+	`sale_price` decimal(5,2) default null,
+	`suggested_price` decimal(5,2) default null,
+	`suggest` varchar(20) default null,
+	`status` tinyint(1) default 1,
+	`register` tinyint(1) default 1
+	) engine=myisam default charset=utf8;	
+	*/
+	'DB_SZ_WISH_SALE_PLAN' => 'sz_wish_sale_plan',
+	'DB_SZ_WISH_SALE_PLAN_ID' => 'id',
+	'DB_SZ_WISH_SALE_PLAN_SKU' => 'sku',
+	'DB_SZ_WISH_SALE_PLAN_FIRST_DATE' => 'first_sale_date',
+	'DB_SZ_WISH_SALE_PLAN_LAST_MODIFY_DATE' => 'last_modify_date',
+	'DB_SZ_WISH_SALE_PLAN_RELISTING_TIMES' => 'relisting_times',
+	'DB_SZ_WISH_SALE_PLAN_PRICE_NOTE' => 'price_note',
+	'DB_SZ_WISH_SALE_PLAN_COST' => 'cost',
+	'DB_SZ_WISH_SALE_PLAN_PRICE' => 'sale_price',
+	'DB_SZ_WISH_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
+	'DB_SZ_WISH_SALE_PLAN_SUGGEST' => 'suggest', //clear,us_relisting,us_price_up, ,us_price_down,de_relisting,de_price_up, ,de_price_down,complete_product_info,complete_sale_info,null
+	'DB_SZ_WISH_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+	'DB_SZ_WISH_SALE_PLAN_REGISTER' => 'register', //register shipping. 1=yes,0=no
 
 
 	/*
