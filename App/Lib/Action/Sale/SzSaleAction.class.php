@@ -1052,7 +1052,7 @@ class SzSaleAction extends CommonAction{
         $this->assign('data',$data);
         $this->assign('market',$this->getMarketByAccountCountry($account,$country));
         $this->assign('account',$account);
-        $this->assign('country',$this->getCountryCName($country));
+        $this->assign('country',$country);
         $this->assign('page',$show);
         $this->display();
 	}
