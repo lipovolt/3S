@@ -436,7 +436,7 @@ class SzSaleAction extends CommonAction{
 			$fee = $this->calWedoNjEubFee($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
 		}else{
-			$fee = $this->getWedoSzUsSw($weight,$l,$w,$h);
+			$fee = $this->getWedoSzUsSf($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
 		}
 		
