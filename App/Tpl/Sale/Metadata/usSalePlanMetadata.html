@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>美自建仓销售建议参数</title>
+<title>美国销售建议参数</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -28,16 +28,16 @@
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>销售</strong></div>
+			<div class="sidenav-hd"><strong>权限管理</strong></div>
 			<div class="sidenav-bd">
-				<include file="./Public/Tpl/saleMenu.html" />	
+				<include file="./Public/Tpl/adminMenu.html" />	
 			</div>
 		</div>
 		<div class="content">
 			<div class="tab-content">
 				<div class="block-hd">
 					<i class="icon import"></i>
-					<strong>美自建仓销售建议参数设置</strong>
+					<strong>美国销售建议参数设置</strong>
 				</div>
 				<table id="tablelist" class="tablelist">
 					<tr>
@@ -58,7 +58,7 @@
 					</tr>
 					<volist name="data" id="vo">
 						<tr>
-						<form method="POST" id="metadataUpdate" action="{:U('Sale/GgsUsswSale/updataMetaDate')}">
+						<form method="POST" id="metadataUpdate" action="{:U('Sale/Metadata/updateUsSaleMetaDate')}">
 							<td><div class="tl">
 							<input type="hidden" style="width:60px;" name="{:C('DB_USSW_SALE_PLAN_METADATA_ID')}" value="{$vo[C('DB_USSW_SALE_PLAN_METADATA_ID')]}" id="{:C('DB_USSW_SALE_PLAN_METADATA_ID')}"/>
 							<input type="text" style="width:60px;" name="{:C('DB_USSW_SALE_PLAN_METADATA_CLEAR_NOD')}" value="{$vo[C('DB_USSW_SALE_PLAN_METADATA_CLEAR_NOD')]}" id="{:C('DB_USSW_SALE_PLAN_METADATA_CLEAR_NOD')}"/></div></td>

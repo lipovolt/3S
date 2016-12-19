@@ -2,11 +2,6 @@
 
 class SzSaleAction extends CommonAction{
 
-	public function szSalePlanMetadata(){
-		$this->data=M(C('DB_SZ_SALE_PLAN_METADATA'))->select();
-		$this->display();
-	}
-
 	public function suggest($account,$country=null,$kw=null,$kwv=null){
 		$Data=D($this->getSalePlanViewModelName($account,$country));
 		if($_POST['keyword']=="" && $kwv==null){ 
@@ -375,36 +370,6 @@ class SzSaleAction extends CommonAction{
 			return $metadata[C('DB_SZ_SALE_PLAN_METADATA_SPR4')];
 		if($cost>50)
 			return $metadata[C('DB_SZ_SALE_PLAN_METADATA_SPR5')];
-	}
-
-	public function updataMetaDate(){
-		if($this->isPost()){
-			$data[C('DB_SZ_SALE_PLAN_METADATA_ID')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_ID'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_CLEAR_NOD')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_CLEAR_NOD'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_RELISTING_NOD')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_RELISTING_NOD'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_ADJUST_PERIOD')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_ADJUST_PERIOD'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_STANDARD_PERIOD')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_STANDARD_PERIOD'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_SPR1')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_SPR1'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_SPR2')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_SPR2'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_SPR3')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_SPR3'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_SPR4')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_SPR4'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_SPR5')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_SPR5'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_PCR')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_PCR'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_SQNR')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_SQNR'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_DENOMINATOR')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_DENOMINATOR'),'','htmlspecialchars');
-			$data[C('DB_SZ_SALE_PLAN_METADATA_GRFR')] = I('post.'.C('DB_SZ_SALE_PLAN_METADATA_GRFR'),'','htmlspecialchars');
-			$metadata = M(C('DB_SZ_SALE_PLAN_METADATA'));
-			$metadata->startTrans();
-			$result = $metadata->save($data);
-
-			$metadata->commit();
-            if(false !== $result || 0 !== $result){
-                $this->success('保存成功！');
-            }else{
-                $this->error("保存不成功！");
-            }
-
-		}
 	}
 
 	private function getSzUsShippingWay($weight,$l,$w,$h,$register){
