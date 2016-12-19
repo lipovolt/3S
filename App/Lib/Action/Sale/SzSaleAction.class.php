@@ -414,7 +414,13 @@ class SzSaleAction extends CommonAction{
 		}else{
 			return $this->getSzUsSw($weight,$l,$w,$h);
 		}*/
-		return "运德南京EUB";
+
+		//计算出运德深圳发美国的最低运费方式
+		if($register || $register ==1){
+			return "运德南京EUB";
+		}else{
+			return $this->getWedoSzUsSw($weight,$l,$w,$h);
+		}
 	}
 
 	private function getSzUsShippingFee($weight,$l,$w,$h,$register){
@@ -424,8 +430,16 @@ class SzSaleAction extends CommonAction{
 		}else{
 			return $this->getSzUsSf($weight,$l,$w,$h);
 		}*/
-		$fee = $this->calWedoNjEubFee($weight,$l,$w,$h);
-		return $fee==0?65536:$fee;
+
+		//计算出运德深圳发美国的最低运费
+		if($register || $register==1){
+			$fee = $this->calWedoNjEubFee($weight,$l,$w,$h);
+			return $fee==0?65536:$fee;
+		}else{
+			$fee = $this->getWedoSzUsSw($weight,$l,$w,$h);
+			return $fee==0?65536:$fee;
+		}
+		
 	}
 
 	private function getSzUsRsw($weight,$l,$w,$h){
