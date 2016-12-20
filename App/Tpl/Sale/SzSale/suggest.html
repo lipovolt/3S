@@ -206,8 +206,8 @@ function bModify(){
 						<else /> <td><div class="tl"><input name="status[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}"/></div></td>
 						</if>
 						<td>
-							<a href="{:U('Sale/SzSale/confirmSuggest',array('id'=>$vo['id'],'country'=>$country))}">已修改</a>
-							<a href="{:U('Sale/SzSale/ignoreSuggest',array('id'=>$vo['id'],'country'=>$country))}">忽略</a>
+							<a href="{:U('Sale/SzSale/confirmSuggest',array('id'=>$vo['id'],'account'=>$account,'country'=>$country))}">已修改</a>
+							<a href="{:U('Sale/SzSale/ignoreSuggest',array('id'=>$vo['id'],'account'=>$account,'country'=>$country))}">忽略</a>
 						</td>
 						</tr>	
 					</volist> 								
