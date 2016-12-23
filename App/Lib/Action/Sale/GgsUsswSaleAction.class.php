@@ -400,7 +400,7 @@ class GgsUsswSaleAction extends CommonAction{
     	$data[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
     	$data['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$data['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
-    	$data['local-shipping-fee1']=$this->getUsswLocalShippingFee1($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+    	$data['local-shipping-fee1']=$this->getUsswLocalShippingFee1($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
 		
 		$salePlan = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
 		if($sale_price!=null){
@@ -439,7 +439,7 @@ class GgsUsswSaleAction extends CommonAction{
     	$data[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
     	$data['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$data['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
-    	$data['local-shipping-fee1']=$this->getUsswLocalShippingFee1($product['weight'],$product['length'],$product['width'],$product['height']);
+    	$data['local-shipping-fee1']=$this->getUsswLocalShippingFee1($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product['length'],$product['width'],$product['height']);
 
     	if($this->getMarketByAccount($account)=='ebay'){
 			return $this->getUsswEbayISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1']);
@@ -547,12 +547,12 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key][C('DB_PRODUCT_TOUS')]=$value[C('DB_PRODUCT_TOUS')];
         	$data[$key]['way-to-us-fee']=$value[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-way1']=$this->getUsswLocalShippingWay1($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-fee1']=$this->getUsswLocalShippingFee1($value['weight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key]['local-shipping-way2']=$this->getUsswLocalShippingWay2($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-fee2']=$this->getUsswLocalShippingFee2($value['weight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key]['local-shipping-way3']=$this->getUsswLocalShippingWay3($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-fee3']=$this->getUsswLocalShippingFee3($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way1']=$this->getUsswLocalShippingWay1($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee1']=$this->getUsswLocalShippingFee1($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way2']=$this->getUsswLocalShippingWay2($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee2']=$this->getUsswLocalShippingFee2($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way3']=$this->getUsswLocalShippingWay3($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee3']=$this->getUsswLocalShippingFee3($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value['length'],$value['width'],$value['height']);
         	$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_PRICE'));
         	if($this->getMarketByAccount($account)=='ebay'){
         		$data[$key]['cost']=$this->getUsswEbayCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_USTARIFF')],$data[$key]['ussw-fee'],$data[$key]['way-to-us-fee'],$data[$key]['local-shipping-fee1'],$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]);
@@ -598,12 +598,12 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['ussw-fee']=$this->calUsswSIOFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
         	$data[$key][C('DB_PRODUCT_TOUS')]=$value[C('DB_PRODUCT_TOUS')];
         	$data[$key]['way-to-us-fee']=$data[$key][C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-way1']=$this->getUsswLocalShippingWay1($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-fee1']=$this->getUsswLocalShippingFee1($value['weight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key]['local-shipping-way2']=$this->getUsswLocalShippingWay2($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-fee2']=$this->getUsswLocalShippingFee2($value['weight'],$value['length'],$value['width'],$value['height']);
-        	$data[$key]['local-shipping-way3']=$this->getUsswLocalShippingWay3($value[C('DB_PRODUCT_WEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
-        	$data[$key]['local-shipping-fee3']=$this->getUsswLocalShippingFee3($value['weight'],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way1']=$this->getUsswLocalShippingWay1($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee1']=$this->getUsswLocalShippingFee1($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way2']=$this->getUsswLocalShippingWay2($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee2']=$this->getUsswLocalShippingFee2($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value['length'],$value['width'],$value['height']);
+        	$data[$key]['local-shipping-way3']=$this->getUsswLocalShippingWay3($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_LENGTH')],$value[C('DB_PRODUCT_WIDTH')],$value[C('DB_PRODUCT_HEIGHT')]);
+        	$data[$key]['local-shipping-fee3']=$this->getUsswLocalShippingFee3($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]:$value[C('DB_PRODUCT_PWEIGHT')],$value['length'],$value['width'],$value['height']);
         	$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_PRICE'));
         	if($this->getMarketByAccount($account)=='ebay'){
         		$data[$key]['cost']=$this->getUsswEbayCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_USTARIFF')],$data[$key]['ussw-fee'],$data[$key]['way-to-us-fee'],$data[$key]['local-shipping-fee1'],$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]);
