@@ -338,12 +338,12 @@ class RestockAction extends CommonAction{
 		                    	if($status=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 		                    		$w = $sheetId==0?'美自建仓':'万邑通德国';
 		                    		$q = ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
-		                    		$this->addRestockOrder($w,$q,$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
+		                    		$this->addRestockOrder($w,$q,$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()*30);
 		                    	}
 		                    	if($status=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
 		                    		$w = $sheetId==0?'万邑通美西':'万邑通德国';
 		                    		$q = ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
-		                    		$this->addRestockOrder($w,$q,$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
+		                    		$this->addRestockOrder($w,$q,$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()*30);
 		                    	}
 		                    }	
 	                    }
