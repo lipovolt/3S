@@ -28,6 +28,7 @@ class WinitDeSaleAction extends CommonAction{
         	$data[$key]['way-to-de-fee']=$data[$key][C('DB_PRODUCT_TODE')]=="空运"?$this->getWinitAirFirstTransportFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]):$this->getWinitSeaFirstTransportFee($value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
         	$data[$key]['local-shipping-way']=$this->getWinitLocalShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
         	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($value['pweight'],$value['plength'],$value['pwidth'],$value['pheight']);
+
         	$data[$key][C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]=$value[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')];
         	$data[$key]['cost']=round($this->getWinitUsCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key][C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]-$data[$key]['cost'];
@@ -131,7 +132,7 @@ class WinitDeSaleAction extends CommonAction{
 				2=>'DE Post Large Letter',
 				3=>'DPD Small Parcels',
 				4=>'DPD Normal Parcels',
-				4=>'DHL Packet Service'
+				5=>'DHL Packet Service'
 			);
 		$fees=array(
 				0=>0,
@@ -171,7 +172,7 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	private function calWinitPostSmallFee($weight,$l,$w,$h){
-		if($weight>0 And $weight <= 500 and $l >=10 and $l<=353 and $w>=7 and $w<=25 and $h>0 and $h<=2){
+		if($weight>0 And $weight <= 500 and $l >=10 and $l<=35.3 and $w>=7 and $w<=25 and $h>0 and $h<=2){
 			return 1.67;
 		}else{
 			return 0;
@@ -179,7 +180,7 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	private function calWinitPostLargeFee($weight,$l,$w,$h){
-		if($weight>0 And $weight <= 1000 and $l >=10 and $l<=353 and $w>=7 and $w<=30 and $h>0 and $h<=15){
+		if($weight>0 And $weight <= 1000 and $l >=10 and $l<=35.3 and $w>=7 and $w<=30 and $h>0 and $h<=15){
 			if($weight>=0 and $weight<=500){
 				return 2.06;
 			}
