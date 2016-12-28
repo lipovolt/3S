@@ -14,6 +14,7 @@ class MetadataAction extends CommonAction{
 			$data[C('DB_METADATA_USDTORMB')] = I('post.'.C('DB_METADATA_USDTORMB'),'','htmlspecialchars');
 			$data[C('DB_METADATA_EURTORMB')] = I('post.'.C('DB_METADATA_EURTORMB'),'','htmlspecialchars');
 			$data[C('DB_METADATA_DEMWST')] = I('post.'.C('DB_METADATA_DEMWST'),'','htmlspecialchars');
+			$data[C('DB_METADATA_USED_UPC')] = I('post.'.C('DB_METADATA_USED_UPC'),'','htmlspecialchars');
 			$metadata = M(C('DB_METADATA'));
 			$metadata->startTrans();
 			$result = $metadata->save($data);

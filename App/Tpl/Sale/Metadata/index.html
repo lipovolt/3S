@@ -43,6 +43,7 @@
 						<th><div class="tl">美元/人民币</div></th>
 						<th><div class="tl">欧元/人民币</div></th>
 						<th><div class="tl">德国增值税率</div></th>
+						<th><div class="tl">已使用UPC</div></th>
 						<th><div class="tl">操作</div></th>
 					</tr>
 					<volist name="data" id="vo">
@@ -53,6 +54,7 @@
 							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_METADATA_USDTORMB')}" value="{$vo[C('DB_METADATA_USDTORMB')]}" id="{:C('DB_METADATA_USDTORMB')}"/></div></td>						
 							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_METADATA_EURTORMB')}" value="{$vo[C('DB_METADATA_EURTORMB')]}" id="{:C('DB_METADATA_EURTORMB')}"/></div></td>
 							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_METADATA_DEMWST')}" value="{$vo[C('DB_METADATA_DEMWST')]}" id="{:C('DB_METADATA_DEMWST')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_METADATA_USED_UPC')}" value="{$vo[C('DB_METADATA_USED_UPC')]}" id="{:C('DB_METADATA_USED_UPC')}"/></div></td>
 							<td><div class="tl"><button class="btn btn-blue btn-s" id="saveMetadataInfo">保存</button></div></td>
 						</form>
 						</tr>	
