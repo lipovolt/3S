@@ -174,22 +174,23 @@ class ProductAction extends CommonAction{
         
         if($verifyError != null){
             $this->error($verifyError);
-        }else{                
+        }else{
             $product = M(C('db_product'));
             $product-> startTrans();
             $result =  $product->save($data);
             $product->commit();
-            $metadata = M(C('DB_METADATA'));
-            $mdata[C('DB_METADATA_USED_UPC')]=$data[C('db_product_upc')];
-            $mdata[C('DB_METADATA_ID')]=1;
-            $metadata->save($mdata);
-            $metadata->commit();
+            if($data[C('db_product_upc')]!=0 && $data[C('db_product_upc')]!=null && $data[C('db_product_upc')]!='0') {
+                $metadata = M(C('DB_METADATA'));
+                $mdata[C('DB_METADATA_USED_UPC')]=$data[C('db_product_upc')];
+                $mdata[C('DB_METADATA_ID')]=1;
+                $metadata->save($mdata);
+                $metadata->commit();
+            }
             if(false !== $result || 0 !== $result) {
                 $this->success('操作成功！');
             }else{
                 $this->error('写入错误！');
             }
-
         } 
                
     }
