@@ -72,7 +72,7 @@ class RestockAction extends CommonAction{
 	        );
         $this->exportExcel('OutOfStock',$xlsCell,F('out'));
 	}
-·
+	
 	public function importStorage($country=null){
 		if($country == null){
 			$this->country='美国和德国';
