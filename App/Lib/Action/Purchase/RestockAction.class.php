@@ -72,7 +72,7 @@ class RestockAction extends CommonAction{
 	        );
         $this->exportExcel('OutOfStock',$xlsCell,F('out'));
 	}
-
+·
 	public function importStorage($country=null){
 		if($country == null){
 			$this->country='美国和德国';
@@ -538,8 +538,8 @@ class RestockAction extends CommonAction{
 
     private function isInPurchaseItem($warehouse,$sku){
     	$map[C('DB_PURCHASE_STATUS')] = array('in','待确认,待付款,待发货');
-    	$map[C('DB_PURCHASE_ITEM_WAREHOUSE')] = $warehouse;
-    	$map[C('DB_PURCHASE_ITEM_SKU')] = $sku;
+    	$map[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('eq',$warehouse);
+    	$map[C('DB_PURCHASE_ITEM_SKU')] = array('eq',$sku);
     	$result=D("PurchaseView")->where($map)->find();
     	if($result !== null && $result!==false){
     		return true;
@@ -550,8 +550,8 @@ class RestockAction extends CommonAction{
 
     private function getPurchasedQuantity($warehouse,$sku){
     	$map[C('DB_PURCHASE_STATUS')] = array('in','待确认,待付款,待发货');
-    	$map[C('DB_PURCHASE_ITEM_WAREHOUSE')] = $warehouse;
-    	$map[C('DB_PURCHASE_ITEM_SKU')] = $sku;
+    	$map[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('eq',$warehouse);
+    	$map[C('DB_PURCHASE_ITEM_SKU')] = array('eq',$sku);
     	$result=D("PurchaseView")->where($map)->sum(C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY'));
     	if($result == null){
     		return 0;
@@ -580,7 +580,7 @@ class RestockAction extends CommonAction{
     private function getIInventory($sku){
     	$iinventory = 0;
     	$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
-		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = $sku;
+		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
 		$iinventory = D("UsswInboundView")->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
 		return $iinventory;
   
