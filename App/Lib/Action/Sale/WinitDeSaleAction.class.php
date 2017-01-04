@@ -30,7 +30,7 @@ class WinitDeSaleAction extends CommonAction{
         	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($value['pweight'],$value['plength'],$value['pwidth'],$value['pheight']);
 
         	$data[$key][C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]=$value[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')];
-        	$data[$key]['cost']=round($this->getWinitUsCost($data[$key]),2);
+        	$data[$key]['cost']=round($this->getWinitDeCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key][C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]*100,2).'%';
         	$data[$key]['pweight']=$value[C('DB_PRODUCT_PWEIGHT')];
@@ -63,7 +63,7 @@ class WinitDeSaleAction extends CommonAction{
         	$data[$key]['local-shipping-way']=$this->getWinitLocalShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
         	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($value['pweight'],$value['plength'],$value['pwidth'],$value['pheight']);
         	$data[$key][C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]=$value[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')];
-        	$data[$key]['cost']=round($this->getWinitUsCost($data[$key]),2);
+        	$data[$key]['cost']=round($this->getWinitDeCost($data[$key]),2);
         	$data[$key]['gprofit']=$data[$key][C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]*100,2).'%';
         	$data[$key]['pweight']=$value[C('DB_PRODUCT_PWEIGHT')];
@@ -233,9 +233,9 @@ class WinitDeSaleAction extends CommonAction{
 		return $fee;
 	}
 
-	private function getWinitUsCost($data){
+	private function getWinitDeCost($data){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
-		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_DETARIFF')]+$data['winit-fee']+$data['way-to-de-fee']+$data['local-shipping-fee']+$data[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]*0.144+0.35;
+		$c = ($data[C('DB_PRODUCT_PRICE')]+0.5)/$exchange+($data[C('DB_PRODUCT_PRICE')]*1.2/$exchange)*$data[C('DB_PRODUCT_DETARIFF')]+$data['winit-fee']+$data['way-to-de-fee']+$data['local-shipping-fee']+$data[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]*0.164+0.35;
 		return $c;
 	}
 }

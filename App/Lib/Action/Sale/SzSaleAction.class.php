@@ -1102,9 +1102,9 @@ class SzSaleAction extends CommonAction{
 			$salePrice = $this->calDeInitialPrice($productPrice,$shippingFee);
 		}
 		if($salePrice<12){
-			$cost = $cost + $salePrice*0.16+0.05;
+			$cost = $cost + $salePrice*0.185+0.05;
 		}else{
-			$cost = $cost+$salePrice*0.139+0.3;
+			$cost = $cost+$salePrice*0.164+0.3;
 		}
 		return round($cost,2);
     }
