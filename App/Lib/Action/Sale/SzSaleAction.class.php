@@ -370,37 +370,37 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function getSzUsShippingWay($weight,$l,$w,$h,$register){
-		//计算出不同物流深圳发美国的最低运费方式
+		/*//计算出不同物流深圳发美国的最低运费方式
 		if($register || $register ==1){
 			return $this->getSzUsRsw($weight,$l,$w,$h);
 		}else{
 			return $this->getSzUsSw($weight,$l,$w,$h);
-		}
+		}*/
 
-		/*//计算出运德深圳发美国的最低运费方式
+		//计算出运德深圳发美国的最低运费方式
 		if($register || $register ==1){
 			return "运德南京EUB";
 		}else{
 			return $this->getWedoSzUsSw($weight,$l,$w,$h);
-		}*/
+		}
 	}
 
 	private function getSzUsShippingFee($weight,$l,$w,$h,$register){
-		//计算出不同物流深圳发美国的最低运费
+		/*//计算出不同物流深圳发美国的最低运费
 		if($register || $register==1){
 			return $this->getSzUsRsf($weight,$l,$w,$h);
 		}else{
 			return $this->getSzUsSf($weight,$l,$w,$h);
-		}
+		}*/
 
-		/*//计算出运德深圳发美国的最低运费
+		//计算出运德深圳发美国的最低运费
 		if($register || $register==1){
 			$fee = $this->calWedoNjEubFee($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
 		}else{
 			$fee = $this->getWedoSzUsSf($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
-		}*/
+		}
 		
 	}
 
@@ -635,37 +635,37 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function getSzDeShippingWay($weight,$l,$w,$h,$register){
-		//计算出不同物流深圳发德国的最低运费方式
+		/*//计算出不同物流深圳发德国的最低运费方式
 		if($register||$register==1){
 			return $this->getSzDeRsw($weight,$l,$w,$h);
 		}else{
 			return $this->getSzDeSw($weight,$l,$w,$h);
-		}
+		}*/
 
-		/*//计算出当前合作物流的深圳发德国发货方式
+		//计算出当前合作物流的深圳发德国发货方式
 		if($register||$register==1){
 			return "运德德国小包（香港）挂号";
 		}else{
 			return "运德德国小包（香港）平邮";
-		}*/
+		}
 	}
 
 	private function getSzDeShippingFee($weight,$l,$w,$h,$register){
-		//计算出不同物流深圳发德国的最低运费
+		/*//计算出不同物流深圳发德国的最低运费
 		if($register||$register==1){
 			return $this->getSzDeRsf($weight,$l,$w,$h);
 		}else{
 			return $this->getSzDeSf($weight,$l,$w,$h);
-		}
+		}*/
 
-		/*//计算出当前合作物流的深圳发德国发货运费
+		//计算出当前合作物流的深圳发德国发货运费
 		if($register||$register==1){
 			$fee=$this->calWedoHDRFee($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
 		}else{
 			$fee=$this->calWedoHDFee($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
-		}*/
+		}
 	}
 
 	private function getSzDeRsw($weight,$l,$w,$h){
