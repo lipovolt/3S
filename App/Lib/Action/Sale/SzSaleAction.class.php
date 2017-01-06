@@ -644,9 +644,9 @@ class SzSaleAction extends CommonAction{
 
 		//计算出当前合作物流的深圳发德国发货方式
 		if($register||$register==1){
-			return "运德德国小包（香港）挂号";
+			return "运德德国小包（新加坡）挂号";
 		}else{
-			return "运德德国小包（香港）平邮";
+			return "运德德国小包（新加坡）平邮";
 		}
 	}
 
@@ -794,7 +794,7 @@ class SzSaleAction extends CommonAction{
 
 	private function calWedoHDRFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 16.65+63.11*$weight/1000;
+			return 14.8+63.21*$weight/1000;
 		}
 		else{
 			return 0;
@@ -804,7 +804,7 @@ class SzSaleAction extends CommonAction{
 	//运德德国小包（香港）平邮
 	private function calWedoHDFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 4.29+97.32*$weight/1000;
+			return 2.36+85.26*$weight/1000;
 		}
 		else{
 			return 0;
