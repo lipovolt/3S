@@ -370,37 +370,37 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function getSzUsShippingWay($weight,$l,$w,$h,$register){
-		/*//计算出不同物流深圳发美国的最低运费方式
+		//计算出不同物流深圳发美国的最低运费方式
 		if($register || $register ==1){
 			return $this->getSzUsRsw($weight,$l,$w,$h);
 		}else{
 			return $this->getSzUsSw($weight,$l,$w,$h);
-		}*/
+		}
 
-		//计算出运德深圳发美国的最低运费方式
+		/*//计算出运德深圳发美国的最低运费方式
 		if($register || $register ==1){
 			return "运德南京EUB";
 		}else{
 			return $this->getWedoSzUsSw($weight,$l,$w,$h);
-		}
+		}*/
 	}
 
 	private function getSzUsShippingFee($weight,$l,$w,$h,$register){
-		/*//计算出不同物流深圳发美国的最低运费
+		//计算出不同物流深圳发美国的最低运费
 		if($register || $register==1){
 			return $this->getSzUsRsf($weight,$l,$w,$h);
 		}else{
 			return $this->getSzUsSf($weight,$l,$w,$h);
-		}*/
+		}
 
-		//计算出运德深圳发美国的最低运费
+		/*//计算出运德深圳发美国的最低运费
 		if($register || $register==1){
 			$fee = $this->calWedoNjEubFee($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
 		}else{
 			$fee = $this->getWedoSzUsSf($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
-		}
+		}*/
 		
 	}
 
@@ -408,22 +408,16 @@ class SzSaleAction extends CommonAction{
 		$ways=array(
 				0=>'No way',
 				1=>'飞特EUB',
-				2=>'飞特中邮挂号',
-				3=>'运德南京EUB',
-				4=>'运德漳州挂号',
-				5=>'运德广州挂号'
+				2=>'运德南京EUB'
 			);
 		$fees=array(
 				0=>0,
 				1=>$this->calFlytEubFee($weight,$l,$w,$h),
-				2=>$this->calFlytCprUsFee($weight,$l,$w,$h),
-				3=>$this->calWedoNjEubFee($weight,$l,$w,$h),
-				4=>$this->calWedoZzCprUsFee($weight,$l,$w,$h),
-				5=>$this->calWedoGzCprUsFee($weight,$l,$w,$h)
+				2=>$this->calWedoNjEubFee($weight,$l,$w,$h)
 			);
 		$cheapest=65536;
 		$way=0;
-		for ($i=0; $i < 6; $i++) { 
+		for ($i=0; $i < 3; $i++) { 
 			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
 				$cheapest = $fees[$i];
 				$way = $i;
@@ -436,13 +430,10 @@ class SzSaleAction extends CommonAction{
 		$fees=array(
 				0=>0,
 				1=>$this->calFlytEubFee($weight,$l,$w,$h),
-				2=>$this->calFlytCprUsFee($weight,$l,$w,$h),
-				3=>$this->calWedoNjEubFee($weight,$l,$w,$h),
-				4=>$this->calWedoZzCprUsFee($weight,$l,$w,$h),
-				5=>$this->calWedoGzCprUsFee($weight,$l,$w,$h)
+				2=>$this->calWedoNjEubFee($weight,$l,$w,$h)
 			);
 		$cheapest=65536;
-		for ($i=0; $i < 6; $i++) { 
+		for ($i=0; $i < 3; $i++) { 
 			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
 				$cheapest = $fees[$i];
 			}
@@ -591,13 +582,14 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
+	//运德美国EUB
 	private function calWedoNjEubFee($weight,$l,$w,$h){
 		if($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
 			if($weight<=200){
-				return $weight<50?(7.92+50*0.0704):(7.92+$weight*0.0704);
+				return $weight<50?(9+50*0.08):(9+$weight*0.08);
 			}
 			else{
-				return 7.92+$weight*0.066;
+				return 9+$weight*0.075;
 			}
 		}
 		else{
@@ -605,6 +597,7 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
+	//运德漳州小包挂号
 	private function calWedoZzCprUsFee($weight,$l,$w,$h){
 		if ($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return 8+90.5*$weight/1000;
@@ -614,6 +607,7 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
+	//运德漳州小包平邮
 	private function calWedoZzCpUsFee($weight,$l,$w,$h){
 		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return $weight<50?50*0.085:$weight*0.085;
@@ -622,6 +616,7 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
+	//运德广州小包平邮
 	private function calWedoGzCpUsFee($weight,$l,$w,$h){
 		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return $weight<50?50*0.0905:$weight*0.0905;
@@ -630,6 +625,7 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
+	//运德广州小包挂号
 	private function calWedoGzCprUsFee($weight,$l,$w,$h){
 		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return $weight<50?8+50*0.0905:8+$weight*0.0905;
@@ -639,37 +635,37 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function getSzDeShippingWay($weight,$l,$w,$h,$register){
-		/*//计算出不同物流深圳发德国的最低运费方式
+		//计算出不同物流深圳发德国的最低运费方式
 		if($register||$register==1){
 			return $this->getSzDeRsw($weight,$l,$w,$h);
 		}else{
 			return $this->getSzDeSw($weight,$l,$w,$h);
-		}*/
+		}
 
-		//计算出当前合作物流的深圳发德国发货方式
+		/*//计算出当前合作物流的深圳发德国发货方式
 		if($register||$register==1){
 			return "运德德国小包（香港）挂号";
 		}else{
 			return "运德德国小包（香港）平邮";
-		}
+		}*/
 	}
 
 	private function getSzDeShippingFee($weight,$l,$w,$h,$register){
-		/*//计算出不同物流深圳发德国的最低运费
+		//计算出不同物流深圳发德国的最低运费
 		if($register||$register==1){
 			return $this->getSzDeRsf($weight,$l,$w,$h);
 		}else{
 			return $this->getSzDeSf($weight,$l,$w,$h);
-		}*/
+		}
 
-		//计算出当前合作物流的深圳发德国发货运费
+		/*//计算出当前合作物流的深圳发德国发货运费
 		if($register||$register==1){
 			$fee=$this->calWedoHDRFee($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
 		}else{
 			$fee=$this->calWedoHDFee($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
-		}
+		}*/
 	}
 
 	private function getSzDeRsw($weight,$l,$w,$h){
@@ -780,7 +776,7 @@ class SzSaleAction extends CommonAction{
 
 	private function calFlytHDRFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 13+79*$weight/1000;
+			return 13.9+84*$weight/1000;
 		}
 		else{
 			return 0;
@@ -789,7 +785,7 @@ class SzSaleAction extends CommonAction{
 
 	private function calFlytHDFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 4+100*$weight/1000;
+			return 4.1+107*$weight/1000;
 		}
 		else{
 			return 0;
@@ -798,16 +794,17 @@ class SzSaleAction extends CommonAction{
 
 	private function calWedoHDRFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 15.12+55.96*$weight/1000;
+			return 16.65+63.11*$weight/1000;
 		}
 		else{
 			return 0;
 		}
 	}
 
+	//运德德国小包（香港）平邮
 	private function calWedoHDFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 4.29+87.03*$weight/1000;
+			return 4.29+97.32*$weight/1000;
 		}
 		else{
 			return 0;
@@ -832,6 +829,7 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
+	//运德漳州挂号运费
 	private function calWedoZprFee($weight,$l,$w,$h){
 		if ($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return 8+100*$weight/1000;
@@ -841,6 +839,7 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
+	//运德漳州平邮运费
 	private function calWedoZpFee($weight,$l,$w,$h){
 		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
 			return $weight<50?50*0.1:$weight*0.1;
