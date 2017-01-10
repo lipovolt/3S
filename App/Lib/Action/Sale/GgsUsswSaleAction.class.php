@@ -128,8 +128,7 @@ class GgsUsswSaleAction extends CommonAction{
 		}else{
 			$this->error('无法保存，当前产品没有销售建议');
 		}
-		
-		$this->success('保存成功');
+		$this->success('保存成功',U('usswSaleSuggest',array('account'=>$account)));
 	}
 
 	public function bIgnoreHandle($account,$kw=null,$kwv=null){
@@ -189,7 +188,7 @@ class GgsUsswSaleAction extends CommonAction{
 		$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 		$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
 		$salePlanTable->save($data);
-		$this->success('保存成功');
+		$this->success('保存成功',U('usswSaleSuggest',array('account'=>$account)));
 	}
 
 	public function updateUsswSalePlan($account, $kw=null,$kwv=null){
