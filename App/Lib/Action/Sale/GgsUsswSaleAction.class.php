@@ -224,7 +224,11 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 		$salePlanTable->commit();
 		$this->calUsswSaleInfoHandle($account);
-		$this->success('修改已保存',U('usswSaleSuggest',array('account'=>$account,'kw'=>$kw,'kwv'=>$kwv)));		
+		if($kwv==null){
+			$this->success('保存成功');
+		}else{
+			$this->success('修改已保存',U('usswSaleSuggest',array('account'=>$account,'kw'=>$kw,'kwv'=>$kwv)));
+		}		
 	}
 
 	private function calUsswSuggest($account,$sku){
@@ -637,7 +641,8 @@ class GgsUsswSaleAction extends CommonAction{
 	//calculate amazon cost according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee) $sPrice(sale price)
 	private function getUsswAmazonCost($pPrice,$tariff,$wFee,$tFee,$sFee,$sPrice){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		return round((($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee+$sPrice*0.15),2);
+		$aFee = $sPrice*0.15<1?1:$sPrice*0.15;
+		return round((($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee+$aFee),2);
 	}
 
 	//calculate ebay initial sale price according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee)
