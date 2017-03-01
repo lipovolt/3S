@@ -9,7 +9,7 @@ class SupplierAction extends CommonAction{
             $Page = new Page($count,20);            
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
-            $supplier = $Data->limit($Page->firstRow.','.$Page->listRows)->select();
+            $supplier = $Data->order('id desc')->limit($Page->firstRow.','.$Page->listRows)->select();
             $this->assign('supplier',$supplier);
             $this->assign('page',$show);
         }
