@@ -129,7 +129,7 @@ class InboundAction extends CommonAction{
                 $highestColumn = $sheet->getHighestDataColumn(); // 取得总列数
 
                 for ($i=$highestRow; $i >0 ; $i--) { 
-                    if($sheet->getCell("A".$i) == null or $sheet->getCell("A".$i) =='')
+                    if($sheet->getCell("B".$i) == null or $sheet->getCell("B".$i) =='')
                         $highestRow = $i;
                     else{
                         $highestRow = $i;

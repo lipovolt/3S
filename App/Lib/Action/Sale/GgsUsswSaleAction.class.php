@@ -859,16 +859,16 @@ class GgsUsswSaleAction extends CommonAction{
 	Private function calUsswUspsPriorityExpressPackageFee($weight,$l,$w,$h){
 		if($weight>0 And $weight <= 31751 and ($l + 2 * ($w + $h)) <= 213){
 			if($weight<=226){
-				return 31.2;
+				return 33.07;
 			}
 			elseif($weight>226 && $weight<=453){
-				return 36.6;
+				return 38.79;
 			}
 			elseif($weight>453 && $weight<=906){
-				return 40.15;
+				return 42.56;
 			}
 			elseif($weight>906){
-				return 40.15+ceil($weight/453)*6;
+				return 42.46+ceil($weight/453)*6;
 			}
 		}
 		else{
