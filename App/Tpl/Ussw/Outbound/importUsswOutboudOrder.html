@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript" src='__PUBLIC__/Js/jquery-1.7.2.min.js'></script>
 </head>
 <body>
 
@@ -55,22 +56,60 @@
 							<div class="block">
 								<div class="block-hd">
 									<i class="icon import"></i>
-									<strong>批量导入ebay订单</strong>
+									<strong>批量导入美自建仓出库单</strong>
 								</div>
 								<div class="block-bd">
 									<div class="block-indent" style="overflow:hidden;">
 										<div style="float:left;width:456px;">
-											<p>导出的ebay未发货订单是CVS文件，需要转换成XLS文件，文件内容无需修改</p>
-											<div>
-												 <form action="{:U('Ussw/Outbound/importEbaySaleRecordFile')}" method="post" enctype="multipart/form-data" onsubmit="return check()">
-												 	<label for="sellerID" class="control-label">ebay账号</label>
-												 	<select name="sellerID"  id="sellerID">
-														<option value="unSelected" >请选择</option>
-														<option value="greatgoodshop" selected>greatgoodshop</option>		
-													</select>
-										            <input type="file" name="import" value=""/>
-								          			<input type="hidden" name="table" value="tablename"/>
-									             	<input type="submit" value="导入"/>
+											<p>ebay出库单： 导出的ebay未发货订单是CVS文件，需要转换成XLS文件，文件内容无需修改</p>
+											<p>amazon出库单： order report 每天0点会自动生成订单的txt文件，需要用excel另存为xls文件，其他无需修改。</p>
+											<div >
+												<form action="{:U('Ussw/Outbound/importUOOHandel')}" method="post" enctype="multipart/form-data" onsubmit="return check()">
+												 	<div>
+													 	<label for="market" class="control-label">平台</label>
+													 	<select name="market"  id="market">
+															<option value="" selected>请选择</option>
+																<option value="amazon">amazon</option>
+																<option value="ebay">ebay</option>
+																<option value="groupon">groupon</option>
+														</select>
+														<select2></select2>
+													<script>
+													 $("#market").change(function(){
+													     var id=$("#market").val();
+													     if(id=="amazon"){
+													         $.get('20160911.php',null,function(data){
+													             $("select2").empty();
+													             $("select2").append("<label>账号</label><select name='sellerID' id='sellerID'><option>lipovolt</option></select>");
+													         })
+													     }
+													     if(id=="ebay"){
+													         $.get('20160911.php',null,function(data){
+													             $("select2").empty();
+													             $("select2").append("<label>账号</label><select name='sellerID' id='sellerID'><option>greatgoodshop</option><option>blackfive</option></select>");
+													         })
+													     }
+													     if(id=="groupon"){
+													         $.get('20160911.php',null,function(data){
+													             $("select2").empty();
+													             $("select2").append("<label>账号</label><select name='sellerID' id='sellerID'><option>lipovolt</option></select>");
+													         })
+													     }
+													     if(id==""){
+													         $.get('20160911.php',null,function(data){
+													             $("select2").empty();
+													             $("select2").append("<label>账号</label><select name='sellerID' id='sellerID'><option>请选择平台</option></select>");
+													         })
+													     }
+
+													})
+													</script>
+													</div>
+													<div>
+											            <input type="file" name="import" value=""/>
+									          			<input type="hidden" name="table" value="tablename"/>
+										             	<input type="submit" value="导入"/>
+									             	</div>
 									         	</form>
 											</div>
 											<p>

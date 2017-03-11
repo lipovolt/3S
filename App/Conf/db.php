@@ -231,7 +231,7 @@ return array(
 	*/
 	'DB_USSW_OUTBOUND' => 'ussw_outbound',
 	'DB_USSW_OUTBOUND_ID' => 'id',
-	'DB_USSW_OUTBOUND_MARKET' => 'market',
+	'DB_USSW_OUTBOUND_MARKET' => 'market', //ebay,amazon,groupon
 	'DB_USSW_OUTBOUND_MARKET_NO' => 'market_no',
 	'DB_USSW_OUTBOUND_STATUS' => 'status', //待出库，已出库
 	'DB_USSW_OUTBOUND_SHIPPING_COMPANY' => 'shipping_company',

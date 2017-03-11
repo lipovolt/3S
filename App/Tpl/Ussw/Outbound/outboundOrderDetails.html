@@ -68,38 +68,42 @@ function del()
                 	<span>{$order[0][C('DB_USSW_OUTBOUND_STATUS')]}</span>
                 </div>
             </div>
+            <div class="form-group">
+                <label for="" class="control-label">买家ID：</label>
+                <div class="control-wrap">
+                	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_ID')]}</span>
+                </div>
+            </div>
         </div>
-        
+
         <div class="item">
             <div class="form-group">
-                <label for="" class="control-label">ebay卖家ID：</label>
+                <label for="" class="control-label">平台：</label>
+                <div class="control-wrap">
+                	<span>{$order[0][C('DB_USSW_OUTBOUND_MARKET')]}</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="control-label">账号：</label>
                 <div class="control-wrap">
                 	<span>{$order[0][C('DB_USSW_OUTBOUND_SELLER_ID')]}</span>
                 </div>
             </div>
             <div class="form-group">
-                <label for="" class="control-label">ebay买家ID：</label>
-                <div class="control-wrap">
-                	<span>{$order[0][C('DB_USSW_OUTBOUND_BUYER_ID')]}</span>
-                </div>
-            </div>
-        </div>        
-        
-        <div class="item">
-            <div class="form-group">
-                <label for="" class="control-label">卖家订单号：</label>
+                <label for="" class="control-label">平台订单号：</label>
                 <div class="control-wrap">
                 	<span>{$order[0][C('DB_USSW_OUTBOUND_MARKET_NO')]}</span>
                 </div>
             </div>
-            <div class="form-group">
+        </div>
+          
+      	<div class="item">
+       		<div class="form-group">
                 <label for="" class="control-label">派送供应商：</label>
                 <div class="control-wrap">
                 	<span>{$order[0][C('DB_USSW_OUTBOUND_SHIPPING_COMPANY')]}</span>
                 </div>
             </div>
-        </div>
-       <div class="item">
             <div class="form-group">
                 <label for="" class="control-label">发货方式：</label>
                 <div class="control-wrap">

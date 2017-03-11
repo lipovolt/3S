@@ -159,6 +159,36 @@ return array(
 		'J'=>'RelationshipDetails',
 		'K'=>'CustomLabel',
 		),
+
+	//Ebay en order tamplate
+	'IMPORT_AMAZON_ORDER' => array(
+		'A' => 'order-id',
+		'B' => 'order-item-id',
+		'C' => 'purchase-date',
+		'D' => 'payments-date',
+		'E' => 'buyer-email',
+		'F' => 'buyer-name',
+		'G' => 'buyer-phone-number',
+		'H' => 'sku',
+		'I' => 'product-name',
+		'J' => 'quantity-purchased',
+		'K' => 'currency',
+		'L' => 'item-price',
+		'M' => 'item-tax',
+		'N' => 'shipping-price',
+		'O' => 'shipping-tax',
+		'P' => 'ship-service-level',
+		'Q' => 'ship-service-name',
+		'R' => 'recipient-name',
+		'S' => 'ship-address-1',
+		'T' => 'ship-address-2',
+		'U' => 'ship-address-3',
+		'V' => 'ship-city',
+		'W' => 'ship-state',
+		'X' => 'ship-postal-code',
+		'Y' => 'ship-country',
+		'Z' => 'ship-phone-number',
+		),
 	);
 
 ?>

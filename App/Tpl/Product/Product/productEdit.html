@@ -12,7 +12,7 @@
 function GenerateUpc(){
 
 	var upc = document.getElementById("upc").value;
-	if(upc==0 || upc==null){
+	if(upc==0 || upc==null || upc<document.getElementById("used_upc").value){
 		var used_upc = document.getElementById("used_upc").value;
 		var oddSum=parseInt(used_upc.substr(0,1))+parseInt(used_upc.substr(2,1))+parseInt(used_upc.substr(4,1))+parseInt(used_upc.substr(6,1))+parseInt(used_upc.substr(8,1))+parseInt(used_upc.substr(10,1))+1;
 	    var evenSum=parseInt(used_upc.substr(1,1))+parseInt(used_upc.substr(3,1))+parseInt(used_upc.substr(5,1))+parseInt(used_upc.substr(7,1))+parseInt(used_upc.substr(9,1));

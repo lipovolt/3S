@@ -92,7 +92,7 @@ function bModify(){
 		</div>
 		<div class="content">
 	<div id="ProductInfo" class="main">
-		<form name="search_product" id="search_product" action="{:U('Sale/GgsUsswSale/usswSaleSuggest')}" method="POST">
+		<form name="search_product" id="search_product" action="{:U('Sale/GgsUsswSale/usswSaleSuggest',array('account'=>$account))}" method="POST">
 		<input type="hidden" name="account" value="{$account}">
 			<div class="search-area">
 				<div class="item">
