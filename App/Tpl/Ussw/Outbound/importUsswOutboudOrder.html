@@ -61,8 +61,9 @@
 								<div class="block-bd">
 									<div class="block-indent" style="overflow:hidden;">
 										<div style="float:left;width:456px;">
-											<p>ebay出库单： 导出的ebay未发货订单是CVS文件，需要转换成XLS文件，文件内容无需修改</p>
-											<p>amazon出库单： order report 每天0点会自动生成订单的txt文件，需要用excel另存为xls文件，其他无需修改。</p>
+											<p>ebay未发货订单： ebay->orders, 导出的ebay未发货订单是CVS文件，需要转换成XLS文件，文件内容无需修改</p>
+											<p>amazon未发货订单： Orders->order reports->Unshipped orders->Request report->Download 下载的是txt格式文件，需要用excel另存为xls文件，其他无需修改。</p>
+											<p>groupon未发货订单： groupon->Orders->Postage required->Order CSV, 下载的是CSV格式文件，需要用excel另存为xls文件，其他无需修改。</p>
 											<div >
 												<form action="{:U('Ussw/Outbound/importUOOHandel')}" method="post" enctype="multipart/form-data" onsubmit="return check()">
 												 	<div>

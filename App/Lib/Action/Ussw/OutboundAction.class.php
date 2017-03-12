@@ -101,7 +101,7 @@ class OutboundAction extends CommonAction{
                 $this->importEbaySaleRecordFile("ebay",$_POST["sellerID"]);
                 break;
             case 'groupon':
-                $this->error("暂时不支持groupon出库单");
+                $this->importGrouponSaleRecordFile("groupon",$_POST["sellerID"]);
                 break;
             
             default:
@@ -145,7 +145,7 @@ class OutboundAction extends CommonAction{
 
                 for($i=2;$i<=$highestRow;$i++){
                     $saleNo = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-                    $sku = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+                    $sku = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
                     //判断amazon订单号是否已存在
                     if($this->duplicateSaleNo($market,$sellerID,$saleNo)){
                         //ebay订单号在出库表中，添加错误信息
@@ -159,9 +159,9 @@ class OutboundAction extends CommonAction{
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_CREATE_TIME')]= Date('Y-m-d H:i:s');
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_MARKET')] = 'amazon';
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_SELLER_ID')] = $sellerID;
-                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_NAME')] = $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
-                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_TEL')] = $objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
-                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_EMAIL')] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_NAME')] = $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_TEL')] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_EMAIL')] = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')] = $objPHPExcel->getActiveSheet()->getCell("S".$i)->getValue();
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ADDRESS2')] = $objPHPExcel->getActiveSheet()->getCell("T".$i)->getValue()." ".$objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_CITY')] = $objPHPExcel->getActiveSheet()->getCell("V".$i)->getValue();
@@ -180,11 +180,11 @@ class OutboundAction extends CommonAction{
                                 $skuQuantityDepart = explode("*",$departedSku);
                                 if(count($skuQuantityDepart)==1){
                                     $departedSkuQuantity[$indexForDepartedSkuQuantity]['sku'] = $skuQuantityDepart[0];
-                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['quantity'] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['quantity'] = $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
                                     $indexForDepartedSkuQuantity = $indexForDepartedSkuQuantity+1;
                                 }else{
                                     $departedSkuQuantity[$indexForDepartedSkuQuantity]['sku'] = $skuQuantityDepart[0];
-                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['quantity'] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue()*$skuQuantityDepart[1];
+                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['quantity'] = $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue()*$skuQuantityDepart[1];
                                     $indexForDepartedSkuQuantity = $indexForDepartedSkuQuantity+1;
                                 }
                             }
@@ -470,6 +470,161 @@ class OutboundAction extends CommonAction{
         }
     }
 
+    private function importGrouponSaleRecordFile($market,$sellerID){
+        if(!empty($_FILES)){
+             import('ORG.Net.UploadFile');
+             $config=array(
+                 'allowExts'=>array('xlsx','xls'),
+                 'savePath'=>'./Public/upload/usswOutbound/',
+                 'saveRule'=>$market.'_'.$sellerID.'_'.time(),
+             );
+             $upload = new UploadFile($config);
+             if (!$upload->upload()) {
+                 $this->error($upload->getErrorMsg());
+             } else {
+                 $info = $upload->getUploadFileInfo();
+                 
+             }
+            
+            vendor("PHPExcel.PHPExcel");
+            $file_name=$info[0]['savepath'].$info[0]['savename'];
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
+            $objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+            $sheet = $objPHPExcel->getSheet(0);
+            $highestRow = $sheet->getHighestRow(); // 取得总行数
+            $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+            //excel first column name verify
+            for($c='A';$c!=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue(); 
+            }
+            if($this->verifyImportedGrouponOrderColumnName($firstRow)){
+                $j = 0; //索引：辅助数组，首先合并相同ebay订单号的订单
+                $k = 0; //索引： 产品明细辅助数组
+                $indexForErrorFile = 0; //索引：错误信息数组
+
+                for($i=2;$i<=$highestRow;$i++){
+                    $saleNo = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+                    $sku = $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
+                    //判断amazon订单号是否已存在
+                    if($this->duplicateSaleNo($market,$sellerID,$saleNo)){
+                        //ebay订单号在出库表中，添加错误信息
+                        $errorInFile[$indexForErrorFile]['saleno'] = $saleNo;
+                        $errorInFile[$indexForErrorFile]['error'] = '该groupon'.$sellerID.'订单号已存在';
+                        $indexForErrorFile = $indexForErrorFile+1;
+                    }else{
+                        //ebay订单号不在出库表中
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_MARKET_NO')] = $saleNo;
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_STATUS')] = '已出库';
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_CREATE_TIME')]= Date('Y-m-d H:i:s');
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_MARKET')] = 'groupon';
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_SELLER_ID')] = $sellerID;
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_NAME')] = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')] = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ADDRESS2')] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_CITY')] = $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_STATE')] = $objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ZIP')] = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_COUNTRY')] = $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+                        $j=$j+1;
+                        if($sku!=''){
+                            //如果sku不为空，首先按照|拆分sku,然后按照*拆分sku和quantity.
+                            $skuDepart = null;
+                            $skuQuantityDepart = null;
+                            $departedSkuQuantity = null;                            
+                            $indexForDepartedSkuQuantity = 0;
+                            $skuDepart = explode("|",$sku);
+                            foreach ($skuDepart as $key => $departedSku) {
+                                $skuQuantityDepart = explode("*",$departedSku);
+                                if(count($skuQuantityDepart)==1){
+                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['sku'] = $skuQuantityDepart[0];
+                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['quantity'] = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+                                    $indexForDepartedSkuQuantity = $indexForDepartedSkuQuantity+1;
+                                }else{
+                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['sku'] = $skuQuantityDepart[0];
+                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['quantity'] = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()*$skuQuantityDepart[1];
+                                    $indexForDepartedSkuQuantity = $indexForDepartedSkuQuantity+1;
+                                }
+                            }
+                            foreach ($departedSkuQuantity as $key => $departedSkuQuantityValue) {
+                                if(M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$departedSkuQuantityValue['sku']))->find() == null){
+                                    //检查产品编码是否在usstorage中,不存在添加错误信息
+                                    $errorInFile[$indexForErrorFile]['saleno'] = $saleNo;
+                                    $errorInFile[$indexForErrorFile]['sku'] = $departedSkuQuantityValue['sku'];
+                                    $errorInFile[$indexForErrorFile]['error'] = '产品编码错误或该产品编码未入美自建仓';
+                                    $indexForErrorFile = $indexForErrorFile+1;
+                                }else{
+                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_OOID')]=$saleNo;
+                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_POSITION')] = $positions;
+                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_SKU')]=$departedSkuQuantityValue['sku'];
+                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')]=$departedSkuQuantityValue['quantity'];
+                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+                                    $k=$k+1; 
+                                }
+                            }                         
+                        }
+                    }
+                }
+                //验证可用库存数量是否大于需要的数量
+                foreach ($outboundOrderItems as $key => $outbounditem) {
+                    $rows = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$outbounditem[C('DB_USSW_OUTBOUND_ITEM_SKU')], $map[C('DB_USSTORAGE_AINVENTORY')]=>array('neq',0)))->select();
+                    $totalAvailableQuantity = 0;
+                    $totalNeedQuantity = 0;
+                    $positions = null;
+                    foreach ($rows as $key => $row) {
+                        //查看该SKU总库存。收集该SKU的货位
+                        $totalAvailableQuantity = $row[C('DB_USSTORAGE_AINVENTORY')] + $totalAvailableQuantity;
+                        $positions = $positions==null?$row[C('DB_USSTORAGE_POSITION')]:$positions.'|'.$row[C('DB_USSTORAGE_POSITION')];
+                    } 
+                    $outboundOrderItems[$key-1][C('DB_USSW_OUTBOUND_ITEM_POSITION')] = $positions;
+                    foreach ($outboundOrderItems as $key => $value) {
+                        if($value[C('DB_USSW_OUTBOUND_ITEM_SKU')] == $outbounditem[C('DB_USSW_OUTBOUND_ITEM_SKU')])
+                            $totalNeedQuantity = $totalNeedQuantity+$value[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
+                    }
+
+                    if($totalAvailableQuantity < $totalNeedQuantity){
+                        //总库存小于订单数量，添加错误信息
+                        $errorInFile[$indexForErrorFile]['saleno']=$outbounditem[C('DB_USSW_OUTBOUND_ITEM_OOID')];
+                        $errorInFile[$indexForErrorFile]['sku']=$outbounditem[C('DB_USSW_OUTBOUND_ITEM_SKU')];
+                        $errorInFile[$indexForErrorFile]['error']='库存不足,可用库存'.$totalAvailableQuantity.'小于总出库数量'.$totalNeedQuantity;
+                        $indexForErrorFile = $indexForErrorFile+1;
+                    }
+                }
+
+                if($errorInFile != null){
+                    //有错误信息，输出错误信息，不做数据库操作。
+                    $this->assign('errorInFile',$errorInFile);             
+                    $this->display('importOutboundOrderError');
+                }else{
+                    //无错误信息
+                    foreach ($outboundOrder as $key => $order) {
+                        //循环第一次整理的amazon订单。查找是否有相同buyer和地址信息的订单
+                        if ($this->buyerExists($order,$filteredOutboundOrder)==-1){
+                            //如果buyer和地址信息不相同，添加到已过滤的数组。
+                            $filteredOutboundOrder[$key]=$order;
+                        }else{
+                            //如果buyer和地址重复，不添加该单到已过滤的数组。与该单相对应的产品列表的订单号更新为已存在的订单号。
+                            $changedToSaleNo = $this->buyerExists($order,$filteredOutboundOrder);
+                            foreach ($outboundOrderItems as $key => $item) {
+                                if($item[C('DB_USSW_OUTBOUND_ITEM_OOID')]==$order[C('DB_USSW_OUTBOUND_MARKET_NO')]){
+                                    $outboundOrderItems[$key][C('DB_USSW_OUTBOUND_ITEM_OOID')]=$changedToSaleNo;
+                                }
+                            }
+                        }
+                    }
+                    //更新ussw_outbound和ussw_outbound_item
+                    $this->addUsswOutboundOrder($filteredOutboundOrder,$outboundOrderItems);
+                    $this->exportPackingList($filteredOutboundOrder);
+                }
+            }else{
+                $this->error("不是groupon订单模板，请检查");
+            }
+        }else{
+            $this->error("请选择上传的文件");
+        }
+    }
+
     private function addUsswOutboundOrder($outboundOrders,$outboundOrderItems){
         //添加出库单到ussw_outbound
         $usswOutbound = M(C('DB_USSW_OUTBOUND'));
@@ -520,8 +675,7 @@ class OutboundAction extends CommonAction{
 
     private function verifyImportedAmazonOrderColumnName($firstRow){
         for($c='A';$c<='Y';$c++){
-            if(trim($firstRow[$c]) != C('IMPORT_AMAZON_ORDER')[$c]){
-                dump($firstRow[$c]);dump(C('IMPORT_AMAZON_ORDER')[$c]);die;
+            if(trim($firstRow[$c]) != C('IMPORT_AMAZON_UNSHIPPED_ORDER')[$c]){
                 return false;
             }
                 
@@ -532,6 +686,16 @@ class OutboundAction extends CommonAction{
     private function verifyImportedEbayEnOrderColumnName($secondRow){
         for($c='A';$c<='AH';$c++){
             if(trim($secondRow[$c]) != C('IMPORT_EBAY_EN_ORDER')[$c]){
+                return false;
+            }
+                
+        }
+        return true;
+    }
+
+    private function verifyImportedGrouponOrderColumnName($firstRow){
+        for($c='A';$c<='N';$c++){
+            if(trim($firstRow[$c]) != C('IMPORT_GROUPON_UNSHIPPED_ORDER')[$c]){
                 return false;
             }
                 
