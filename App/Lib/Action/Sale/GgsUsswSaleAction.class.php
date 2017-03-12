@@ -1202,19 +1202,21 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 	}
 
-	public function fileExchange($account){
-		$this->assign('market',$this->getMarketByAccount($account));
+	public function fileExchange($market,$account){
+		$this->assign('market',$market);
 		$this->assign('account',$account);
 		$this->display();
 	}
 
-	public function fileExchangeHandle($account){
-		if($this->getMarketByAccount($account)=='ebay'){
+	public function fileExchangeHandle($market,$account){
+		if($market=='ebay'){
 			$this->ebayFileExchangeHandle($account);
-		}elseif($this->getMarketByAccount($account)=='amazon'){
+		}elseif($market=='amazon'){
 			$this->amazonFileExchangeHandle($account);
+		}elseif($market=='groupon'){
+			$this->grouponFileExchangeHandle($account);
 		}else{
-			$this->error('无法找到与 '.$account.' 匹配的平台');
+			$this->error('没有 '.$market.' 平台');
 		}
 
 	}
@@ -1338,6 +1340,10 @@ class GgsUsswSaleAction extends CommonAction{
     }
 
     private function amazonFileExchangeHandle($account){
+    	$this->error('功能待完善');
+    }
+
+    private function grouponFileExchangeHandle($account){
     	$this->error('功能待完善');
     }
 
