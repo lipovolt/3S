@@ -1316,12 +1316,13 @@ class GgsUsswSaleAction extends CommonAction{
                 $excelCellName[5]=$objPHPExcel->getActiveSheet()->getCell("F1")->getValue();
                 $excelCellName[6]='SuggestPrice';
                 $excelCellName[7]='Suggest';
-                $excelCellName[8]=$objPHPExcel->getActiveSheet()->getCell("H1")->getValue();
-                $excelCellName[9]='Ainventory';
-                $excelCellName[10]=$objPHPExcel->getActiveSheet()->getCell("I1")->getValue();
-                $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("J1")->getValue();
-                $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("K1")->getValue();
-                $this->exportFileExchangeExcel('GgsFileExchange',$excelCellName,$data); 
+                $excelCellName[8]=$objPHPExcel->getActiveSheet()->getCell("G1")->getValue();
+                $excelCellName[9]=$objPHPExcel->getActiveSheet()->getCell("H1")->getValue();
+                $excelCellName[10]='Ainventory';
+                $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("I1")->getValue();
+                $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("J1")->getValue();
+                $excelCellName[13]=$objPHPExcel->getActiveSheet()->getCell("K1")->getValue();
+                $this->exportEbayFileExchangeExcel('GgsFileExchange',$excelCellName,$data); 
             }else{
                 $this->error("模板错误，请检查模板！");
             }   
@@ -1339,8 +1340,52 @@ class GgsUsswSaleAction extends CommonAction{
         return true;
     }
 
+    //Verify imported file exchange template column name
+	private function verifyAmazonFxt($firstRow){
+        for($c='B';$c<=max(array_keys(C('IMPORT_AMAZON_FXT')));$c++){
+            if($firstRow[$c] != C('IMPORT_AMAZON_FXT')[$c])
+                return false;
+        }
+        return true;
+    }
+
     private function amazonFileExchangeHandle($account){
-    	$this->error('功能待完善');
+    	$salePlan=M($this->getSalePlanTableName($account))->select();
+    	$storageTable=M($this->getStorageTableName($account));
+    	$storageTable->startTrans();
+    	foreach ($salePlan as $key => $value) {
+    		$data[$key]["sku"]=$value[C("DB_USSW_SALE_PLAN_SKU")];
+    		$data[$key]["price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
+    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]<(1+$_POST["minbbpPercent"])*$value[C("DB_USSW_SALE_PLAN_COST")]){
+    			$data[$key]["minimum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
+    		}else{
+    			$data[$key]["minimum-seller-allowed-price"]=round((1+$_POST["minbbpPercent"])*$value[C("DB_USSW_SALE_PLAN_COST")],2);
+    		}
+    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]>(1+$_POST["maxbbpPercent"])*$value[C("DB_USSW_SALE_PLAN_COST")]){
+    			$data[$key]["maximum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
+    		}else{
+    			$data[$key]["maximum-seller-allowed-price"]=round((1+$_POST["maxbbpPercent"])*$value[C("DB_USSW_SALE_PLAN_COST")],2);
+    		}
+    		if($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY"))==null){
+    			$data[$key]["quantity"]=0;
+    		}else{
+    			$data[$key]["quantity"]=$storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY"));
+    		}
+    		$data[$key]["leadtime-to-ship"]=3; 
+    		$data[$key]["suggested-price"]=$value[C("DB_USSW_SALE_PLAN_SUGGESTED_PRICE")];
+    		$data[$key]["suggest"]=$value[C("DB_USSW_SALE_PLAN_SUGGEST")];		
+    	}
+    	$storageTable->commit();
+    	$excelCellName[0]='sku';
+    	$excelCellName[1]='price';
+    	$excelCellName[2]='suggested-price';
+    	$excelCellName[3]='suggest';
+    	$excelCellName[4]='minimum-seller-allowed-price';
+    	$excelCellName[5]='maximum-seller-allowed-price';
+    	$excelCellName[6]='quantity';
+    	$excelCellName[7]='leadtime-to-ship';
+    	$excelCellName[8]='fulfillment-channel';
+    	$this->exportAmazonFileExchangeExcel("amazon_update_file",$excelCellName,$data);
     }
 
     private function grouponFileExchangeHandle($account){
@@ -1426,7 +1471,7 @@ class GgsUsswSaleAction extends CommonAction{
     	}
     }
 
-    private function exportFileExchangeExcel($expTitle,$expCellName,$expTableData){
+    private function exportEbayFileExchangeExcel($expTitle,$expCellName,$expTableData){
         $fileName = $expTitle.date('_Ymd');
         $cellNum = count($expCellName);
         $dataNum = count($expTableData);
@@ -1447,11 +1492,11 @@ class GgsUsswSaleAction extends CommonAction{
             		$objPHPExcel->getActiveSheet()->getStyle( 'G'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
             		$objPHPExcel->getActiveSheet()->getStyle( 'G'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
             	}
-            	if($i>0 && $expTableData[$i][$expCellName[9]]!=null && $expTableData[$i][$expCellName[8]]!=$expTableData[$i][$expCellName[9]]){
-            		$objPHPExcel->getActiveSheet()->getStyle( 'I'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-            		$objPHPExcel->getActiveSheet()->getStyle( 'I'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+            	if($i>0 && $expTableData[$i][$expCellName[10]]!=null && $expTableData[$i][$expCellName[9]]!=$expTableData[$i][$expCellName[10]]){
             		$objPHPExcel->getActiveSheet()->getStyle( 'J'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
             		$objPHPExcel->getActiveSheet()->getStyle( 'J'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+            		$objPHPExcel->getActiveSheet()->getStyle( 'K'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'K'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
             	}
                 $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $expTableData[$i][$expCellName[$j]]);
             }             
@@ -1463,6 +1508,191 @@ class GgsUsswSaleAction extends CommonAction{
         $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
         $objWriter->save('php://output');
         exit;   
+    }
+
+    private function exportAmazonFileExchangeExcel($expTitle,$expCellName,$expTableData){
+        $fileName = $expTitle.date('_Ymd');
+        $cellNum = count($expCellName);
+        $dataNum = count($expTableData);
+        vendor("PHPExcel.PHPExcel");
+
+        $objPHPExcel = new PHPExcel();
+        $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
+
+        for($i=0;$i<$cellNum;$i++){
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i].'1', $expCellName[$i]); 
+        } 
+
+        for($i=0;$i<$dataNum;$i++){
+            for($j=0;$j<$cellNum;$j++){
+            	if($i>=0 && $expTableData[$i][$expCellName[2]] !=null && $expTableData[$i][$expCellName[1]]!=$expTableData[$i][$expCellName[2]]){
+            		$objPHPExcel->getActiveSheet()->getStyle( 'B'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'B'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+            		$objPHPExcel->getActiveSheet()->getStyle( 'C'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'C'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+            	}
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $expTableData[$i][$expCellName[$j]]);
+            }             
+        }  
+
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="'.$xlsTitle.'.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
+        $objWriter->save('php://output');
+        exit;   
+    }
+
+    public function updateSalePrice($market,$account){
+    	$this->assign('market',$market);
+    	$this->assign('account',$account);
+    	$this->display();
+    }
+
+    public function updateSalePriceHandle($market,$account){
+    	if($market=='ebay'){
+			$this->updateEbaySalePriceHandle($account);
+		}elseif($market=='amazon'){
+			$this->updateAmazonSalePriceHandle($account);
+		}elseif($market=='groupon'){
+			$this->grouponFileExchangeHandle($account);
+		}else{
+			$this->error('没有 '.$market.' 平台');
+		}    	
+    }
+
+    private function updateEbaySalePriceHandle($account){
+    	if (!empty($_FILES)) {
+    		import('ORG.Net.UploadFile');
+			$config=array(
+			 'allowExts'=>array('xls'),
+			 'savePath'=>'./Public/upload/updateSalePrice/',
+			 'saveRule'=>'ebay'.'_'.$account.'_'.time(),
+			);
+			$upload = new UploadFile($config);
+			if (!$upload->upload()) {
+				$this->error($upload->getErrorMsg());
+			}else {
+				$info = $upload->getUploadFileInfo();                 
+			}
+			vendor("PHPExcel.PHPExcel");
+			$file_name=$info[0]['savepath'].$info[0]['savename'];
+
+			$objReader = PHPExcel_IOFactory::createReader('Excel5');
+			$objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+			$sheetnames = $objPHPExcel->getSheetNames();
+
+			//creat excel writer
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			
+
+			$objPHPExcel->setActiveSheetIndex(0);
+			$sheet = $objPHPExcel->getSheet(0);
+			$highestRow = $sheet->getHighestRow(); // 取得总行数
+			$highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+			//excel first column name verify
+            for($c='A';$c<=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+            }
+
+            if($this->verifyEbayFxtcn($firstRow)){
+            	$salePlan=M($this->getSalePlanTableName($account));
+            	$salePlan->startTrans();
+            	for($i=2;$i<=$highestRow;$i++){
+            		$sku = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+            		if($sku!='' && $sku!=null){
+            			$map[C("DB_USSW_SALE_PLAN_SKU")]=array("eq",$sku);
+            			$actualPrice = $salePlan->where($map)->getField(C("DB_USSW_SALE_PLAN_PRICE"));
+            			if($actualPrice!=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue()){
+	            			$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+							if($data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]==null){
+								$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('ymd',time());
+							}else{
+								$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')].' | '.$data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+							}
+							$data[C("DB_USSW_SALE_PLAN_PRICE")]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+							$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+							$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
+							$salePlan->where($map)->save($data);
+							$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]=null;
+	            		}
+            		}
+            	}
+            	$salePlan->commit();
+            	$this->success("更新产品售价成功");
+            }else{
+            	$this->error("模板错误，请检查模板！");
+            }
+    	}else{
+    		$this->error("请选择上传的文件");
+    	}
+    }
+
+    private function updateAmazonSalePriceHandle($account){
+    	if (!empty($_FILES)) {
+    		import('ORG.Net.UploadFile');
+			$config=array(
+			 'allowExts'=>array('xls'),
+			 'savePath'=>'./Public/upload/updateSalePrice/',
+			 'saveRule'=>'amazon'.'_'.$account.'_'.time(),
+			);
+			$upload = new UploadFile($config);
+			if (!$upload->upload()) {
+				$this->error($upload->getErrorMsg());
+			}else {
+				$info = $upload->getUploadFileInfo();                 
+			}
+			vendor("PHPExcel.PHPExcel");
+			$file_name=$info[0]['savepath'].$info[0]['savename'];
+
+			$objReader = PHPExcel_IOFactory::createReader('Excel5');
+			$objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+			$sheetnames = $objPHPExcel->getSheetNames();
+
+			//creat excel writer
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			
+
+			$objPHPExcel->setActiveSheetIndex(0);
+			$sheet = $objPHPExcel->getSheet(0);
+			$highestRow = $sheet->getHighestRow(); // 取得总行数
+			$highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+			//excel first column name verify
+            for($c='A';$c<=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+            }
+
+            if($this->verifyAmazonFxt($firstRow)){
+            	$salePlan=M($this->getSalePlanTableName($account));
+            	$salePlan->startTrans();
+            	for($i=2;$i<=$highestRow;$i++){
+            		$sku = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+            		$map[C("DB_USSW_SALE_PLAN_SKU")]=array("eq",$sku);
+            		$actualPrice = $salePlan->where($map)->getField(C("DB_USSW_SALE_PLAN_PRICE"));
+            		if($actualPrice!=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue()){
+            			$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+						if($data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]==null){
+							$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('ymd',time());
+						}else{
+							$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')].' | '.$data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+						}
+						$data[C("DB_USSW_SALE_PLAN_PRICE")]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+						$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+						$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
+						$salePlan->where($map)->save($data);
+						$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]=null;
+            		}
+            	}
+            	$salePlan->commit();
+            	$this->success("更新产品售价成功");
+            }else{
+            	$this->error("模板错误，请检查模板！");
+            }
+    	}else{
+    		$this->error("请选择上传的文件");
+    	}
     }
 }
 

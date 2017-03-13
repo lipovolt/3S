@@ -65,28 +65,28 @@
 												 			<p>功能说明： 本功能通过文件下载，处理，上传的方式，批量更新ebay在线listing的数量和价格。</p>
 														 	<p>操作步骤：<br> 1. 下载File Exchange 文件。 ebay后台->点击File exchange->Download Files->Listing and records选择Active->Dowload Format 选择File exchange->Revise Price and Quanlity->Date range 选择All active listing->给出能接收邮件的邮箱->点击save->等待邮件->打开邮件里的链接下载文件。<br>2. 下载的文件是CSV格式的，需要转换成xls格式。<br>3. 上传xls格式的文件到3s系统，上传之后3s系统会自动给出处理过的文件用于下载。<br>4. 保存系统处理过的文件，并打开。<br>5. 已处理的文件增加了三列分别是 SuggestPrice(建议价格),Suggest（销售建议）和Ainventory
 	（仓库可用库存数量）。如果建议价格和当前售价有差别，两个单元格会标记灰色。如果可用数量和在线数量有差别，两个单元格会标记灰色。 该表格需要手动进一步处理才能上传平台. Ainventory(可用数量)可以全部先复制到Quantity(数量)列。建议售价需要手动检查是否需要更新，如果需要就把建议售价复制到售价列。<br>6. 处理之后可以把这三列SuggestPrice(建议价格),Suggest（销售建议）和Ainventory
-	（仓库可用库存数量）删掉。<br>7. 将表格另存为CSV格式。<br>8. 上传处理好的文件到ebay. ebay后台->点击File exchange->Upload Files->给出可用邮箱，选择好要上传的文件->点击Upload<br>9. 等待ebay处理。</p>
+	（仓库可用库存数量）删掉。<br>7. 将表格另存为CSV格式。<br>8. 上传处理好的文件到ebay. ebay后台->点击File exchange->Upload Files->给出可用邮箱，选择好要上传的文件->点击Upload<br>9. 等待ebay处理。<br>10. 将处理过的xls格式的文件上传3s系统保存新的售价 销售->对应账号的销售建议表->批量更新售价->跳转新的页面->导入表格。</p>
+															<div class="form-group">
+													            <input type="file" name="fileExchange"/>
+												             	<input class="btn btn-blue btn-s" type="submit" value="导入"/>
+												            </div>
 														<elseif condition="$market eq 'amazon'"/>
-															<p>功能说明： 本功能通过文件下载，处理，上传的方式，批量更新amazon在线listing的数量和价格。</p>
-															<p>操作步骤：<br> 1. 下载File Exchange 文件。 amazon后台->Inventory->Add Products via Upload->Download inventory file templates->点击Dowload template->点击 Update Inventory with the Price & Quantity Template->Download: Price & Quantity file template->保存文件。<br>2. 下载的文件是txt格式的，需要转换成xls格式。<br>3. 上传xls格式的文件到3s系统，上传之后3s系统会自动给出处理过的文件用于下载。<br>4. 保存系统处理过的文件，并打开。<br>5. 已处理的文件增加了三列分别是 SuggestPrice(建议价格),Suggest（销售建议）和Ainventory
-	（仓库可用库存数量）。如果建议价格和当前售价有差别，两个单元格会标记灰色。如果可用数量和在线数量有差别，两个单元格会标记灰色。 该表格需要手动进一步处理才能上传平台. Ainventory(可用数量)可以全部先复制到Quantity(数量)列。建议售价需要手动检查是否需要更新，如果需要就把建议售价复制到售价列。<br>6. 处理之后可以把这三列SuggestPrice(建议价格),Suggest（销售建议）和Ainventory
-	（仓库可用库存数量）删掉。<br>7. 将处理好的文件保存成文本文件（制表符分割）<br>8. 上传文本文件（制表符分割）格式的文件到amazon. amazon后台->Inventory->Add Products via Upload->Upload inventory files 选择 Price & Quantity File 并选择要上传的文件->点击 Upload now, 等待amazon更新价格和数量。</p>
-														<elseif condition="$market eq 'groupon'"/>
-														<p>功能说明： 本功能通过文件下载，处理，上传的方式，批量更新group在线listing的数量和价格。批量更新的情况下，groupon只允许更新的价格低于当前的售价。如有涨价的需要，要在groupon后台手动处理。</p>
-														<p>操作步骤：<br> 1. 下载File Exchange 文件。 group后台->Products->CSV Update 选择 Download CSV->给出邮箱->确认下载<br>2. 收到的邮件里面有一个CSV文件，保存到本地电脑，改成xls格式<br>3. 上传xls格式的文件到3s系统，上传之后3s系统会自动给出处理过的文件用于下载。<br>4. 保存系统处理过的文件，并打开。<br>5. 已处理的文件增加了三列分别是 SuggestPrice(建议价格),Suggest（销售建议）和Ainventory
-	（仓库可用库存数量）。如果建议价格和当前售价有差别，两个单元格会标记灰色。如果可用数量和在线数量有差别，两个单元格会标记灰色。 该表格需要手动进一步处理才能上传平台. Ainventory(可用数量)可以全部先复制到Quantity(数量)列。建议售价需要手动检查是否需要更新，如果需要就把建议售价复制到售价列。<br>6. 处理之后可以把这三列SuggestPrice(建议价格),Suggest（销售建议）和Ainventory
-	（仓库可用库存数量）删掉。<br>7. 将xls格式的文件保存成CSV格式的文件<br>8. 上传处理好的CSV格式文件到groupon. groupon后台->Products->CSV Update 选择 Upload CSV->给出邮箱地址并选择要上传的文件->点击 Upload now, 等待groupon更新价格和数量。</p>
+															<p>功能说明： 本功能通过3s系统导出amazon格式的更新文件，上传到amazon系统的方式，批量更新amazon在线listing的数量和价格。</p>
+															<p>操作步骤：<br> 1. 给出BBP利润率区间<br>2. 导出文件<br>3. 导出的文件需要对price(售价)进行手动处理。参考SuggestPrice(建议价格)和Suggest（销售建议），如果需要按照建议售价销售就把建议售价复制到售价处。处理之后删除SuggestPrice(建议价格)和Suggest（销售建议）两列。<br>4. 将编辑好的文件保存成文本文件（制表符分割）<br>5. 上传文本文件（制表符分割）格式的文件到amazon. amazon后台->Inventory->Add Products via Upload->Upload inventory files 选择 Price & Quantity File 并选择要上传的文件->点击 Upload now<br>6. 等待amazon更新价格和数量。<br>7. 将处理过的xls格式的文件上传3s系统保存新的售价 销售->对应账号的销售建议表->批量更新售价->跳转新的页面->导入表格。</p>
+															<div class="form-group">
+												            	<div class="form-group">
+												            		<label for="bbpPercent" class="control-label">BBP利润率（默认10%-50%，可自行调整）</label>
+												            		<input type="text"  id="minbbpPercent" name="minPrice" value="10"/>
+												            		<label for="bbpPercent" class="control-label">%</label>
+												            		<label for="bbpPercent" class="control-label">-</label>
+												            		<input type="text"  id="maxbbpPercent" name="maxPrice" value="50"/>
+												            		<label for="bbpPercent" class="control-label">%</label>
+												            		<input class="btn btn-blue btn-s" type="submit" value="导出"/>
+												            	</div>
+												            </div>
 														<else /> 无法识别平台，清联系管理员处理。
 														</if>
-
-												 		
-
 										            </div>
-										            <div class="form-group">
-											            <input type="file" name="fileExchange"/>
-										             	<input class="btn btn-blue btn-s" type="submit" value="导入"/>
-										            </div>
-
 									         	</form>
 
 											</div>

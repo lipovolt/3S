@@ -160,6 +160,17 @@ return array(
 		'K'=>'CustomLabel',
 		),
 
+	//update amazon file exchange template column name
+	'IMPORT_AMAZON_FXT' => array(
+		'A'=>'sku',
+		'B'=>'price',
+		'C'=>'minimum-seller-allowed-price',
+		'D'=>'maximum-seller-allowed-price',
+		'E'=>'quantity',
+		'F'=>'leadtime-to-ship',
+		'G'=>'fulfillment-channel',
+		),
+
 	//Amazon Unshipped orders template
 	'IMPORT_AMAZON_UNSHIPPED_ORDER' => array(
 		'A' => 'order-id',
