@@ -1485,6 +1485,7 @@ class GgsUsswSaleAction extends CommonAction{
         } 
 
         for($i=0;$i<$dataNum;$i++){
+        	$objPHPExcel->getActiveSheet()->getStyle('B'.($i+2))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
             for($j=0;$j<$cellNum;$j++){
             	if($i>0 && $expTableData[$i][$expCellName[6]] !=null && $expTableData[$i][$expCellName[5]]!=$expTableData[$i][$expCellName[6]]){
             		$objPHPExcel->getActiveSheet()->getStyle( 'F'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
