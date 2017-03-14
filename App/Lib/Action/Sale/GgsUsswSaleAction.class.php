@@ -653,10 +653,14 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	//calculate amazon initial sale price according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee)
-	private function getUsswAmazonISP($pPrice,$tariff,$wFee,$tFee,$sFee){
+	private function getUsswAmazonISP($pPrice,$tariff,$wFee,$tFee,$sFee,$profitPercent=null){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee;
-		return round(($cost*(1+$this->getCostClass($cost)/100))/(1-0.15*(1+$this->getCostClass($cost)/100)),2);
+		if($profitPercent==null){
+			return round(($cost*(1+$this->getCostClass($cost)/100))/(1-0.15*(1+$this->getCostClass($cost)/100)),2);
+		}else{
+			return round(($cost*(1+$profitPercent/100))/(1-0.15*(1+$profitPercent/100)),2);
+		}
 	}
 
 	private function calUsswSIOFee($weight,$l,$w,$h){
@@ -1352,19 +1356,28 @@ class GgsUsswSaleAction extends CommonAction{
     private function amazonFileExchangeHandle($account){
     	$salePlan=M($this->getSalePlanTableName($account))->select();
     	$storageTable=M($this->getStorageTableName($account));
+    	$productTable=M(C("DB_PRODUCT"));
     	$storageTable->startTrans();
+    	$productTable->startTrans();
     	foreach ($salePlan as $key => $value) {
     		$data[$key]["sku"]=$value[C("DB_USSW_SALE_PLAN_SKU")];
     		$data[$key]["price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
-    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]<(1+$_POST["minbbpPercent"])*$value[C("DB_USSW_SALE_PLAN_COST")]){
+    		$product = $productTable->where(array(C('DB_PRODUCT_SKU')=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->find();
+	    	$p[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
+	    	$p[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
+	    	$p['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+	    	$p['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+	    	$p['local-shipping-fee1']=$this->getUsswLocalShippingFee1($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+
+
+	    	$data[$key]["minimum-seller-allowed-price"]=$this->getUsswAmazonISP($p[C('DB_PRODUCT_PRICE')],$p[C('DB_PRODUCT_USTARIFF')],$p['ussw-fee'],$p['way-to-us-fee'],$p['local-shipping-fee1'],$_POST["minbbpPercent"]);
+	    	$data[$key]["maximum-seller-allowed-price"]=$this->getUsswAmazonISP($p[C('DB_PRODUCT_PRICE')],$p[C('DB_PRODUCT_USTARIFF')],$p['ussw-fee'],$p['way-to-us-fee'],$p['local-shipping-fee1'],$_POST["maxbbpPercent"]);
+
+    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]<$data[$key]["minimum-seller-allowed-price"]){
     			$data[$key]["minimum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
-    		}else{
-    			$data[$key]["minimum-seller-allowed-price"]=round((1+$_POST["minbbpPercent"])*$value[C("DB_USSW_SALE_PLAN_COST")],2);
     		}
-    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]>(1+$_POST["maxbbpPercent"])*$value[C("DB_USSW_SALE_PLAN_COST")]){
+    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]>$data[$key]["maximum-seller-allowed-price"]){
     			$data[$key]["maximum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
-    		}else{
-    			$data[$key]["maximum-seller-allowed-price"]=round((1+$_POST["maxbbpPercent"])*$value[C("DB_USSW_SALE_PLAN_COST")],2);
     		}
     		if($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY"))==null){
     			$data[$key]["quantity"]=0;
@@ -1375,6 +1388,7 @@ class GgsUsswSaleAction extends CommonAction{
     		$data[$key]["suggested-price"]=$value[C("DB_USSW_SALE_PLAN_SUGGESTED_PRICE")];
     		$data[$key]["suggest"]=$value[C("DB_USSW_SALE_PLAN_SUGGEST")];		
     	}
+    	$productTable->commit();
     	$storageTable->commit();
     	$excelCellName[0]='sku';
     	$excelCellName[1]='price';
