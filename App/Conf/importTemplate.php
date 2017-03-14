@@ -171,6 +171,24 @@ return array(
 		'G'=>'fulfillment-channel',
 		),
 
+	//update groupon file exchange template column name
+	'IMPORT_GROUPON_FXT' => array(
+		'A'=>'Product Title',
+		'B'=>'Variant 1',
+		'C'=>'Variant 2',
+		'D'=>'Variant 3',
+		'E'=>'Product ID',
+		'F'=>'Option ID',
+		'G'=>'Product State',
+		'H'=>'QTY sold',
+		'I'=>'QTY available',
+		'J'=>'SKU',
+		'K'=>'UPC',
+		'L'=>'MSRP Price',
+		'M'=>'Market Rate Price',
+		'N'=>'Groupon Price',
+		),
+
 	//Amazon Unshipped orders template
 	'IMPORT_AMAZON_UNSHIPPED_ORDER' => array(
 		'A' => 'order-id',

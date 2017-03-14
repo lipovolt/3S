@@ -66,7 +66,7 @@
 														<elseif condition="$market eq 'amazon'"/>
 															<p>功能说明： 在将File exchange 文件上传amazon之后，上传成功之后再上传3s系统用于更新销售建议表的售价。</p>
 														<elseif condition="$market eq 'groupon'"/>
-														<p>功能说明： 在将File exchange 文件上传groupon之后，上传成功之后再上传3s系统用于更新销售建议表的售价。批量更新的情况下，groupon只允许更新的价格低于当前的售价。如有涨价的需要，要在groupon后台手动处理。</p>
+														<p>功能说明： 在将File exchange 文件上传groupon之后，上传成功之后再上传3s系统用于更新销售建议表的售价。批量更新的情况下，groupon只允许更新的价格低于market rate price。</p>
 														<else /> 无法识别平台，清联系管理员处理。
 														</if>
 										            </div>

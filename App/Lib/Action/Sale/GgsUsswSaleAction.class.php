@@ -410,7 +410,7 @@ class GgsUsswSaleAction extends CommonAction{
 			if($this->getMarketByAccount($account)=='ebay'){
 				return $this->getUsswEbayCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$sale_price);
 			}
-			if($this->getMarketByAccount($account)=='amazon'){
+			if($this->getMarketByAccount($account)=='amazon' || $this->getMarketByAccount($account)=='groupon'){
 				return $this->getUsswAmazonCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$sale_price);
 			}
 			$this->error('无法找到与 '.$account.' 匹配的平台！不能计算销售建议表成本！');
@@ -418,7 +418,7 @@ class GgsUsswSaleAction extends CommonAction{
 			if($this->getMarketByAccount($account)=='ebay'){
 				return $this->getUsswEbayCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]);
 			}
-			if($this->getMarketByAccount($account)=='amazon'){
+			if($this->getMarketByAccount($account)=='amazon' || $this->getMarketByAccount($account)=='groupon'){
 				return $this->getUsswAmazonCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]);
 			}
 			$this->error('无法找到与 '.$account.' 匹配的平台！不能计算销售建议表成本！');
@@ -427,7 +427,7 @@ class GgsUsswSaleAction extends CommonAction{
 				$tmpSalePrice = $this->getUsswEbayISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1']);
 				return $this->getUsswEbayCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]);
 			}
-			if($this->getMarketByAccount($account)=='amazon'){
+			if($this->getMarketByAccount($account)=='amazon' || $this->getMarketByAccount($account)=='groupon'){
 				$tmpSalePrice = $this->getUsswAmazonISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1']);
 				return $this->getUsswAmazonCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1'],$tmpSalePrice);
 			}
@@ -447,7 +447,7 @@ class GgsUsswSaleAction extends CommonAction{
     	if($this->getMarketByAccount($account)=='ebay'){
 			return $this->getUsswEbayISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1']);
 		}
-		if($this->getMarketByAccount($account)=='amazon'){
+		if($this->getMarketByAccount($account)=='amazon' || $this->getMarketByAccount($account)=='groupon'){
 			return $this->getUsswAmazonISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1']);
 		}
 		$this->error('无法找到与 '.$account.' 匹配的平台！不能计算初始售价！');
@@ -560,7 +560,7 @@ class GgsUsswSaleAction extends CommonAction{
         	if($this->getMarketByAccount($account)=='ebay'){
         		$data[$key]['cost']=$this->getUsswEbayCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_USTARIFF')],$data[$key]['ussw-fee'],$data[$key]['way-to-us-fee'],$data[$key]['local-shipping-fee1'],$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]);
         	}
-        	elseif($this->getMarketByAccount($account)=='amazon'){
+        	elseif($this->getMarketByAccount($account)=='amazon' || $this->getMarketByAccount($account)=='groupon'){
         		$data[$key]['cost']=$this->getUsswAmazonCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_USTARIFF')],$data[$key]['ussw-fee'],$data[$key]['way-to-us-fee'],$data[$key]['local-shipping-fee1'],$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]);
         	}else{
         		$this->error('无法找到与 '.$account.' 匹配的平台！不能显示销售表！');
@@ -611,7 +611,7 @@ class GgsUsswSaleAction extends CommonAction{
         	if($this->getMarketByAccount($account)=='ebay'){
         		$data[$key]['cost']=$this->getUsswEbayCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_USTARIFF')],$data[$key]['ussw-fee'],$data[$key]['way-to-us-fee'],$data[$key]['local-shipping-fee1'],$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]);
         	}
-        	elseif($this->getMarketByAccount($account)=='amazon'){
+        	elseif($this->getMarketByAccount($account)=='amazon' || $this->getMarketByAccount($account)=='groupon'){
         		$data[$key]['cost']=$this->getUsswAmazonCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_USTARIFF')],$data[$key]['ussw-fee'],$data[$key]['way-to-us-fee'],$data[$key]['local-shipping-fee1'],$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]);
         	}else{
         		$this->error('无法找到与 '.$account.' 匹配的平台！不能显示销售表！');
@@ -1282,31 +1282,36 @@ class GgsUsswSaleAction extends CommonAction{
                 	if(count($splitSku)==1){
                 		//Single sku
                 		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][0]))->find();
-                		$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-                		$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
                 		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
+                		if($ainventory==null){
+                			$ainventory=0;
+                		}
                 		if($splitSku[0][1]==1){
                 			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
-                			$data[$i-2]['Ainventory']=$ainventory;
+                			$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+                			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+                			$data[$i-2][$firstRow['H']]=$ainventory;
                 		}else{
                 			//Single sku and multiple sale quantity
-                			$data[$i-2]['Ainventory']=intval($ainventory/$splitSku[0][1]);
+                			$data[$i-2]['Suggest']="多个一组销售商品，无法给出建议售价";
+                			$data[$i-2][$firstRow['H']]=intval($ainventory/$splitSku[0][1]);
                 		}
 
                 	}else{
                 		//Multiple sku
-                		$data[$i-2]['Ainventory']=65536;
+                		$data[$i-2]['Suggest']="组合销售商品，无法给出建议售价";
+                		$data[$i-2][$firstRow['H']]=65536;
                 		foreach ($splitSku as $key => $skuQuantity){
                 			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
                 			if($skuQuantity[1]==1){
                 				//Multiple sku and Single sale quantity
-                				if($ainventory<$data[$i-2]['Ainventory']){
-                					$data[$i-2]['Ainventory']=$ainventory;
+                				if($ainventory<$data[$i-2][$firstRow['H']]){
+                					$data[$i-2][$firstRow['H']]=$ainventory;
                 				}
                 			}else{
                 				//Multiple sku and Multiple sale quantity
-                				if(intval($ainventory/$skuQuantity[1])<$data[$i-2]['Ainventory']){
-                					$data[$i-2]['Ainventory']=intval($ainventory/$skuQuantity[1]);
+                				if(intval($ainventory/$skuQuantity[1])<$data[$i-2][$firstRow['H']]){
+                					$data[$i-2][$firstRow['H']]=intval($ainventory/$skuQuantity[1]);
                 				}
                 			}
                 		}
@@ -1322,10 +1327,9 @@ class GgsUsswSaleAction extends CommonAction{
                 $excelCellName[7]='Suggest';
                 $excelCellName[8]=$objPHPExcel->getActiveSheet()->getCell("G1")->getValue();
                 $excelCellName[9]=$objPHPExcel->getActiveSheet()->getCell("H1")->getValue();
-                $excelCellName[10]='Ainventory';
-                $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("I1")->getValue();
-                $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("J1")->getValue();
-                $excelCellName[13]=$objPHPExcel->getActiveSheet()->getCell("K1")->getValue();
+                $excelCellName[10]=$objPHPExcel->getActiveSheet()->getCell("I1")->getValue();
+                $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("J1")->getValue();
+                $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("K1")->getValue();
                 $this->exportEbayFileExchangeExcel('GgsFileExchange',$excelCellName,$data); 
             }else{
                 $this->error("模板错误，请检查模板！");
@@ -1346,8 +1350,17 @@ class GgsUsswSaleAction extends CommonAction{
 
     //Verify imported file exchange template column name
 	private function verifyAmazonFxt($firstRow){
-        for($c='B';$c<=max(array_keys(C('IMPORT_AMAZON_FXT')));$c++){
+        for($c='A';$c<=max(array_keys(C('IMPORT_AMAZON_FXT')));$c++){
             if($firstRow[$c] != C('IMPORT_AMAZON_FXT')[$c])
+                return false;
+        }
+        return true;
+    }
+
+    //Verify imported file exchange template column name
+	private function verifyGrouponFxt($firstRow){
+        for($c='A';$c<=max(array_keys(C('IMPORT_GROUPON_FXT')));$c++){
+            if($firstRow[$c] != C('IMPORT_GROUPON_FXT')[$c])
                 return false;
         }
         return true;
@@ -1403,7 +1416,124 @@ class GgsUsswSaleAction extends CommonAction{
     }
 
     private function grouponFileExchangeHandle($account){
-    	$this->error('功能待完善');
+    	if (!empty($_FILES)) {
+			import('ORG.Net.UploadFile');
+			$config=array(
+			 'allowExts'=>array('xls'),
+			 'savePath'=>'./Public/upload/fileExchange/',
+			 'saveRule'=>'grouponFileExchange'.'_'.time(),
+			);
+			$upload = new UploadFile($config);
+			if (!$upload->upload()) {
+				$this->error($upload->getErrorMsg());
+			}else {
+				$info = $upload->getUploadFileInfo();                 
+			}
+			vendor("PHPExcel.PHPExcel");
+			$file_name=$info[0]['savepath'].$info[0]['savename'];
+
+			$objReader = PHPExcel_IOFactory::createReader('Excel5');
+			$objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+			$sheetnames = $objPHPExcel->getSheetNames();
+
+			//creat excel writer
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			
+
+			$objPHPExcel->setActiveSheetIndex(0);
+			$sheet = $objPHPExcel->getSheet(0);
+			$highestRow = $sheet->getHighestRow(); // 取得总行数
+			$highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+			//excel first column name verify
+            for($c='A';$c<=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+            }
+
+            if($this->verifyGrouponFxt($firstRow)){
+            	$storageTable=M($this->getStorageTableName($account));
+            	$salePlanTable=M($this->getSalePlanTableName($account));
+
+                for($i=2;$i<=$highestRow;$i++){
+                	$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue());
+
+                	$data[$i-2][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+        			$data[$i-2][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+        			$data[$i-2][$firstRow['C']]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+        			$data[$i-2][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+        			$data[$i-2][$firstRow['E']]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
+        			$data[$i-2][$firstRow['F']]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+        			$data[$i-2][$firstRow['G']]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+                	$data[$i-2][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+        			$data[$i-2][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+        			$data[$i-2][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+        			$data[$i-2][$firstRow['L']]=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
+        			$data[$i-2][$firstRow['M']]=$objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
+        			$data[$i-2][$firstRow['N']]=$objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
+
+                	if(count($splitSku)==1){
+                		//Single sku
+                		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][0]))->find();
+                		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
+                		if($splitSku[0][1]==1){
+                			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
+                			
+                			if($salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]>$data[$i-2][$firstRow['M']]){
+                				$data[$i-2]['SuggestPrice']=$data[$i-2][$firstRow['M']];
+                			}else{
+                				$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+                			}
+                			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+                			$data[$i-2][$firstRow['I']]=$ainventory;
+                		}else{
+                			//Single sku and multiple sale quantity
+                			$data[$i-2]['Suggest']="多个一组销售商品，无法给出建议售价";
+                			$data[$i-2][$firstRow['I']]=intval($ainventory/$splitSku[0][1]);
+                		}
+
+                	}else{
+                		$data[$i-2]['Suggest']="组合销售商品，无法给出建议售价";
+                		//Multiple sku
+                		$data[$i-2][$firstRow['I']]=65536;
+                		foreach ($splitSku as $key => $skuQuantity){
+                			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
+                			if($skuQuantity[1]==1){
+                				//Multiple sku and Single sale quantity
+                				if($ainventory<$data[$i-2][$firstRow['I']]){
+                					$data[$i-2][$firstRow['I']]=$ainventory;
+                				}
+                			}else{
+                				//Multiple sku and Multiple sale quantity
+                				if(intval($ainventory/$skuQuantity[1])<$data[$i-2]['Ainventory']){
+                					$data[$i-2][$firstRow['I']]=intval($ainventory/$skuQuantity[1]);
+                				}
+                			}
+                		}
+                	}                 
+                }
+                $excelCellName[0]=$objPHPExcel->getActiveSheet()->getCell("A1")->getValue();
+                $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
+                $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
+                $excelCellName[3]=$objPHPExcel->getActiveSheet()->getCell("D1")->getValue();
+                $excelCellName[4]=$objPHPExcel->getActiveSheet()->getCell("E1")->getValue();
+                $excelCellName[5]=$objPHPExcel->getActiveSheet()->getCell("F1")->getValue();
+                $excelCellName[6]=$objPHPExcel->getActiveSheet()->getCell("G1")->getValue();
+                $excelCellName[7]=$objPHPExcel->getActiveSheet()->getCell("H1")->getValue();
+                $excelCellName[8]=$objPHPExcel->getActiveSheet()->getCell("I1")->getValue();
+                $excelCellName[9]=$objPHPExcel->getActiveSheet()->getCell("J1")->getValue();
+                $excelCellName[10]=$objPHPExcel->getActiveSheet()->getCell("K1")->getValue();
+                $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("L1")->getValue();
+                $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("M1")->getValue();
+                $excelCellName[13]=$objPHPExcel->getActiveSheet()->getCell("N1")->getValue();
+                $excelCellName[14]='SuggestPrice';
+                $excelCellName[15]='Suggest';
+                $this->exportGrouponFileExchangeExcel('G-lipovoltFileExchange',$excelCellName,$data); 
+            }else{
+                $this->error("模板错误，请检查模板！");
+            }   
+        }else{
+            $this->error("请选择上传的文件");
+        }
     }
 
     //Split sku according to | and *, then return a 2d array. 
@@ -1434,6 +1564,9 @@ class GgsUsswSaleAction extends CommonAction{
     		case 'lipovolt':
     			return C('DB_USSTORAGE');
     			break;
+    		case 'g-lipovolt':
+    			return C('DB_USSTORAGE');
+    			break;
     		default:
     			return null;
     			break;
@@ -1448,6 +1581,9 @@ class GgsUsswSaleAction extends CommonAction{
     			break;
     		case 'lipovolt':
     			return C('DB_USSW_SALE_PLAN2');
+    			break;
+    		case 'g-lipovolt':
+    			return C('DB_USSW_SALE_PLAN3');
     			break;
     		default:
     			return null;
@@ -1464,6 +1600,9 @@ class GgsUsswSaleAction extends CommonAction{
     		case 'lipovolt':
     			return 'UsswSalePlan2View';
     			break;
+			case 'g-lipovolt':
+				return 'UsswSalePlan3View';
+				break;
     		default:
     			return null;
     			break;
@@ -1478,6 +1617,9 @@ class GgsUsswSaleAction extends CommonAction{
     			break;
     		case 'lipovolt':
     			return 'amazon';
+    			break;
+    		case 'g-lipovolt':
+    			return 'groupon';
     			break;
     		default:
     			return null;
@@ -1507,11 +1649,38 @@ class GgsUsswSaleAction extends CommonAction{
             		$objPHPExcel->getActiveSheet()->getStyle( 'G'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
             		$objPHPExcel->getActiveSheet()->getStyle( 'G'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
             	}
-            	if($i>0 && $expTableData[$i][$expCellName[10]]!=null && $expTableData[$i][$expCellName[9]]!=$expTableData[$i][$expCellName[10]]){
-            		$objPHPExcel->getActiveSheet()->getStyle( 'J'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-            		$objPHPExcel->getActiveSheet()->getStyle( 'J'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
-            		$objPHPExcel->getActiveSheet()->getStyle( 'K'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-            		$objPHPExcel->getActiveSheet()->getStyle( 'K'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $expTableData[$i][$expCellName[$j]]);
+            }             
+        }  
+
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="'.$xlsTitle.'.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
+        $objWriter->save('php://output');
+        exit;   
+    }
+
+    private function exportGrouponFileExchangeExcel($expTitle,$expCellName,$expTableData){
+        $fileName = $expTitle.date('_Ymd');
+        $cellNum = count($expCellName);
+        $dataNum = count($expTableData);
+        vendor("PHPExcel.PHPExcel");
+
+        $objPHPExcel = new PHPExcel();
+        $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
+
+        for($i=0;$i<$cellNum;$i++){
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i].'1', $expCellName[$i]); 
+        } 
+
+        for($i=0;$i<$dataNum;$i++){
+            for($j=0;$j<$cellNum;$j++){
+            	if($i>0 && $expTableData[$i][$expCellName[14]] !=null && $expTableData[$i][$expCellName[14]]!=$expTableData[$i][$expCellName[13]]){
+            		$objPHPExcel->getActiveSheet()->getStyle( 'N'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'N'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+            		$objPHPExcel->getActiveSheet()->getStyle( 'O'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'O'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
             	}
                 $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $expTableData[$i][$expCellName[$j]]);
             }             
@@ -1570,7 +1739,7 @@ class GgsUsswSaleAction extends CommonAction{
 		}elseif($market=='amazon'){
 			$this->updateAmazonSalePriceHandle($account);
 		}elseif($market=='groupon'){
-			$this->grouponFileExchangeHandle($account);
+			$this->updateGrouponSalePriceHandle($account);
 		}else{
 			$this->error('没有 '.$market.' 平台');
 		}    	
@@ -1686,14 +1855,82 @@ class GgsUsswSaleAction extends CommonAction{
             		$sku = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
             		$map[C("DB_USSW_SALE_PLAN_SKU")]=array("eq",$sku);
             		$actualPrice = $salePlan->where($map)->getField(C("DB_USSW_SALE_PLAN_PRICE"));
+            		$priceNote = $salePlan->where($map)->getField(C("DB_USSW_SALE_PLAN_PRICE_NOTE"));
             		if($actualPrice!=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue()){
             			$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
-						if($data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]==null){
-							$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('ymd',time());
+						if($priceNote==null){
+							$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue().' '.date('ymd',time());
 						}else{
-							$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')].' | '.$data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+							$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $priceNote.' | '.$$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue().' '.date('Y-m-d',time());
 						}
 						$data[C("DB_USSW_SALE_PLAN_PRICE")]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+						$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+						$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
+						$salePlan->where($map)->save($data);
+						$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]=null;
+            		}
+            	}
+            	$salePlan->commit();
+            	$this->success("更新产品售价成功");
+            }else{
+            	$this->error("模板错误，请检查模板！");
+            }
+    	}else{
+    		$this->error("请选择上传的文件");
+    	}
+    }
+
+    private function updateGrouponSalePriceHandle($account){
+    	if (!empty($_FILES)) {
+    		import('ORG.Net.UploadFile');
+			$config=array(
+			 'allowExts'=>array('xls'),
+			 'savePath'=>'./Public/upload/updateSalePrice/',
+			 'saveRule'=>'groupon'.'_'.$account.'_'.time(),
+			);
+			$upload = new UploadFile($config);
+			if (!$upload->upload()) {
+				$this->error($upload->getErrorMsg());
+			}else {
+				$info = $upload->getUploadFileInfo();                 
+			}
+			vendor("PHPExcel.PHPExcel");
+			$file_name=$info[0]['savepath'].$info[0]['savename'];
+
+			$objReader = PHPExcel_IOFactory::createReader('Excel5');
+			$objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+			$sheetnames = $objPHPExcel->getSheetNames();
+
+			//creat excel writer
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			
+
+			$objPHPExcel->setActiveSheetIndex(0);
+			$sheet = $objPHPExcel->getSheet(0);
+			$highestRow = $sheet->getHighestRow(); // 取得总行数
+			$highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+			//excel first column name verify
+            for($c='A';$c<=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+            }
+
+            if($this->verifyGrouponFxt($firstRow)){
+            	$salePlan=M($this->getSalePlanTableName($account));
+            	$salePlan->startTrans();
+            	for($i=2;$i<=$highestRow;$i++){
+            		$sku = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+            		$map[C("DB_USSW_SALE_PLAN_SKU")]=array("eq",$sku);
+            		$actualPrice = $salePlan->where($map)->getField(C("DB_USSW_SALE_PLAN_PRICE"));
+            		$priceNote = $salePlan->where($map)->getField(C("DB_USSW_SALE_PLAN_PRICE_NOTE"));
+            		if($actualPrice!=$objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue()){
+            			$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+						if($priceNote==null){
+							$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue().' '.date('ymd',time());
+						}else{
+							$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $priceNote.' | '.$objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue().' '.date('Y-m-d',time());
+						}
+						$data[C("DB_USSW_SALE_PLAN_PRICE")]=$objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
 						$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 						$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
 						$salePlan->where($map)->save($data);
