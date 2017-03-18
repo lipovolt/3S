@@ -744,6 +744,8 @@ class RestockAction extends CommonAction{
     		$restock = M(C('DB_RESTOCK'));
     		$restock->startTrans();
     		foreach ($_POST['cb'] as $key => $value) {
+    			$data[C('DB_RESTOCK_STATUS')]='已发货';
+    			$data[C('DB_RESTOCK_SHIPPING_DATE')]=date("Y-m-d H:i:s" ,time());
     			$restock->where(array(C('DB_RESTOCK_ID')=>$value))->setField(C('DB_RESTOCK_STATUS'),'已发货');
     		}
     		$restock->commit();
