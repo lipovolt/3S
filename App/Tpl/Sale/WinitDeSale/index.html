@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>万邑通德国销售信息</title>
+<title>万邑通{$account}销售信息</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -67,6 +67,7 @@
 		<div>
 			<div class="tab-content">	
 				<table id="tablelist" class="tablelist">
+				<div align="center" style="font-size:x-large; color: red">万邑通 {$market} {$account} 销售表</div>
 					<tr>
 						<th width="66">产品编码</th>
 						<th><div class="tl">中文名称</div></th>
@@ -98,7 +99,7 @@
 						<td><div class="tl">{$vo.local-shipping-way}</div></td>
 						<td><div class="tl">{$vo.local-shipping-fee}</div></td>
 						<td><div class="tl">{$vo.cost}</div></td>
-						<td><div class="tl">{$vo[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_RC_DE_SALE_PLAN_PRICE')]}</div></td>
 						<td><div class="tl">{$vo.gprofit}</div></td>
 						<td><div class="tl">{$vo.grate}</div></td>
 						<td><div class="tl">{$vo.pweight}</div></td>

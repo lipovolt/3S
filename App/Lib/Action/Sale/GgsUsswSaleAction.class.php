@@ -1317,6 +1317,26 @@ class GgsUsswSaleAction extends CommonAction{
                 		}
                 	}                 
                 }
+
+                //find item in stock but not listed
+                $map[C('DB_USSTORAGE_AINVENTORY')] = array('gt',0);
+                $storages=$storageTable->where($map)->select();
+                $newIndex = $highestRow+1;
+                foreach ($storages as $key => $value) {
+
+                	$listed=false;
+                	for ($i=2;$i<=$highestRow;$i++) {
+                		if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()==$value[C('DB_USSTORAGE_SKU')]){
+                			$listed=true;
+                		}
+                	}
+                	if($listed==false){
+                		$data[$newIndex][$firstRow['K']]=$value[C('DB_USSTORAGE_SKU')];
+                		$data[$newIndex]['Suggest']="未刊登商品";
+                		$newIndex++;
+                	}
+                }
+
                 $excelCellName[0]=$objPHPExcel->getActiveSheet()->getCell("A1")->getValue();
                 $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
                 $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
@@ -1511,6 +1531,26 @@ class GgsUsswSaleAction extends CommonAction{
                 		}
                 	}                 
                 }
+
+                //find item in stock but not listed
+                $map[C('DB_USSTORAGE_AINVENTORY')] = array('gt',0);
+                $storages=$storageTable->where($map)->select();
+                $newIndex = $highestRow+1;
+                foreach ($storages as $key => $value) {
+
+                	$listed=false;
+                	for ($i=2;$i<=$highestRow;$i++) {
+                		if($objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue()==$value[C('DB_USSTORAGE_SKU')]){
+                			$listed=true;
+                		}
+                	}
+                	if($listed==false){
+                		$data[$newIndex][$firstRow['J']]=$value[C('DB_USSTORAGE_SKU')];
+                		$data[$newIndex]['Suggest']="未刊登商品";
+                		$newIndex++;
+                	}
+                }
+
                 $excelCellName[0]=$objPHPExcel->getActiveSheet()->getCell("A1")->getValue();
                 $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
                 $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();

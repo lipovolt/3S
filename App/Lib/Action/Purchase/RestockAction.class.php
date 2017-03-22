@@ -152,19 +152,19 @@ class RestockAction extends CommonAction{
                     	if($objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0){
                     		if(($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())==0){
 
-		                    	if($product[C('db_product_tode')]=='空运' && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($product[C('db_product_tode')]=='空运' && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),0)){
 		                    		$this->addRestockOrder('万邑通德国',0,$product,0,0,0);
 		                    	}
-		                    	if($product[C('db_product_tode')]=='海运' && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($product[C('db_product_tode')]=='海运' && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),0)){
 		                    		$this->addRestockOrder('万邑通德国',0,$product,0,0,0);
 		                    	}
                     		}
                     	}else{
 	                    	$dayAvailableForSale = ($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())/$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-	                    	if($product[C('db_product_tode')]=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+	                    	if($product[C('db_product_tode')]=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()))){
 	                    		$this->addRestockOrder('万邑通德国',ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()),$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
 	                    	}
-	                    	if($product[C('db_product_tode')]=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+	                    	if($product[C('db_product_tode')]=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock('万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()))){
 	                    		$this->addRestockOrder('万邑通德国',ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()),$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
 	                    	}
 	                    }	
@@ -236,19 +236,19 @@ class RestockAction extends CommonAction{
                     	if($objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0){
                     		if(($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())==0){
 
-		                    	if($product[C('db_product_tous')]=='空运' && $this->reallyOutOfStock('美自建仓',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($product[C('db_product_tous')]=='空运' && $this->reallyOutOfStock('美自建仓',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),0)){
 		                    		$this->addRestockOrder('美自建仓',0,$product,0,0,0);
 		                    	}
-		                    	if($product[C('db_product_tous')]=='海运' && $this->reallyOutOfStock('万邑通美西',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($product[C('db_product_tous')]=='海运' && $this->reallyOutOfStock('万邑通美西',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),0)){
 		                    		$this->addRestockOrder('万邑通美西',0,$product,0,0,0);
 		                    	}
                     		}
                     	}else{
 	                    	$dayAvailableForSale = ($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())/$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-	                    	if($product[C('db_product_tous')]=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock('美自建仓',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+	                    	if($product[C('db_product_tous')]=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock('美自建仓',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()))){
 	                    		$this->addRestockOrder('美自建仓',ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()),$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
 	                    	}
-	                    	if($product[C('db_product_tous')]=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock('万邑通美西',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+	                    	if($product[C('db_product_tous')]=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock('万邑通美西',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()))){
 	                    		$this->addRestockOrder('万邑通美西',ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()),$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
 	                    	}
 	                    }	
@@ -324,23 +324,23 @@ class RestockAction extends CommonAction{
 	                    	if($objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()==0){
 	                    		if(($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())==0){
 
-			                    	if($status=='空运' && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+			                    	if($status=='空运' && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),0)){
 			                    		$w = $sheetId==0?'美自建仓':'万邑通德国';
 			                    		$this->addRestockOrder($w,0,$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),0);
 			                    	}
-			                    	if($status=='海运' && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+			                    	if($status=='海运' && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),0)){
 			                    		$w = $sheetId==0?'万邑通美西':'万邑通德国';
 			                    		$this->addRestockOrder($w,0,$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),0);
 			                    	}
 	                    		}
 	                    	}else{
 		                    	$dayAvailableForSale = ($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue() + $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue())/$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-		                    	if($status=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($status=='空运' && $dayAvailableForSale<$dfa && $this->reallyOutOfStock($sheetId==0?'美自建仓':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()))){
 		                    		$w = $sheetId==0?'美自建仓':'万邑通德国';
 		                    		$q = ceil(($dfa-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
 		                    		$this->addRestockOrder($w,$q,$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()*30);
 		                    	}
-		                    	if($status=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())){
+		                    	if($status=='海运' && $dayAvailableForSale<$dfs && $this->reallyOutOfStock($sheetId==0?'万邑通美西':'万邑通德国',$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()))){
 		                    		$w = $sheetId==0?'万邑通美西':'万邑通德国';
 		                    		$q = ceil(($dfs-$dayAvailableForSale)*$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue());
 		                    		$this->addRestockOrder($w,$q,$product,$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue(),$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()*30);
@@ -371,9 +371,9 @@ class RestockAction extends CommonAction{
 			if($product[C('db_product_tous')] !== null && $product[C('db_product_tous')] !== '无'){
 				$msq = $this->getUssw30DaysSales($ussv[C('DB_USSTORAGE_SKU')]);
 				if($product[C('db_product_tous')] == '空运'){
-					$roos = $this->reallyOutOfStock('美自建仓',$ussv[C('DB_USSTORAGE_SKU')]);
+					$roos = $this->reallyOutOfStock('美自建仓',$ussv[C('DB_USSTORAGE_SKU')],ceil(($dfa-$dayAvailableForSale)*($msq/30)));
 				}else{
-					$roos = $this->reallyOutOfStock('万邑通美西',$ussv[C('DB_USSTORAGE_SKU')]);
+					$roos = $this->reallyOutOfStock('万邑通美西',$ussv[C('DB_USSTORAGE_SKU')],ceil(($dfs-$dayAvailableForSale)*$msq/30));
 				}
 				if($msq==0 && ($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_INVENTORY')])==0){
 					if($product[C('db_product_tous')]=='空运' && $roos){
@@ -407,7 +407,7 @@ class RestockAction extends CommonAction{
 				$msq = $this->getSzsw30DaysSales($szsv[C('DB_SZSTORAGE_SKU')]);
 				if($msq != null){
 					$dayAvailableForSale=($szsv[C('DB_SZSTORAGE_AINVENTORY')]+$this->getSzIinventory($szsv[C('DB_SZSTORAGE_SKU')]))/($msq/30);
-					$roos = $this->reallyOutOfStock('深圳仓',$szsv[C('DB_USSTORAGE_SKU')]);
+					$roos = $this->reallyOutOfStock('深圳仓',$szsv[C('DB_USSTORAGE_SKU')],ceil((3-$dayAvailableForSale)*($msq/30)));
 					if($product[C('DB_PRODUCT_TOUS')]!='无' && $dayAvailableForSale<3 && $roos){				
 						$this->addRestockOrder('深圳仓',ceil((3-$dayAvailableForSale)*($msq/30)),$product);
 					}
@@ -513,6 +513,18 @@ class RestockAction extends CommonAction{
     	}
     }
 
+    private function enoughInRestockOrPurchased($warehouse,$sku,$neededQuantity){
+    	$restockQuantity = $this->getRestockQuantity($warehouse,$sku);
+    	$purchasedQuantity = $this->getPurchasedQuantity($warehouse,$sku);
+    	if($warehouse=='美自建仓'){
+    		$restockQuantity=$restockQuantity+$this->getIInventory($sku);
+    	}
+    	if($neededQuantity<($restockQuantity+$purchasedQuantity)){
+    		return false;
+    	}
+    	return true;
+    }
+
     private function isInRestock($warehouse,$sku){
     	$map[C('DB_RESTOCK_SKU')] = array('eq',$sku);
     	$map[C('DB_RESTOCK_WAREHOUSE')] = array('eq',$warehouse);
@@ -586,12 +598,12 @@ class RestockAction extends CommonAction{
   
     }
 
-    private function reallyOutOfStock($warehouse,$sku){
-    	if($warehouse=='万邑通德国' && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku)){
+    private function reallyOutOfStock($warehouse,$sku,$neededQuantity){
+    	if($warehouse=='万邑通德国' && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && $this->enoughInRestockOrPurchased($warehouse,$sku,$neededQuantity)){
     		return true;
-    	}elseif($warehouse=='美自建仓' && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && $this->getIInventory($sku)==0){
+    	}elseif($warehouse=='美自建仓' && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && $this->enoughInRestockOrPurchased($warehouse,$sku,$neededQuantity)){
     		return true;
-    	}elseif($warehouse=='万邑通美西' && !$this->isInOutOfStock($warehouse,$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku)){
+    	}elseif($warehouse=='万邑通美西' && !$this->isInOutOfStock($warehouse,$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && $this->enoughInRestockOrPurchased($warehouse,$sku,$neededQuantity)){
     		return true;
     	}elseif($warehouse=='深圳仓' && !$this->isInPurchaseItem($warehouse,$sku)){
     		return true;

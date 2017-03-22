@@ -145,6 +145,32 @@ return array(
 		'Q'=>'出口申报价值(USD)',
 		),
 
+	//import winit outbound template
+	'IMPORT_WINIT_OUTBOUND' => array(
+		'A'=>'Seller Order NO.',
+		'B'=>'Warehouse',
+		'C'=>'Shipping Method',
+		'D'=>'Insurance Type',
+		'E'=>'eBaySellerID',
+		'F'=>'eBayBuyerID',
+		'G'=>'Buyer Fullname',
+		'H'=>'Buyer Phone Number',
+		'I'=>'Buyer Email',
+		'J'=>'Buyer Address 1',
+		'K'=>'Buyer Address 2',
+		'L'=>'Buyer City',
+		'M'=>'Buyer State',
+		'N'=>'Buyer Postcode',
+		'O'=>'Buyer Country',
+		'P'=>'House No.',
+		'Q'=>'Duplicate order',
+		'R'=>'SKU No.',
+		'S'=>'Attribute',
+		'T'=>'Quantity',
+		'U'=>'Item Number',
+		'V'=>'Transaction ID',
+		),
+
 	//update ebay file exchange template column name
 	'IMPORT_EBAY_FXT' => array(
 		'A'=>'Action',

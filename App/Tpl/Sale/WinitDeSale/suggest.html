@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>万邑通{$account}销售建议</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript">
+function save(){
+	var kw = document.getElementById('keyword').value;
+	var kwv = document.getElementById('keywordValue').value;
+	form.action="{:U('Sale/WinitDeSale/updateSalePlan',array('account'=>$account))}?kw="+kw+"&kwv="+kwv;
+	form.submit();
+}
+function  cli(Obj){
+	var collid = document.getElementById("all");
+	var coll = document.getElementsByName(Obj);
+	if (collid.checked){
+	    for(var i = 0; i < coll.length; i++)
+	       coll[i].checked = true;
+	}else{
+	    for(var i = 0; i < coll.length; i++)
+		    coll[i].checked = false;
+	}
+}
+function bIgnore(){
+	if(confirm("确认批量忽略么？")){
+		var kw = document.getElementById('keyword').value;
+		var kwv = document.getElementById('keywordValue').value;
+		var coll = document.getElementsByName("cb[]");
+		var bo = false;
+		for(var i = 0; i < coll.length; i++){
+			if(coll[i].checked){
+				bo=true;
+			}
+		}
+		if(bo){
+			form.action="{:U('Sale/WinitDeSale/bIgnoreHandle',array('account'=>$account))}?kw="+kw+"&kwv="+kwv;
+			form.submit();
+		}else{
+			alert('请选择需要批量忽略的建议！');
+		}
+	}	
+}
+function bModify(){
+	if(confirm("确认批量修改么？")){
+		var kw = document.getElementById('keyword').value;
+		var kwv = document.getElementById('keywordValue').value;
+		var coll = document.getElementsByName("cb[]");
+		var bo = false;
+		for(var i = 0; i < coll.length; i++){
+			if(coll[i].checked){
+				bo=true;
+			}
+		}
+		if(bo){
+			form.action="{:U('Sale/WinitDeSale/bModifyHandle',array('account'=>$account))}?kw="+kw+"&kwv="+kwv;
+			form.submit();
+		}else{
+			alert('请选择需要批量修改的建议！');
+		}
+	}	
+}
+</script>
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>销售</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/saleMenu.html" />	
+			</div>
+		</div>
+		<div class="content">
+	<div id="ProductInfo" class="main">
+		<form name="search_product" id="search_product" action="{:U('Sale/WinitDeSale/suggest',array('account'=>$account))}" method="POST">
+		<input type="hidden" name="account" value="{$account}">
+			<div class="search-area">
+				<div class="item">
+					<div class="form-group">
+						<label for="keyword" class="control-label">关键字</label>
+						<div class="control-wrap">
+							<select name="keyword" id="keyword" data-value="">
+								<if condition="($keyword eq 'cname')"> 
+									<option value="{:C('DB_PRODUCT_SKU')}">产品编码</option>
+									<option value="{:C('DB_PRODUCT_CNAME')}" selected="">产品名称</option>
+								<else /> 
+									<option value="{:C('DB_PRODUCT_SKU')}" selected="">产品编码</option>
+									<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
+								</if>
+							</select>
+						</div>
+						<div class="control-wrap">
+							<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="{$keywordValue}">
+						</div>
+					</div>
+					<button class="btn btn-s btn-blue" onClick="search_product.submit();">
+						<i class="icon search"></i>
+						<i class="vline-inline"></i>
+						<span>查询</span>
+					</button>
+				</div>			
+			</div>
+		</form>
+		<div>
+			<div class="tab-content">
+			<div align="center" style="font-size:x-large; color: red">万邑通 {$market} {$account} 销售建议表</div><br />
+				<form name="form" id="search_product" action="#" method="POST">
+				<a class="btn btn-s btn-blue" href="{:U('Sale/WinitDeSale/calSaleInfo',array('account'=>$account))}">更新建议（全部）</a>
+				<input class="btn btn-s btn-blue" type="button" onclick="save()" value="保存售价和自动建议状态（全部）" style="width:200px;"/>
+				<input class="btn btn-s btn-blue" type="button" onclick="bIgnore()" value="批量忽略（选择的建议）" style="width:200px;"/>
+				<input class="btn btn-s btn-blue" type="button" onclick="bModify()" value="批量已修改（选择的建议）" style="width:200px;"/>
+				<a class="btn btn-s btn-blue" type="button" href="{:U('Sale/WinitDeSale/updateSalePrice',array('market'=>$market,'account'=>$account))}">批量更新售价</a>
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th><div class="tl">
+							<input type="checkbox" id="all" value="" onclick="cli('cb[]');">
+						</div></th>
+						<th width="66">产品编码</th>
+						<th><div class="tl">中文名称</div></th>
+						<th><div class="tl">首次销售时间</div></th>
+						<th><div class="tl">上一次变更时间</div></th>
+						<th><div class="tl">重新刊<br>登次数</div></th>
+						<th><div class="tl">价格轨迹</div></th>
+						<th><div class="tl">成本$</div></th>
+						<th><div class="tl">售价$</div></th>
+						<th><div class="tl">利润$</div></th>
+						<th><div class="tl">利润率</div></th>
+						<th><div class="tl">建议售价$</div></th>
+						<th><div class="tl">销售建议</div></th>
+						<th><div class="tl">开启关闭<br>自动建议</div></th>
+						<th><div class="tl">操作</div></th>
+					</tr>
+					<volist name="suggest" id="vo">
+						<tr>
+						<td><div class="tl">
+							<input type="checkbox" name="cb[]" value="{$vo[C('DB_USSW_SALE_PLAN_ID')]}">
+						</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_SKU')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_PRODUCT_CNAME')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_FIRST_DATE')]|substr=0,10}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] | substr=0,10}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_COST')]}</div></td>
+						<td><div class="tl">
+						<input type="hidden" id="id-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="id-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" value="{$vo[C('DB_USSW_SALE_PLAN_ID')]}" />
+						<input type="hidden" id="sku-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="sku-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" value="{$vo[C('DB_USSW_SALE_PLAN_SKU')]}" />
+						<input id="sale_price-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name='sale_price-{$vo[C('DB_USSW_SALE_PLAN_ID')]}' type='text' value='{$vo[C('DB_USSW_SALE_PLAN_PRICE')]}' style="width:60px;"/></div></td>
+						<td><div class="tl">{$vo['profit']}</div></td>
+						<td><div class="tl">{$vo['grate']}%</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_USSW_SALE_PLAN_SUGGEST')]}</div></td>
+						<if condition="($vo[C('DB_USSW_SALE_PLAN_STATUS')] eq 1)"> <td><div class="tl"><input id="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" type='checkbox' checked /></div></td>
+						<else /> <td><div class="tl"><input id="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" type='checkbox' /></div></td>
+						</if>
+						<td>
+							<a href="{:U('Sale/WinitDeSale/confirmSuggest',array('account'=>$account,'id'=>$vo['id']))}">已修改</a>
+							<a href="{:U('Sale/WinitDeSale/ignoreSuggest',array('account'=>$account,'id'=>$vo['id']))}">忽略</a>
+						</td>
+						</tr>	
+					</volist> 								
+				</table>
+				</form>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+
+
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

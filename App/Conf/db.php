@@ -1057,5 +1057,168 @@ return array(
 	'DB_TODO_STATUS' => 'status',
 	'DB_TODO_TASK' => 'task',
 	'DB_TODO_REMARK' => 'remark',
+
+
+	//winit_outbound
+	/*创建万邑通出库表
+	create table if not exists `3s_winit_outbound`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`market` varchar(10) default null,
+	`market_no` varchar(20) default null,
+	`status` varchar(10) default null,
+	`shipping_company` varchar(20),
+	`shipping_way` varchar(30) default null,
+	`tracking_number` varchar(30) default null,
+	`create_time` datetime,
+	`seller_id` varchar(20) default null,
+	`buyer_id` varchar(20) default null,
+	`buyer_name` varchar(30) default null,
+	`buyer_tel` varchar(20) default null,
+	`buyer_email` varchar(30) default null,
+	`buyer_address1` varchar(50) default null,
+	`buyer_address2` varchar(50) default null,
+	`buyer_city` varchar(30) default null,
+	`buyer_state` varchar(30) default null,
+	`buyer_country` varchar(30) default null,
+	`buyer_zip` varchar(20) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_WINIT_OUTBOUND' => 'winit_outbound',
+	'DB_WINIT_OUTBOUND_ID' => 'id',
+	'DB_WINIT_OUTBOUND_MARKET' => 'market', //ebay,amazon,groupon
+	'DB_WINIT_OUTBOUND_MARKET_NO' => 'market_no',
+	'DB_WINIT_OUTBOUND_STATUS' => 'status', //待出库，已出库
+	'DB_WINIT_OUTBOUND_SHIPPING_COMPANY' => 'shipping_company',
+	'DB_WINIT_OUTBOUND_SHIPPING_WAY' => 'shipping_way',
+	'DB_WINIT_OUTBOUND_TRACKING_NUMBER' => 'tracking_number',
+	'DB_WINIT_OUTBOUND_CREATE_TIME' => 'create_time',
+	'DB_WINIT_OUTBOUND_SELLER_ID' => 'seller_id',
+	'DB_WINIT_OUTBOUND_BUYER_ID' => 'buyer_id',
+	'DB_WINIT_OUTBOUND_BUYER_NAME' => 'buyer_name',
+	'DB_WINIT_OUTBOUND_BUYER_TEL' => 'buyer_tel',
+	'DB_WINIT_OUTBOUND_BUYER_EMAIL' => 'buyer_email',
+	'DB_WINIT_OUTBOUND_BUYER_ADDRESS1' => 'buyer_address1',
+	'DB_WINIT_OUTBOUND_BUYER_ADDRESS2' => 'buyer_address2',
+	'DB_WINIT_OUTBOUND_BUYER_CITY' => 'buyer_city',
+	'DB_WINIT_OUTBOUND_BUYER_STATE' => 'buyer_state',
+	'DB_WINIT_OUTBOUND_BUYER_COUNTRY' => 'buyer_country',
+	'DB_WINIT_OUTBOUND_BUYER_ZIP' => 'buyer_zip',
+
+	//wini_outbound_item
+	/*
+	创建万邑通出库单产品明细表
+	create table if not exists `3s_winit_outbound_item`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`outbound_id` smallint(6),
+	`sku` varchar(10) default null,
+	`position` varchar(10) default null,
+	`quantity` smallint(3) default 0,
+	`market_no` varchar(20) default null,
+	`transaction_no` varchar(20) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_WINIT_OUTBOUND_ITEM' => 'winit_outbound_item',
+	'DB_WINIT_OUTBOUND_ITEM_ID' => 'id',
+	'DB_WINIT_OUTBOUND_ITEM_OOID' => 'outbound_id',
+	'DB_WINIT_OUTBOUND_ITEM_SKU' => 'sku',
+	'DB_WINIT_OUTBOUND_ITEM_POSITION' => 'position',
+	'DB_WINIT_OUTBOUND_ITEM_QUANTITY' => 'quantity',
+	'DB_WINIT_OUTBOUND_ITEM_MARKET_NO' => 'market_no',
+	'DB_WINIT_OUTBOUND_ITEM_TRANSACTION_NO' => 'transaction_no',
+
+	//winit_de_storage
+	/*
+	CREATE TABLE IF NOT EXISTS `3s_winit_de_storage` (
+	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
+	  `position` varchar(10) NOT NULL,
+	  `sku` varchar(10) NOT NULL,
+	  `cname` varchar(255) DEFAULT NULL,
+	  `ename` varchar(255) DEFAULT NULL,
+	  `attribute` varchar(50) DEFAULT NULL,
+	  `cinventory` smallint(6) DEFAULT 0,
+	  `ainventory` smallint(6) DEFAULT 0,
+	  `oinventory` smallint(6) DEFAULT 0,
+	  `iinventory` smallint(6) DEFAULT 0,
+	  `csales` smallint(6) DEFAULT 0,
+	  `remark` varchar(255) DEFAULT NULL,
+	  `sale_status` varchar(10) DEFAULT NULL
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
+	'DB_WINIT_DE_STORAGE' => 'winit_de_storage',
+	'DB_WINIT_DE_STORAGE_ID' => 'id',
+	'DB_WINIT_DE_STORAGE_POSITION' => 'position',
+	'DB_WINIT_DE_STORAGE_SKU' => 'sku',
+	'DB_WINIT_DE_STORAGE_CNAME' => 'cname',
+	'DB_WINIT_DE_STORAGE_ENAME' => 'ename',
+	'DB_WINIT_DE_STORAGE_ATTRIBUTE' => 'attribute',
+	'DB_WINIT_DE_STORAGE_CINVENTORY' => 'cinventory',
+	'DB_WINIT_DE_STORAGE_AINVENTORY' => 'ainventory',
+	'DB_WINIT_DE_STORAGE_OINVENTORY' => 'oinventory',
+	'DB_WINIT_DE_STORAGE_IINVENTORY' => 'iinventory',
+	'DB_WINIT_DE_STORAGE_CSALES' => 'csales',
+	'DB_WINIT_DE_STORAGE_REMARK' => 'remark',
+	'DB_WINIT_DE_STORAGE_SALE_STATUS' => 'sale_status', //待下架，已下架, Null
+
+	//winit_uswc_storage
+	/*
+	CREATE TABLE IF NOT EXISTS `3s_winit_uswc_storage` (
+	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
+	  `position` varchar(10) NOT NULL,
+	  `sku` varchar(10) NOT NULL,
+	  `cname` varchar(255) DEFAULT NULL,
+	  `ename` varchar(255) DEFAULT NULL,
+	  `attribute` varchar(50) DEFAULT NULL,
+	  `cinventory` smallint(6) DEFAULT 0,
+	  `ainventory` smallint(6) DEFAULT 0,
+	  `oinventory` smallint(6) DEFAULT 0,
+	  `iinventory` smallint(6) DEFAULT 0,
+	  `csales` smallint(6) DEFAULT 0,
+	  `remark` varchar(255) DEFAULT NULL,
+	  `sale_status` varchar(10) DEFAULT NULL
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
+	'DB_WINIT_USWC_STORAGE' => 'winit_uswc_storage',
+	'DB_WINIT_USWC_STORAGE_ID' => 'id',
+	'DB_WINIT_USWC_STORAGE_POSITION' => 'position',
+	'DB_WINIT_USWC_STORAGE_SKU' => 'sku',
+	'DB_WINIT_USWC_STORAGE_CNAME' => 'cname',
+	'DB_WINIT_USWC_STORAGE_ENAME' => 'ename',
+	'DB_WINIT_USWC_STORAGE_ATTRIBUTE' => 'attribute',
+	'DB_WINIT_USWC_STORAGE_CINVENTORY' => 'cinventory',
+	'DB_WINIT_USWC_STORAGE_AINVENTORY' => 'ainventory',
+	'DB_WINIT_USWC_STORAGE_OINVENTORY' => 'oinventory',
+	'DB_WINIT_USWC_STORAGE_IINVENTORY' => 'iinventory',
+	'DB_WINIT_USWC_STORAGE_CSALES' => 'csales',
+	'DB_WINIT_USWC_STORAGE_REMARK' => 'remark',
+	'DB_WINIT_USWC_STORAGE_SALE_STATUS' => 'sale_status', //待下架，已下架, Null
+
+	//rc_de_sale_plan for rc-helicar ebay.de items
+	/*
+	create table if not exists `3s_rc_de_sale_plan`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`sku` varchar(10) not null,
+	`first_sale_date` timestamp default NOW(),
+	`last_modify_date` datetime default null,
+	`relisting_times` smallint(6) default 0,
+	`price_note` varchar(255) default null,
+	`cost` decimal(5,2) default null,
+	`sale_price` decimal(5,2) default null,
+	`suggested_price` decimal(5,2) default null,
+	`suggest` varchar(20) default null,
+	`status` tinyint(1) default 1
+	) engine=myisam default charset=utf8;	
+	*/
+	'DB_RC_DE_SALE_PLAN' => 'rc_de_sale_plan',
+	'DB_RC_DE_SALE_PLAN_ID' => 'id',
+	'DB_RC_DE_SALE_PLAN_SKU' => 'sku',
+	'DB_RC_DE_SALE_PLAN_FIRST_DATE' => 'first_sale_date',
+	'DB_RC_DE_SALE_PLAN_LAST_MODIFY_DATE' => 'last_modify_date',
+	'DB_RC_DE_SALE_PLAN_RELISTING_TIMES' => 'relisting_times',
+	'DB_RC_DE_SALE_PLAN_PRICE_NOTE' => 'price_note',
+	'DB_RC_DE_SALE_PLAN_COST' => 'cost',
+	'DB_RC_DE_SALE_PLAN_PRICE' => 'sale_price',
+	'DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
+	'DB_RC_DE_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
+	'DB_RC_DE_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
 	);
 ?>
