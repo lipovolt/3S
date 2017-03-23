@@ -1472,7 +1472,7 @@ class GgsUsswSaleAction extends CommonAction{
             	$salePlanTable=M($this->getSalePlanTableName($account));
 
                 for($i=2;$i<=$highestRow;$i++){
-                	$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue());
+                	$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
 
                 	$data[$i-2][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
         			$data[$i-2][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
@@ -1487,6 +1487,7 @@ class GgsUsswSaleAction extends CommonAction{
         			$data[$i-2][$firstRow['L']]=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
         			$data[$i-2][$firstRow['M']]=$objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
         			$data[$i-2][$firstRow['N']]=$objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
+        			$data[$i-2][$firstRow['O']]=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
 
                 	if(count($splitSku)==1){
                 		//Single sku
@@ -1495,34 +1496,34 @@ class GgsUsswSaleAction extends CommonAction{
                 		if($splitSku[0][1]==1){
                 			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
                 			
-                			if($salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]>$data[$i-2][$firstRow['M']]){
-                				$data[$i-2]['SuggestPrice']=$data[$i-2][$firstRow['M']];
+                			if($salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]>$data[$i-2][$firstRow['N']]){
+                				$data[$i-2]['SuggestPrice']=$data[$i-2][$firstRow['N']];
                 			}else{
                 				$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
                 			}
                 			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
-                			$data[$i-2][$firstRow['I']]=$ainventory;
+                			$data[$i-2][$firstRow['J']]=$ainventory;
                 		}else{
                 			//Single sku and multiple sale quantity
                 			$data[$i-2]['Suggest']="多个一组销售商品，无法给出建议售价";
-                			$data[$i-2][$firstRow['I']]=intval($ainventory/$splitSku[0][1]);
+                			$data[$i-2][$firstRow['J']]=intval($ainventory/$splitSku[0][1]);
                 		}
 
                 	}else{
                 		$data[$i-2]['Suggest']="组合销售商品，无法给出建议售价";
                 		//Multiple sku
-                		$data[$i-2][$firstRow['I']]=65536;
+                		$data[$i-2][$firstRow['J']]=65536;
                 		foreach ($splitSku as $key => $skuQuantity){
                 			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
                 			if($skuQuantity[1]==1){
                 				//Multiple sku and Single sale quantity
-                				if($ainventory<$data[$i-2][$firstRow['I']]){
-                					$data[$i-2][$firstRow['I']]=$ainventory;
+                				if($ainventory<$data[$i-2][$firstRow['J']]){
+                					$data[$i-2][$firstRow['J']]=$ainventory;
                 				}
                 			}else{
                 				//Multiple sku and Multiple sale quantity
                 				if(intval($ainventory/$skuQuantity[1])<$data[$i-2]['Ainventory']){
-                					$data[$i-2][$firstRow['I']]=intval($ainventory/$skuQuantity[1]);
+                					$data[$i-2][$firstRow['J']]=intval($ainventory/$skuQuantity[1]);
                 				}
                 			}
                 		}
@@ -1542,7 +1543,7 @@ class GgsUsswSaleAction extends CommonAction{
                 		}
                 	}
                 	if($listed==false){
-                		$data[$newIndex][$firstRow['J']]=$value[C('DB_USSTORAGE_SKU')];
+                		$data[$newIndex][$firstRow['K']]=$value[C('DB_USSTORAGE_SKU')];
                 		$data[$newIndex]['Suggest']="未刊登商品";
                 		$newIndex++;
                 	}
@@ -1562,6 +1563,7 @@ class GgsUsswSaleAction extends CommonAction{
                 $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("L1")->getValue();
                 $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("M1")->getValue();
                 $excelCellName[13]=$objPHPExcel->getActiveSheet()->getCell("N1")->getValue();
+                $excelCellName[13]=$objPHPExcel->getActiveSheet()->getCell("O1")->getValue();
                 $excelCellName[14]='SuggestPrice';
                 $excelCellName[15]='Suggest';
                 $this->exportGrouponFileExchangeExcel('G-lipovoltFileExchange',$excelCellName,$data); 
