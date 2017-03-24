@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 <script type="text/javascript" src='__PUBLIC__/Js/jquery-1.7.2.min.js'></script>
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
 </head>
 <body>
 
@@ -45,7 +46,16 @@
 				if(sellerID == "unSelected"){ 
 					alert("请选择ebay账号"); 
 					return false; 
-				}  
+				} 
+
+				var date = document.getElementById("order_date").value;
+			 	if(date !="" && date !="如使用当前日期可不填"){
+			    	if(!confirm("不使用当前日期？")){
+			    		return false;
+			    	}
+			 	}else{
+			 		document.getElementById("order_date").value='';
+			 	} 
 			} 
 			</script>
 			
@@ -105,6 +115,8 @@
 
 													})
 													</script>
+													<label for="sellerID" class="control-label">订单日期:</label>
+													<input type="text" name="order_date" id="order_date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'});" value="如使用当前日期可不填" size="27" class="date" readonly>
 													</div>
 													<div>
 											            <input type="file" name="import" value=""/>

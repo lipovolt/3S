@@ -99,7 +99,11 @@ class OutboundAction extends CommonAction{
                         //判断是否跟上一行订单号相同，不相同的话，需要创建新出库单
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_MARKET_NO')] = $saleNo;
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_STATUS')] = '已出库';
-                            $outboundOrder[$j][C('DB_SZ_OUTBOUND_CREATE_TIME')]= Date('Y-m-d H:i:s');
+                            if(I('post.order_date')==null || I('post.order_date')==''){
+                                $outboundOrder[$j][C('DB_SZ_OUTBOUND_CREATE_TIME')]= Date('Y-m-d H:i:s');
+                            }else{
+                                $outboundOrder[$j][C('DB_SZ_OUTBOUND_CREATE_TIME')]= Date(I('post.order_date'));
+                            }
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_MARKET')] = 'ebay';
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_SELLER_ID')] = I('post.sellerID','','htmlspecialchars');
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_BUYER_ID')] = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();

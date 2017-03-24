@@ -2,7 +2,33 @@
 
 class OutboundAction extends CommonAction{
 
+    public function index(){
+        if($_POST['keyword']==""){
+            $Data = M(C('DB_WINIT_OUTBOUND'));
+            import('ORG.Util.Page');
+            $count = $Data->count();
+            $Page = new Page($count,20);            
+            $Page->setConfig('header', '条数据');
+            $show = $Page->show();
+            $outboundOrders = $Data->order('id desc')->limit($Page->firstRow.','.$Page->listRows)->select();
+            $this->assign('outboundOrders',$outboundOrders);
+            $this->assign('page',$show);
+        }
+        else{
+            $where[I('post.keyword','','htmlspecialchars')] = I('post.keywordValue','','htmlspecialchars');
+            $this->outboundOrders = M(C('DB_WINIT_OUTBOUND'))->where($where)->select();
+        }
+        $this->display();
+    }
+
     public function importWinitOutboundOrder(){
+        $this->display();
+    }
+
+    public function outboundOrderDetails($id){
+        $this->order=M(C('DB_WINIT_OUTBOUND'))->where(array(C('DB_USSW_OUTBOUND_ID')=>$id))->select();
+        $outboundOrderItems=M(C('DB_WINIT_OUTBOUND_ITEM'))->where(array(C('DB_WINIT_OUTBOUND_ITEM_OOID')=>$id))->select();
+        $this->assign('outboundOrderItems',$outboundOrderItems);
         $this->display();
     }
 
@@ -30,6 +56,14 @@ class OutboundAction extends CommonAction{
             $highestRow = $sheet->getHighestRow(); // 取得总行数
             $highestColumn = $sheet->getHighestColumn(); // 取得总列数
 
+            //get row number
+            for($maxRow=$highestRow; $maxRow>1; $maxRow--) {
+                if($objPHPExcel->getActiveSheet()->getCell('A'.$maxRow)->getValue()!=''){
+                    $highestRow=$maxRow;
+                    break;
+                }
+            }
+
             //excel first column name verify
             for($c='A';$c!=$highestColumn;$c++){
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue(); 
@@ -42,8 +76,14 @@ class OutboundAction extends CommonAction{
                 for($i=2;$i<=$highestRow;$i++){
                     $woo[C('DB_WINIT_OUTBOUND_MARKET')]=I('post.market');
                     $woo[C('DB_WINIT_OUTBOUND_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_SHIPPING_COMPANY')]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_SHIPPING_WAY')]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
                     $woo[C('DB_WINIT_OUTBOUND_STATUS')]='已出库';
-                    $woo[C('DB_WINIT_OUTBOUND_CREATE_TIME')]=Date('Y-m-d H:i:s');
+                    if(I('post.order_date')==null || I('post.order_date')==''){
+                        $woo[C('DB_WINIT_OUTBOUND_CREATE_TIME')]=Date('Y-m-d H:i:s');
+                    }else{
+                        $woo[C('DB_WINIT_OUTBOUND_CREATE_TIME')]=Date(I('post.order_date'));
+                    }
                     $woo[C('DB_WINIT_OUTBOUND_SELLER_ID')]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
                     $woo[C('DB_WINIT_OUTBOUND_BUYER_ID')]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
                     $woo[C('DB_WINIT_OUTBOUND_BUYER_NAME')]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();

@@ -7,6 +7,8 @@
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
 </head>
 <body>
@@ -44,7 +46,16 @@
 				if(sellerID == "unSelected"){ 
 					alert("请选择ebay账号"); 
 					return false; 
-				}  
+				}
+
+				var date = document.getElementById("order_date").value;
+			 	if(date !="" && date !="如使用当前日期可不填"){
+			    	if(!confirm("不使用当前日期？")){
+			    		return false;
+			    	}
+			 	}else{
+			 		document.getElementById("order_date").value='';
+			 	}
 			} 
 			</script>
 			
@@ -63,12 +74,14 @@
 											<p>导出的ebay未发货订单是CVS文件，需要转换成XLS文件，文件内容无需修改</p>
 											<div>
 												 <form action="{:U('Szsw/Outbound/importEbaySaleRecordFile')}" method="post" enctype="multipart/form-data" onsubmit="return check()">
-												 	<label for="sellerID" class="control-label">ebay账号</label>
+												 	<label for="sellerID" class="control-label">ebay账号:</label>
 												 	<select name="sellerID"  id="sellerID">
 														<option value="unSelected" >请选择</option>
 														<option value="vtkg5755" selected>vtkg5755</option>
 														<option value="rc-helicar">rc-helicar</option>		
 													</select>
+													<label for="sellerID" class="control-label">订单日期:</label>
+													<input type="text" name="order_date" id="order_date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'});" value="如使用当前日期可不填" size="27" class="date" readonly>
 										            <input type="file" name="import" value=""/>
 								          			<input type="hidden" name="table" value="tablename"/>
 									             	<input type="submit" value="导入"/>

@@ -1563,9 +1563,9 @@ class GgsUsswSaleAction extends CommonAction{
                 $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("L1")->getValue();
                 $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("M1")->getValue();
                 $excelCellName[13]=$objPHPExcel->getActiveSheet()->getCell("N1")->getValue();
-                $excelCellName[13]=$objPHPExcel->getActiveSheet()->getCell("O1")->getValue();
-                $excelCellName[14]='SuggestPrice';
-                $excelCellName[15]='Suggest';
+                $excelCellName[14]=$objPHPExcel->getActiveSheet()->getCell("O1")->getValue();
+                $excelCellName[15]='SuggestPrice';
+                $excelCellName[16]='Suggest';
                 $this->exportGrouponFileExchangeExcel('G-lipovoltFileExchange',$excelCellName,$data); 
             }else{
                 $this->error("模板错误，请检查模板！");
@@ -1716,10 +1716,10 @@ class GgsUsswSaleAction extends CommonAction{
         for($i=0;$i<$dataNum;$i++){
             for($j=0;$j<$cellNum;$j++){
             	if($i>0 && $expTableData[$i][$expCellName[14]] !=null && $expTableData[$i][$expCellName[14]]!=$expTableData[$i][$expCellName[13]]){
-            		$objPHPExcel->getActiveSheet()->getStyle( 'N'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-            		$objPHPExcel->getActiveSheet()->getStyle( 'N'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
             		$objPHPExcel->getActiveSheet()->getStyle( 'O'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
             		$objPHPExcel->getActiveSheet()->getStyle( 'O'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+            		$objPHPExcel->getActiveSheet()->getStyle( 'P'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'P'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
             	}
                 $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $expTableData[$i][$expCellName[$j]]);
             }             
