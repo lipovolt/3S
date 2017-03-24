@@ -34,17 +34,18 @@ class WinitDeSaleAction extends CommonAction{
         	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($value['pweight'],$value['plength'],$value['pwidth'],$value['pheight']);
 
         	$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]=$salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_RC_DE_SALE_PLAN_PRICE'));
-        	$data[$key]['gprofit']=$data[$key][C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]-$data[$key]['cost'];
-        	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]*100,2).'%';
+        	if($this->getMarketByAccount($account)=='ebay'){
+        		$data[$key]['cost']=round($this->getWinitDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]),2);
+        	}else{
+        		$this->error('无法找到与 '.$account.' 匹配的平台！不能显示销售表！');
+        	}
+        	$data[$key]['gprofit']=$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]-$data[$key]['cost'];
+        	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_RC_DE_SALE_PLAN_PRICE')]*100,2).'%';
         	$data[$key]['pweight']=$value[C('DB_PRODUCT_PWEIGHT')];
         	$data[$key]['plength']=$value[C('DB_PRODUCT_PLENGTH')];
         	$data[$key]['pwidth']=$value[C('DB_PRODUCT_PWIDTH')];
         	$data[$key]['pheight']=$value[C('DB_PRODUCT_PHEIGHT')];
-        	if($this->getMarketByAccount($account)=='ebay'){
-        		$data[$key]['cost']=round($this->getWinitDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]),2);
-        	}else{
-        		$this->error('无法找到与 '.$account.' 匹配的平台！不能显示销售表！');
-        	}
+        	
         }
         $this->assign('market',$this->getMarketByAccount($account));
         $this->assign('account',$account);
@@ -78,12 +79,12 @@ class WinitDeSaleAction extends CommonAction{
         	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($value['pweight'],$value['plength'],$value['pwidth'],$value['pheight']);
         	$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]=$salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_RC_DE_SALE_PLAN_PRICE'));
         	if($this->getMarketByAccount($account)=='ebay'){
-        		$data[$key]['cost']=round($this->getWinitDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]),2);
+        		$data[$key]['cost']=round($this->getWinitDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]),2);
         	}else{
         		$this->error('无法找到与 '.$account.' 匹配的平台！不能显示销售表！');
         	}
-        	$data[$key]['gprofit']=$data[$key][C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]-$data[$key]['cost'];
-        	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE')]*100,2).'%';
+        	$data[$key]['gprofit']=$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]-$data[$key]['cost'];
+        	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_RC_DE_SALE_PLAN_PRICE')]*100,2).'%';
         	$data[$key]['pweight']=$value[C('DB_PRODUCT_PWEIGHT')];
         	$data[$key]['plength']=$value[C('DB_PRODUCT_PLENGTH')];
         	$data[$key]['pwidth']=$value[C('DB_PRODUCT_PWIDTH')];
