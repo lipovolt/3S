@@ -40,7 +40,7 @@ class WinitDeSaleAction extends CommonAction{
         		$this->error('无法找到与 '.$account.' 匹配的平台！不能显示销售表！');
         	}
         	$data[$key]['gprofit']=$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]-$data[$key]['cost'];
-        	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_RC_DE_SALE_PLAN_PRICE')]*100,2).'%';
+        	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]*100,2).'%';
         	$data[$key]['pweight']=$value[C('DB_PRODUCT_PWEIGHT')];
         	$data[$key]['plength']=$value[C('DB_PRODUCT_PLENGTH')];
         	$data[$key]['pwidth']=$value[C('DB_PRODUCT_PWIDTH')];
@@ -84,7 +84,7 @@ class WinitDeSaleAction extends CommonAction{
         		$this->error('无法找到与 '.$account.' 匹配的平台！不能显示销售表！');
         	}
         	$data[$key]['gprofit']=$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]-$data[$key]['cost'];
-        	$data[$key]['grate']=round($data[$key]['gprofit']/$value[C('DB_RC_DE_SALE_PLAN_PRICE')]*100,2).'%';
+        	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]*100,2).'%';
         	$data[$key]['pweight']=$value[C('DB_PRODUCT_PWEIGHT')];
         	$data[$key]['plength']=$value[C('DB_PRODUCT_PLENGTH')];
         	$data[$key]['pwidth']=$value[C('DB_PRODUCT_PWIDTH')];
