@@ -368,6 +368,7 @@ class RestockAction extends CommonAction{
 		
 		foreach ($usstorage as $ussk => $ussv) {
 			$product = M(C('db_product'))->where(array(C('db_product_sku')=>$ussv[C('DB_USSTORAGE_SKU')]))->find();
+			$ussv[C('DB_USSTORAGE_IINVENTORY')]=$this->getUsswIInventory($ussv[C('DB_USSTORAGE_SKU')]);
 			if($product[C('db_product_tous')] !== null && $product[C('db_product_tous')] !== '无'){
 				$msq = $this->getUssw30DaysSales($ussv[C('DB_USSTORAGE_SKU')]);
 				if($product[C('db_product_tous')] == '空运'){
@@ -375,7 +376,7 @@ class RestockAction extends CommonAction{
 				}else{
 					$roos = $this->reallyOutOfStock('万邑通美西',$ussv[C('DB_USSTORAGE_SKU')],ceil(($dfs-$dayAvailableForSale)*$msq/30));
 				}
-				if($msq==0 && ($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_INVENTORY')])==0){
+				if($msq==0 && ($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_IINVENTORY')])==0){
 					if($product[C('db_product_tous')]=='空运' && $roos){
 						$this->addRestockOrder('美自建仓',0,$product,0,0,0);
 					}
@@ -517,7 +518,7 @@ class RestockAction extends CommonAction{
     	$restockQuantity = $this->getRestockQuantity($warehouse,$sku);
     	$purchasedQuantity = $this->getPurchasedQuantity($warehouse,$sku);
     	if($warehouse=='美自建仓'){
-    		$restockQuantity=$restockQuantity+$this->getIInventory($sku);
+    		$restockQuantity=$restockQuantity+$this->getUsswIInventory($sku);
     	}
     	if($neededQuantity<($restockQuantity+$purchasedQuantity)){
     		return false;
@@ -589,7 +590,7 @@ class RestockAction extends CommonAction{
     	}
     }
 
-    private function getIInventory($sku){
+    private function getUsswIInventory($sku){
     	$iinventory = 0;
     	$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
 		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
