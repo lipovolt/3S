@@ -41,6 +41,13 @@
 				_PRODUCTINFO_BATCHADD_PRODUCTIMPORT_ERROR_FILE_TYPE_NOT_MATCH_:"产品信息导入只支持XLS格式文件!",
 				_COMMON_PLEASE_SELECT_FILE_:"请选择文件！"
 			}
+			function check(){ 
+				var type = document.getElementById("updateType").value;
+				if(type == "unSelected"){ 
+					alert("请选择要更新的站点"); 
+					return false; 
+				}
+			} 
 			</script>
 			
 			<!-- 主页面开始  -->
@@ -59,7 +66,7 @@
 									<div class="block-indent" style="overflow:hidden;">
 										<div style="float:left;width:auto;">
 											<div>
-												 <form action="{:U('Sale/SzSale/fileExchangeHandle',array('market'=>$market,'account'=>$account))}" method="post" enctype="multipart/form-data">
+												 <form action="{:U('Sale/SzSale/fileExchangeHandle',array('market'=>$market,'account'=>$account))}" method="post" enctype="multipart/form-data"  onsubmit="return check()">
 												 	<div>
 												 		<if condition="$market eq 'ebay'">
 												 			<p>功能说明： </p><ol><li>1. 本功能通过文件下载，处理，上传的方式，批量更新{$account}的德国站在线listing的数量和价格。</li><li>2. 提示美国站的当前售价与建议售价有区别的商品和数量不足的商品。美国站的listing的售价和数量需要手动修改。美国站目前无法批量处理。</li></ol>
