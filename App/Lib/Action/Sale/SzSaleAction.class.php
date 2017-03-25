@@ -1287,42 +1287,45 @@ class SzSaleAction extends CommonAction{
             		$salePlanTables[$key]=M($value);
             	}
                 for($i=2;$i<=$highestRow;$i++){
-                	$data[$i-2][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-        			$data[$i-2][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
-        			$data[$i-2][$firstRow['C']]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
-        			$data[$i-2][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
-        			$data[$i-2][$firstRow['E']]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
-        			$data[$i-2][$firstRow['F']]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
-        			$data[$i-2][$firstRow['G']]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
-                	$data[$i-2][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
-                	$data[$i-2][$firstRow['I']]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
-        			$data[$i-2][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
-        			$data[$i-2][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+                	if($data[$i-2][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue()==$_POST['updateType'] || ($data[$i-2][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue()=='eBayMotors' && $_POST['updateType']=='US')){
+                		$data[$i-2][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+	        			$data[$i-2][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+	        			$data[$i-2][$firstRow['C']]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+	        			$data[$i-2][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+	        			$data[$i-2][$firstRow['E']]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
+	        			$data[$i-2][$firstRow['F']]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+	        			$data[$i-2][$firstRow['G']]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+	                	$data[$i-2][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+	                	$data[$i-2][$firstRow['I']]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+	        			$data[$i-2][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+	        			$data[$i-2][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
 
-                	$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
-            		if($countryOfItem==null || $countryOfItem==''){
-            			for ($r=$i-1; $r>1; $r--) { 
-            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
-            				if($countryOfItem!=null && $countryOfItem!=''){
-            					break;
-            				}
-            			}
-            		}
-            		if($countryOfItem=='Germany'){
-            			if($product->where(array(C('DB_PRODUCT_SKU')=>$data[$i-2][$firstRow['K']]))->getField(C('DB_PRODUCT_TODE'))!='无' || $product->where(array(C('DB_PRODUCT_SKU')=>$data[$i-2][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无')
-            				$data[$i-2][$firstRow['H']]=30;
-            		}
-            		$salePlan=$salePlanTables[$countryOfItem]->where(array('sku'=>$data[$i-2][$firstRow['K']]))->find();
-            		$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-                	$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];                	                
+	                	$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+	            		if($countryOfItem==null || $countryOfItem==''){
+	            			for ($r=$i-1; $r>1; $r--) { 
+	            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
+	            				if($countryOfItem!=null && $countryOfItem!=''){
+	            					break;
+	            				}
+	            			}
+	            		}
+	            		if($countryOfItem=='Germany'){
+	            			if($product->where(array(C('DB_PRODUCT_SKU')=>$data[$i-2][$firstRow['K']]))->getField(C('DB_PRODUCT_TODE'))!='无' || $product->where(array(C('DB_PRODUCT_SKU')=>$data[$i-2][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无')
+	            				$data[$i-2][$firstRow['H']]=30;
+	            		}
+	            		$salePlan=$salePlanTables[$countryOfItem]->where(array('sku'=>$data[$i-2][$firstRow['K']]))->find();
+	            		$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+	                	$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+                	}
+                	                	                
                 }
 
                 //find item in stock but not listed
                 $storages=$storageTable->where($map)->select();
                 $newIndex = $highestRow+1;
                 foreach ($storages as $key => $value) {                	
-                	$toDe = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TODE'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0;
-            		$toUs = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TOUS'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0;
+                	$toDe = ($product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TODE'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0) && $_POST['updateType']=='Germany';
+            		$toUs = ($product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TOUS'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0) && $_POST['updateType']=='US';
             		if($toDe && !$toUs){
             			$listed=false;
             			for ($i=2;$i<=$highestRow;$i++) {
@@ -1369,7 +1372,7 @@ class SzSaleAction extends CommonAction{
 	                		$newIndex++;
 	                	}
             		}
-            		if($toDe && $toUs){
+            		/*if($toDe && $toUs){
             			$listed['US']=false;
             			$listed['Germany']=false;
             			for ($i=2;$i<=$highestRow;$i++) {
@@ -1397,7 +1400,7 @@ class SzSaleAction extends CommonAction{
 		                		$newIndex++;
 	                		}
 	                	}
-            		}
+            		}*/
                 	
                 }
 
@@ -1427,6 +1430,7 @@ class SzSaleAction extends CommonAction{
     	if($account=='vtkg5755'){
     		$tableNames['Germany']=C('DB_SZ_DE_SALE_PLAN');
     		$tableNames['US']=C('DB_SZ_US_SALE_PLAN');
+    		$tableNames['eBayMotors']=C('DB_SZ_US_SALE_PLAN');
     		return $tableNames;
     	}else{
     		$this->error('无法根据'.$account.'匹配出销售表');
