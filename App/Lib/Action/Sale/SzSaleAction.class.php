@@ -1122,6 +1122,373 @@ class SzSaleAction extends CommonAction{
 		}
 		return round($cost,2);
     }
+
+    public function updateSalePrice($market,$account,$country){
+    	$this->assign('market',$market);
+    	$this->assign('account',$account);
+    	$this->assign('country',$country);
+    	$this->display();
+    }
+
+    public function updateSalePriceHandle($market,$account,$country){
+    	if($market=='ebay.de' || $market=='ebay.com'){
+			$this->updateEbaySalePriceHandle($account,$country);
+		}else{
+			$this->error('没有 '.$market.' 平台');
+		}    	
+    }
+
+    private function updateEbaySalePriceHandle($account,$country){
+    	if (!empty($_FILES)) {
+    		import('ORG.Net.UploadFile');
+			$config=array(
+			 'allowExts'=>array('xls'),
+			 'savePath'=>'./Public/upload/updateSalePrice/',
+			 'saveRule'=>'ebay'.'_'.$account.'_'.time(),
+			);
+			$upload = new UploadFile($config);
+			if (!$upload->upload()) {
+				$this->error($upload->getErrorMsg());
+			}else {
+				$info = $upload->getUploadFileInfo();                 
+			}
+			vendor("PHPExcel.PHPExcel");
+			$file_name=$info[0]['savepath'].$info[0]['savename'];
+
+			$objReader = PHPExcel_IOFactory::createReader('Excel5');
+			$objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+			$sheetnames = $objPHPExcel->getSheetNames();
+
+			//creat excel writer
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			
+
+			$objPHPExcel->setActiveSheetIndex(0);
+			$sheet = $objPHPExcel->getSheet(0);
+			$highestRow = $sheet->getHighestRow(); // 取得总行数
+			$highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+			//excel first column name verify
+            for($c='A';$c<=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+            }
+
+            if($this->verifyEbayFxtcn($firstRow)){
+            	$salePlan=M($this->getSalePlanTableName($account,$country));
+            	$salePlan->startTrans();
+            	if($country=='de'){
+            		$country='Germany';
+            	}
+            	if($country=='us'){
+            		$country='US';
+            	}
+            	for($i=2;$i<=$highestRow;$i++){
+            		$sku = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+            		$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+            		if($countryOfItem==null || $countryOfItem==''){
+            			for ($r=$i-1; $r>1; $r--) { 
+            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
+            				if($countryOfItem!=null && $countryOfItem!=''){
+            					break;
+            				}
+            			}
+            		}
+            		if($sku!='' && $sku!=null && $countryOfItem==$country){
+            			$map[C("DB_USSW_SALE_PLAN_SKU")]=array("eq",$sku);
+            			$actualPrice = $salePlan->where($map)->getField(C("DB_USSW_SALE_PLAN_PRICE"));
+            			if($actualPrice!=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue()){
+	            			$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+							if($data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]==null){
+								$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('ymd',time());
+							}else{
+								$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')].' | '.$data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+							}
+							$data[C("DB_USSW_SALE_PLAN_PRICE")]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+							$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+							$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
+							$salePlan->where($map)->save($data);
+							$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]=null;
+	            		}
+            		}
+            	}
+            	$salePlan->commit();
+            	$this->success("更新产品售价成功");
+            }else{
+            	$this->error("模板错误，请检查模板！");
+            }
+    	}else{
+    		$this->error("请选择上传的文件");
+    	}
+    }
+
+    //Verify imported file exchange template column name
+	private function verifyEbayFxtcn($firstRow){
+        for($c='B';$c<=max(array_keys(C('IMPORT_EBAY_FXT')));$c++){
+            if($firstRow[$c] != C('IMPORT_EBAY_FXT')[$c])
+                return false;
+        }
+        return true;
+    }
+
+    public function fileExchange($market,$account){
+		$this->assign('market',$market);
+		$this->assign('account',$account);
+		$this->display();
+	}
+
+	public function fileExchangeHandle($market,$account){
+		if($market=='ebay' || $market=='ebay.de' || $market=='ebay.com'){
+			$this->ebayFileExchangeHandle($account);
+		}else{
+			$this->error('没有 '.$market.' 平台');
+		}
+
+	}
+
+	private function ebayFileExchangeHandle($account){
+		if (!empty($_FILES)) {
+			import('ORG.Net.UploadFile');
+			$config=array(
+			 'allowExts'=>array('xls'),
+			 'savePath'=>'./Public/upload/fileExchange/',
+			 'saveRule'=>'ebayFileExchange'.'_'.time(),
+			);
+			$upload = new UploadFile($config);
+			if (!$upload->upload()) {
+				$this->error($upload->getErrorMsg());
+			}else {
+				$info = $upload->getUploadFileInfo();                 
+			}
+			vendor("PHPExcel.PHPExcel");
+			$file_name=$info[0]['savepath'].$info[0]['savename'];
+
+			$objReader = PHPExcel_IOFactory::createReader('Excel5');
+			$objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+			$sheetnames = $objPHPExcel->getSheetNames();
+
+			//creat excel writer
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			
+
+			$objPHPExcel->setActiveSheetIndex(0);
+			$sheet = $objPHPExcel->getSheet(0);
+			$highestRow = $sheet->getHighestRow(); // 取得总行数
+			$highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+			//excel first column name verify
+            for($c='A';$c<=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+            }
+
+            if($this->verifyEbayFxtcn($firstRow)){
+            	$storageTable=M(C('DB_SZSTORAGE'));
+            	$product=M(C('DB_PRODUCT'));
+            	foreach ($this->getSalePlanTableNames($account) as $key => $value) {
+            		$salePlanTables[$key]=M($value);
+            	}
+                for($i=2;$i<=$highestRow;$i++){
+                	$data[$i-2][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+        			$data[$i-2][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+        			$data[$i-2][$firstRow['C']]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+        			$data[$i-2][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+        			$data[$i-2][$firstRow['E']]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
+        			$data[$i-2][$firstRow['F']]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+        			$data[$i-2][$firstRow['G']]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+                	$data[$i-2][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+                	$data[$i-2][$firstRow['I']]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+        			$data[$i-2][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+        			$data[$i-2][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+
+                	$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+            		if($countryOfItem==null || $countryOfItem==''){
+            			for ($r=$i-1; $r>1; $r--) { 
+            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
+            				if($countryOfItem!=null && $countryOfItem!=''){
+            					break;
+            				}
+            			}
+            		}
+            		if($countryOfItem=='Germany'){
+            			if($product->where(array(C('DB_PRODUCT_SKU')=>$data[$i-2][$firstRow['K']]))->getField(C('DB_PRODUCT_TODE'))!='无' || $product->where(array(C('DB_PRODUCT_SKU')=>$data[$i-2][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无')
+            				$data[$i-2][$firstRow['H']]=30;
+            		}
+            		$salePlan=$salePlanTables[$countryOfItem]->where(array('sku'=>$data[$i-2][$firstRow['K']]))->find();
+            		$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+                	$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];                	                
+                }
+
+                //find item in stock but not listed
+                $storages=$storageTable->where($map)->select();
+                $newIndex = $highestRow+1;
+                foreach ($storages as $key => $value) {                	
+                	$toDe = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TODE'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0;
+            		$toUs = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TOUS'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0;
+            		if($toDe && !$toUs){
+            			$listed=false;
+            			for ($i=2;$i<=$highestRow;$i++) {
+	                		$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+		            		if($countryOfItem==null || $countryOfItem==''){
+		            			for ($r=$i-1; $r>1; $r--) { 
+		            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
+		            				if($countryOfItem!=null && $countryOfItem!=''){
+		            					break;
+		            				}
+		            			}
+		            		}
+	                		if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()==$value[C('DB_WINIT_DE_STORAGE_SKU')] && $countryOfItem=='Germany'){
+	                			$listed=true;
+	                		}
+	                	}
+	                	if($listed==false){
+	                		$data[$newIndex][$firstRow['D']]='Germany';
+	                		$data[$newIndex][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
+	                		$data[$newIndex]['Suggest']="未刊登商品";
+	                		$newIndex++;
+	                	}
+            		}
+            		if(!$toDe && $toUs){
+            			$listed=false;
+            			for ($i=2;$i<=$highestRow;$i++) {
+	                		$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+		            		if($countryOfItem==null || $countryOfItem==''){
+		            			for ($r=$i-1; $r>1; $r--) { 
+		            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
+		            				if($countryOfItem!=null && $countryOfItem!=''){
+		            					break;
+		            				}
+		            			}
+		            		}
+	                		if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()==$value[C('DB_WINIT_DE_STORAGE_SKU')] && $countryOfItem=='US'){
+	                			$listed=true;
+	                		}
+	                	}
+	                	if($listed==false){
+	                		$data[$newIndex][$firstRow['D']]='US';
+	                		$data[$newIndex][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
+	                		$data[$newIndex]['Suggest']="未刊登商品";
+	                		$newIndex++;
+	                	}
+            		}
+            		if($toDe && $toUs){
+            			$listed['US']=false;
+            			$listed['Germany']=false;
+            			for ($i=2;$i<=$highestRow;$i++) {
+	                		$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+		            		if($countryOfItem==null || $countryOfItem==''){
+		            			for ($r=$i-1; $r>1; $r--) { 
+		            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
+		            				if($countryOfItem!=null && $countryOfItem!=''){
+		            					break;
+		            				}
+		            			}
+		            		}
+	                		if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()==$value[C('DB_WINIT_DE_STORAGE_SKU')] && $countryOfItem=='US'){
+	                			$listed['US']=true;
+	                		}
+	                		if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()==$value[C('DB_WINIT_DE_STORAGE_SKU')] && $countryOfItem=='Germany'){
+	                			$listed['Germany']=true;
+	                		}
+	                	}
+	                	foreach ($listed as $lkey => $lvalue) {
+	                		if(!$lvalue){
+	                			$data[$newIndex][$firstRow['D']]=$lkey;
+		                		$data[$newIndex][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
+		                		$data[$newIndex]['Suggest']="未刊登商品";
+		                		$newIndex++;
+	                		}
+	                	}
+            		}
+                	
+                }
+
+                $excelCellName[0]=$objPHPExcel->getActiveSheet()->getCell("A1")->getValue();
+                $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
+                $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
+                $excelCellName[3]=$objPHPExcel->getActiveSheet()->getCell("D1")->getValue();
+                $excelCellName[4]=$objPHPExcel->getActiveSheet()->getCell("E1")->getValue();
+                $excelCellName[5]=$objPHPExcel->getActiveSheet()->getCell("F1")->getValue();
+                $excelCellName[6]='SuggestPrice';
+                $excelCellName[7]='Suggest';
+                $excelCellName[8]=$objPHPExcel->getActiveSheet()->getCell("G1")->getValue();
+                $excelCellName[9]=$objPHPExcel->getActiveSheet()->getCell("H1")->getValue();
+                $excelCellName[10]=$objPHPExcel->getActiveSheet()->getCell("I1")->getValue();
+                $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("J1")->getValue();
+                $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("K1")->getValue();
+                $this->exportEbayFileExchangeExcel('Vtkg_'.$_POST['updateType'].'_FileExchange',$excelCellName,$data); 
+            }else{
+                $this->error("模板错误，请检查模板！");
+            }   
+        }else{
+            $this->error("请选择上传的文件");
+        }
+	}
+
+    private function getSalePlanTableNames($account){
+    	if($account=='vtkg5755'){
+    		$tableNames['Germany']=C('DB_SZ_DE_SALE_PLAN');
+    		$tableNames['US']=C('DB_SZ_US_SALE_PLAN');
+    		return $tableNames;
+    	}else{
+    		$this->error('无法根据'.$account.'匹配出销售表');
+    	}
+    }
+
+    //Split sku according to | and *, then return a 2d array. 
+    private function splitSku($sku){
+    	$skuDepart = explode("|",$sku);
+    	foreach ($skuDepart as $key => $departedSku) {
+            $skuQuantityDepart = explode("*",$departedSku);
+            if(count($skuQuantityDepart)==1){
+                $splitSku[$key][0]=$skuQuantityDepart[0];
+                $splitSku[$key][1]=1;
+            }else{
+                $splitSku[$key][0]=$skuQuantityDepart[0];
+                $splitSku[$key][1]=$skuQuantityDepart[1];
+            }
+        }
+        return $splitSku;
+    }
+
+    private function exportEbayFileExchangeExcel($expTitle,$expCellName,$expTableData){
+        $fileName = $expTitle.date('_Ymd');
+        $cellNum = count($expCellName);
+        $dataNum = count($expTableData);
+        vendor("PHPExcel.PHPExcel");
+
+        $objPHPExcel = new PHPExcel();
+        $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
+
+        for($i=0;$i<$cellNum;$i++){
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i].'1', $expCellName[$i]); 
+        } 
+        $insertRowNumber=2;
+        for($i=0;$i<$dataNum;$i++){
+        	if($expTableData[$i]['SiteID']==$_POST['updateType'] || $_POST['updateType']=='all'){
+        		$objPHPExcel->getActiveSheet()->getStyle('B'.$insertRowNumber)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+	            for($j=0;$j<$cellNum;$j++){
+	            	if($i>0 && $expTableData[$i][$expCellName[6]] !=null && $expTableData[$i][$expCellName[5]]!=$expTableData[$i][$expCellName[6]]){
+	            		$objPHPExcel->getActiveSheet()->getStyle( 'F'.$insertRowNumber)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+	            		$objPHPExcel->getActiveSheet()->getStyle( 'F'.$insertRowNumber)->getFill()->getStartColor()->setARGB('FF808080');
+	            		$objPHPExcel->getActiveSheet()->getStyle( 'G'.$insertRowNumber)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+	            		$objPHPExcel->getActiveSheet()->getStyle( 'G'.$insertRowNumber)->getFill()->getStartColor()->setARGB('FF808080');
+	            	}
+	            	if($expTableData[$i][$expCellName[9]]<10){
+	            		$objPHPExcel->getActiveSheet()->getStyle( 'J'.$insertRowNumber)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+	            		$objPHPExcel->getActiveSheet()->getStyle( 'J'.$insertRowNumber)->getFill()->getStartColor()->setARGB('FF808080');
+	            	}
+	                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].$insertRowNumber, $expTableData[$i][$expCellName[$j]]);
+	            }
+	        $insertRowNumber++;
+        	}           
+        }  
+
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="'.$xlsTitle.'.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
+        $objWriter->save('php://output');
+        exit;   
+    }
 }
 
 ?>
