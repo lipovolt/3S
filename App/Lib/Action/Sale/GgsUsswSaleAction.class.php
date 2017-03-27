@@ -1263,7 +1263,8 @@ class GgsUsswSaleAction extends CommonAction{
             if($this->verifyEbayFxtcn($firstRow)){
             	$storageTable=M($this->getStorageTableName($account));
             	$salePlanTable=M($this->getSalePlanTableName($account));
-
+            	$productTable=M(C('DB_PRODUCT'));
+            	$usswInboundViewTable=D("UsswInboundView");
                 for($i=2;$i<=$highestRow;$i++){
                 	$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
 
@@ -1283,15 +1284,27 @@ class GgsUsswSaleAction extends CommonAction{
                 		//Single sku
                 		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][0]))->find();
                 		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
+                		$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
+						$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$splitSku[0][0]);
+                		$iinventory=$usswInboundViewTable->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
                 		if($splitSku[0][1]==1){
                 			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
                 			$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-                			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
                 			$data[$i-2][$firstRow['H']]=$ainventory;
+                			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TOUS')) == '无' && $ainventory==0 && $iinventory==0){
+                				$data[$i-2]['Suggest']='不做的商品，需要下架';
+                			}else{
+                				$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+                			}
                 		}else{
                 			//Single sku and multiple sale quantity
-                			$data[$i-2]['Suggest']="多个一组销售商品，无法给出建议售价";
+                			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
                 			$data[$i-2][$firstRow['H']]=intval($ainventory/$splitSku[0][1]);
+                			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TOUS')) == '无' && $ainventory==0 && $iinventory==0){
+                				$data[$i-2]['Suggest']='不做的商品，需要下架';
+                			}else{
+                				$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+                			}
                 		}
 
                 	}else{
