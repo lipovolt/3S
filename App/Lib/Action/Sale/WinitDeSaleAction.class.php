@@ -716,7 +716,7 @@ class WinitDeSaleAction extends CommonAction{
 
 	private function calWinitDHLFee($weight,$l,$w,$h){
 		$fee = 0;
-		if($weight>0 And $weight <= 31500 and $l<=200 and $w<=200 and $h<=200 and $l>=15 and $w>=11 and $h>=1 and ($l + 2 * ($w + $h))<=360){
+		if($weight>0 And $weight <= 31500 and $l<=200 and $w<=200 and $h<=200 and ($l + 2 * ($w + $h))<=360){
 			if($weight>0 and $weight<=1000){
 				$fee = 3.28;
 			}elseif($weight>1000 and $weight<=5000){
@@ -727,8 +727,9 @@ class WinitDeSaleAction extends CommonAction{
 				$fee = 4.76;
 			}elseif($weight>20000 and $weight<=31500){
 				$fee = 5.2;
-			}elseif(($l>=120 or $w>=60 or $h>=60) and ($l<=200 or $w<=200 or $h<=200) and ($l + 2 * ($w + $h))<=360){
-				$fee = $fee+8.8;
+			}
+			if(($l>=120 or $w>=60 or $h>=60) and ($l<=200 or $w<=200 or $h<=200) and ($l + 2 * ($w + $h))<=360){
+				$fee = $fee+12;
 			}
 		}
 		return $fee;
