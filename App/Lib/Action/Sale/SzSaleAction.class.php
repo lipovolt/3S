@@ -1322,7 +1322,7 @@ class SzSaleAction extends CommonAction{
 
                 //find item in stock but not listed
                 $storages=$storageTable->where($map)->select();
-                $newIndex = $highestRow+1;
+                $newIndex = $highestRow-1;
                 foreach ($storages as $key => $value) {                	
                 	$toDe = ($product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TODE'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0) && $_POST['updateType']=='Germany';
             		$toUs = ($product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TOUS'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0) && $_POST['updateType']=='US';

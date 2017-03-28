@@ -1332,14 +1332,16 @@ class GgsUsswSaleAction extends CommonAction{
                 //find item in stock but not listed
                 $map[C('DB_USSTORAGE_AINVENTORY')] = array('gt',0);
                 $storages=$storageTable->where($map)->select();
-                $map=null;
-                $newIndex = $highestRow+1;
+
+                $newIndex = $highestRow-1;
                 foreach ($storages as $key => $value) {
 
                 	$listed=false;
+
                 	for ($i=2;$i<=$highestRow;$i++) {
                 		if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()==$value[C('DB_USSTORAGE_SKU')]){
                 			$listed=true;
+                			break;
                 		}
                 	}
                 	if($listed==false){
@@ -1548,7 +1550,7 @@ class GgsUsswSaleAction extends CommonAction{
                 //find item in stock but not listed
                 $map[C('DB_USSTORAGE_AINVENTORY')] = array('gt',0);
                 $storages=$storageTable->where($map)->select();
-                $newIndex = $highestRow+1;
+                $newIndex = $highestRow-1;
                 foreach ($storages as $key => $value) {
 
                 	$listed=false;

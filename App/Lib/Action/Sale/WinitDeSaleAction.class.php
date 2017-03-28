@@ -970,7 +970,7 @@ class WinitDeSaleAction extends CommonAction{
                 //find item in stock but not listed
                 $map[C('DB_WINIT_DE_STORAGE_AINVENTORY')] = array('gt',0);
                 $storages=$storageTable->where($map)->select();
-                $newIndex = $highestRow+1;
+                $newIndex = $highestRow-1;
                 foreach ($storages as $key => $value) {
 
                 	$listed=false;
