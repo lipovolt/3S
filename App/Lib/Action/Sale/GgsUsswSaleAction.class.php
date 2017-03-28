@@ -1287,6 +1287,7 @@ class GgsUsswSaleAction extends CommonAction{
                 		$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
 						$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$splitSku[0][0]);
                 		$iinventory=$usswInboundViewTable->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
+                		$map=null;
                 		if($splitSku[0][1]==1){
                 			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
                 			$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
@@ -1331,6 +1332,7 @@ class GgsUsswSaleAction extends CommonAction{
                 //find item in stock but not listed
                 $map[C('DB_USSTORAGE_AINVENTORY')] = array('gt',0);
                 $storages=$storageTable->where($map)->select();
+                $map=null;
                 $newIndex = $highestRow+1;
                 foreach ($storages as $key => $value) {
 
