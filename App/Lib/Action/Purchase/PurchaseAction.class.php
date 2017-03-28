@@ -356,7 +356,7 @@ class PurchaseAction extends CommonAction{
             $items = M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_PURCHASE_ID')=>$purchaseID))->select();
             $product = M(C('DB_PRODUCT'));
             foreach ($items as $key => $value) {
-                $p = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_PURCHASE_ITEM_SKU')]))->select();
+                $p = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_PURCHASE_ITEM_SKU')]))->find();
                 if($value[C('DB_PURCHASE_ITEM_PRICE')] != $p[C('DB_PRODUCT_PRICE')]){
                     $p[C('DB_PRODUCT_PRICE')] = $value[C('DB_PURCHASE_ITEM_PRICE')];
                     $product->save($p);
