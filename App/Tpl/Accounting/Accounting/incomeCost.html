@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>收入成本</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript" src='__PUBLIC__/Js/jquery-1.7.2.min.js'></script>
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>财务</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/accountingMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form name="search_income_cost" id="search_income_cost" action="{:U('Accounting/Accounting/searchIncomeCost')}" method="POST">
+			<div class="search-area">
+				<div class="item">
+					<label for="month" class="control-label">月份:</label>
+					<input type="text" name="month" id="month" onclick="WdatePicker({dateFmt:'yyyy-MM'});" value="{$month}" size="17" class="date" readonly>
+					<label>账号：</label>
+					<select name='seller_id' id='seller_id'>
+						<if condition="($seller_id eq greatgoodshop)"> <option value="greatgoodshop" selected>ebay_greatgoodshop</option>
+						<else /> <option value="greatgoodshop">ebay_greatgoodshop</option>
+						</if>
+						<if condition="($seller_id eq blackfive)"> <option value="blackfive" selected>ebay_blackfive</option>
+						<else /> <option value="blackfive">ebay_blackfive</option>
+						</if>
+						<if condition="($seller_id eq rc-helicar)"> <option value="rc-helicar" selected>ebay_rc-helicar</option>
+						<else /> <option value="rc-helicar">ebay_rc-helicar</option>
+						</if>
+						<if condition="($seller_id eq vtkg5755)"> <option value="vtkg5755" selected>ebay_vtkg5755</option>
+						<else /> <option value="vtkg5755">ebay_vtkg5755</option>
+						</if>
+						<if condition="($seller_id eq yzhan-816)"> <option value="yzhan-816" selected>ebay_yzhan-816</option>
+						<else /> <option value="yzhan-816">ebay_yzhan-816</option>
+						</if>
+						<if condition="($seller_id eq lipovolt)"> <option value="lipovolt" selected>amazon_lipovolt</option>
+						<else /> <option value="lipovolt">amazon_lipovolt</option>
+						</if>
+						<if condition="($seller_id eq g-lipovolt)"> <option value="g-lipovolt" selected>groupon_lipovolt</option>
+						<else /> <option value="g-lipovolt">groupon_lipovolt</option>
+						</if>
+						<if condition="($seller_id eq zuck)"> <option value="zuck" selected>wish_zuck</option>
+						<else /> <option value="zuck">wish_zuck</option>
+						</if>
+						<if condition="($seller_id eq '')"><option value="" selected>请选择</option>
+						<else /> <option value="">请选择</option>
+						</if>
+						
+					</select>
+					<label>账号类型：</label>
+					<select name='seller_id_type' id='seller_id_type'>
+						<if condition="($seller_id_type eq cooperate)">
+							<option value="cooperate" selected>合作账号</option>
+							<option value="personal">个人账号</option>
+							<option value="">请选择</option>
+						<elseif condition="($seller_id_type eq personal)"/>
+							<option value="cooperate">合作账号</option>
+							<option value="personal" selected>个人账号</option>
+							<option value="">请选择</option>
+						<else /> 
+							<option value="cooperate">合作账号</option>
+							<option value="personal">个人账号</option>
+							<option value="" selected>请选择</option>
+						</if>
+					</select>
+					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
+				</div>			
+			</div>
+		</form>
+		<div>
+			<div class="tab-content">	
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th><div class="tl">行号</div></th>
+						<th><div class="tl">月份</div></th>
+						<th><div class="tl">账号</div></th>
+						<th><div class="tl">账号类型</div></th>
+						<th><div class="tl">美元收入</div></th>
+						<th><div class="tl">欧元收入</div></th>
+						<th><div class="tl">美收采成本￥</div></th>
+						<th><div class="tl">欧收采成本￥</div></th>
+						<th><div class="tl">美元退款</div></th>
+						<th><div class="tl">欧元退款</div></th>
+						<th><div class="tl">平台费用</div></th>
+						<th><div class="tl">PayPal费用</div></th>
+						<th><div class="tl">代收税费</div></th>
+					</tr>
+					<volist name="data" id="vo">
+						<tr>
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_ID')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_MONTH')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_SLLERID')]}</div></td>
+						<td><div class="tl">
+						<if condition="($vo[C('DB_INCOMECOST_SLLERIDTYPE')] eq 'cooperate')"> 合作账号
+						<else /> 个人账号
+						</if>
+						</div></td>
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_USDINCOME')]}</div></td>	
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_EURINCOME')]}</div></td>	
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_USDITEMCOST')]}</div></td>	
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_EURITEMCOST')]}</div></td>	
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_USDRETURN')]}</div></td>	
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_EURRETURN')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_MARKETFEE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_PAYPALFEE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_INCOMECOST_TAX_COLLECTION')]}</div></td>
+						</tr>	
+					</volist> 								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

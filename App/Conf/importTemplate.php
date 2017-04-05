@@ -79,6 +79,37 @@ return array(
 		'AC' => 'Notes to yourself',
 		),
 
+	//Ebay de order tamplate
+	'IMPORT_EBAY_DE_ORDER' => array(
+		'A' => 'Verkaufsprotokollnumm',
+		'B' => 'Nutzername',
+		'C' => 'Name des Käufers',
+		'D' => 'Telefonnummer',
+		'E' => 'E-Mail-Adresse',
+		'F' => 'Adresse 1',
+		'G' => 'Adresse 2',
+		'H' => 'Ort',
+		'I' => 'Region',
+		'J' => 'PLZ',
+		'K' => 'Land',
+		'L' => 'Artikelnummer',
+		'M' => 'Artikelbezeichnung',
+		'N' => 'Bestandseinheit',
+		'O' => 'Stückzahl',
+		'P' => 'Preis',
+		'Q' => 'MwSt.-Satz',
+		'R' => 'Verpackung und Versand',
+		'S' => 'Versicherung',
+		'T' => 'Nachnahmekosten',
+		'U' => 'Gesamtpreis',
+		'V' => 'Zahlungsmethode',
+		'W' => 'Verkauft am',
+		'X' => 'Datum der Kaufabwicklung',
+		'Y' => 'Zahlungsdatum',
+		'Z' => 'Versanddatum',
+		'AA' => 'Rechnungsdatum',
+		),
+
 	//Purchase order template
 	'IMPORT_PURCHASE' => array(
 		'A' => '临时编号',
@@ -195,6 +226,19 @@ return array(
 		'E'=>'quantity',
 		'F'=>'leadtime-to-ship',
 		'G'=>'fulfillment-channel',
+		),
+
+	//accounting amazon transaction view template column name
+	'IMPORT_AMAZON_TV' => array(
+		'A'=>'Date',
+		'B'=>'Order ID',
+		'C'=>'SKU',
+		'D'=>'Transaction type',
+		'E'=>'Payment Type',
+		'F'=>'Payment Detail',
+		'G'=>'Amount',
+		'H'=>'Quantity',
+		'I'=>'Product Title',
 		),
 
 	//update groupon file exchange template column name

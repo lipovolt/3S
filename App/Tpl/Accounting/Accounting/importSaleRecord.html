@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>批量导入平台订单</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	<div class="area clearfix">
+		<!-- 左边栏 -->
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>财务</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/accountingMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+			<script>
+			var GlobalData = {
+				_COMMON_DATA_PROCESSING_ : "数据处理中...",
+				_PRODUCTINFO_BATCHADD_PRODUCTIMPORT_ERROR_FILE_TYPE_NOT_MATCH_:"产品信息导入只支持XLS格式文件!",
+				_COMMON_PLEASE_SELECT_FILE_:"请选择文件！"
+			}
+			function check(){ 
+				var sellerID = document.getElementById("sellerID").value;
+				if(sellerID == "unSelected"){ 
+					alert("请选择ebay账号"); 
+					return false; 
+				}
+			} 
+			</script>
+			
+			<!-- 主页面开始  -->
+				<div id="ProductInfo" class="main">
+					<div class="tab-content">
+						<div class="tab-inner-content" style="">
+							<div class="block">
+								<div class="block-hd">
+									<i class="icon import"></i>
+									<strong>批量导入平台销售记录</strong>
+								</div>
+								<div class="block-bd">
+									<div class="block-indent" style="overflow:hidden;">
+										<div style="float:left;width:456px;">
+											<p>注意事项：</p>
+											<p>1. 导出的ebay订单是CVS文件，需要转换成XLS文件，删除第一行和第三行的空白行，上传的文件第一行应该是标题行，第二行开始订单。</p>
+											<p>2. 导出的亚马逊订单Reports->Transaction View->给出日期->update->download, 导出的是制表符分割的txt文件，需要转换成XLS文件。</p>
+											<p>2. 导出的goupon订单是csv文件。文件不包含sku,需要另外下载产品信息文件，用excel公式根据产品名称匹配出sku，放在最后一列。还需要把售价列调整好小数点。然后才能上传</p>
+											<div>
+												 <form action="{:U('Accounting/Accounting/importSaleRecordHandle')}" method="post" enctype="multipart/form-data" onsubmit="return check()">
+												 	<label for="month" class="control-label">月份:</label>
+													<input type="text" name="month" id="month" onclick="WdatePicker({dateFmt:'yyyy-MM'});" value="" size="17" class="date" readonly>
+												 	<label for="sellerID" class="control-label">ebay账号:</label>
+												 	<select name="sellerID"  id="sellerID">
+														<option value="unSelected" selected>请选择</option>
+														<option value="vtkg5755">ebay vtkg5755</option>
+														<option value="rc-helicar">ebay rc-helicar</option>	
+														<option value="greatgoodshop">ebay greatgoodshop</option>	
+														<option value="blackfive">ebay blackfive</option>	
+														<option value="yzhan-816">ebay yzhan-816</option>	
+														<option value="lipovolt">amazon lipovolt</option>	
+														<option value="g-lipovolt">groupon lipovolt</option>	
+														<option value="zuck">wish zuck</option>	
+													</select>
+										            <input type="file" name="import" value=""/>
+								          			<input type="hidden" name="table" value="tablename"/>
+									             	<input type="submit" value="导入"/>
+									         	</form>
+											</div>
+											<p>
+												<span class="notice-s">产品信息导入只支持XLS格式文件</span>
+											</p>
+										</div>										
+									</div>															
+								</div>
+							</div>
+						</div>
+					</div>
+			<!-- 主页面结束 -->
+		</div>
+	</div>
+	</div>
+		
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

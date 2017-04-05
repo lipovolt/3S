@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>管理费用</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript" src='__PUBLIC__/Js/jquery-1.7.2.min.js'></script>
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>财务</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/accountingMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form name="search_income_cost" id="search_income_cost" action="{:U('Accounting/Accounting/searchManagementFee')}" method="POST">
+			<div class="search-area">
+				<div class="item">
+					<label for="{:C('DB_SALEFEE_MONTH')}" class="control-label">月份:</label>
+					<input type="text" name="{:C('DB_SALEFEE_MONTH')}" id="{:C('DB_SALEFEE_MONTH')}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" value="{$month}" size="17" class="date" readonly>
+					<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
+				</div>			
+			</div>
+		</form>
+		<div>
+			<div class="tab-content">
+				<a class="btn btn-s btn-blue" href="{:U('Accounting/Accounting/editManagementFee')}">新增</a>
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th><div class="tl">行号</div></th>
+						<th><div class="tl">月份</div></th>
+						<th><div class="tl">用途</div></th>
+						<th><div class="tl">金额￥</div></th>
+						<th><div class="tl">结算类型</div></th>
+						<th><div class="tl">备注</div></th>
+						<th><div class="tl">操作</div></th>
+					</tr>
+					<volist name="managementFees" id="vo">
+						<tr>
+						<td><div class="tl">{$vo[C('DB_MANAGEMENTFEE_ID')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_MANAGEMENTFEE_MONTH')]}</div></td>						
+						<td><div class="tl">{:C('MANAGEMENT_PURPOSE_CNAME')[$vo[C('DB_MANAGEMENTFEE_PURPOSE')]]}</div></td>
+						<td><div class="tl">{$vo[C('DB_MANAGEMENTFEE_AMOUNT')]}</div></td>
+						<td><div class="tl">{:C('SHARE_TYPE_CNAME')[$vo[C('DB_MANAGEMENTFEE_SHARE_TYPE')]]}</div></td>
+						<td><div class="tl">{$vo[C('DB_MANAGEMENTFEE_REMARK')]}</div></td>
+						<td>
+							<a href="{:U('Accounting/Accounting/editManagementFee',array('id'=>$vo['id']))}">编辑</a>
+						</td>
+						</tr>	
+					</volist> 								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

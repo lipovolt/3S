@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>编辑工资</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript" src='__PUBLIC__/Js/jquery-1.7.2.min.js'></script>
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<script>
+function checkForm(){
+	if(isNaN(document.getElementById('base').value)){
+		alert('基本工资不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('performance').value)){
+		alert('绩效工资不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('percent').value)){
+		alert('绩效工资不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('si_company').value)){
+		alert('社保公司不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('si_person').value)){
+		alert('社保个人不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('leave_days').value)){
+		alert('请假天数不是数字');
+		return false;
+	}
+
+	return true;
+}
+</script>
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>财务</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/accountingMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form method="POST" id="edit_productInfo" action="{:U('Accounting/Accounting/editWagesHandle')}" onsubmit="return checkForm()">
+		<div class="block-outer BaseInfo">
+			<div class="block-outer-bd">
+				<div class="inline-block block-indent">
+					<div class="item">
+						<div class="form-group">
+							<label for="month" class="control-label">月份</label>
+							<div class="control-wrap">
+								<input type="text" name="{:C('DB_WAGES_MONTH')}" id="{:C('DB_WAGES_MONTH')}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" value="{$wages[C('DB_WAGES_MONTH')]}" oldvalue="{$wages[C('DB_WAGES_MONTH')]}" size="17" class="date" readonly>
+								<input type="hidden" id="{:C('DB_WAGES_ID')}" name="{:C('DB_WAGES_ID')}" value="{$wages[C('DB_WAGES_ID')]}"/>
+								<input type="hidden" id="maxMonth" name="maxMonth" value="$maxMonth"/>
+							</div>
+						</div>
+					</div>
+					<div class="item">
+                       <div class="form-group">
+							<label for="{C('DB_WAGES_NAME')}" class="control-label">名字</label>
+							<div class="control-wrap">
+								<select name="{:C('DB_WAGES_NAME')}"  id="{:C('DB_WAGES_NAME')}">
+									<volist name="names" id="vo">
+										<if condition="($wages[C('DB_WAGES_NAME')] eq $vo)"> <option value="{$vo}" selected="">{$vo}</option>
+										<else /> <option value="{$vo}">{$vo}</option>
+										</if>											
+									</volist> 	
+								</select>							 	
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="{C('DB_WAGES_BASE')}" class="control-label">基本工资</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_WAGES_BASE')}" name="{:C('DB_WAGES_BASE')}" value="{$wages[C('DB_WAGES_BASE')]}" />
+							</div>
+						</div>						
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="{C('DB_WAGES_PERFORMANCE')}" class="control-label">绩效$</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_WAGES_PERFORMANCE')}" name="{:C('DB_WAGES_PERFORMANCE')}" value="{$wages[C('DB_WAGES_PERFORMANCE')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="{C('DB_WAGES_PERCENT')}" class="control-label">绩效百分比</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_WAGES_PERCENT')}" name="{:C('DB_WAGES_PERCENT')}" value="{$wages[C('DB_WAGES_PERCENT')]}"/>
+							</div>
+						</div>
+					</div>
+					<div class="item">
+                       <div class="form-group">
+							<label for="{C('DB_WAGES_SI_COMPANY')}" class="control-label">社保（公司）</label>
+							<div class="control-wrap">
+								<input type="text" id="{:C('DB_WAGES_SI_COMPANY')}" name="{:C('DB_WAGES_SI_COMPANY')}" value="{$wages[C('DB_WAGES_SI_COMPANY')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="{C('DB_WAGES_SI_PERSON')}" class="control-label">社保（个人）</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_WAGES_SI_PERSON')}" name="{:C('DB_WAGES_SI_PERSON')}" value="{$wages[C('DB_WAGES_SI_PERSON')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="{C('DB_WAGES_LEAVE_DAYS')}" class="control-label">请假天数</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_WAGES_LEAVE_DAYS')}" name="{:C('DB_WAGES_LEAVE_DAYS')}" value="{$wages[C('DB_WAGES_LEAVE_DAYS')]}" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="item tc">
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+			<button class="btn btn-blue btn-s" id="saveProductInfo" name="saveProductInfo">保存	</button>
+		</div>
+	</form> 
+	</div>
+
+
+		</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>编辑管理费用</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript" src='__PUBLIC__/Js/jquery-1.7.2.min.js'></script>
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<script>
+function checkForm(){
+	if(isNaN(document.getElementById('rent').value)){
+		alert('房租不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('book_keeping').value)){
+		alert('代理记账不是数字');
+		return false;
+	}
+	return true;
+}
+</script>
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>财务</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/accountingMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form method="POST" id="edit_productInfo" action="{:U('Accounting/Accounting/editManagementFeeHandle')}" onsubmit="return checkForm()">
+		<div class="block-outer BaseInfo">
+			<div class="block-outer-bd">
+				<div class="inline-block block-indent">
+					<div class="item">
+						<div class="form-group">
+							<label for="month" class="control-label">月份</label>
+							<div class="control-wrap">
+								<input type="text" name="{:C('DB_MANAGEMENTFEE_MONTH')}" id="{:C('DB_MANAGEMENTFEE_MONTH')}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" value="{$managementFee[C('DB_MANAGEMENTFEE_MONTH')]}" oldvalue="{$managementFee[C('DB_MANAGEMENTFEE_MONTH')]}" onchange="checkMonth()" size="17" class="date" readonly>
+								<input type="hidden" id="{:C('DB_MANAGEMENTFEE_ID')}" name="{:C('DB_MANAGEMENTFEE_ID')}" value="{$managementFee[C('DB_MANAGEMENTFEE_ID')]}"/>
+							</div>
+						</div>
+					</div>
+					<div class="item">
+                       <div class="form-group">
+							<label for="{C('DB_MANAGEMENTFEE_PURPOSE')}" class="control-label">用途</label>
+							<div class="control-wrap">
+								<select name="{:C('DB_MANAGEMENTFEE_PURPOSE')}"  id="{:C('DB_MANAGEMENTFEE_PURPOSE')}">
+									<volist name="purpose" id="vo">
+										<if condition="($managementFee[C('DB_MANAGEMENTFEE_PURPOSE')] eq $vo)"> <option value="{$vo}" selected="">{:C('MANAGEMENT_PURPOSE_CNAME')[$vo]}</option>
+										<else /> <option value="{$vo}">{:C('MANAGEMENT_PURPOSE_CNAME')[$vo]}</option>
+										</if>											
+									</volist> 	
+								</select>							 	
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="{C('DB_MANAGEMENTFEE_AMOUNT')}" class="control-label">金额</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_MANAGEMENTFEE_AMOUNT')}" name="{:C('DB_MANAGEMENTFEE_AMOUNT')}" value="{$managementFee[C('DB_MANAGEMENTFEE_AMOUNT')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="{C('DB_MANAGEMENTFEE_SHARE_TYPE')}" class="control-label">类型</label>
+							<div class="control-wrap">
+								<select name="{:C('DB_MANAGEMENTFEE_SHARE_TYPE')}"  id="{:C('DB_MANAGEMENTFEE_SHARE_TYPE')}">
+									<volist name="share_type" id="vo">
+										<if condition="($managementFee[C('DB_MANAGEMENTFEE_SHARE_TYPE')] eq $vo)"> <option value="{$vo}" selected="">{:C('SHARE_TYPE_CNAME')[$vo]}</option>
+										<else /> <option value="{$vo}">{:C('SHARE_TYPE_CNAME')[$vo]}</option>
+										</if>											
+									</volist> 	
+								</select>							 	
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="{C('DB_MANAGEMENTFEE_REMARK')}" class="control-label">备注</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_MANAGEMENTFEE_REMARK')}" name="{:C('DB_MANAGEMENTFEE_REMARK')}" value="{$managementFee[C('DB_MANAGEMENTFEE_REMARK')]}" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="item tc">
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+			<button class="btn btn-blue btn-s" id="saveProductInfo" name="saveProductInfo">保存	</button>
+		</div>
+	</form> 
+	</div>
+
+
+		</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

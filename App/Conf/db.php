@@ -1159,39 +1159,6 @@ return array(
 	'DB_WINIT_DE_STORAGE_REMARK' => 'remark',
 	'DB_WINIT_DE_STORAGE_SALE_STATUS' => 'sale_status', //待下架，已下架, Null
 
-	//winit_uswc_storage
-	/*
-	CREATE TABLE IF NOT EXISTS `3s_winit_uswc_storage` (
-	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
-	  `position` varchar(10) NOT NULL,
-	  `sku` varchar(10) NOT NULL,
-	  `cname` varchar(255) DEFAULT NULL,
-	  `ename` varchar(255) DEFAULT NULL,
-	  `attribute` varchar(50) DEFAULT NULL,
-	  `cinventory` smallint(6) DEFAULT 0,
-	  `ainventory` smallint(6) DEFAULT 0,
-	  `oinventory` smallint(6) DEFAULT 0,
-	  `iinventory` smallint(6) DEFAULT 0,
-	  `csales` smallint(6) DEFAULT 0,
-	  `remark` varchar(255) DEFAULT NULL,
-	  `sale_status` varchar(10) DEFAULT NULL
-	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
-	*/
-	'DB_WINIT_USWC_STORAGE' => 'winit_uswc_storage',
-	'DB_WINIT_USWC_STORAGE_ID' => 'id',
-	'DB_WINIT_USWC_STORAGE_POSITION' => 'position',
-	'DB_WINIT_USWC_STORAGE_SKU' => 'sku',
-	'DB_WINIT_USWC_STORAGE_CNAME' => 'cname',
-	'DB_WINIT_USWC_STORAGE_ENAME' => 'ename',
-	'DB_WINIT_USWC_STORAGE_ATTRIBUTE' => 'attribute',
-	'DB_WINIT_USWC_STORAGE_CINVENTORY' => 'cinventory',
-	'DB_WINIT_USWC_STORAGE_AINVENTORY' => 'ainventory',
-	'DB_WINIT_USWC_STORAGE_OINVENTORY' => 'oinventory',
-	'DB_WINIT_USWC_STORAGE_IINVENTORY' => 'iinventory',
-	'DB_WINIT_USWC_STORAGE_CSALES' => 'csales',
-	'DB_WINIT_USWC_STORAGE_REMARK' => 'remark',
-	'DB_WINIT_USWC_STORAGE_SALE_STATUS' => 'sale_status', //待下架，已下架, Null
-
 	//rc_de_sale_plan for rc-helicar ebay.de items
 	/*
 	create table if not exists `3s_rc_de_sale_plan`(
@@ -1220,5 +1187,113 @@ return array(
 	'DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
 	'DB_RC_DE_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
 	'DB_RC_DE_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+
+
+	//Income cost table
+	/*
+	create table if not exists `3s_income_cost`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`month` varchar(20) not null,
+	`seller_id` varchar(30) default null,
+	`seller_id_type` varchar(10) default null, //cooperate,personal
+	`usd_income` decimal(10,2) default null,
+	`eur_income` decimal(10,2) default null,
+	`usd_item_cost` decimal(10,2) default null,
+	`eur_item_cost` decimal(10,2) default null,
+	`usd_return` decimal(10,2) default null,
+	`eur_return` decimal(10,2) default null,
+	`market_fee` decimal(10,2) default null,
+	`paypal_fee` decimal(10,2) default null,
+	`tax_collection` decimal(10,2) default null
+	) engine=myisam default charset=utf8;	
+	*/
+	'DB_INCOMECOST' => 'income_cost',
+	'DB_INCOMECOST_ID' => 'id',
+	'DB_INCOMECOST_MONTH' => 'month',
+	'DB_INCOMECOST_SLLERID' => 'seller_id',
+	'DB_INCOMECOST_SLLERIDTYPE' => 'seller_id_type',
+	'DB_INCOMECOST_USDINCOME' => 'usd_income',
+	'DB_INCOMECOST_USDITEMCOST' => 'usd_item_cost',
+	'DB_INCOMECOST_USDRETURN' => 'usd_return',
+	'DB_INCOMECOST_EURINCOME' => 'eur_income',
+	'DB_INCOMECOST_EURITEMCOST' => 'eur_item_cost',
+	'DB_INCOMECOST_EURRETURN' => 'eur_return',
+	'DB_INCOMECOST_MARKETFEE' => 'market_fee', //USD
+	'DB_INCOMECOST_PAYPALFEE' => 'paypal_fee', //USD
+	'DB_INCOMECOST_TAX_COLLECTION' => 'tax_collection', //USD
+
+	//Sale fee table
+	/*
+	create table if not exists `3s_sale_fee`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`month` varchar(20) not null,
+	`ussw_sf_cn` decimal(10,2) default null,
+	`ussw_sf_local` decimal(10,2) default null,
+	`ussw_storage_fee` decimal(10,2) default null,
+	`ussw_tariff` decimal(10,2) default null,
+	`third_party_sf_cn` decimal(10,2) default null,
+	`third_party_sf_local` decimal(10,2) default null,
+	`third_party_storage_fee` decimal(10,2) default null,
+	`third_party_tariff` decimal(10,2) default null,
+	`szsw_sf` decimal(10,2) default null
+	) engine=myisam default charset=utf8;	
+	*/
+	'DB_SALEFEE' => 'sale_fee',
+	'DB_SALEFEE_ID' => 'id',
+	'DB_SALEFEE_MONTH' => 'month',
+	'DB_SALEFEE_USSWSFCN' => 'ussw_sf_cn', //RMB
+	'DB_SALEFEE_USSWSFLOCAL' => 'ussw_sf_local', //USD
+	'DB_SALEFEE_USSWSTORAGEFEE' => 'ussw_storage_fee', //USD
+	'DB_SALEFEE_USSWTARIFF' => 'ussw_tariff', //USD
+	'DB_SALEFEE_THRIDPARTYSFCN' => 'third_party_sf_cn',//USD
+	'DB_SALEFEE_THIRDPARTYSFLOCAL' => 'third_party_sf_local',//USD
+	'DB_SALEFEE_THIRDPARTYSTORAGEFEE' => 'third_party_storage_fee',//USD
+	'DB_SALEFEE_THIRDPARTYTARIFF' => 'third_party_tariff', //USD
+	'DB_SALEFEE_SZSWSF' => 'szsw_sf', //RMB
+
+	//Management fee table
+	/*
+	create table if not exists `3s_management_fee`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`month` varchar(20) not null,
+	`purpose` varchar(20) default null,
+	`amount` decimal(10,2) default null,
+	`share_type` varchar(20) default null,
+	`remark` varchar(255) default null
+	) engine=myisam default charset=utf8;	
+	*/
+	'DB_MANAGEMENTFEE' => 'management_fee',
+	'DB_MANAGEMENTFEE_ID' => 'id',
+	'DB_MANAGEMENTFEE_MONTH' => 'month',
+	'DB_MANAGEMENTFEE_PURPOSE' => 'purpose', //rent,booking,packing,purchasing_shipping_fee,other
+	'DB_MANAGEMENTFEE_AMOUNT' => 'amount', //RMB
+	'DB_MANAGEMENTFEE_SHARE_TYPE' => 'share_type', //cooperate,personal,all
+	'DB_MANAGEMENTFEE_REMARK' => 'remark',
+
+
+	//Wages table
+	/*
+	create table if not exists `3s_wages`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`month` varchar(20) not null,
+	`name` varchar(10) default null,
+	`base` decimal(10,2) default null,
+	`performance` decimal(10,2) default null,
+	`percent` decimal(5,2) default null,
+	`si_company` decimal(10,2) default null,
+	`si_person` decimal(10,2) default null,
+	`leave_days` decimal(5,2) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_WAGES' => 'wages',
+	'DB_WAGES_ID' => 'id',
+	'DB_WAGES_MONTH' => 'month',
+	'DB_WAGES_NAME' => 'name',
+	'DB_WAGES_BASE' => 'base',
+	'DB_WAGES_PERFORMANCE' => 'performance',
+	'DB_WAGES_PERCENT' => 'percent',
+	'DB_WAGES_SI_COMPANY' => 'si_company',
+	'DB_WAGES_SI_PERSON' => 'si_person',
+	'DB_WAGES_LEAVE_DAYS' => 'leave_days',
 	);
 ?>

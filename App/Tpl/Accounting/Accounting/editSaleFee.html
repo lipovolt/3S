@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>编辑销售费用</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript" src='__PUBLIC__/Js/jquery-1.7.2.min.js'></script>
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<script>
+function checkForm(){
+	if(isNaN(document.getElementById('ussw_sf_cn').value)){
+		alert('美自建仓头程运费不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('ussw_sf_local').value)){
+		alert('美自建仓本地运费不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('ussw_storage_fee').value)){
+		alert('美自建仓仓储费用不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('uusw_tariff').value)){
+		alert('美自建仓关税不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('third_party_sf_cn').value)){
+		alert('海外仓头程运费不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('third_party_sf_local').value)){
+		alert('海外仓本地运费不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('third_party_storage_fee').value)){
+		alert('海外仓仓储费用不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('third_party_tariff').value)){
+		alert('海外仓关税不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('purchasing_sf').value)){
+		alert('中国采购快递费不是数字');
+		return false;
+	}
+	if(isNaN(document.getElementById('packing_materials_fee').value)){
+		alert('包菜费用不是数字');
+		return false;
+	}
+	
+	return true;
+}
+function checkMonth(){
+	if(document.getElementById('id').value!=null && document.getElementById('id').value!=''){
+		document.getElementById('month').value=document.getElementById('month').getAttribute('oldvalue');
+		alert(document.getElementById('month').getAttribute('oldvalue')+' 已经统计过，不能修改月份');
+		return false;
+	}
+	if(document.getElementById('month').value <= document.getElementById('maxMonth').value){
+		alert(document.getElementById('month').value + ' 已经完成统计，请重新选择！！！');
+		document.getElementById('month').value=null;		
+		return false;
+	}
+}
+</script>
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>财务</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/accountingMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form method="POST" id="edit_productInfo" action="{:U('Accounting/Accounting/editSaleFeeHandle')}" onsubmit="return checkForm()">
+		<div class="block-outer BaseInfo">
+			<div class="block-outer-bd">
+				<div class="inline-block block-indent">
+					<div class="item">
+						<div class="form-group">
+							<label for="month" class="control-label">月份</label>
+							<div class="control-wrap">
+								<input type="text" name="{:C('DB_SALEFEE_MONTH')}" id="{:C('DB_SALEFEE_MONTH')}" onclick="WdatePicker({dateFmt:'yyyy-MM'});" value="{$saleFee[C('DB_SALEFEE_MONTH')]}" oldvalue="{$saleFee[C('DB_SALEFEE_MONTH')]}" onchange="checkMonth()" size="17" class="date" readonly>
+								<input type="hidden" id="{:C('DB_SALEFEE_ID')}" name="{:C('DB_SALEFEE_ID')}" value="{$saleFee[C('DB_SALEFEE_ID')]}"/>
+								<input type="hidden" id="maxMonth" name="maxMonth" value="$maxMonth"/>
+							</div>
+						</div>
+					</div>
+					<div class="item">
+                       <div class="form-group">
+							<label for="{C('DB_SALEFEE_USSWSFCN')}" class="control-label">美自建仓头程运费￥</label>
+							<div class="control-wrap">
+								<input type="text" id="{:C('DB_SALEFEE_USSWSFCN')}" name="{:C('DB_SALEFEE_USSWSFCN')}" value="{$saleFee[C('DB_SALEFEE_USSWSFCN')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="{C('DB_SALEFEE_USSWSFLOCAL')}" class="control-label">美自建仓本地运费$</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_SALEFEE_USSWSFLOCAL')}" name="{:C('DB_SALEFEE_USSWSFLOCAL')}" value="{$saleFee[C('DB_SALEFEE_USSWSFLOCAL')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="{C('DB_SALEFEE_USSWSTORAGEFEE')}" class="control-label">美自建仓仓储费用$</label>
+							<div class="control-wrap">
+								<input type="text" id="{:C('DB_SALEFEE_USSWSTORAGEFEE')}" name="{:C('DB_SALEFEE_USSWSTORAGEFEE')}" value="{$saleFee[C('DB_SALEFEE_USSWSTORAGEFEE')]}"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="{C('DB_SALEFEE_USSWTARIFF')}" class="control-label">美自建仓关税$</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_SALEFEE_USSWTARIFF')}" name="{:C('DB_SALEFEE_USSWTARIFF')}" value="{$saleFee[C('DB_SALEFEE_USSWTARIFF')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="{C('DB_SALEFEE_THRIDPARTYSFCN')}" class="control-label">海外仓头程运费$</label>
+							<div class="control-wrap">
+								<input type="text" id="{:C('DB_SALEFEE_THRIDPARTYSFCN')}" name="{:C('DB_SALEFEE_THRIDPARTYSFCN')}" value="{$saleFee[C('DB_SALEFEE_THRIDPARTYSFCN')]}"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="{C('DB_SALEFEE_THIRDPARTYSFLOCAL')}" class="control-label">海外仓本地运费$</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_SALEFEE_THIRDPARTYSFLOCAL')}" name="{:C('DB_SALEFEE_THIRDPARTYSFLOCAL')}" value="{$saleFee[C('DB_SALEFEE_THIRDPARTYSFLOCAL')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="{C('DB_SALEFEE_THIRDPARTYSTORAGEFEE')}" class="control-label">海外仓仓储费用$</label>
+							<div class="control-wrap">
+								<input type="text" id="{:C('DB_SALEFEE_THIRDPARTYSTORAGEFEE')}" name="{:C('DB_SALEFEE_THIRDPARTYSTORAGEFEE')}" value="{$saleFee[C('DB_SALEFEE_THIRDPARTYSTORAGEFEE')]}"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="{C('DB_SALEFEE_THIRDPARTYTARIFF')}" class="control-label">海外仓关税$</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_SALEFEE_THIRDPARTYTARIFF')}" name="{:C('DB_SALEFEE_THIRDPARTYTARIFF')}" value="{$saleFee[C('DB_SALEFEE_THIRDPARTYTARIFF')]}" />
+							</div>
+						</div>
+					</div>
+                    <div class="item">
+						<div class="form-group">
+							<label for="{C('DB_SALEFEE_SZSWSF')}" class="control-label">深圳仓运费￥</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_SALEFEE_SZSWSF')}" name="{:C('DB_SALEFEE_SZSWSF')}" value="{$saleFee[C('DB_SALEFEE_SZSWSF')]}" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="item tc">
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+			<button class="btn btn-blue btn-s" id="saveProductInfo" name="saveProductInfo">保存	</button>
+		</div>
+	</form> 
+	</div>
+
+
+		</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>
