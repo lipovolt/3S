@@ -86,36 +86,6 @@ class AccountingAction extends CommonAction{
 		$this->redirect('managementFee');
 	}
 
-	public function otherFee(){
-		$this->assign('otherFees',M(C('DB_OTHERFEE'))->select());
-		$this->display();
-	}
-
-	public function searchOtherFee(){
-		if($_POST[C('DB_OTHERFEE_MONTH')]!='' && $_POST[C('DB_OTHERFEE_MONTH')]!=null){
-			$map[C('DB_OTHERFEE_MONTH')]=array('eq',$_POST[C('DB_OTHERFEE_MONTH')]);
-			$this->assign(C('DB_OTHERFEE_MONTH'),$_POST[C('DB_OTHERFEE_MONTH')]);
-		}
-		$this->assign('otherFees',M(C('DB_OTHERFEE'))->where($map)->select());
-		$this->display('otherFee');
-	}
-
-	public function editOtherFee($id=null){
-		if($id!=null){
-			$this->assign('otherFee',M(C('DB_OTHERFEE'))->where(array(C('DB_OTHERFEE_ID')=>$id))->find());
-		}
-		$this->display();		
-	}
-
-	public function editOtherFeeHandle(){
-		if($_POST[C('DB_OTHERFEE_ID')]!=null){
-			M(C('DB_OTHERFEE'))->save($_POST);
-		}else{
-			M(C('DB_OTHERFEE'))->add($_POST);
-		}
-		$this->redirect('otherFee');
-	}
-
 	public function wages(){
 		$this->assign('wages',M(C('DB_WAGES'))->select());
 		$this->display();
