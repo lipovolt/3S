@@ -1262,14 +1262,14 @@ class AccountingAction extends CommonAction{
 	private function getStatisticGpr($dataPara){
 		$ui['subject']='毛利率';
 		foreach (C('COOPERATE_SELLERID') as $key => $value) {
-			$ui[$value] = round($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['item_cost']][$value]/$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']][$value],2);
+			$ui[$value] = round(($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']][$value]-$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['item_cost']][$value])/$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']][$value],2);
 		}
 		foreach (C('PERSONAL_SELLERID') as $key => $value) {
-			$ui[$value] = round($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['item_cost']][$value]/$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']][$value],2);
+			$ui[$value] = round(($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']][$value]-$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['item_cost']][$value])/$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']][$value],2);
 		}
-		$ui['coSub']=round($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['item_cost']]['coSub']/$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']]['coSub'],2);
-		$ui['perSub']=round($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['item_cost']]['perSub']/$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']]['perSub'],2);
-		$ui['total']=round($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['item_cost']]['total']/$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']]['total'],2);
+		$ui['coSub']=round(($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']]['coSub']-$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['item_cost']]['coSub'])/$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']]['coSub'],2);
+		$ui['perSub']=round(($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']]['perSub']-$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['item_cost']]['perSub'])/$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']]['perSub'],2);
+		$ui['total']=round(($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']]['total']-$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['item_cost']]['total'])/$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['income_rmb']]['total'],2);
 		return $ui;
 	}
 
