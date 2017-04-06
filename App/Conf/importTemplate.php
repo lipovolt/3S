@@ -342,5 +342,11 @@ return array(
 		'AD' => 'Order Expiration Date',
 		'AE' => 'Sku',
 		),
+
+	//Groupon order analysis template
+	'IMPORT_EXCLUDE_STOCK_FXT' => array(
+		'A' => 'Sku',
+		'B' => 'Quantity',
+		),
 	);
 ?>

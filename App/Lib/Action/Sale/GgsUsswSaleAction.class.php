@@ -1254,13 +1254,19 @@ class GgsUsswSaleAction extends CommonAction{
 			$sheet = $objPHPExcel->getSheet(0);
 			$highestRow = $sheet->getHighestRow(); // 取得总行数
 			$highestColumn = $sheet->getHighestColumn(); // 取得总列数
-
 			//excel first column name verify
             for($c='A';$c<=$highestColumn;$c++){
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
+            $excludeSheet = $objPHPExcel->getSheet(1);
+            $excludeHighestRow = $excludeSheet->getHighestRow(); // 取得总行数
+			$excludeHighestColumn = $excludeSheet->getHighestColumn(); // 取得总列数
+			//excel first column name of exclude table verify
+            for($c='A';$c<=$excludeHighestColumn;$c++){
+                $excludeFirstRow[$c] = $excludeSheet->getCell($c.'1')->getValue();
+            }
 
-            if($this->verifyEbayFxtcn($firstRow)){
+            if($this->verifyEbayFxtcn($firstRow) && $this->verifyExcludeFxt($excludeFirstRow)){
             	$storageTable=M($this->getStorageTableName($account));
             	$salePlanTable=M($this->getSalePlanTableName($account));
             	$productTable=M(C('DB_PRODUCT'));
@@ -1282,6 +1288,12 @@ class GgsUsswSaleAction extends CommonAction{
 
                 	if(count($splitSku)==1){
                 		//Single sku
+                		$oinventory=0;
+                		for($e=1;$e<=$excludeHighestRow;$e++){
+                			if($excludeSheet->getCell("A".$e)->getValue()==$splitSku[0][0]){
+                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
+                			}
+                		}
                 		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][0]))->find();
                 		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
                 		$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
@@ -1291,7 +1303,7 @@ class GgsUsswSaleAction extends CommonAction{
                 		if($splitSku[0][1]==1){
                 			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
                 			$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-                			$data[$i-2][$firstRow['H']]=$ainventory;
+                			$data[$i-2][$firstRow['H']]=$ainventory-$oinventory;
                 			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TOUS')) == '无' && $ainventory==0 && $iinventory==0){
                 				$data[$i-2]['Suggest']='不做的商品，需要下架';
                 			}else{
@@ -1300,7 +1312,7 @@ class GgsUsswSaleAction extends CommonAction{
                 		}else{
                 			//Single sku and multiple sale quantity
                 			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-                			$data[$i-2][$firstRow['H']]=intval($ainventory/$splitSku[0][1]);
+                			$data[$i-2][$firstRow['H']]=intval(($ainventory-$oinventory)/$splitSku[0][1]);
                 			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TOUS')) == '无' && $ainventory==0 && $iinventory==0){
                 				$data[$i-2]['Suggest']='不做的商品，需要下架';
                 			}else{
@@ -1313,16 +1325,22 @@ class GgsUsswSaleAction extends CommonAction{
                 		$data[$i-2]['Suggest']="组合销售商品，无法给出建议售价";
                 		$data[$i-2][$firstRow['H']]=65536;
                 		foreach ($splitSku as $key => $skuQuantity){
+                			$oinventory=0;
+	                		for($e=1;$e<=$excludeHighestRow;$e++){
+	                			if($excludeSheet->getCell("A".$e)->getValue()==$skuQuantity[0]){
+	                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
+	                			}
+	                		}
                 			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
                 			if($skuQuantity[1]==1){
                 				//Multiple sku and Single sale quantity
-                				if($ainventory<$data[$i-2][$firstRow['H']]){
-                					$data[$i-2][$firstRow['H']]=$ainventory;
+                				if(($ainventory-$oinventory)<$data[$i-2][$firstRow['H']]){
+                					$data[$i-2][$firstRow['H']]=$ainventory-$oinventory;
                 				}
                 			}else{
                 				//Multiple sku and Multiple sale quantity
-                				if(intval($ainventory/$skuQuantity[1])<$data[$i-2][$firstRow['H']]){
-                					$data[$i-2][$firstRow['H']]=intval($ainventory/$skuQuantity[1]);
+                				if(intval(($ainventory-$oinventory)/$skuQuantity[1])<$data[$i-2][$firstRow['H']]){
+                					$data[$i-2][$firstRow['H']]=intval(($ainventory-$oinventory)/$skuQuantity[1]);
                 				}
                 			}
                 		}
@@ -1381,6 +1399,15 @@ class GgsUsswSaleAction extends CommonAction{
         }
         return true;
     }
+    
+    //Verify imported file exchange exclude template column name
+	private function verifyExcludeFxt($firstRow){
+        for($c='A';$c<=max(array_keys(C('IMPORT_EXCLUDE_STOCK_FXT')));$c++){
+            if($firstRow[$c] != C('IMPORT_EXCLUDE_STOCK_FXT')[$c])
+                return false;
+        }
+        return true;
+    }
 
     //Verify imported file exchange template column name
 	private function verifyAmazonFxt($firstRow){
@@ -1401,52 +1428,99 @@ class GgsUsswSaleAction extends CommonAction{
     }
 
     private function amazonFileExchangeHandle($account){
-    	$salePlan=M($this->getSalePlanTableName($account))->select();
-    	$storageTable=M($this->getStorageTableName($account));
-    	$productTable=M(C("DB_PRODUCT"));
-    	$storageTable->startTrans();
-    	$productTable->startTrans();
-    	foreach ($salePlan as $key => $value) {
-    		$data[$key]["sku"]=$value[C("DB_USSW_SALE_PLAN_SKU")];
-    		$data[$key]["price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
-    		$product = $productTable->where(array(C('DB_PRODUCT_SKU')=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->find();
-	    	$p[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
-	    	$p[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
-	    	$p['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
-	    	$p['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
-	    	$p['local-shipping-fee1']=$this->getUsswLocalShippingFee1($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+    	if (!empty($_FILES)) {
+    		import('ORG.Net.UploadFile');
+			$config=array(
+			 'allowExts'=>array('xls'),
+			 'savePath'=>'./Public/upload/fileExchange/',
+			 'saveRule'=>'ebayFileExchange'.'_'.time(),
+			);
+			$upload = new UploadFile($config);
+			if (!$upload->upload()) {
+				$this->error($upload->getErrorMsg());
+			}else {
+				$info = $upload->getUploadFileInfo();                 
+			}
+			vendor("PHPExcel.PHPExcel");
+			$file_name=$info[0]['savepath'].$info[0]['savename'];
+
+			$objReader = PHPExcel_IOFactory::createReader('Excel5');
+			$objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+			$sheetnames = $objPHPExcel->getSheetNames();
+
+			//creat excel writer
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			
+
+			$objPHPExcel->setActiveSheetIndex(0);
+			$excludeSheet = $objPHPExcel->getSheet(0);
+			$excludeHighestRow = $excludeSheet->getHighestRow(); // 取得总行数
+			$excludeHighestColumn = $excludeSheet->getHighestColumn(); // 取得总列数
+			//excel first column name verify
+            for($c='A';$c<=$excludeHighestColumn;$c++){
+                $excludeFirstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+            }
+
+            if($this->verifyExcludeFxt($excludeFirstRow)){
+            	$salePlan=M($this->getSalePlanTableName($account))->select();
+		    	$storageTable=M($this->getStorageTableName($account));
+		    	$productTable=M(C("DB_PRODUCT"));
+		    	$storageTable->startTrans();
+		    	$productTable->startTrans();
+		    	foreach ($salePlan as $key => $value) {
+		    		$data[$key]["sku"]=$value[C("DB_USSW_SALE_PLAN_SKU")];
+		    		$data[$key]["price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
+		    		$product = $productTable->where(array(C('DB_PRODUCT_SKU')=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->find();
+			    	$p[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
+			    	$p[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
+			    	$p['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+			    	$p['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+			    	$p['local-shipping-fee1']=$this->getUsswLocalShippingFee1($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
 
 
-	    	$data[$key]["minimum-seller-allowed-price"]=$this->getUsswAmazonISP($p[C('DB_PRODUCT_PRICE')],$p[C('DB_PRODUCT_USTARIFF')],$p['ussw-fee'],$p['way-to-us-fee'],$p['local-shipping-fee1'],$_POST["minbbpPercent"]);
-	    	$data[$key]["maximum-seller-allowed-price"]=$this->getUsswAmazonISP($p[C('DB_PRODUCT_PRICE')],$p[C('DB_PRODUCT_USTARIFF')],$p['ussw-fee'],$p['way-to-us-fee'],$p['local-shipping-fee1'],$_POST["maxbbpPercent"]);
+			    	$data[$key]["minimum-seller-allowed-price"]=$this->getUsswAmazonISP($p[C('DB_PRODUCT_PRICE')],$p[C('DB_PRODUCT_USTARIFF')],$p['ussw-fee'],$p['way-to-us-fee'],$p['local-shipping-fee1'],$_POST["minbbpPercent"]);
+			    	$data[$key]["maximum-seller-allowed-price"]=$this->getUsswAmazonISP($p[C('DB_PRODUCT_PRICE')],$p[C('DB_PRODUCT_USTARIFF')],$p['ussw-fee'],$p['way-to-us-fee'],$p['local-shipping-fee1'],$_POST["maxbbpPercent"]);
 
-    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]<$data[$key]["minimum-seller-allowed-price"]){
-    			$data[$key]["minimum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
-    		}
-    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]>$data[$key]["maximum-seller-allowed-price"]){
-    			$data[$key]["maximum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
-    		}
-    		if($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY"))==null){
-    			$data[$key]["quantity"]=0;
-    		}else{
-    			$data[$key]["quantity"]=$storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY"));
-    		}
-    		$data[$key]["leadtime-to-ship"]=3; 
-    		$data[$key]["suggested-price"]=$value[C("DB_USSW_SALE_PLAN_SUGGESTED_PRICE")];
-    		$data[$key]["suggest"]=$value[C("DB_USSW_SALE_PLAN_SUGGEST")];		
-    	}
-    	$productTable->commit();
-    	$storageTable->commit();
-    	$excelCellName[0]='sku';
-    	$excelCellName[1]='price';
-    	$excelCellName[2]='suggested-price';
-    	$excelCellName[3]='suggest';
-    	$excelCellName[4]='minimum-seller-allowed-price';
-    	$excelCellName[5]='maximum-seller-allowed-price';
-    	$excelCellName[6]='quantity';
-    	$excelCellName[7]='leadtime-to-ship';
-    	$excelCellName[8]='fulfillment-channel';
-    	$this->exportAmazonFileExchangeExcel("amazon_update_file",$excelCellName,$data);
+		    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]<$data[$key]["minimum-seller-allowed-price"]){
+		    			$data[$key]["minimum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
+		    		}
+		    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]>$data[$key]["maximum-seller-allowed-price"]){
+		    			$data[$key]["maximum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
+		    		}
+		    		$oinventory=0;
+            		for($e=1;$e<=$excludeHighestRow;$e++){
+            			if($excludeSheet->getCell("A".$e)->getValue()==$value[C("DB_USSW_SALE_PLAN_SKU")]){
+            				$oinventory= $objPHPExcel->getActiveSheet()->getCell('B'.$e)->getValue();
+            			}
+            		}
+		    		if($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY"))==null){
+		    			$data[$key]["quantity"]=0;
+		    		}else{
+		    			$data[$key]["quantity"]=($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY")))-$oinventory;
+		    		}
+
+		    		$data[$key]["leadtime-to-ship"]=3; 
+		    		$data[$key]["suggested-price"]=$value[C("DB_USSW_SALE_PLAN_SUGGESTED_PRICE")];
+		    		$data[$key]["suggest"]=$value[C("DB_USSW_SALE_PLAN_SUGGEST")];		
+		    	}
+		    	$productTable->commit();
+		    	$storageTable->commit();
+		    	$excelCellName[0]='sku';
+		    	$excelCellName[1]='price';
+		    	$excelCellName[2]='suggested-price';
+		    	$excelCellName[3]='suggest';
+		    	$excelCellName[4]='minimum-seller-allowed-price';
+		    	$excelCellName[5]='maximum-seller-allowed-price';
+		    	$excelCellName[6]='quantity';
+		    	$excelCellName[7]='leadtime-to-ship';
+		    	$excelCellName[8]='fulfillment-channel';
+		    	$this->exportAmazonFileExchangeExcel("amazon_update_file",$excelCellName,$data);
+            }else{
+                $this->error("模板错误，请检查模板！");
+            }
+    	}else{
+            $this->error("请选择上传的文件");
+        }
     }
 
     private function grouponFileExchangeHandle($account){
@@ -1478,13 +1552,20 @@ class GgsUsswSaleAction extends CommonAction{
 			$sheet = $objPHPExcel->getSheet(0);
 			$highestRow = $sheet->getHighestRow(); // 取得总行数
 			$highestColumn = $sheet->getHighestColumn(); // 取得总列数
-
 			//excel first column name verify
             for($c='A';$c<=$highestColumn;$c++){
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
 
-            if($this->verifyGrouponFxt($firstRow)){
+            $excludeSheet = $objPHPExcel->getSheet(1);
+            $excludeHighestRow = $excludeSheet->getHighestRow(); // 取得总行数
+			$excludeHighestColumn = $excludeSheet->getHighestColumn(); // 取得总列数
+			//excel first column name of exclude table verify
+            for($c='A';$c<=$excludeHighestColumn;$c++){
+                $excludeFirstRow[$c] = $excludeSheet->getCell($c.'1')->getValue();
+            }
+
+            if($this->verifyGrouponFxt($firstRow) && $this->verifyExcludeFxt($excludeFirstRow)){
             	$storageTable=M($this->getStorageTableName($account));
             	$salePlanTable=M($this->getSalePlanTableName($account));
 
@@ -1508,6 +1589,12 @@ class GgsUsswSaleAction extends CommonAction{
 
                 	if(count($splitSku)==1){
                 		//Single sku
+                		$oinventory=0;
+                		for($e=1;$e<=$excludeHighestRow;$e++){
+                			if($excludeSheet->getCell("A".$e)->getValue()==$splitSku[0][0]){
+                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
+                			}
+                		}
                 		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][0]))->find();
                 		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
                 		if($splitSku[0][1]==1){
@@ -1519,11 +1606,11 @@ class GgsUsswSaleAction extends CommonAction{
                 				$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
                 			}
                 			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
-                			$data[$i-2][$firstRow['J']]=$ainventory;
+                			$data[$i-2][$firstRow['J']]=$ainventory-$oinventory;
                 		}else{
                 			//Single sku and multiple sale quantity
                 			$data[$i-2]['Suggest']="多个一组销售商品，无法给出建议售价";
-                			$data[$i-2][$firstRow['J']]=intval($ainventory/$splitSku[0][1]);
+                			$data[$i-2][$firstRow['J']]=intval(($ainventory-$oinventory)/$splitSku[0][1]);
                 		}
 
                 	}else{
@@ -1531,16 +1618,22 @@ class GgsUsswSaleAction extends CommonAction{
                 		//Multiple sku
                 		$data[$i-2][$firstRow['J']]=65536;
                 		foreach ($splitSku as $key => $skuQuantity){
+                			$oinventory=0;
+	                		for($e=1;$e<=$excludeHighestRow;$e++){
+	                			if($excludeSheet->getCell("A".$e)->getValue()==$skuQuantity[0]){
+	                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
+	                			}
+	                		}
                 			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
                 			if($skuQuantity[1]==1){
                 				//Multiple sku and Single sale quantity
-                				if($ainventory<$data[$i-2][$firstRow['J']]){
-                					$data[$i-2][$firstRow['J']]=$ainventory;
+                				if(($ainventory-$oinventory)<$data[$i-2][$firstRow['J']]){
+                					$data[$i-2][$firstRow['J']]=$ainventory-$oinventory;
                 				}
                 			}else{
                 				//Multiple sku and Multiple sale quantity
-                				if(intval($ainventory/$skuQuantity[1])<$data[$i-2]['Ainventory']){
-                					$data[$i-2][$firstRow['J']]=intval($ainventory/$skuQuantity[1]);
+                				if(intval(($ainventory-$oinventory)/$skuQuantity[1])<$data[$i-2]['Ainventory']){
+                					$data[$i-2][$firstRow['J']]=intval(($ainventory-$oinventory)/$skuQuantity[1]);
                 				}
                 			}
                 		}
