@@ -65,7 +65,7 @@
 											<p>注意事项：</p>
 											<p>1. 导出的ebay订单是CVS文件，需要转换成XLS文件，删除第一行和第三行的空白行，上传的文件第一行应该是标题行，第二行开始订单。</p>
 											<p>2. 导出的亚马逊订单Reports->Transaction View->给出日期->update->download, 导出的是制表符分割的txt文件，需要转换成XLS文件。</p>
-											<p>2. 导出的goupon订单是csv文件。文件不包含sku,需要另外下载产品信息文件，用excel公式根据产品名称匹配出sku，放在最后一列。还需要把售价列调整好小数点。然后才能上传</p>
+											<p>2. 导出的goupon订单是csv文件。文件不包含sku,需要另外下载产品信息文件，用excel公式根据产品名称vlookup匹配出sku，放在最后一列。更改sku列的单元格格式为文本。然后才能上传</p>
 											<div>
 												 <form action="{:U('Accounting/Accounting/importSaleRecordHandle')}" method="post" enctype="multipart/form-data" onsubmit="return check()">
 												 	<label for="month" class="control-label">月份:</label>

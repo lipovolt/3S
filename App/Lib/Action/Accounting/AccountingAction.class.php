@@ -145,6 +145,104 @@ class AccountingAction extends CommonAction{
 		}
 	}
 
+	private function importGrouponSaleRecordHandle(){
+		import('ORG.Net.UploadFile');
+        $config=array(
+            'allowExts'=>array('xlsx','xls'),
+            'savePath'=>'./Public/upload/accounting/',
+            'saveRule'=>I('post.sellerID').'_'.I('post.month').'_'.time(),
+        );
+        $upload = new UploadFile($config);
+        if (!$upload->upload()) {
+            $this->error($upload->getErrorMsg());
+        }else {
+            $info = $upload->getUploadFileInfo();
+             
+        }
+        
+        vendor("PHPExcel.PHPExcel");
+        $file_name=$info[0]['savepath'].$info[0]['savename'];
+        $objReader = PHPExcel_IOFactory::createReader('Excel5');
+        $objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+        //excel first column name verify
+        for($c='A';$c!=$highestColumn;$c++){
+            $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue(); 
+        }
+        if($this->verifyGroupOnOrderAnalyzeColumnName($firstRow)){
+        	$usdIncome = 0;
+        	$usdMarketFee = 0;
+        	$usdTaxCollection = 0;
+        	$usdRefund = 0;
+        	$usdCost = 0;
+        	$usdPmpa = null;
+        	$productTable=M(C('DB_PRODUCT'));
+        	for($i=2;$i<=$highestRow;$i++){
+        		$sku = $objPHPExcel->getActiveSheet()->getCell("AE".$i)->getValue();
+        		$pPrice=$productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_PRICE'));
+        		if($pPrice==false || $pPrice==null){
+        			$this->error($i.' 行的sku无法找到售价。');
+        		}
+        		$fDate = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+        		$cDate = $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
+        		$rDate = $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
+        		$quantity = $objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+        		$salePrice = $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue()/100;
+        		$shippingPrice = $objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue()/100;
+        		$tax = $objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue()/100;
+        		$marketFee = $objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue()/100;
+        		$pmanager = $productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_MANAGER'));
+        		if($pmanager==null){
+        			$pmanager='Yellow River';
+        		}
+        		if($fDate!='' && $cDate=='' && $rDate==''){
+        			$usdIncome=$usdIncome+$salePrice+$shippingPrice;
+        			$usdCost=$usdCost+$pPrice*$quantity;
+        			$usdTaxCollection=$usdTaxCollection+$tax;
+        			$usdPmpa[$pmanager] = $usdPmpa[$pmanager]+$salePrice+$shippingPrice;
+        			$usdMarketFee = $usdMarketFee+$marketFee;
+        		}elseif($fDate!=''&&$rDate==''){
+        			$usdRefund=$usdRefund+$salePrice+$shippingPrice;
+        			$usdMarketFee = $usdMarketFee+$marketFee;
+        		}
+        	}
+        	$data[C('DB_INCOMECOST_MONTH')] = $_POST['month'];
+        	$data[C('DB_INCOMECOST_SLLERID')] = $_POST['sellerID'];
+        	$data[C('DB_INCOMECOST_SLLERIDTYPE')] = $this->getSellerIDType($_POST['sellerID']);
+        	$data[C('DB_INCOMECOST_USDINCOME')] = $usdIncome;
+        	$data[C('DB_INCOMECOST_USDITEMCOST')] = $usdCost;
+        	$data[C('DB_INCOMECOST_USDRETURN')] = $usdRefund;
+        	$data[C('DB_INCOMECOST_MARKETFEE')] = $usdMarketFee;
+        	$data[C('DB_INCOMECOST_TAX_COLLECTION')] = $usdTaxCollection;
+        	M(C('DB_INCOMECOST'))->add($data);
+        	$wagesTable = M(C('DB_WAGES'));
+        	$wagesTable->startTrans();
+        	foreach ($usdPmpa as $key => $value) {
+        		$usdPmpa[$key] = $value;
+        		$wmap[C('DB_WAGES_MONTH')] = array('eq', $_POST['month']);
+	        	$wmap[C('DB_WAGES_NAME')] = array('eq', C('PRODUCT_MANAGER_NAME')[$key]);
+	        	$result = $wagesTable->where($wmap)->find();
+	        	if($result !== null && $result !== false){
+	        		$result[C('DB_WAGES_PERFORMANCE')] = $usdPmpa[$key] + $result[C('DB_WAGES_PERFORMANCE')];
+	        		$wagesTable->save($result);
+	        	}else{
+	        		$newWages[C('DB_WAGES_NAME')] = C('PRODUCT_MANAGER_NAME')[$key];
+	        		$newWages[C('DB_WAGES_MONTH')] = $_POST['month'];
+	        		$newWages[C('DB_WAGES_PERFORMANCE')] = $usdPmpa[$key];
+	        		$newWages[C('DB_WAGES_PERCENT')] = C('WAGES_PERFORMANCE_PERCENT')[$newWages[C('DB_WAGES_NAME')]];
+	        		$newWages[C('DB_WAGES_BASE')] = C('WAGES_BASE')[$newWages[C('DB_WAGES_NAME')]];
+	        		$wagesTable->add($newWages);
+	        	}
+        	}
+        	$wagesTable->commit();
+        	$this->redirect('incomeCost');
+        }else{
+        	$this->error("模板不正确，请检查");
+        }
+	}
+
 	private function importEbayEnSaleRecordHandle(){
 		import('ORG.Net.UploadFile');
         $config=array(
@@ -847,6 +945,15 @@ class AccountingAction extends CommonAction{
 			return array('currency'=>'eur','amount'=>str_replace(",",".",$price));
 		}
 		return array('currency'=>null,'amount'=>null);
+	}
+
+	private function verifyGroupOnOrderAnalyzeColumnName(){
+		for($c='A';$c<=max(array_keys(C('verifyGroupOnOrderAnalyzeColumnName')))-1;$c++){
+            if(trim($secondRow[$c]) != C('verifyGroupOnOrderAnalyzeColumnName')[$c]){
+                return false;
+            }      
+        }
+        return true;
 	}
 
 	private function verifyEbayEnSaleRecordColumnName(){
