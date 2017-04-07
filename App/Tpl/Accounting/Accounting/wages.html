@@ -54,25 +54,29 @@
 						<th><div class="tl">行号</div></th>
 						<th><div class="tl">月份</div></th>
 						<th><div class="tl">名字</div></th>
+						<th><div class="tl">请假天数</div></th>
+						<th><div class="tl">实发工资</div></th>
 						<th><div class="tl">基本工资</div></th>
 						<th><div class="tl">绩效$</div></th>
 						<th><div class="tl">绩效百分比</div></th>
 						<th><div class="tl">社保（公司）</div></th>
 						<th><div class="tl">社保（个人）</div></th>
-						<th><div class="tl">请假天数</div></th>
+						<th><div class="tl">用工成本</div></th>
 						<th><div class="tl">操作</div></th>
 					</tr>
 					<volist name="wages" id="wages">
 						<tr>
 						<td><div class="tl">{$wages[C('DB_WAGES_ID')]}</div></td>
 						<td><div class="tl">{$wages[C('DB_WAGES_MONTH')]}</div></td>						
-						<td><div class="tl">{$wages[C('DB_WAGES_NAME')]}</div></td>
+						<td><div class="tl">{$wages[C('DB_WAGES_NAME')]}</div></td>						
+						<td><div class="tl">{$wages[C('DB_WAGES_LEAVE_DAYS')]}</div></td>
+						<td><div class="tl">{$wages['paidWages']}</div></td>
 						<td><div class="tl">{$wages[C('DB_WAGES_BASE')]}</div></td>
 						<td><div class="tl">{$wages[C('DB_WAGES_PERFORMANCE')]}</div></td>
 						<td><div class="tl">{$wages[C('DB_WAGES_PERCENT')]}%</div></td>
 						<td><div class="tl">{$wages[C('DB_WAGES_SI_COMPANY')]}</div></td>
 						<td><div class="tl">{$wages[C('DB_WAGES_SI_PERSON')]}</div></td>						
-						<td><div class="tl">{$wages[C('DB_WAGES_LEAVE_DAYS')]}</div></td>
+						<td><div class="tl">{$wages['WagesCost']}</div></td>
 						<td>
 							<a href="{:U('Accounting/Accounting/editWages',array('id'=>$wages['id']))}">编辑</a>
 						</td>

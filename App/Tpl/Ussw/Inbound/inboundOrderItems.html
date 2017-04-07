@@ -8,6 +8,15 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript">
+	function update(){
+		var scannedSku = document.getElementById("scannedSku").value;
+		var quantity = document.getElementById("scannedQuantity").value;
+		form.action="{:U('Ussw/Inbound/scanConfirmedQuantity',array('orderID'=>$orderID))}?scannedSku="+scannedSku+"&quantity="+quantity;
+		
+		form.submit();
+	}
+</script>
 </head>
 <body>
 
@@ -38,10 +47,20 @@
 		<div>
 			<div class="tab-content">
 				<div class="form-group">
-					<label for="pQuantity" class="control-label">入库单号 {$orderID}</label>
+					<label for="pQuantity" class="control-label">入库单号 {$orderID}</label><br>
 				</div>
 				<form name="form" id="search_product" action="{:U('Ussw/Inbound/bUpdateConfirmedQuantity',array('orderID'=>$orderID))}" method="POST">
-				<input class="btn btn-s btn-blue" type="button" onclick="submit();" value="批量保存"/>
+				<div class="form-group">
+					<input class="btn btn-s btn-blue" type="button" onclick="submit();" value="批量保存"/>
+					<label for="" class="control-label" name="scan" id="scan" >扫描入库</label>
+					<div class="control-wrap">
+						<input type="text" name="scannedSku" onkeydown='if(event.keyCode==13){update();}' id="scannedSku" autofocus="autofocus" value="">
+					</div>
+					<label for="" class="control-label" name="scan" id="scan" >数量</label>
+					<div class="control-wrap">
+						<input type="text" name="scannedQuantity" id="scannedQuantity" onkeydown='if(event.keyCode==13){update();}' value="1">
+					</div>
+				</div>
 				<table id="tablelist" class="tablelist">
 					<tr>
 						<th><div class="tl">产品编号</div></th>

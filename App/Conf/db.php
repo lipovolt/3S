@@ -1282,7 +1282,8 @@ return array(
 	`percent` decimal(5,2) default null,
 	`si_company` decimal(10,2) default null,
 	`si_person` decimal(10,2) default null,
-	`leave_days` decimal(5,2) default null
+	`leave_days` decimal(5,2) default null,
+	`remark` varchar(255) default null
 	) engine=myisam default charset=utf8;
 	*/
 	'DB_WAGES' => 'wages',
@@ -1295,5 +1296,6 @@ return array(
 	'DB_WAGES_SI_COMPANY' => 'si_company',
 	'DB_WAGES_SI_PERSON' => 'si_person',
 	'DB_WAGES_LEAVE_DAYS' => 'leave_days',
+	'DB_WAGES_REMARK' => 'remark',
 	);
 ?>

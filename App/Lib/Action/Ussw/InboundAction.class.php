@@ -458,6 +458,23 @@ class InboundAction extends CommonAction{
         $this->success('保存成功');
     }
 
+    public function scanConfirmedQuantity($orderID,$scannedSku,$quantity){
+        $inStatus = M(C('DB_USSW_INBOUND'))->where(array(C('DB_USSW_INBOUND_ID')=>$orderID))->getField(C('DB_USSW_INBOUND_STATUS'));
+        if($inStatus=='已入库'){
+            $this->error('该单已完成入库，无法更新！');
+        }
+        $map[C('DB_USSW_INBOUND_ITEM_IOID')] = array('eq',$orderID);
+        $map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$scannedSku);
+        $inboundItem = M(C('DB_USSW_INBOUND_ITEM'))->where($map)->find();
+        if($inboundItem==false || $inboundItem==null){
+            $this->redirect('inboundOrderItems', array('orderID'=>$orderID), 3,$scannedSku.' Does not exist in this Inbound Order.');
+        }else{
+            $inboundItem[C('DB_USSW_INBOUND_ITEM_CQUANTITY')]=$inboundItem[C('DB_USSW_INBOUND_ITEM_CQUANTITY')]+$quantity;
+            M(C('DB_USSW_INBOUND_ITEM'))->save($inboundItem);
+        }
+        $this->redirect("inboundOrderItems",array('orderID'=>$orderID));
+    }
+
     public function updateStorage($ioid){
         $status = M(C('DB_USSW_INBOUND'))->where(array(C('DB_USSW_INBOUND_ID')=>$ioid))->getField('status');
         if($status != "已入库"){

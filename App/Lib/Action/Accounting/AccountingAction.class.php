@@ -87,7 +87,13 @@ class AccountingAction extends CommonAction{
 	}
 
 	public function wages(){
-		$this->assign('wages',M(C('DB_WAGES'))->select());
+		$wages=M(C('DB_WAGES'))->select();
+		$usdToRmb=M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
+		foreach ($wages as $key => $value) {
+			$wages[$key]['paidWages']=round($value[C('DB_WAGES_BASE')]+$value[C('DB_WAGES_PERFORMANCE')]*$value[C('DB_WAGES_PERCENT')]/100*$usdToRmb-$value[C('DB_WAGES_SI_PERSON')]-$value[C('DB_WAGES_BASE')]/26*$value[C('DB_WAGES_LEAVE_DAYS')],2);
+			$wages[$key]['WagesCost']=round($value[C('DB_WAGES_BASE')]+$value[C('DB_WAGES_PERFORMANCE')]*$value[C('DB_WAGES_PERCENT')]/100*$usdToRmb+$value[C('DB_WAGES_SI_COMPANY')]-$value[C('DB_WAGES_BASE')]/26*$value[C('DB_WAGES_LEAVE_DAYS')],2);
+		}
+		$this->assign('wages',$wages);
 		$this->display();
 	}
 
