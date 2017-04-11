@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>编辑考勤</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript" src='__PUBLIC__/Js/jquery-1.7.2.min.js'></script>
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>待办事项</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/todo.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form method="POST" id="edit_productInfo" action="{:U('Todo/Todo/editAttendanceHandle')}" onsubmit="return checkForm()">
+		<div class="block-outer BaseInfo">
+			<div class="block-outer-bd">
+				<div class="inline-block block-indent">
+					<div class="item">
+						<div class="form-group">
+							<label for="name" class="control-label">名字</label>
+							<div class="control-wrap">
+								<input type="hidden"  id="id" name="id" value="{$att[C('DB_ATTENDANCE_ID')]}" readonly="" />
+								<select name="name"  id="name">
+									<option value="unknow">请选择</option>
+									<volist name="names" id="vo">
+										<if condition="($name eq $vo)"> <option value="{$vo}" selected="">{$vo}</option>
+										<else /> <option value="{$vo}">{$vo}</option>
+										</if>											
+									</volist> 	
+								</select>							 	
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="come" class="control-label">开工IP</label>
+							<div class="control-wrap">
+								<input type="text"  id="come_ip" name="come_ip" value="{$att[C('DB_ATTENDANCE_COMEIP')]}" readonly="" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="leave" class="control-label">收工IP</label>
+							<div class="control-wrap">
+								<input type="text"  id="leave_ip" name="leave_ip" value="{$att[C('DB_ATTENDANCE_LEAVEIP')]}" readonly="" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="come" class="control-label">开工时间</label>
+							<div class="control-wrap">
+								<input type="text"  id="come_time" name="come_time" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="{$att[C('DB_ATTENDANCE_COMETIME')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="leave" class="control-label">收工时间</label>
+							<div class="control-wrap">
+								<input type="text"  id="leave_time" name="leave_time" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="{$att[C('DB_ATTENDANCE_LEAVETIME')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="rest1_begin" class="control-label">间休1开始时间</label>
+							<div class="control-wrap">
+								<input type="text"  id="rest1_begin" name="rest1_begin" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="{$att[C('DB_ATTENDANCE_REST1_BEGIN')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="rest1_end" class="control-label">间休1结束时间</label>
+							<div class="control-wrap">
+								<input type="text"  id="rest1_end" name="rest1_end" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="{$att[C('DB_ATTENDANCE_REST1_END')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="rest2_begin" class="control-label">间休2开始时间</label>
+							<div class="control-wrap">
+								<input type="text"  id="rest2_begin" name="rest2_begin" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="{$att[C('DB_ATTENDANCE_REST2_BEGIN')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="rest2_end" class="control-label">间休2结束时间</label>
+							<div class="control-wrap">
+								<input type="text"  id="rest2_end" name="rest2_end" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="{$att[C('DB_ATTENDANCE_REST2_END')]}" />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="item tc">
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+			<button class="btn btn-blue btn-s" id="saveProductInfo" name="saveProductInfo">保存	</button>
+		</div>
+	</form> 
+	</div>
+
+
+		</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

@@ -1295,7 +1295,10 @@ class GgsUsswSaleAction extends CommonAction{
                 			}
                 		}
                 		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][0]))->find();
-                		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
+                		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory')-$oinventory;
+                		if($ainventory<0){
+                			$ainventory=0;
+                		}
                 		$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
 						$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$splitSku[0][0]);
                 		$iinventory=$usswInboundViewTable->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
@@ -1303,7 +1306,7 @@ class GgsUsswSaleAction extends CommonAction{
                 		if($splitSku[0][1]==1){
                 			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
                 			$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-                			$data[$i-2][$firstRow['H']]=$ainventory-$oinventory;
+                			$data[$i-2][$firstRow['H']]=$ainventory;
                 			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TOUS')) == '无' && $ainventory==0 && $iinventory==0){
                 				$data[$i-2]['Suggest']='不做的商品，需要下架';
                 			}else{
@@ -1312,7 +1315,7 @@ class GgsUsswSaleAction extends CommonAction{
                 		}else{
                 			//Single sku and multiple sale quantity
                 			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-                			$data[$i-2][$firstRow['H']]=intval(($ainventory-$oinventory)/$splitSku[0][1]);
+                			$data[$i-2][$firstRow['H']]=intval($ainventory/$splitSku[0][1]);
                 			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TOUS')) == '无' && $ainventory==0 && $iinventory==0){
                 				$data[$i-2]['Suggest']='不做的商品，需要下架';
                 			}else{
@@ -1331,16 +1334,19 @@ class GgsUsswSaleAction extends CommonAction{
 	                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
 	                			}
 	                		}
-                			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
+                			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory')-$oinventory;
+                			if($ainventory<0){
+                				$ainventory=0;
+                			}
                 			if($skuQuantity[1]==1){
                 				//Multiple sku and Single sale quantity
-                				if(($ainventory-$oinventory)<$data[$i-2][$firstRow['H']]){
-                					$data[$i-2][$firstRow['H']]=$ainventory-$oinventory;
+                				if($ainventory<$data[$i-2][$firstRow['H']]){
+                					$data[$i-2][$firstRow['H']]=$ainventory;
                 				}
                 			}else{
                 				//Multiple sku and Multiple sale quantity
-                				if(intval(($ainventory-$oinventory)/$skuQuantity[1])<$data[$i-2][$firstRow['H']]){
-                					$data[$i-2][$firstRow['H']]=intval(($ainventory-$oinventory)/$skuQuantity[1]);
+                				if(intval($ainventory/$skuQuantity[1])<$data[$i-2][$firstRow['H']]){
+                					$data[$i-2][$firstRow['H']]=intval($ainventory/$skuQuantity[1]);
                 				}
                 			}
                 		}
@@ -1496,7 +1502,8 @@ class GgsUsswSaleAction extends CommonAction{
 		    		if($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY"))==null){
 		    			$data[$key]["quantity"]=0;
 		    		}else{
-		    			$data[$key]["quantity"]=($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY")))-$oinventory;
+		    			$ainventory=($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY")))-$oinventory;
+		    			$data[$key]["quantity"]=$ainventory<0?0:$ainventory;
 		    		}
 
 		    		$data[$key]["leadtime-to-ship"]=3; 
@@ -1596,7 +1603,10 @@ class GgsUsswSaleAction extends CommonAction{
                 			}
                 		}
                 		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][0]))->find();
-                		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
+                		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory')-$oinventory;
+                		if($ainventory<0){
+                			$ainventory=0;
+                		}
                 		if($splitSku[0][1]==1){
                 			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
                 			
@@ -1606,11 +1616,11 @@ class GgsUsswSaleAction extends CommonAction{
                 				$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
                 			}
                 			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
-                			$data[$i-2][$firstRow['J']]=$ainventory-$oinventory;
+                			$data[$i-2][$firstRow['J']]=$ainventory;
                 		}else{
                 			//Single sku and multiple sale quantity
                 			$data[$i-2]['Suggest']="多个一组销售商品，无法给出建议售价";
-                			$data[$i-2][$firstRow['J']]=intval(($ainventory-$oinventory)/$splitSku[0][1]);
+                			$data[$i-2][$firstRow['J']]=intval($ainventory/$splitSku[0][1]);
                 		}
 
                 	}else{
@@ -1624,16 +1634,19 @@ class GgsUsswSaleAction extends CommonAction{
 	                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
 	                			}
 	                		}
-                			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
+                			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory')-$oinventory;
+                			if($ainventory<0){
+                				$ainventory=0;
+                			}
                 			if($skuQuantity[1]==1){
                 				//Multiple sku and Single sale quantity
-                				if(($ainventory-$oinventory)<$data[$i-2][$firstRow['J']]){
-                					$data[$i-2][$firstRow['J']]=$ainventory-$oinventory;
+                				if($ainventory<$data[$i-2][$firstRow['J']]){
+                					$data[$i-2][$firstRow['J']]=$ainventory;
                 				}
                 			}else{
                 				//Multiple sku and Multiple sale quantity
-                				if(intval(($ainventory-$oinventory)/$skuQuantity[1])<$data[$i-2]['Ainventory']){
-                					$data[$i-2][$firstRow['J']]=intval(($ainventory-$oinventory)/$skuQuantity[1]);
+                				if(intval($ainventory/$skuQuantity[1])<$data[$i-2]['Ainventory']){
+                					$data[$i-2][$firstRow['J']]=intval($ainventory/$skuQuantity[1]);
                 				}
                 			}
                 		}

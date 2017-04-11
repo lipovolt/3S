@@ -1,6 +1,31 @@
+<script type="text/javascript">
+function att(){
+	var date = new Date();
+	var strDate=date.getFullYear()+'-'+add_zero(date.getMonth()+1)+'-'+add_zero(date.getDate());
+	location.href="{:U('Todo/Todo/attendance')}?actualDate="+strDate;
+}
+function attManage(){
+	var date = new Date();
+	var strDate=date.getFullYear()+'-'+add_zero(date.getMonth()+1)+'-'+add_zero(date.getDate());
+	location.href="{:U('Todo/Todo/attendanceAll')}?actualDate="+strDate;
+}
+function add_zero(temp){ 
+ if(temp<10) 
+ 	return "0"+temp; 
+ else 
+ 	return temp; 
+}
+</script>
 <dl>
 	<dt>
 		<i class="icon dropdown-s"></i><strong>待办事项</strong>								
 	</dt>
 	<dd><a href="{:U('Todo/Todo/index')}" >事项列表</a></dd>
+</dl>
+<dl>
+	<dt>
+		<i class="icon dropdown-s"></i><strong>考勤</strong>								
+	</dt>
+	<dd><a href="javascript:void(0)" onclick="att();" >考勤</a></dd>
+	<dd><a href="javascript:void(0)" onclick="attManage();" >考勤管理</a></dd>
 </dl>

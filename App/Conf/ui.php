@@ -49,6 +49,15 @@ return array(
 		'Wish_CN_Shop' => 0,
 		),
 	
+	//Noon break
+	'NOON_BREAK' => array(
+		'张昱' => 1,
+		'孙志磊' => 1,
+		'郑德杰' => 1,
+		'彭莉明' => 0.5,
+		'admin' => 1,
+		),
+
 	//performace percent
 	'WAGES_PERFORMANCE_PERCENT' => array(
 		'孙志磊' => 1,

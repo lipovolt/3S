@@ -52,9 +52,7 @@ class IndexAction extends Action {
         session_unset();
         session_destroy();
         $this->display('index');
-    }
-
-    
+    }    
 }
 
 ?>

@@ -1297,5 +1297,33 @@ return array(
 	'DB_WAGES_SI_PERSON' => 'si_person',
 	'DB_WAGES_LEAVE_DAYS' => 'leave_days',
 	'DB_WAGES_REMARK' => 'remark',
+
+
+	//Attendance table
+	/*
+	create table if not exists `3s_attendance`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`name` varchar(20) not null,
+	`come_ip` varchar(30) default null,
+	`leave_ip` varchar(30) default null,
+	`come_time` varchar(30) default null,
+	`leave_time` varchar(30) default null,
+	`rest1_begin` varchar(30) default null,
+	`rest1_end` varchar(30) default null,
+	`rest2_begin` varchar(30) default null,
+	`rest2_end` varchar(30) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_ATTENDANCE' => 'attendance',
+	'DB_ATTENDANCE_ID' => 'id',
+	'DB_ATTENDANCE_NAME' => 'name',
+	'DB_ATTENDANCE_COMEIP' => 'come_ip',
+	'DB_ATTENDANCE_LEAVEIP' => 'leave_ip',
+	'DB_ATTENDANCE_COMETIME' => 'come_time',
+	'DB_ATTENDANCE_LEAVETIME' => 'leave_time',
+	'DB_ATTENDANCE_REST1_BEGIN' => 'rest1_begin',
+	'DB_ATTENDANCE_REST1_END' => 'rest1_end',
+	'DB_ATTENDANCE_REST2_BEGIN' => 'rest2_begin',
+	'DB_ATTENDANCE_REST2_END' => 'rest2_end',
 	);
 ?>
