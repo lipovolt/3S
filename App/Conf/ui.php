@@ -55,7 +55,6 @@ return array(
 		'孙志磊' => 1,
 		'郑德杰' => 1,
 		'彭莉明' => 0.5,
-		'admin' => 1,
 		),
 
 	//performace percent

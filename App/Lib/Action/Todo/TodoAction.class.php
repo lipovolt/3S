@@ -239,22 +239,32 @@ class TodoAction extends CommonAction{
         }
     }
 
-    public function editAttendance($id){
-        $map[C('DB_ATTENDANCE_ID')]=array('eq',$id);
-        $att=M(C('DB_ATTENDANCE'))->where($map)->find();
+    public function editAttendance($id=null){
+        if($id!=null){
+            $map[C('DB_ATTENDANCE_ID')]=array('eq',$id);
+            $att=M(C('DB_ATTENDANCE'))->where($map)->find();
+            $this->assign('att',$att);
+            $this->assign('name',$_SESSION['username']);
+        }
         $this->assign('names',array_keys(C('NOON_BREAK')));
-        $this->assign('name',$_SESSION['username']);
-        $this->assign('att',$att);
         $this->display();
     }
 
     public function editAttendanceHandle(){
-        $attendaceTable=M(C('DB_ATTENDANCE'));
-        $result=$attendaceTable->save($_POST);
-        if($result!=false)
-            $this->success('保存成功');
-        else
-            $this->error('保存失败');
+        if($_POST['id']!=null || $_POST['id']!=''){
+            $result=M(C('DB_ATTENDANCE'))->save($_POST);
+            if($result!=false)
+                $this->success('保存成功');
+            else
+                $this->error('保存失败');
+        }else{
+            $result=M(C('DB_ATTENDANCE'))->add($_POST);
+            if($result!=false)
+                $this->success('保存成功');
+            else
+                $this->error('保存失败');
+        }
+        
     }
 }
 
