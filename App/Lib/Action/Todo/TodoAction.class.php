@@ -263,8 +263,47 @@ class TodoAction extends CommonAction{
                 $this->success('保存成功');
             else
                 $this->error('保存失败');
+        }        
+    }
+
+    public function attStatistic($month=null){
+        $this->assign('data',$this->attStatisticHandle($month));
+        $this->assign('month',$month);
+        $this->display();
+    }
+
+    public function searchAttStatistic(){
+        $this->redirect('attStatistic',array('month'=>$_POST['month'])); 
+    }
+
+    private function attStatisticHandle($month){
+        $attendaceTable=M(C('DB_ATTENDANCE'));
+        $map[C('DB_ATTENDANCE_COMETIME')]=array('like', $month.'%');
+        $i=0;
+        foreach (C('NOON_BREAK') as $key => $value) {
+            $data[$i]['name'] = $key;
+            $map[C('DB_ATTENDANCE_NAME')]=array('eq',$key);
+            $atts=$attendaceTable->where($map)->select();
+            foreach ($atts as $attKey => $attValue) {
+                $tmRest1=(strtotime(substr($attValue[C('DB_ATTENDANCE_REST1_END')], 10,9))-strtotime(substr($attValue[C('DB_ATTENDANCE_REST1_BEGIN')], 10,9)))/3600;
+                $tmpRest2=(strtotime(substr($attValue[C('DB_ATTENDANCE_REST2_END')], 10,9))-strtotime(substr($attValue[C('DB_ATTENDANCE_REST2_BEGIN')], 10,9)))/3600;
+                $tmpTotalHour=(strtotime(substr($attValue[C('DB_ATTENDANCE_LEAVETIME')], 10,9))-strtotime(substr($attValue[C('DB_ATTENDANCE_COMETIME')], 10,9)))/3600;
+                $tmpRest=$tmpRest1+$tmpRest2;
+                if($tmpRest==null || $tmpRest=='' || $tmpRest==0){
+                    $tmpRealHour = $tmpTotalHour-C('NOON_BREAK')[$key];
+                    if($tmpRealHour>0){
+                        $data[$i]['hour'] = $data[$i]['hour']+$tmpRealHour;
+                    }                    
+                }else{
+                     $tmpRealHour = $tmpTotalHour-$tmpRest;
+                     if($tmpRealHour>0){
+                        $data[$i]['hour'] = $data[$i]['hour']+$tmpRealHour;
+                    } 
+                } 
+            }
+            $i++; 
         }
-        
+        return $data;
     }
 }
 
