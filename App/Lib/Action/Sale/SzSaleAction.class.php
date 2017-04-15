@@ -174,22 +174,28 @@ class SzSaleAction extends CommonAction{
 	private function calUsInitialPrice($productPrice,$shippingFee){
 		$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($productPrice+0.5+$shippingFee)/$exchange;
-		$salePrice = (($cost+0.3)*(1+$this->getCostClass($cost)/100))/(1-(1+$this->getCostClass($cost)/100)*0.139);
-		return round($salePrice,2);
+		$salePrice = abs(round(($cost+0.3)/(1-0.139-$this->getCostClass($cost)/100),2));
+		if($salePrice<12){
+			$salePrice = abs(round(($cost+0.05)/(1-0.16-$this->getCostClass($cost)/100),2));
+		}
+		return $salePrice;
 	}
 
 	private function calDeInitialPrice($productPrice,$shippingFee){
 		$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_EURTORMB'));
 		$cost = ($productPrice+0.5+$shippingFee)/$exchange;
-		$salePrice = (($cost+0.3)*(1+$this->getCostClass($cost)/100))/(1-(1+$this->getCostClass($cost)/100)*0.139);
-		return round($salePrice,2);
+		$salePrice = abs(round(($cost+0.3)/(1-0.139-$this->getCostClass($cost)/100),2));
+		if($salePrice<12){
+			$salePrice = abs(round(($cost+0.05)/(1-0.16-$this->getCostClass($cost)/100),2));
+		}
+		return $salePrice;
 	}
 
 	private function calWishInitialPrice($productPrice,$shippingFee){
 		$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($productPrice+0.5+$shippingFee)/$exchange;
-		$salePrice = ($cost*(1+$this->getCostClass($cost)/100))/(1-(1+$this->getCostClass($cost)/100)*0.16);
-		return round($salePrice,2);
+		$salePrice = ($cost/(1-0.16-$this->getCostClass($cost)/100));
+		return abs(round($salePrice,2));
 	}
 
 	public function confirmSuggest($id,$account,$country=null){

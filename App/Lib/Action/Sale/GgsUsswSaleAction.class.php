@@ -357,12 +357,12 @@ class GgsUsswSaleAction extends CommonAction{
 		$newUsp[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time()); 
 		$newUsp[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')] = 0; 
 		$newUsp[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =null;
-		$newUsp[C('DB_USSW_SALE_PLAN_COST')] = $this->calUsswSuggestCost($account,$sku);
 		$price =  M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_GGS_USSW_SALE_PRICE'));
 		if($price==null || $price==0){
 			$price = $newUsp[C('DB_USSW_SALE_PLAN_COST')];
 		}
-		$newUsp[C('DB_USSW_SALE_PLAN_PRICE')] = $this->calUsswInitialPrice($account,$sku);
+		$newUsp[C('DB_USSW_SALE_PLAN_PRICE')] = $this->calUsswInitialPrice($account,$sku);		
+		$newUsp[C('DB_USSW_SALE_PLAN_COST')] = $this->calUsswSuggestCost($account,$sku,$newUsp[C('DB_USSW_SALE_PLAN_PRICE')]);
 		$newUsp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
 		$newUsp[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
 		$newUsp[C('DB_USSW_SALE_PLAN_STATUS')] = 1;
@@ -649,7 +649,7 @@ class GgsUsswSaleAction extends CommonAction{
 	private function getUsswEbayISP($pPrice,$tariff,$wFee,$tFee,$sFee){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee;
-		return round ((($cost+0.3)*(1+$this->getCostClass($cost)/100))/(1-0.129*(1+$this->getCostClass($cost)/100)),2);
+		return abs(round(($cost+0.3)/(1-0.129-$this->getCostClass($cost)/100),2));
 	}
 
 	//calculate amazon initial sale price according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee)
@@ -657,9 +657,9 @@ class GgsUsswSaleAction extends CommonAction{
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee;
 		if($profitPercent==null){
-			return round(($cost*(1+$this->getCostClass($cost)/100))/(1-0.15*(1+$this->getCostClass($cost)/100)),2);
+			return abs(round($cost/(1-0.15-$this->getCostClass($cost)/100),2));
 		}else{
-			return round(($cost*(1+$profitPercent/100))/(1-0.15*(1+$profitPercent/100)),2);
+			return abs(round($cost/(1-0.15-$profitPercent/100),2));
 		}
 	}
 

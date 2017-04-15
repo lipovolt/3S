@@ -269,12 +269,12 @@ class WinitDeSaleAction extends CommonAction{
 		$newUsp[C('DB_RC_DE_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time()); 
 		$newUsp[C('DB_RC_DE_SALE_PLAN_RELISTING_TIMES')] = 0; 
 		$newUsp[C('DB_RC_DE_SALE_PLAN_PRICE_NOTE')] =null;
-		$newUsp[C('DB_RC_DE_SALE_PLAN_COST')] = $this->calSuggestCost($account,$sku);
 		$price =  M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_RC_WINIT_DE_SALE_PRICE'));
 		if($price==null || $price==0){
 			$price = $newUsp[C('DB_RC_DE_SALE_PLAN_COST')];
 		}
 		$newUsp[C('DB_RC_DE_SALE_PLAN_PRICE')] = $this->calWinitDeInitialPrice($account,$sku);
+		$newUsp[C('DB_RC_DE_SALE_PLAN_COST')] = $this->calSuggestCost($account,$sku,$newUsp[C('DB_RC_DE_SALE_PLAN_PRICE')]);
 		$newUsp[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = null;
 		$newUsp[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = null;
 		$newUsp[C('DB_RC_DE_SALE_PLAN_STATUS')] = 1;
@@ -432,7 +432,11 @@ class WinitDeSaleAction extends CommonAction{
 	private function getWinitEbayISP($pPrice,$tariff,$wFee,$tFee,$sFee){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($pPrice+0.5)/$exchange+($pPrice/$exchange)*$tariff+$wFee+$tFee+$sFee;
-		return round ((($cost+0.35)*(1+$this->getCostClass($cost)/100))/(1-0.144*(1+$this->getCostClass($cost)/100)),2);
+		$salePrice = abs(round((($cost+0.35)/(1-0.144-$this->getCostClass($cost)/100)),2));
+		if($salePrice<12){
+			$salePrice = abs(round((($cost+0.05)/(1-0.16-$this->getCostClass($cost)/100)),2));
+		}
+		return $salePrice;
 	}
 
 	private function calWinitDeSaleQuantity($account, $sku, $startDate, $endDate=null){
