@@ -447,7 +447,7 @@ class WinitDeSaleAction extends CommonAction{
 		$map[C('DB_WINIT_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
 		$map[C('DB_WINIT_OUTBOUND_SELLER_ID')] = array('eq',$account);
 		$map[C('DB_WINIT_OUTBOUND_BUYER_COUNTRY')] = array('neq','US');
-		return $usswOutboundItem->where($map)->sum(C('DB_WINIT_OUTBOUND_ITEM_QUANTITY'));
+		return $WinitDeOutboundItem->where($map)->sum(C('DB_WINIT_OUTBOUND_ITEM_QUANTITY'));
 	}
 
 	public function bIgnoreHandle($account,$kw=null,$kwv=null){
