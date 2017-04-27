@@ -1332,84 +1332,30 @@ class SzSaleAction extends CommonAction{
                 }
                 //find item in stock but not listed
                 $storages=$storageTable->where($map)->select();
-                foreach ($storages as $key => $value) {                	
-                	$toDe = ($product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TODE'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0) && $_POST['updateType']=='Germany';
-            		$toUs = ($product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TOUS'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0) && $_POST['updateType']=='US';
-            		if($toDe && !$toUs){
+				$countOfData=count($data);
+                foreach ($storages as $key => $value) { 
+                	if($_POST['updateType']=='US'){
+                		$toCountry = 'DB_PRODUCT_TOUS';
+                	}elseif($_POST['updateType']=='Germany'){
+                		$toCountry = 'DB_PRODUCT_TODE';
+                	}
+                	            	
+                	$active = ($product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C($toCountry))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0);
+            		if($active){
             			$listed=false;
-            			for ($i=2;$i<=$highestRow;$i++) {
-	                		$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
-		            		if($countryOfItem==null || $countryOfItem==''){
-		            			for ($r=$i-1; $r>1; $r--) { 
-		            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
-		            				if($countryOfItem!=null && $countryOfItem!=''){
-		            					break;
-		            				}
-		            			}
-		            		}
-	                		if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()==$value[C('DB_WINIT_DE_STORAGE_SKU')] && $countryOfItem=='Germany'){
+            			for ($i=0;$i<$countOfData;$i++) {
+	                		if($data[$i][$firstRow['K']]==$value[C('DB_WINIT_DE_STORAGE_SKU')]){
 	                			$listed=true;
+	                			break;
 	                		}
 	                	}
 	                	if($listed==false){
-	                		$data[$j][$firstRow['D']]='Germany';
+	                		$data[$j][$firstRow['D']]=$_POST['updateType'];
 	                		$data[$j][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
 	                		$data[$j]['Suggest']="未刊登商品";
 	                		$j++;
 	                	}
             		}
-            		if(!$toDe && $toUs){
-            			$listed=false;
-            			for ($i=2;$i<=$highestRow;$i++) {
-	                		$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
-		            		if($countryOfItem==null || $countryOfItem==''){
-		            			for ($r=$i-1; $r>1; $r--) { 
-		            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
-		            				if($countryOfItem!=null && $countryOfItem!=''){
-		            					break;
-		            				}
-		            			}
-		            		}
-	                		if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()==$value[C('DB_WINIT_DE_STORAGE_SKU')] && $countryOfItem=='US'){
-	                			$listed=true;
-	                		}
-	                	}
-	                	if($listed==false){
-	                		$data[$j][$firstRow['D']]='US';
-	                		$data[$j][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
-	                		$data[$j]['Suggest']="未刊登商品";
-	                		$j++;
-	                	}
-            		}
-            		/*if($toDe && $toUs){
-            			$listed['US']=false;
-            			$listed['Germany']=false;
-            			for ($i=2;$i<=$highestRow;$i++) {
-	                		$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
-		            		if($countryOfItem==null || $countryOfItem==''){
-		            			for ($r=$i-1; $r>1; $r--) { 
-		            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
-		            				if($countryOfItem!=null && $countryOfItem!=''){
-		            					break;
-		            				}
-		            			}
-		            		}
-	                		if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()==$value[C('DB_WINIT_DE_STORAGE_SKU')] && $countryOfItem=='US'){
-	                			$listed['US']=true;
-	                		}
-	                		if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()==$value[C('DB_WINIT_DE_STORAGE_SKU')] && $countryOfItem=='Germany'){
-	                			$listed['Germany']=true;
-	                		}
-	                	}
-	                	foreach ($listed as $lkey => $lvalue) {
-	                		if(!$lvalue){
-	                			$data[$j][$firstRow['D']]=$lkey;
-		                		$data[$j][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
-		                		$data[$j]['Suggest']="未刊登商品";
-		                		$j++;
-	                		}
-	                	}
-            		}*/
                 }
                 $excelCellName[0]=$objPHPExcel->getActiveSheet()->getCell("A1")->getValue();
                 $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
