@@ -1292,43 +1292,46 @@ class SzSaleAction extends CommonAction{
             	foreach ($this->getSalePlanTableNames($account) as $key => $value) {
             		$salePlanTables[$key]=M($value);
             	}
+            	$j=0;
                 for($i=2;$i<=$highestRow;$i++){
-                	if($data[$i-2][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue()==$_POST['updateType'] || ($data[$i-2][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue()=='eBayMotors' && $_POST['updateType']=='US')){
-                		$data[$i-2][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-	        			$data[$i-2][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
-	        			$data[$i-2][$firstRow['C']]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
-	        			$data[$i-2][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
-	        			$data[$i-2][$firstRow['E']]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
-	        			$data[$i-2][$firstRow['F']]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
-	        			$data[$i-2][$firstRow['G']]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
-	                	$data[$i-2][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
-	                	$data[$i-2][$firstRow['I']]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
-	        			$data[$i-2][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
-	        			$data[$i-2][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+                	$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+            		if($countryOfItem==null || $countryOfItem==''){
+            			for ($r=$i-1; $r>1; $r--) { 
+            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
+            				if($countryOfItem!=null && $countryOfItem!=''){
+            					break;
+            				}
+            			}
+            		}
+                	if($countryOfItem==$_POST['updateType'] || ($countryOfItem=='eBayMotors' && $_POST['updateType']=='US')){
 
-	                	$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
-	            		if($countryOfItem==null || $countryOfItem==''){
-	            			for ($r=$i-1; $r>1; $r--) { 
-	            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
-	            				if($countryOfItem!=null && $countryOfItem!=''){
-	            					break;
-	            				}
-	            			}
-	            		}
+                		$data[$j][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+	        			$data[$j][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+	        			$data[$j][$firstRow['C']]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+	        			$data[$j][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+	        			$data[$j][$firstRow['E']]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
+	        			$data[$j][$firstRow['F']]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+	        			$data[$j][$firstRow['G']]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+	                	$data[$j][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+	                	$data[$j][$firstRow['I']]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+	        			$data[$j][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+	        			$data[$j][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+
+	                	
 	            		if($countryOfItem=='Germany'){
-	            			if($product->where(array(C('DB_PRODUCT_SKU')=>$data[$i-2][$firstRow['K']]))->getField(C('DB_PRODUCT_TODE'))!='无' || $product->where(array(C('DB_PRODUCT_SKU')=>$data[$i-2][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无')
-	            				$data[$i-2][$firstRow['H']]=30;
+	            			if($product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TODE'))!='无' || $product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无')
+	            				$data[$j][$firstRow['H']]=30;
 	            		}
-	            		$salePlan=$salePlanTables[$countryOfItem]->where(array('sku'=>$data[$i-2][$firstRow['K']]))->find();
-	            		$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-	                	$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+	            		$salePlan=$salePlanTables[$countryOfItem]->where(array('sku'=>$data[$j][$firstRow['K']]))->find();
+	            		$data[$j]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+	                	$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+	                	$data[$j][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
+	                	$j++;
                 	}
                 	                	                
                 }
-
                 //find item in stock but not listed
                 $storages=$storageTable->where($map)->select();
-                $newIndex = $highestRow-1;
                 foreach ($storages as $key => $value) {                	
                 	$toDe = ($product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TODE'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0) && $_POST['updateType']=='Germany';
             		$toUs = ($product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_TOUS'))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0) && $_POST['updateType']=='US';
@@ -1349,10 +1352,10 @@ class SzSaleAction extends CommonAction{
 	                		}
 	                	}
 	                	if($listed==false){
-	                		$data[$newIndex][$firstRow['D']]='Germany';
-	                		$data[$newIndex][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
-	                		$data[$newIndex]['Suggest']="未刊登商品";
-	                		$newIndex++;
+	                		$data[$j][$firstRow['D']]='Germany';
+	                		$data[$j][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
+	                		$data[$j]['Suggest']="未刊登商品";
+	                		$j++;
 	                	}
             		}
             		if(!$toDe && $toUs){
@@ -1372,10 +1375,10 @@ class SzSaleAction extends CommonAction{
 	                		}
 	                	}
 	                	if($listed==false){
-	                		$data[$newIndex][$firstRow['D']]='US';
-	                		$data[$newIndex][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
-	                		$data[$newIndex]['Suggest']="未刊登商品";
-	                		$newIndex++;
+	                		$data[$j][$firstRow['D']]='US';
+	                		$data[$j][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
+	                		$data[$j]['Suggest']="未刊登商品";
+	                		$j++;
 	                	}
             		}
             		/*if($toDe && $toUs){
@@ -1400,16 +1403,14 @@ class SzSaleAction extends CommonAction{
 	                	}
 	                	foreach ($listed as $lkey => $lvalue) {
 	                		if(!$lvalue){
-	                			$data[$newIndex][$firstRow['D']]=$lkey;
-		                		$data[$newIndex][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
-		                		$data[$newIndex]['Suggest']="未刊登商品";
-		                		$newIndex++;
+	                			$data[$j][$firstRow['D']]=$lkey;
+		                		$data[$j][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
+		                		$data[$j]['Suggest']="未刊登商品";
+		                		$j++;
 	                		}
 	                	}
             		}*/
-                	
                 }
-
                 $excelCellName[0]=$objPHPExcel->getActiveSheet()->getCell("A1")->getValue();
                 $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
                 $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
@@ -1473,23 +1474,21 @@ class SzSaleAction extends CommonAction{
         } 
         $insertRowNumber=2;
         for($i=0;$i<$dataNum;$i++){
-        	if($expTableData[$i]['SiteID']==$_POST['updateType'] || $_POST['updateType']=='all'){
-        		$objPHPExcel->getActiveSheet()->getStyle('B'.$insertRowNumber)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
-	            for($j=0;$j<$cellNum;$j++){
-	            	if($i>0 && $expTableData[$i][$expCellName[6]] !=null && $expTableData[$i][$expCellName[5]]!=$expTableData[$i][$expCellName[6]]){
-	            		$objPHPExcel->getActiveSheet()->getStyle( 'F'.$insertRowNumber)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-	            		$objPHPExcel->getActiveSheet()->getStyle( 'F'.$insertRowNumber)->getFill()->getStartColor()->setARGB('FF808080');
-	            		$objPHPExcel->getActiveSheet()->getStyle( 'G'.$insertRowNumber)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-	            		$objPHPExcel->getActiveSheet()->getStyle( 'G'.$insertRowNumber)->getFill()->getStartColor()->setARGB('FF808080');
-	            	}
-	            	if($expTableData[$i][$expCellName[9]]<10){
-	            		$objPHPExcel->getActiveSheet()->getStyle( 'J'.$insertRowNumber)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
-	            		$objPHPExcel->getActiveSheet()->getStyle( 'J'.$insertRowNumber)->getFill()->getStartColor()->setARGB('FF808080');
-	            	}
-	                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].$insertRowNumber, $expTableData[$i][$expCellName[$j]]);
-	            }
-	        $insertRowNumber++;
-        	}           
+        	$objPHPExcel->getActiveSheet()->getStyle('B'.$insertRowNumber)->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
+            for($j=0;$j<$cellNum;$j++){
+            	if($i>0 && $expTableData[$i][$expCellName[6]] !=null && $expTableData[$i][$expCellName[5]]!=$expTableData[$i][$expCellName[6]]){
+            		$objPHPExcel->getActiveSheet()->getStyle( 'F'.$insertRowNumber)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'F'.$insertRowNumber)->getFill()->getStartColor()->setARGB('FF808080');
+            		$objPHPExcel->getActiveSheet()->getStyle( 'G'.$insertRowNumber)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'G'.$insertRowNumber)->getFill()->getStartColor()->setARGB('FF808080');
+            	}
+            	if($expTableData[$i][$expCellName[9]]<10){
+            		$objPHPExcel->getActiveSheet()->getStyle( 'J'.$insertRowNumber)->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+            		$objPHPExcel->getActiveSheet()->getStyle( 'J'.$insertRowNumber)->getFill()->getStartColor()->setARGB('FF808080');
+            	}
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].$insertRowNumber, $expTableData[$i][$expCellName[$j]]);
+            }
+        	$insertRowNumber++;          
         }  
 
         header('pragma:public');
