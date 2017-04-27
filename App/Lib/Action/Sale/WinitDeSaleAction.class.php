@@ -899,7 +899,7 @@ class WinitDeSaleAction extends CommonAction{
             	$storageTable=M($this->getStorageTableName($account));
             	$salePlanTable=M($this->getSalePlanTableName($account));
             	$productTable=M(C('DB_PRODUCT'));
-            	
+            	$j=0;
                 for($i=2;$i<=$highestRow;$i++){
                 	$country = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
 	        		if($country==null || $country==''){
@@ -912,17 +912,17 @@ class WinitDeSaleAction extends CommonAction{
 	        		}
                 	if($country=='Germany'){
 
-                		$data[$i-2][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-	        			$data[$i-2][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
-	        			$data[$i-2][$firstRow['C']]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
-	        			$data[$i-2][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
-	        			$data[$i-2][$firstRow['E']]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
-	        			$data[$i-2][$firstRow['F']]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
-	        			$data[$i-2][$firstRow['G']]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
-	                	$data[$i-2][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
-	                	$data[$i-2][$firstRow['I']]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
-	        			$data[$i-2][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
-	        			$data[$i-2][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+                		$data[$j][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+	        			$data[$j][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+	        			$data[$j][$firstRow['C']]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+	        			$data[$j][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+	        			$data[$j][$firstRow['E']]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
+	        			$data[$j][$firstRow['F']]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+	        			$data[$j][$firstRow['G']]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+	                	$data[$j][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+	                	$data[$j][$firstRow['I']]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+	        			$data[$j][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+	        			$data[$j][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
 
             			$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
 						if(count($splitSku)==1){
@@ -932,50 +932,51 @@ class WinitDeSaleAction extends CommonAction{
 	                		$iinventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('iinventory');
 	                		if($splitSku[0][1]==1){
 	                			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
-	                			$data[$i-2]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-	                			$data[$i-2][$firstRow['H']]=$ainventory;
+	                			$data[$j]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+	                			$data[$j][$firstRow['H']]=$ainventory;
 	                			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TODE')) == '无' && $ainventory==0 && $iinventory==0){
-	                				$data[$i-2]['Suggest']='不做的商品，需要下架';
+	                				$data[$j]['Suggest']='不做的商品，需要下架';
 	                			}else{
-	                				$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+	                				$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
 	                			}
+	                			$data[$j][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
 	                		}else{
 	                			//Single sku and multiple sale quantity
-	                			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-	                			$data[$i-2][$firstRow['H']]=intval($ainventory/$splitSku[0][1]);
+	                			$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+	                			$data[$j][$firstRow['H']]=intval($ainventory/$splitSku[0][1]);
 	                			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TODE')) == '无' && $ainventory==0 && $iinventory==0){
-	                				$data[$i-2]['Suggest']='不做的商品，需要下架';
+	                				$data[$j]['Suggest']='不做的商品，需要下架';
 	                			}else{
-	                				$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+	                				$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
 	                			}
 	                		}
 
 	                	}else{
 	                		//Multiple sku
-	                		$data[$i-2]['Suggest']="组合销售商品，无法给出建议售价";
-	                		$data[$i-2][$firstRow['H']]=65536;
+	                		$data[$j]['Suggest']="组合销售商品，无法给出建议售价";
+	                		$data[$j][$firstRow['H']]=65536;
 	                		foreach ($splitSku as $key => $skuQuantity){
 	                			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
 	                			if($skuQuantity[1]==1){
 	                				//Multiple sku and Single sale quantity
-	                				if($ainventory<$data[$i-2][$firstRow['H']]){
-	                					$data[$i-2][$firstRow['H']]=$ainventory;
+	                				if($ainventory<$data[$j][$firstRow['H']]){
+	                					$data[$j][$firstRow['H']]=$ainventory;
 	                				}
 	                			}else{
 	                				//Multiple sku and Multiple sale quantity
-	                				if(intval($ainventory/$skuQuantity[1])<$data[$i-2][$firstRow['H']]){
-	                					$data[$i-2][$firstRow['H']]=intval($ainventory/$skuQuantity[1]);
+	                				if(intval($ainventory/$skuQuantity[1])<$data[$j][$firstRow['H']]){
+	                					$data[$j][$firstRow['H']]=intval($ainventory/$skuQuantity[1]);
 	                				}
 	                			}
 	                		}
 	                	} 
+	                	$j++;
             		}                	                
                 }
 
                 //find item in stock but not listed
                 $map[C('DB_WINIT_DE_STORAGE_AINVENTORY')] = array('gt',0);
                 $storages=$storageTable->where($map)->select();
-                $newIndex = $highestRow-1;
                 foreach ($storages as $key => $value) {
 
                 	$listed=false;
@@ -994,9 +995,9 @@ class WinitDeSaleAction extends CommonAction{
                 		}
                 	}
                 	if($listed==false){
-                		$data[$newIndex][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
-                		$data[$newIndex]['Suggest']="未刊登商品";
-                		$newIndex++;
+                		$data[$j][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
+                		$data[$j]['Suggest']="未刊登商品";
+                		$j++;
                 	}
                 }
 

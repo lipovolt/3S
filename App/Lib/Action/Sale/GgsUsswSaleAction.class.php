@@ -1312,6 +1312,7 @@ class GgsUsswSaleAction extends CommonAction{
                 			}else{
                 				$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
                 			}
+                			$data[$i-2][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
                 		}else{
                 			//Single sku and multiple sale quantity
                 			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
@@ -1617,6 +1618,7 @@ class GgsUsswSaleAction extends CommonAction{
                 			}
                 			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
                 			$data[$i-2][$firstRow['J']]=$ainventory;
+                			$data[$i-2][$firstRow['O']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
                 		}else{
                 			//Single sku and multiple sale quantity
                 			$data[$i-2]['Suggest']="多个一组销售商品，无法给出建议售价";
