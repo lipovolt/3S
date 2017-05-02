@@ -268,8 +268,10 @@ class TodoAction extends CommonAction{
     }
 
     public function attStatistic($month=null){
-        $this->assign('data',$this->attStatisticHandle($month));
-        $this->assign('month',$month);
+        if($month!=null){
+            $this->assign('data',$this->attStatisticHandle($month));
+            $this->assign('month',$month);
+        }
         $this->display();
     }
 
