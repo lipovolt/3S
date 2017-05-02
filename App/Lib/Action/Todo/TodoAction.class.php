@@ -108,7 +108,8 @@ class TodoAction extends CommonAction{
     }
 
     public function addZero($temp){
-         if($temp<10) 
+
+         if($temp<10 && strlen($temp)==1)
             return "0".$temp; 
          else 
             return $temp; 
