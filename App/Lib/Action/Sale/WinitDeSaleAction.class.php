@@ -1001,7 +1001,7 @@ class WinitDeSaleAction extends CommonAction{
                 	}
                 }
 
-                $excelCellName[0]=$objPHPExcel->getActiveSheet()->getCell("A1")->getValue();
+                $excelCellName[0]='*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
                 $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
                 $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
                 $excelCellName[3]=$objPHPExcel->getActiveSheet()->getCell("D1")->getValue();
