@@ -188,7 +188,11 @@ class AccountingAction extends CommonAction{
         	for($i=2;$i<=$highestRow;$i++){
         		$sku = $objPHPExcel->getActiveSheet()->getCell("AE".$i)->getValue();
         		$pPrice=$productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_PRICE'));
+
         		if($pPrice==false || $pPrice==null){
+        			dump($sku);
+        		dump($pPrice);
+        		dump($productTable->getLastSql());die;
         			$this->error($i.' 行的sku无法找到售价。');
         		}
         		$fDate = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
@@ -1008,7 +1012,8 @@ class AccountingAction extends CommonAction{
 	}
 
 	public function searchProfitStatistic(){
-		$this->profitStatistic($_POST['month']);
+		//$this->profitStatistic($_POST['month']);
+		$this->redirect('profitStatistic',array('month'=>$_POST['month']),1,'页面跳转中...');
 	}
 
 	private function getProfitStatistic($month=null){
