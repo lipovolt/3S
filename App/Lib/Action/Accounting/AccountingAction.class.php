@@ -1308,7 +1308,7 @@ class AccountingAction extends CommonAction{
 			$ui[$value]=$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['management_rent']][$value]+$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['managment_wages']][$value]+$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['managment_booking']][$value]+$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['managment_other']][$value];
 			$ui['coSub']=$ui['coSub']+$ui[$value];
 		}
-		foreach (C('COOPERATE_SELLERID') as $key => $value) {
+		foreach (C('PERSONAL_SELLERID') as $key => $value) {
 			$ui[$value]=$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['management_rent']][$value]+$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['managment_wages']][$value]+$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['managment_booking']][$value]+$dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['managment_other']][$value];
 			$ui['perSub']=$ui['perSub']+$ui[$value];
 		}
