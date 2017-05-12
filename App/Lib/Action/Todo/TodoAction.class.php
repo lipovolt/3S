@@ -167,7 +167,7 @@ class TodoAction extends CommonAction{
             $result[C('DB_ATTENDANCE_COMETIME')]=$comeTime;
             $result=M(C('DB_ATTENDANCE'))->add($result);
             if($result!==false){
-                $this->success('开工咯，加油！');
+                $this->success('向着我们的万5月营业额的目标前进！');
             }else{
                 $this->error('开工失败，请重新点击开工按钮！');
             }
@@ -186,7 +186,7 @@ class TodoAction extends CommonAction{
             $result[C('DB_ATTENDANCE_LEAVETIME')]=$leaveTime;
             $result=M(C('DB_ATTENDANCE'))->save($result);
             if($result!==false){
-                $this->success('已收工，好好放松一下！');
+                $this->success('劳累了一天。您辛苦了！');
             }else{
                 $this->error('收工失败，请重新点击收工按钮！');
             }
