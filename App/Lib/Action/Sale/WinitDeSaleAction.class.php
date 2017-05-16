@@ -894,6 +894,7 @@ class WinitDeSaleAction extends CommonAction{
             for($c='A';$c<=$highestColumn;$c++){
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
+            $firstRow['A'] = '*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
 
             if($this->verifyEbayFxtcn($firstRow)){
             	$storageTable=M($this->getStorageTableName($account));
@@ -1054,7 +1055,6 @@ class WinitDeSaleAction extends CommonAction{
         $cellNum = count($expCellName);
         $dataNum = count($expTableData);
         vendor("PHPExcel.PHPExcel");
-
         $objPHPExcel = new PHPExcel();
         $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
 
