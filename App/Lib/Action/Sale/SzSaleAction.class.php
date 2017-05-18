@@ -1285,6 +1285,12 @@ class SzSaleAction extends CommonAction{
             for($c='A';$c<=$highestColumn;$c++){
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
+            if($_POST['updateType']=='Germany'){
+            	$firstRow['A'] = 'Action(SiteID=Germany|Country=CN|Currency=EUR|Version=941)';
+            }
+            if($_POST['updateType'] == 'US'){
+            	$firstRow['A'] = 'Action(SiteID=US|Country=CN|Currency=USD|Version=585|CC=ISO-8859-1)';
+            }
 
             if($this->verifyEbayFxtcn($firstRow)){
             	$storageTable=M(C('DB_SZSTORAGE'));
@@ -1318,10 +1324,9 @@ class SzSaleAction extends CommonAction{
 	        			$data[$j][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
 
 	                	
-	            		if($countryOfItem=='Germany'){
-	            			if($product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TODE'))!='无' || $product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无')
-	            				$data[$j][$firstRow['H']]=30;
-	            		}
+	            		if($product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!=null && ($product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无' || $product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无')){
+	            			$data[$j][$firstRow['H']]=30;
+	            		}	
 	            		$salePlan=$salePlanTables[$countryOfItem]->where(array('sku'=>$data[$j][$firstRow['K']]))->find();
 	            		$data[$j]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
 	                	$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
@@ -1357,7 +1362,12 @@ class SzSaleAction extends CommonAction{
 	                	}
             		}
                 }
-                $excelCellName[0]=$objPHPExcel->getActiveSheet()->getCell("A1")->getValue();
+                if($_POST['updateType']=='Germany'){
+	            	$excelCellName[0] = 'Action(SiteID=Germany|Country=CN|Currency=EUR|Version=941)';
+	            }
+	            if($_POST['updateType'] == 'US'){
+	            	$excelCellName[0] = 'Action(SiteID=US|Country=CN|Currency=USD|Version=585|CC=ISO-8859-1)';
+	            }
                 $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
                 $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
                 $excelCellName[3]=$objPHPExcel->getActiveSheet()->getCell("D1")->getValue();
