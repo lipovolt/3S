@@ -644,7 +644,7 @@ return array(
 
 
 	'USSW_SALE_PLAN_COMPLETE_PRODUCT_INFO' => '完善产品信息',
-	'USSW_SALE_PLAN_COMPLETE_SALE_INFO' => '完善自建仓销售信息',
+	'USSW_SALE_PLAN_COMPLETE_SALE_INFO' => '完善销售信息',
 	'USSW_SALE_PLAN_CLEAR' => '清货',
 	'USSW_SALE_PLAN_RELISTING' => '重新刊登',
 	'USSW_SALE_PLAN_PRICE_UP' => '涨价',
@@ -778,7 +778,7 @@ return array(
 
 
 	'SZ_SALE_PLAN_COMPLETE_PRODUCT_INFO' => '完善产品信息',
-	'SZ_SALE_PLAN_COMPLETE_SALE_INFO' => '完善自建仓销售信息',
+	'SZ_SALE_PLAN_COMPLETE_SALE_INFO' => '完善销售信息',
 	'SZ_SALE_PLAN_CLEAR' => '清货',
 	'SZ_SALE_PLAN_RELISTING' => '重新刊登',
 	'SZ_SALE_PLAN_PRICE_UP' => '涨价',

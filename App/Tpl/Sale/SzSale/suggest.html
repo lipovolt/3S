@@ -108,9 +108,15 @@ function bModify(){
 								<if condition="($keyword eq 'cname')"> 
 									<option value="{:C('DB_PRODUCT_SKU')}">产品编码</option>
 									<option value="{:C('DB_PRODUCT_CNAME')}" selected="">产品名称</option>
-								<else /> 
+									<option value="suggest">销售建议</option>
+								<elseif condition="($keyword eq 'suggest')"/> 
+									<option value="{:C('DB_PRODUCT_SKU')}">产品编码</option>
+									<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
+									<option value="suggest" selected="">销售建议</option>
+								<else/> 
 									<option value="{:C('DB_PRODUCT_SKU')}" selected="">产品编码</option>
 									<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
+									<option value="suggest">销售建议</option>
 								</if>
 							</select>
 						</div>

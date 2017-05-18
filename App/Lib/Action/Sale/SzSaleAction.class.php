@@ -4,7 +4,7 @@ class SzSaleAction extends CommonAction{
 
 	public function suggest($account,$country=null,$kw=null,$kwv=null){
 		$Data=D($this->getSalePlanViewModelName($account,$country));
-		if($_POST['keyword']=="" && $kwv==null){ 
+		if($_POST['keyword']=="" && $kwv==null && $_POST['keyword2']==""){ 
             import('ORG.Util.Page');
             $count = $Data->count();
             $Page = new Page($count,20);            
@@ -28,7 +28,7 @@ class SzSaleAction extends CommonAction{
         		$keyword = I('post.keyword','','htmlspecialchars');
         		$keywordValue = I('post.keywordValue','','htmlspecialchars');
         	}
-            $where[$keyword] = array('like','%'.$keywordValue.'%');
+        	$where[$keyword] = array('like','%'.$keywordValue.'%');
             $suggest = $Data->where($where)->select();
             foreach ($suggest as $key => $value) {
 	        	$suggest[$key]['profit'] = $value[C('DB_SZ_US_SALE_PLAN_PRICE')] - $value[C('DB_SZ_US_SALE_PLAN_COST')];
@@ -68,13 +68,13 @@ class SzSaleAction extends CommonAction{
 			if(!$this->isProductInfoComplete($p[C('DB_SZSTORAGE_SKU')])){
 				//产品信息不全，建议完善产品信息,退出循环
 				$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
-				$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = 'complete_product_info';
+				$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = C('SZ_SALE_PLAN_COMPLETE_PRODUCT_INFO');
 				$salePlan->save($usp);
 				$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$p[C('DB_SZSTORAGE_SKU')]))->find();
 			}elseif(!$this->isSaleInfoComplete($usp)){
 				//无法计算，建议完善销售信息，退出循环
 				$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
-				$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = 'complete_sale_info';
+				$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = C('SZ_SALE_PLAN_COMPLETE_SALE_INFO');
 				$salePlan->save($usp);
 				$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$p[C('DB_SZSTORAGE_SKU')]))->find();
 			}else{

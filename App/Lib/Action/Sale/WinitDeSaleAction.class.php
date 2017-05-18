@@ -237,13 +237,13 @@ class WinitDeSaleAction extends CommonAction{
 			if(!$this->isProductInfoComplete($p[C('DB_WINIT_DE_STORAGE_SKU')])){
 				//产品信息不全，建议完善产品信息
 				$usp[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = null;
-				$usp[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = C('complete_product_info');
+				$usp[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = C('SZ_SALE_PLAN_COMPLETE_PRODUCT_INFO');
 				$this->updateUsp($account,$usp);
 				$usp = $salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_SKU')=>$p[C('DB_WINIT_DE_STORAGE_SKU')]))->find();
 			}elseif(!$this->isWinitDeSaleInfoComplete($usp)){
 				//无法计算，建议完善销售信息
 				$usp[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = null;
-				$usp[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = C('complete_sale_info');
+				$usp[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = C('SZ_SALE_PLAN_COMPLETE_SALE_INFO');
 				$this->updateUsp($account,$usp);
 				$usp = $salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_SKU')=>$p[C('DB_WINIT_DE_STORAGE_SKU')]))->find();
 			}else{

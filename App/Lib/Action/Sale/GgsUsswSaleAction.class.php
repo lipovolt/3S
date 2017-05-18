@@ -45,6 +45,7 @@ class GgsUsswSaleAction extends CommonAction{
 	        $this->assign('suggest',$suggest);
             $this->assign('keyword',$keyword);
             $this->assign('keywordValue',$keywordValue);
+            $this->assign('keyword2',$keyword2);
         }
         $this->assign('market',$this->getMarketByAccount($account));
         $this->assign('account',$account);
@@ -78,13 +79,13 @@ class GgsUsswSaleAction extends CommonAction{
 			if(!$this->isProductInfoComplete($p[C('DB_USSTORAGE_SKU')])){
 				//产品信息不全，建议完善产品信息
 				$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
-				$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = 'complete_product_info';
+				$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_COMPLETE_PRODUCT_INFO');
 				$this->updateUsp($account,$usp);
 				$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
 			}elseif(!$this->isUsswSaleInfoComplete($usp)){
 				//无法计算，建议完善销售信息
 				$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
-				$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = 'complete_sale_info';
+				$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_COMPLETE_SALE_INFO');
 				$this->updateUsp($account,$usp);
 				$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
 			}else{
