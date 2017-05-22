@@ -1291,9 +1291,9 @@ class GgsUsswSaleAction extends CommonAction{
                 			}
                 		}
                 		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][0]))->find();
-                		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory')-$oinventory;
-                		if($ainventory<0){
-                			$ainventory=0;
+                		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
+                		if($ainventory!=null){
+                			$ainventory=($ainventory-$oinventory)<0?0:($ainventory-$oinventory);
                 		}
                 		$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
 						$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$splitSku[0][0]);
@@ -1331,9 +1331,9 @@ class GgsUsswSaleAction extends CommonAction{
 	                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
 	                			}
 	                		}
-                			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory')-$oinventory;
-                			if($ainventory<0){
-                				$ainventory=0;
+                			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
+                			if($ainventory!=null){
+                				$ainventory=($ainventory-$oinventory)<0?0:($ainventory-$oinventory);
                 			}
                 			if($skuQuantity[1]==1){
                 				//Multiple sku and Single sale quantity
