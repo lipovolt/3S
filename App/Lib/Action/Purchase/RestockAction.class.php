@@ -371,6 +371,7 @@ class RestockAction extends CommonAction{
 			$ussv[C('DB_USSTORAGE_IINVENTORY')]=$this->getUsswIInventory($ussv[C('DB_USSTORAGE_SKU')]);
 			if($product[C('db_product_tous')] !== null && $product[C('db_product_tous')] !== '无'){
 				$msq = $this->getUssw30DaysSales($ussv[C('DB_USSTORAGE_SKU')]);
+				$dayAvailableForSale=($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_IINVENTORY')])/($msq/30);
 				if($product[C('db_product_tous')] == '空运'){
 					$roos = $this->reallyOutOfStock('美自建仓',$ussv[C('DB_USSTORAGE_SKU')],ceil(($dfa-$dayAvailableForSale)*($msq/30)));
 				}else{
@@ -386,7 +387,6 @@ class RestockAction extends CommonAction{
 				}
 
 				if($msq>0){
-					$dayAvailableForSale=($ussv[C('DB_USSTORAGE_AINVENTORY')]+$ussv[C('DB_USSTORAGE_IINVENTORY')])/($msq/30);
 					if($product[C('db_product_tous')]=='空运' && $dayAvailableForSale<$dfa && $roos){
 						$this->addRestockOrder('美自建仓',ceil(($dfa-$dayAvailableForSale)*($msq/30)),$product,$ussv[C('DB_USSTORAGE_AINVENTORY')],$ussv[C('DB_USSTORAGE_IINVENTORY')],$msq);
 					}
@@ -520,7 +520,7 @@ class RestockAction extends CommonAction{
     	if($warehouse=='美自建仓'){
     		$restockQuantity=$restockQuantity+$this->getUsswIInventory($sku);
     	}
-    	if($neededQuantity<($restockQuantity+$purchasedQuantity)){
+    	if($neededQuantity>($restockQuantity+$purchasedQuantity)){
     		return false;
     	}
     	return true;
@@ -600,11 +600,11 @@ class RestockAction extends CommonAction{
     }
 
     private function reallyOutOfStock($warehouse,$sku,$neededQuantity){
-    	if($warehouse=='万邑通德国' && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && $this->enoughInRestockOrPurchased($warehouse,$sku,$neededQuantity)){
+    	if($warehouse=='万邑通德国' && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && !$this->enoughInRestockOrPurchased($warehouse,$sku,$neededQuantity)){
     		return true;
-    	}elseif($warehouse=='美自建仓' && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && $this->enoughInRestockOrPurchased($warehouse,$sku,$neededQuantity)){
+    	}elseif($warehouse=='美自建仓' && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && !$this->enoughInRestockOrPurchased($warehouse,$sku,$neededQuantity)){
     		return true;
-    	}elseif($warehouse=='万邑通美西' && !$this->isInOutOfStock($warehouse,$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && $this->enoughInRestockOrPurchased($warehouse,$sku,$neededQuantity)){
+    	}elseif($warehouse=='万邑通美西' && !$this->isInOutOfStock($warehouse,$sku) && !$this->isInRestock($warehouse,$sku) && !$this->isInPurchaseItem($warehouse,$sku) && !$this->enoughInRestockOrPurchased($warehouse,$sku,$neededQuantity)){
     		return true;
     	}elseif($warehouse=='深圳仓' && !$this->isInPurchaseItem($warehouse,$sku)){
     		return true;
