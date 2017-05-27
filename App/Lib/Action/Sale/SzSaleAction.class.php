@@ -800,7 +800,7 @@ class SzSaleAction extends CommonAction{
 
 	private function calWedoHDRFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 14.8+63.21*$weight/1000;
+			return 14.8+64.71*$weight/1000;
 		}
 		else{
 			return 0;
@@ -810,7 +810,7 @@ class SzSaleAction extends CommonAction{
 	//运德德国小包（香港）平邮
 	private function calWedoHDFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 2.36+85.26*$weight/1000;
+			return 2.36+86.76*$weight/1000;
 		}
 		else{
 			return 0;
