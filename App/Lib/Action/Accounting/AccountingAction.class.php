@@ -190,9 +190,6 @@ class AccountingAction extends CommonAction{
         		$pPrice=$productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_PRICE'));
 
         		if($pPrice==false || $pPrice==null){
-        			dump($sku);
-        		dump($pPrice);
-        		dump($productTable->getLastSql());die;
         			$this->error($i.' 行的sku无法找到售价。');
         		}
         		$fDate = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
@@ -713,6 +710,13 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurTaxCollection = $eurTaxCollection+$amountCM['amount'];
         			}
+        		}elseif($transactionType=='Refund' && $paymentType=='Other' && $paymentDetail=='Shipping'){
+        			if($amountCM['currency']=='usd'){
+        				$usdShippingFee = $usdShippingFee+$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurShippingFee = $eurShippingFee+$amountCM['amount'];
+        			}
         		}elseif($transactionType=='Order Payment' && $paymentType=='Amazon fees'){
         			if($amountCM['currency']=='usd'){
         				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
@@ -766,7 +770,21 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurShippingFee = $eurShippingFee-$amountCM['amount'];
         			}
+        		}elseif($transactionType=='Shipping services purchased through Amazon' && $paymentType=='Shipping Services - Carrier Adjustments'){
+        			if($amountCM['currency']=='usd'){
+        				$usdShippingFee = $usdShippingFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurShippingFee = $eurShippingFee-$amountCM['amount'];
+        			}
         		}elseif($transactionType=='Service Fees' && $paymentType=='Amazon fees'){
+        			if($amountCM['currency']=='usd'){
+        				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
+        			}
+        		}elseif($transactionType=='Service Fees' && $paymentType=='Transaction Details'){
         			if($amountCM['currency']=='usd'){
         				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
         			}

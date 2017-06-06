@@ -40,6 +40,8 @@ class RestockAction extends CommonAction{
 	        array(C('DB_RESTOCK_ID'),'补货编号'),
 	        array(C('DB_RESTOCK_MANAGER'),'产品经理'),
 	        array(C('DB_RESTOCK_SKU'),'产品编码'),
+	        array(C('cname'),'中文名称'),
+	        array(C('postition'),'货位'),
 	        array(C('DB_RESTOCK_QUANTITY'),'数量'),
 	        array(C('DB_RESTOCK_WAREHOUSE'),'仓库'),
 	        array(C('DB_RESTOCK_TRANSPORT'),'运输方式'),
@@ -47,8 +49,14 @@ class RestockAction extends CommonAction{
 	        array(C('DB_RESTOCK_REMARK'),'备注')  
 	        );
         $xlsModel = M(C('DB_RESTOCK'));
+        $product = M(C('DB_PRODUCT'));
+        $szstorag = M(C('DB_SZSTORAGE'));
         $map[C('DB_RESTOCK_STATUS')] = array('neq', '已发货');
         $xlsData  = $xlsModel->where($map)->select();
+        foreach ($xlsData as $key => $value) {
+        	$xlsData[$key]['cname'] = $product->where(array('sku'=>$value[C('DB_RESTOCK_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
+        	$xlsData[$key]['position'] = $szstorag->where(array('sku'=>$value[C('DB_RESTOCK_SKU')]))->getField(C('DB_SZSTORAGE_POSITION'));
+        }
         $this->exportExcel($xlsName,$xlsCell,$xlsData);
 	}
 	
