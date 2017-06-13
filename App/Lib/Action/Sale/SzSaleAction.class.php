@@ -1330,10 +1330,11 @@ class SzSaleAction extends CommonAction{
 	            		$salePlan=$salePlanTables[$countryOfItem]->where(array('sku'=>$data[$j][$firstRow['K']]))->find();
 	            		$data[$j]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
 	                	$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
-	                	$data[$j][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
+	                	if($account !='vtkg5755' || ($account=='vtkg5755' &&  !$this->szFxtPriceException($data[$j][$firstRow['K']]))){
+	                		$data[$j][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
+	                	}
 	                	$j++;
-                	}
-                	                	                
+                	}               	                
                 }
                 //find item in stock but not listed
                 $storages=$storageTable->where($map)->select();
@@ -1387,6 +1388,14 @@ class SzSaleAction extends CommonAction{
         }else{
             $this->error("请选择上传的文件");
         }
+	}
+
+	private function szFxtPriceException($sku){
+		$exception = array(
+			'1076.01','1082','1111','1154','1181.02','1225','1234','1252','1254','1256','1259.01','1274.01','1347','1359','1362','1369','1370.01','1370.02','1375','1376','1412.02','1412.03','1412.04','1415','1424','1431','1432.01','1432.02','1433','1440','1512','1519','1544','1546.01','1546.02','1546.03','1549','1565','1585.01','1585.02','1593','1597','1602','1604','1608.04','1608.05','1621','1666','1681','1692','1704','1724','1764.03','1765.01','1765.02'
+		);
+		return in_array($sku, $exception);
+		
 	}
 
     private function getSalePlanTableNames($account){
