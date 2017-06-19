@@ -30,10 +30,11 @@ class WinitDeSaleAction extends CommonAction{
         	$data[$key]['winit-fee']=$this->calWinitSIOFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
         	$data[$key][C('DB_PRODUCT_TODE')]=$value[C('DB_PRODUCT_TODE')];
         	$data[$key]['way-to-de-fee']=$data[$key][C('DB_PRODUCT_TODE')]=="空运"?$this->getWinitAirFirstTransportFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]):$this->getWinitSeaFirstTransportFee($value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
-        	$data[$key]['local-shipping-way']=$this->getWinitLocalShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
-        	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($value['pweight'],$value['plength'],$value['pwidth'],$value['pheight']);
+        	
 
         	$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]=$salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_RC_DE_SALE_PLAN_PRICE'));
+        	$data[$key]['local-shipping-way']=$this->getWinitLocalShippingWay($data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')],$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
+        	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')],$value['pweight'],$value['plength'],$value['pwidth'],$value['pheight']);
         	if($this->getMarketByAccount($account)=='ebay'){
         		$data[$key]['cost']=round($this->getWinitDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]),2);
         	}else{
@@ -75,9 +76,10 @@ class WinitDeSaleAction extends CommonAction{
         	$data[$key]['winit-fee']=$this->calWinitSIOFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
         	$data[$key][C('DB_PRODUCT_TODE')]=$value[C('DB_PRODUCT_TODE')];
         	$data[$key]['way-to-de-fee']=$data[$key][C('DB_PRODUCT_TODE')]=="空运"?$this->getWinitAirFirstTransportFee($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]):$this->getWinitSeaFirstTransportFee($value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
-        	$data[$key]['local-shipping-way']=$this->getWinitLocalShippingWay($value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
-        	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($value['pweight'],$value['plength'],$value['pwidth'],$value['pheight']);
+        	
         	$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]=$salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_RC_DE_SALE_PLAN_PRICE'));
+        	$data[$key]['local-shipping-way']=$this->getWinitLocalShippingWay($data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')],$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
+        	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')],$value['pweight'],$value['plength'],$value['pwidth'],$value['pheight']);
         	if($this->getMarketByAccount($account)=='ebay'){
         		$data[$key]['cost']=round($this->getWinitDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]),2);
         	}else{
@@ -630,7 +632,39 @@ class WinitDeSaleAction extends CommonAction{
 		return round(($l * $w * $h) / 1000000 * 170  / $eurToUsd,2);
 	}
 
-	private function getWinitLocalShippingWay($weight,$l,$w,$h){
+	private function getWinitLocalShippingWay($salePrice,$weight,$l,$w,$h){
+		if($salePrice<13){
+			return $this->getWinitLocalUntrackedShippingWay($weight,$l,$w,$h);
+		}else{
+			return $this->getWinitLocalTrackedShippingWay($weight,$l,$w,$h);
+		}
+	}
+
+	private function getWinitLocalTrackedShippingWay($weight,$l,$w,$h){
+		$ways=array(
+				0=>'No way',
+				1=>'DPD Small Parcels',
+				2=>'DPD Normal Parcels',
+				3=>'DHL Packet Service'
+			);
+		$fees=array(
+				0=>0,
+				1=>$this->calWinitDPDSmallFee($weight,$l,$w,$h),
+				2=>$this->calWinitDPDNormalFee($weight,$l,$w,$h),
+				3=>$this->calWinitDHLFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		$way=0;
+		for ($i=0; $i < 4; $i++) { 
+			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+				$way = $i;
+			}
+		}
+		return $ways[$way];
+	}
+
+	private function getWinitLocalUntrackedShippingWay($weight,$l,$w,$h){
 		$ways=array(
 				0=>'No way',
 				1=>'DE Post Small Letter',
@@ -658,7 +692,31 @@ class WinitDeSaleAction extends CommonAction{
 		return $ways[$way];
 	}
 
-	private function getWinitLocalShippingFee($weight,$l,$w,$h){
+	private function getWinitLocalShippingFee($salePrice,$weight,$l,$w,$h){
+		if($salePrice<13){
+			return $this->getWinitLocalUntrackedShippingFee($weight,$l,$w,$h);
+		}else{
+			return $this->getWinitLocalTrackedShippingFee($weight,$l,$w,$h);
+		}
+	}
+
+	private function getWinitLocalTrackedShippingFee($weight,$l,$w,$h){
+		$fees=array(
+				0=>0,
+				1=>$this->calWinitDPDSmallFee($weight,$l,$w,$h),
+				2=>$this->calWinitDPDNormalFee($weight,$l,$w,$h),
+				3=>$this->calWinitDHLFee($weight,$l,$w,$h)
+			);
+		$cheapest=65536;
+		for ($i=0; $i < 4; $i++) { 
+			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
+				$cheapest = $fees[$i];
+			}
+		}
+		return $cheapest;
+	}
+
+	private function getWinitLocalUntrackedShippingFee($weight,$l,$w,$h){
 		$fees=array(
 				0=>0,
 				1=>$this->calWinitPostSmallFee($weight,$l,$w,$h),
