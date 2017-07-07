@@ -106,7 +106,7 @@ return array(
 		0 => 'rent',
 		1 => 'packing',
 		2 => 'booking',
-		3 => 'purchasing_shipping_fee',
+		3 => 'purchasing_shipping',
 		4 => 'other',
 		),
 
@@ -114,7 +114,7 @@ return array(
 		'rent'=>'房租',
 		'packing'=>'包材',
 		'booking'=>'代理记账',
-		'purchasing_shipping_fee'=>'采购快递费',
+		'purchasing_shipping'=>'采购快递费',
 		'other'=>'其他',
 		),
 
