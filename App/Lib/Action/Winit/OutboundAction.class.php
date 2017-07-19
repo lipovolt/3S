@@ -96,7 +96,7 @@ class OutboundAction extends CommonAction{
                     $woo[C('DB_WINIT_OUTBOUND_BUYER_COUNTRY')]=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
                     $woo[C('DB_WINIT_OUTBOUND_BUYER_ZIP')]=$objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
                     $index=$winitOutboundOrder->add($woo);
-                    for($j='R'; $j!=$highestColumn;$j++) { 
+                    for($j='Q'; $j!=$highestColumn;$j++) { 
                         if($objPHPExcel->getActiveSheet()->getCell($j.$i)->getValue()!=null && $objPHPExcel->getActiveSheet()->getCell($j.$i)->getValue()!='' && $index!= false){
                             $wooi[C('DB_WINIT_OUTBOUND_ITEM_OOID')]=$index;
                             $wooi[C('DB_WINIT_OUTBOUND_ITEM_SKU')]=$objPHPExcel->getActiveSheet()->getCell($j.$i)->getValue();
