@@ -199,11 +199,25 @@ class OutboundAction extends CommonAction{
                     }
                                                         
                 }
-                //验证可用库存数量是否大于需要的数量
+                /*//验证可用库存数量是否大于需要的数量
                 $error = $this->mergerArray($errorInFile,$this->checkAinventory($outboundOrderItems));
                 if($error != null){
                     //有错误信息，输出错误信息，不做数据库操作。
                     $this->assign('errorInFile',$error);             
+                    $this->display('importOutboundOrderError');
+                }else{
+                    //无错误信息
+                    //更新已合并的订单数组到szsw_outbound 
+                    $this->addOutboundOrder($this->mergeOrder($outboundOrder));                    
+                    //更新订单产品数组到szsw_outbound_item 和 szstorage
+                    $this->addOutboundItem($outboundOrderItems);                    
+                    $this->success('导入成功！');
+                }*/
+
+                //不需要验证库存数量和发货数量
+                if($errorInFile != null){
+                    //有错误信息，输出错误信息，不做数据库操作。
+                    $this->assign('errorInFile',$errorInFile);             
                     $this->display('importOutboundOrderError');
                 }else{
                     //无错误信息
