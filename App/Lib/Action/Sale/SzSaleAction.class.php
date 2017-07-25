@@ -92,6 +92,46 @@ class SzSaleAction extends CommonAction{
 		}
 	}
 
+	private function getSuggestHandleSingle($account,$country=null, $id){
+		import('ORG.Util.Date');// 导入日期类
+		$Date = new Date();
+		$salePlan=M($this->getSalePlanTableName($account,$country));
+		$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$usp[C('DB_SZ_US_SALE_PLAN_SKU')]))->find();
+		if($usp == null){
+			$this->addProductToUsp($usp[C('DB_SZ_US_SALE_PLAN_SKU')],$account,$country);
+			$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$usp[C('DB_SZ_US_SALE_PLAN_SKU')]))->find();
+		}else{
+			
+			$usp[C('DB_SZ_US_SALE_PLAN_COST')]=$this->calSuggestCost($usp[C('DB_SZ_US_SALE_PLAN_SKU')],$account,$country,$usp[C('DB_SZ_US_SALE_PLAN_PRICE')]);
+			$salePlan->save($usp);
+			$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$usp[C('DB_SZ_US_SALE_PLAN_SKU')]))->find();
+		}
+		if(!$this->isProductInfoComplete($usp[C('DB_SZ_US_SALE_PLAN_SKU')])){
+			//产品信息不全，建议完善产品信息,退出循环
+			$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
+			$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = C('SZ_SALE_PLAN_COMPLETE_PRODUCT_INFO');
+			$salePlan->save($usp);
+			$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$usp[C('DB_SZ_US_SALE_PLAN_SKU')]))->find();
+		}elseif(!$this->isSaleInfoComplete($usp)){
+			//无法计算，建议完善销售信息，退出循环
+			$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
+			$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = C('SZ_SALE_PLAN_COMPLETE_SALE_INFO');
+			$salePlan->save($usp);
+			$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$usp[C('DB_SZ_US_SALE_PLAN_SKU')]))->find();
+		}else{
+			$lastModifyDate = $salePlan->where(array('sku'=>$usp[C('DB_SZ_US_SALE_PLAN_SKU')]))->getField('last_modify_date');
+			$adjustPeriod = M(C('DB_SZ_SALE_PLAN_METADATA'))->where(array('id'=>1))->getField('adjust_period');
+			if(-($Date->dateDiff($lastModifyDate))>$adjustPeriod){
+				//开始计算该产品的销售建议
+				$suggest=null;
+				$suggest = $this->calSuggest($usp[C('DB_SZ_US_SALE_PLAN_SKU')],$account,$country);
+				$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')];
+				$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_SZ_US_SALE_PLAN_SUGGEST')];
+				$salePlan->save($usp);
+			}
+		}
+	}
+
 	private function isSaleInfoComplete($usp){
 		if($usp['cost']==null || $usp['cost']==0)
 			return false;
@@ -255,6 +295,20 @@ class SzSaleAction extends CommonAction{
 		}
 		$salePlan->commit();
 		$this->getSuggestHandle($account,$country);
+		$this->success('保存成功！', U('suggest',array('account'=>$account,'country'=>$country,'kw'=>$kw,'kwv'=>$kwv)));
+	}
+
+	public function updateSalePlanSingle($account,$country=null,$kw=null,$kwv=null, $obj, $salePrice, $status, $register){
+		$salePlan=M($this->getSalePlanTableName($account,$country));
+		$salePlan->startTrans();
+		$data[C('DB_SZ_US_SALE_PLAN_ID')]=$obj;
+		$data[C('DB_SZ_US_SALE_PLAN_PRICE')]=$salePrice;
+		$data[C('DB_SZ_US_SALE_PLAN_STATUS')]=$status;
+		$data[C('DB_SZ_US_SALE_PLAN_REGISTER')]=$register;
+		$salePlan->save($data);
+		$salePlan->commit();
+
+		$this->getSuggestHandleSingle($account,$country, $id);
 		$this->success('保存成功！', U('suggest',array('account'=>$account,'country'=>$country,'kw'=>$kw,'kwv'=>$kwv)));
 	}
 

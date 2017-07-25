@@ -15,6 +15,18 @@ function save(){
 	form.action="{:U('Sale/GgsUsswSale/updateUsswSalePlan',array('account'=>$account))}?kw="+kw+"&kwv="+kwv;
 	form.submit();
 }
+function saveSingle(Obj){
+	var kw = document.getElementById('keyword').value;
+	var kwv = document.getElementById('keywordValue').value;
+	var salePrice = document.getElementById('sale_price-'+Obj).value;
+	if(document.getElementById('status-'+Obj).checked){
+		var status = 1;
+	}else{
+		var status = 0;
+	}
+	form.action="{:U('Sale/GgsUsswSale/updateUsswSalePlanSingle',array('account'=>$account))}?kw="+kw+"&kwv="+kwv+"&id="+Obj+"&salePrice="+salePrice+"&status="+status;
+	form.submit();
+}
 function  cli(Obj){
 	var collid = document.getElementById("all");
 	var coll = document.getElementsByName(Obj);
@@ -182,6 +194,7 @@ function bModify(){
 						<td>
 							<a href="{:U('Sale/GgsUsswSale/confirmSuggest',array('account'=>$account,'id'=>$vo['id']))}">已修改</a>
 							<a href="{:U('Sale/GgsUsswSale/ignoreSuggest',array('account'=>$account,'id'=>$vo['id']))}">忽略</a>
+							<a href="#" onclick="saveSingle({$vo[C('DB_USSW_SALE_PLAN_ID')]})">保存</a>
 						</td>
 						</tr>	
 					</volist> 								

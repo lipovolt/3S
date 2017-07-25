@@ -104,6 +104,48 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 	}
 
+	private function calUsswSaleInfoHandleSingle($account, $id){
+		import('ORG.Util.Date');// 导入日期类
+		$Date = new Date();
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error("无法找到匹配的销售表！");
+		}
+		$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->find();
+		if($usp == null){
+			$this->addProductToUsp($account,$usp[C('DB_USSW_SALE_PLAN_SKU')]);
+			$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$usp[C('DB_USSW_SALE_PLAN_SKU')]))->find();
+		}else{
+			$usp[C('DB_USSW_SALE_PLAN_COST')]=$this->calUsswSuggestCost($account,$usp[C('DB_USSW_SALE_PLAN_SKU')],$usp[C('DB_USSW_SALE_PLAN_PRICE')]);
+			$this->updateUsp($account,$usp);
+			$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$usp[C('DB_USSW_SALE_PLAN_SKU')]))->find();
+		}
+		if(!$this->isProductInfoComplete($usp[C('DB_USSW_SALE_PLAN_SKU')])){
+			//产品信息不全，建议完善产品信息
+			$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+			$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_COMPLETE_PRODUCT_INFO');
+			$this->updateUsp($account,$usp);
+			$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$usp[C('DB_USSW_SALE_PLAN_SKU')]))->find();
+		}elseif(!$this->isUsswSaleInfoComplete($usp)){
+			//无法计算，建议完善销售信息
+			$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+			$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_COMPLETE_SALE_INFO');
+			$this->updateUsp($account,$usp);
+			$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$usp[C('DB_USSW_SALE_PLAN_SKU')]))->find();
+		}else{
+			$lastModifyDate = $salePlanTable->where(array('sku'=>$usp[C('DB_USSW_SALE_PLAN_SKU')]))->getField('last_modify_date');
+			$adjustPeriod = M(C('DB_USSW_SALE_PLAN_METADATA'))->where(array('id'=>1))->getField('adjust_period');
+			if(-($Date->dateDiff($lastModifyDate))>$adjustPeriod){
+				//开始计算该产品的销售建议
+				$suggest=null;
+				$suggest = $this->calUsswSuggest($account,$usp[C('DB_USSW_SALE_PLAN_SKU')]);
+				$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+				$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_USSW_SALE_PLAN_SUGGEST')];
+				$this->updateUsp($account,$usp);
+			}
+		}
+	}
+
 	public function confirmSuggest($account,$id){
 		$salePlanTable = M($this->getSalePlanTableName($account));
 		if($salePlanTable==null){
@@ -225,6 +267,27 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 		$salePlanTable->commit();
 		$this->calUsswSaleInfoHandle($account);
+		if($kwv==null){
+			$this->success('保存成功');
+		}else{
+			$this->success('修改已保存',U('usswSaleSuggest',array('account'=>$account,'kw'=>$kw,'kwv'=>$kwv)));
+		}		
+	}
+
+
+	public function updateUsswSalePlanSingle($account, $kw=null,$kwv=null, $id, $salePrice, $status){
+		$data=null;
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
+		$data[C('DB_USSW_SALE_PLAN_ID')]=$id; 
+		$data[C('DB_USSW_SALE_PLAN_PRICE')]=$salePrice; 
+		$data[C('DB_USSW_SALE_PLAN_STATUS')]=$status; 
+		$salePlanTable->startTrans();
+		$salePlanTable->save($data);
+		$salePlanTable->commit();
+		$this->calUsswSaleInfoHandleSingle($account, $id);
 		if($kwv==null){
 			$this->success('保存成功');
 		}else{

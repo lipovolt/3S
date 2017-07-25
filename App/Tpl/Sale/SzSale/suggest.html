@@ -17,6 +17,27 @@ function save(){
 	form.action="{:U('Sale/SzSale/updateSalePlan')}?account="+account+"&country="+country+"&kw="+kw+"&kwv="+kwv;
 	form.submit();
 }
+function saveSingle(Obj){
+	var kw = document.getElementById('keyword').value;
+	var kwv = document.getElementById('keywordValue').value;
+	var salePrice = document.getElementById('sale_price['+Obj+']').value;	
+	if(document.getElementById('status['+Obj+']').checked){
+		var status = 1;
+	}else{
+		var status = 0;
+	}
+	if(document.getElementById('register['+Obj+']').checked){
+		var register = 1;
+	}else{
+		var register = 0;
+	}
+
+	var account = '{$account}';
+	var country = '{$country}';
+
+	form.action="{:U('Sale/SzSale/updateSalePlanSingle')}?account="+account+"&country="+country+"&kw="+kw+"&kwv="+kwv+"&obj="+Obj+"&salePrice="+salePrice+"&status="+status+"&register="+register;
+	form.submit();
+}
 function  cli(all,Obj){
 	var collid = document.getElementById(all);
 	var coll = document.getElementsByName(Obj);
@@ -197,7 +218,7 @@ function bModify(){
 						<td><div class="tl">
 						<input type="hidden" name="id[]" value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" />
 						<input type="hidden" name="sku[]" value="{$vo[C('DB_SZ_US_SALE_PLAN_SKU')]}" />
-						<input name='sale_price[]' type='text' value='{$vo[C('DB_SZ_US_SALE_PLAN_PRICE')]}' style="width:60px;"/></div></td>
+						<input id="sale_price[{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}]" name='sale_price[]' type='text' value='{$vo[C('DB_SZ_US_SALE_PLAN_PRICE')]}' style="width:60px;"/></div></td>
 						<!-- <td><div class="tl">
 						<input type="hidden" id="id-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" name="id-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" />
 						<input type="hidden" id="sku-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" name="sku-{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" value="{$vo[C('DB_SZ_US_SALE_PLAN_SKU')]}" />
@@ -206,15 +227,16 @@ function bModify(){
 						<td><div class="tl">{$vo['grate']}%</div></td>
 						<td><div class="tl">{$vo[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_SZ_US_SALE_PLAN_SUGGEST')]}</div></td>
-						<if condition="($vo[C('DB_SZ_US_SALE_PLAN_REGISTER')] eq 1)"> <td><div class="tl"><input name="register[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" checked/></div></td>
-						<else /> <td><div class="tl"><input name="register[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}"/></div></td>
+						<if condition="($vo[C('DB_SZ_US_SALE_PLAN_REGISTER')] eq 1)"> <td><div class="tl"><input id="register[{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}]" name="register[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" checked/></div></td>
+						<else /> <td><div class="tl"><input id="register[{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}]" name="register[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}"/></div></td>
 						</if>
-						<if condition="($vo[C('DB_SZ_US_SALE_PLAN_STATUS')] eq 1)"> <td><div class="tl"><input name="status[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" checked /></div></td>
-						<else /> <td><div class="tl"><input name="status[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}"/></div></td>
+						<if condition="($vo[C('DB_SZ_US_SALE_PLAN_STATUS')] eq 1)"> <td><div class="tl"><input id="status[{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}]" name="status[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}" checked /></div></td>
+						<else /> <td><div class="tl"><input id="status[{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}]" name="status[]" type='checkbox' value="{$vo[C('DB_SZ_US_SALE_PLAN_ID')]}"/></div></td>
 						</if>
 						<td>
 							<a href="{:U('Sale/SzSale/confirmSuggest',array('id'=>$vo['id'],'account'=>$account,'country'=>$country))}">已修改</a>
 							<a href="{:U('Sale/SzSale/ignoreSuggest',array('id'=>$vo['id'],'account'=>$account,'country'=>$country))}">忽略</a>
+							<a href="#" onclick="saveSingle({$vo[C('DB_SZ_US_SALE_PLAN_ID')]})">保存</a>
 						</td>
 						</tr>	
 					</volist> 								
