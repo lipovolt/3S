@@ -62,16 +62,44 @@
 									</div>
 								</div>
 								<div>
-									<label class="control-label">角色:</label>
+									<label class="control-label">部门:</label>
 									<div id="roles">
 										<select name="{:C('DB_ROLE_ID')}[]"  id="{:C('DB_ROLE_ID')}">
-											<option value="" selected>请选择角色</option>
+											<option value="" selected>请选择部门</option>
 											<foreach name="{C('DB_ROLE')}" item='v'>
 												<option value="{$v[C('DB_ROLE_ID')]}">{$v[C('DB_ROLE_NAME')]}({$v[C('DB_ROLE_REMARK')]})</option>
 											</foreach>					
 										</select>
 										<span class='add-role'>增加角色</span>
 									</div>	
+								</div>
+								<div class="form-group">
+									<label class="control-label">职位:</label>
+									<div class="control-wrap">
+										<select name="{:C('DB_3S_USER_POSITION')}"  id="{:C('DB_3S_USER_POSITION')}">
+											<option value="" selected>请选择</option>
+											<option value="主管">主管</option>
+											<option value="员工" >员工</option>						
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label">午休时间:</label>
+									<div class="control-wrap">
+										<input type="text" name="{:C('DB_3S_USER_LUNCH_BREAK')}" value="60" id="{:C('DB_3S_USER_LUNCH_BREAK')}"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label">基本工资:</label>
+									<div class="control-wrap">
+										<input type="text" name="{:C('DB_3S_USER_BASIC_WAGE')}" value="4000" id="{:C('DB_3S_USER_BASIC_WAGE')}"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label">绩效提成0-1:</label>
+									<div class="control-wrap">
+										<input type="text" name="{:C('DB_3S_USER_PERFOMANCE_PERCENT')}" value="0" id="{:C('DB_3S_USER_PERFOMANCE_PERCENT')}"/>
+									</div>
 								</div>
 								<div id="buttons">
 									<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>

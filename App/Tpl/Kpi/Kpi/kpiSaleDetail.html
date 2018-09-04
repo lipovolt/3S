@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>销售绩效表</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>待办事项</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/todo.html" />	
+			</div>
+		</div>
+	<div class="content">
+<!-- 主页面开始  -->
+<div id="WarehouseOutbound" class="main">
+<script>
+function deleteItem(id){
+	form.action="{:U('Kpi/Kpi/deleteCustomerPerformance')}?id="+id;
+	form.submit();	
+}
+function save(){
+	form.action="{:U('Kpi/Kpi/newCustomerPerformance')}";
+	form.submit();
+}
+</script>
+
+<!--产品列表-->
+<div class="block-outer">
+		<table  id="warehouseProduct" class="tablelist">              
+			
+				<tr>
+					<th>绩效表ID</th>
+					<th>产品编码</th>
+					<th>仓库</th>
+					<th>售出日期</th>
+					<th>数量</th>
+					<th>单价</th>
+					<th>运费</th>
+					<th>平台</th>
+					<th>账号</th>
+					<th>平台商品编码</th>
+					<th>平台交易编码</th>
+				</tr> 
+
+				<volist name="records" id="vo">
+					
+					<tr>
+					<td>
+						<label>{$vo[C('DB_KPI_SALE_RECORD_SALE_ID')]}</label>
+						<input type="hidden" id="id" name="id" value="{$vo[C('DB_KPI_SALE_RECORD_ID')]}" readonly=""></input>
+					</td>
+					<td><label>{$vo[C('DB_KPI_SALE_RECORD_SKU')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_RECORD_WAREHOUSE')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_RECORD_SOLD_DATE')]|date='Y-m-d',###}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_RECORD_QUANTITY')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_RECORD_PRICE')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_RECORD_SHIPPING_FEE')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_RECORD_MARKET')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_RECORD_SELLER_ID')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_RECORD_MARKET_NO')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_RECORD_TRANSACTION_NO')]}</label></td>
+					</tr>
+					
+				</volist>	
+		</table>
+</div>
+
+</div>
+</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

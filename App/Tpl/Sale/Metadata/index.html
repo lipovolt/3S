@@ -54,9 +54,24 @@
 							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_METADATA_USDTORMB')}" value="{$vo[C('DB_METADATA_USDTORMB')]}" id="{:C('DB_METADATA_USDTORMB')}"/></div></td>						
 							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_METADATA_EURTORMB')}" value="{$vo[C('DB_METADATA_EURTORMB')]}" id="{:C('DB_METADATA_EURTORMB')}"/></div></td>
 							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_METADATA_DEMWST')}" value="{$vo[C('DB_METADATA_DEMWST')]}" id="{:C('DB_METADATA_DEMWST')}"/></div></td>
-							<td><div class="tl"><input type="text" style="width:60px;" name="{:C('DB_METADATA_USED_UPC')}" value="{$vo[C('DB_METADATA_USED_UPC')]}" id="{:C('DB_METADATA_USED_UPC')}"/></div></td>
+							<td><div class="tl"><input type="text" style="width:150px;" name="{:C('DB_METADATA_USED_UPC')}" value="{$vo[C('DB_METADATA_USED_UPC')]}" id="{:C('DB_METADATA_USED_UPC')}"/></div></td>
 							<td><div class="tl"><button class="btn btn-blue btn-s" id="saveMetadataInfo">保存</button></div></td>
 						</form>
+						</tr>	
+					</volist> 								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+			<div class="tab-content">	
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th width="66">账号</th>
+						<th><div class="tl">密码</div></th>
+					</tr>
+					<volist name="pw" id="pvo">
+						<tr>
+						<td><div class="tl">{$key}</div></td>
+						<td><div class="tl">{$pvo}</div></td>
 						</tr>	
 					</volist> 								
 				</table>

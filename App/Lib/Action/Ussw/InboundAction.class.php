@@ -100,7 +100,7 @@ class InboundAction extends CommonAction{
         $this->display();
     }
 
-    Public function addItem($orderID){
+    public function addItem($orderID){
         $status = M(C('DB_USSW_INBOUND'))->where(array(C('DB_USSW_INBOUND_ID')=>$orderID))->getField('status');
         if($status != '已入库' and $status != '产品已导入' and $status != '待入库'){
             if (!empty($_FILES)) {
@@ -147,7 +147,8 @@ class InboundAction extends CommonAction{
                     $errorInFile = null;
                     $data = null;
                     for($i=2;$i<=$highestRow;$i++){
-                        if($product->where(array(C('DB_PRODUCT_SKU')=>$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue()))->find() == null){
+                        $map[C('DB_PRODUCT_SKU')] = array('eq',strval($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue()));
+                        if($product->where($map)->find() == null){
                             $errorInFile[$i]='产品编码不存在或未注册';
                         }
 
@@ -179,11 +180,17 @@ class InboundAction extends CommonAction{
                         $usswInboundItem->startTrans();
                         $result = 0;
                         foreach ($data as $key => $value){
-                            if(false !== $result){
-                                $result = $usswInboundItem->add($value);
+                            $checkExist = $usswInboundItem->where(array(C('DB_USSW_INBOUND_ITEM_IOID')=>$value[C('DB_USSW_INBOUND_ITEM_IOID')], C('DB_USSW_INBOUND_ITEM_SKU')=>$value[C('DB_USSW_INBOUND_ITEM_SKU')]))->find();
+                            if($checkExist !== false && $checkExist!==null){
+                                $checkExist[C('DB_USSW_INBOUND_ITEM_DQUANTITY')] = $checkExist[C('DB_USSW_INBOUND_ITEM_DQUANTITY')]+$value[C('DB_USSW_INBOUND_ITEM_DQUANTITY')];
+                                $usswInboundItem->save($checkExist);
                             }else{
-                                $errorDuringInsert[$key] = '未能添加';
-                            }                            
+                                if(false !== $result){
+                                    $result = $usswInboundItem->add($value);
+                                }else{
+                                    $errorDuringInsert[$key] = '未能添加';
+                                }  
+                            }                                                      
                         }
                         $usswInboundItem->commit();
 
@@ -238,7 +245,7 @@ class InboundAction extends CommonAction{
         return true;
     }
 
-    Public function addPackage($orderID){
+    public function addPackage($orderID){
         $status = M(C('DB_USSW_INBOUND'))->where(array(C('DB_USSW_INBOUND_ID')=>$orderID))->getField('status');
         if($status != '已入库' and $status != '装箱已导入' and $status != '待入库'){
             if (!empty($_FILES)) {
@@ -505,6 +512,24 @@ class InboundAction extends CommonAction{
         }
         else{
             $this->error('该单已入库！');
+        }
+    }
+
+    public function directInbound($ioid){
+        $status = M(C('DB_USSW_INBOUND'))->where(array(C('DB_USSW_INBOUND_ID')=>$ioid))->getField('status');
+        if($status != "已入库"){
+            $usswInboundItemTable = M(C('DB_USSW_INBOUND_ITEM'));
+            $usswInboundItemTable->starttrans();
+            $items = $usswInboundItemTable->where(array(C('DB_USSW_INBOUND_ITEM_IOID')=>$ioid))->select();
+            foreach ($items as $value) {
+               $value[C('DB_USSW_INBOUND_ITEM_CQUANTITY')] = $value[C('DB_USSW_INBOUND_ITEM_DQUANTITY')];
+               $usswInboundItemTable->save($value);
+            }
+            $usswInboundItemTable->commit();
+            $this->updateStorage($ioid);
+        }
+        else{
+            $this->error('该单已经入库！');
         }
     }
 

@@ -55,7 +55,7 @@ class AccountingAction extends CommonAction{
 	}
 
 	public function managementFee(){
-		$this->assign('managementFees',M(C('DB_MANAGEMENTFEE'))->select());
+		$this->assign('managementFees',M(C('DB_MANAGEMENTFEE'))->order('id desc')->select());
 		$this->display();
 	}
 
@@ -90,8 +90,8 @@ class AccountingAction extends CommonAction{
 		$wages=M(C('DB_WAGES'))->select();
 		$usdToRmb=M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		foreach ($wages as $key => $value) {
-			$wages[$key]['paidWages']=round($value[C('DB_WAGES_BASE')]+$value[C('DB_WAGES_PERFORMANCE')]*$value[C('DB_WAGES_PERCENT')]/100*$usdToRmb-$value[C('DB_WAGES_SI_PERSON')]-$value[C('DB_WAGES_BASE')]/26*$value[C('DB_WAGES_LEAVE_DAYS')],2);
-			$wages[$key]['WagesCost']=round($value[C('DB_WAGES_BASE')]+$value[C('DB_WAGES_PERFORMANCE')]*$value[C('DB_WAGES_PERCENT')]/100*$usdToRmb+$value[C('DB_WAGES_SI_COMPANY')]-$value[C('DB_WAGES_BASE')]/26*$value[C('DB_WAGES_LEAVE_DAYS')],2);
+			$wages[$key]['paidWages']=round($value[C('DB_WAGES_BASE')]+$value[C('DB_WAGES_PERFORMANCE')]*$value[C('DB_WAGES_PERCENT')]/100*$usdToRmb-$value[C('DB_WAGES_SI_PERSON')]-$value[C('DB_WAGES_BASE')]/26*$value[C('DB_WAGES_LEAVE_DAYS')],2)+$value[C('DB_WAGES_BONUS')];
+			$wages[$key]['WagesCost']=round($value[C('DB_WAGES_BASE')]+$value[C('DB_WAGES_PERFORMANCE')]*$value[C('DB_WAGES_PERCENT')]/100*$usdToRmb+$value[C('DB_WAGES_SI_COMPANY')]-$value[C('DB_WAGES_BASE')]/26*$value[C('DB_WAGES_LEAVE_DAYS')],2)+$value[C('DB_WAGES_BONUS')];
 		}
 		$this->assign('wages',$wages);
 		$this->display();
@@ -123,6 +123,33 @@ class AccountingAction extends CommonAction{
 		$this->redirect('wages');
 	}
 
+	private function setBonus($month){
+		$incomeCost = M(C('DB_INCOMECOST'))->where(array(C('DB_INCOMECOST_MONTH')=>$month))->select();
+		$metaData = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->find();
+		$bonusBase = 600;
+		$bonus = 0;
+		foreach ($incomeCost as $key => $value) {
+			$usdIncome = $usdIncome + $value[C('DB_INCOMECOST_USDINCOME')];
+			$usdIncome = $usdIncome + $value[C('DB_INCOMECOST_EURINCOME')]*$metaData[C('DB_METADATA_EURTOUSD')];
+		}
+		$usdIncome = $usdIncome - 8750*count(C('WAGES_BASE'));
+		if($usdIncome>0){
+			$bonus = ceil($usdIncome/5000)*$bonusBase;
+		}
+		$quantity = count(C('WAGES_BASE'))-2;
+		$bonusForEachPerson = intval($bonus/$quantity);
+		$wagesTable = M(C('DB_WAGES'));
+		$wagesTable->startTrans();
+		foreach (C('WAGES_BASE') as $key => $value) {
+			if($key != '张昱' && $key != '张旻'){
+				$map[C('DB_WAGES_MONTH')] = array('eq', $month);
+				$map[C('DB_WAGES_NAME')] = array('eq', $key);
+				$wagesTable->where($map)->setField(C('DB_WAGES_BONUS'), $bonusForEachPerson);
+			}
+		}
+		$wagesTable->commit();
+	}
+
 	public function importSaleRecord(){
 		$this->display();
 	}
@@ -136,9 +163,9 @@ class AccountingAction extends CommonAction{
 			$this->error("请选择上传的文件");
 		}else{
 			if($_POST['sellerID']=='greatgoodshop' || $_POST['sellerID']=='blackfive' || $_POST['sellerID']=='vtkg5755' || $_POST['sellerID']=='yzhan-816'){
-				$this->importEbayEnSaleRecordHandle();				
+				$this->importEbayEnSaleRecordHandle();		
 			}elseif ($_POST['sellerID']=='rc-helicar') {
-				$this->importEbayDeSaleRecordHandle();
+				$this->importEbayEnSaleRecordHandle();
 			}elseif($_POST['sellerID']=='lipovolt'){
 				$this->importAmazonEnSaleRecordHandle();
 			}elseif($_POST['sellerID']=='g-lipovolt'){
@@ -185,12 +212,14 @@ class AccountingAction extends CommonAction{
         	$usdCost = 0;
         	$usdPmpa = null;
         	$productTable=M(C('DB_PRODUCT'));
+        	$kpiSaleRecordTable=M(C('DB_KPI_SALE_RECORD'));
+        	$kpiSaleRecordTable->startTrans();
         	for($i=2;$i<=$highestRow;$i++){
         		$sku = $objPHPExcel->getActiveSheet()->getCell("AE".$i)->getValue();
         		$pPrice=$productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_PRICE'));
 
         		if($pPrice==false || $pPrice==null){
-        			$this->error($i.' 行的sku无法找到售价。');
+        			$this->error($i.' 行的'.$sku.'无法找到采购价。');
         		}
         		$fDate = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
         		$cDate = $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
@@ -214,7 +243,19 @@ class AccountingAction extends CommonAction{
         			$usdRefund=$usdRefund+$salePrice+$shippingPrice;
         			$usdMarketFee = $usdMarketFee+$marketFee;
         		}
+
+        		//添加价格到销售绩效表
+        		$kpiSaleMap[C('DB_KPI_SALE_RECORD_SKU')] = array('eq', $sku);
+        		$kpiSaleMap[C('DB_KPI_SALE_RECORD_WAREHOUSE')] = array('eq', C('USSW'));
+        		$kpiSaleMap[C('DB_KPI_SALE_RECORD_TRANSACTION_NO')] = array('eq', $objPHPExcel->getActiveSheet()->getCell("T".$i)->getValue());
+        		$kpiSaleRecord = $kpiSaleRecordTable->where($kpiSaleMap)->find();
+        		if($kpiSaleRecord!=null && $kpiSaleRecord!=false){
+        			$kpiSaleRecord[C('DB_KPI_SALE_RECORD_PRICE')] = $salePrice;
+        			$kpiSaleRecord[C('DB_KPI_SALE_RECORD_SHIPPING_FEE')] = $shippingPrice;
+        			$kpiSaleRecordTable->save($kpiSaleRecord);
+        		}
         	}
+        	$kpiSaleRecordTable->commit();
         	$data[C('DB_INCOMECOST_MONTH')] = $_POST['month'];
         	$data[C('DB_INCOMECOST_SLLERID')] = $_POST['sellerID'];
         	$data[C('DB_INCOMECOST_SLLERIDTYPE')] = $this->getSellerIDType($_POST['sellerID']);
@@ -233,17 +274,19 @@ class AccountingAction extends CommonAction{
 	        	$result = $wagesTable->where($wmap)->find();
 	        	if($result !== null && $result !== false){
 	        		$result[C('DB_WAGES_PERFORMANCE')] = $usdPmpa[$key] + $result[C('DB_WAGES_PERFORMANCE')];
+	        		$result[C('DB_WAGES_PERCENT')] = $this->getProductManagerPercent($key,$result[C('DB_WAGES_PERFORMANCE')] );
 	        		$wagesTable->save($result);
 	        	}else{
 	        		$newWages[C('DB_WAGES_NAME')] = C('PRODUCT_MANAGER_NAME')[$key];
 	        		$newWages[C('DB_WAGES_MONTH')] = $_POST['month'];
 	        		$newWages[C('DB_WAGES_PERFORMANCE')] = $usdPmpa[$key];
-	        		$newWages[C('DB_WAGES_PERCENT')] = C('WAGES_PERFORMANCE_PERCENT')[$newWages[C('DB_WAGES_NAME')]];
+	        		$newWages[C('DB_WAGES_PERCENT')] = $this->getProductManagerPercent($key,$newWages[C('DB_WAGES_PERFORMANCE')]);
 	        		$newWages[C('DB_WAGES_BASE')] = C('WAGES_BASE')[$newWages[C('DB_WAGES_NAME')]];
 	        		$wagesTable->add($newWages);
 	        	}
         	}
         	$wagesTable->commit();
+			$this->setBonus($_POST['month']);
         	$this->redirect('incomeCost');
         }else{
         	$this->error("模板不正确，请检查");
@@ -293,17 +336,34 @@ class AccountingAction extends CommonAction{
         	$eurPmpa = null;
         	$pfa = $this->getPlatformFeeArray($_POST['sellerID']);
         	$productTable=M(C('DB_PRODUCT'));
+        	$kpiSaleRecordTable=M(C('DB_KPI_SALE_RECORD'));
+        	$kpiSaleRecordTable->startTrans();
         	for($i=2;$i<=$highestRow;$i++){
-        		$sku = $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
-        		$quantity = $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
-        		$salePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue());
-        		$shippingPriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue());
-        		$taxCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue());
+        		$sku = $objPHPExcel->getActiveSheet()->getCell("AF".$i)->getValue();
+        		$quantity = $objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
+        		$salePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue());
+        		$shippingPriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue());
+        		$taxCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("S".$i)->getValue());
     			$totalCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue());
         		$pmanager = $productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_MANAGER'));
         		if($pmanager==null){
         			$pmanager='Yellow River';
         		}
+
+        		//检测该sku是否在销售绩效考核表中。如果是，要补充价格到绩效考核表
+        		if($sku!=null){
+        			$kpiSaleMap[C('DB_KPI_SALE_RECORD_SKU')] = array('eq', $sku);
+        			$kpiSaleMap[C('DB_KPI_SALE_RECORD_WAREHOUSE')] = array('eq', $this->getWarehouse(I('post.sellerID'),$salePriceCM['currency']));
+        			$kpiSaleMap[C('DB_KPI_SALE_RECORD_TRANSACTION_NO')] = array('eq', $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue());
+
+        			$kpiSaleRecord = $kpiSaleRecordTable->where($kpiSaleMap)->find();
+        			if($kpiSaleRecord!=null && $kpiSaleRecord!=false){
+        				$kpiSaleRecord[C('DB_KPI_SALE_RECORD_PRICE')] = $salePriceCM['amount'];
+        				$kpiSaleRecord[C('DB_KPI_SALE_RECORD_SHIPPING_FEE')] = $shippingPriceCM['amount'];
+        				$kpiSaleRecordTable->save($kpiSaleRecord);
+        			}
+        		}
+
         		//如果sku和总价都不为空，可以用总价确认收入，平台费用，产品经理绩效。用sku查找采购成本。通过运算计算是否有退款。
         		if($sku != null && $totalCM['amount']!=null){
 	        		if($totalCM['currency']=='usd'){
@@ -339,7 +399,7 @@ class AccountingAction extends CommonAction{
 	        			if($totalCM['currency']=='eur'){
 	        				$eurRefund=$eurRefund+$difference;
 	        			}
-	        		}	
+	        		}
         		}
         		
 
@@ -378,9 +438,9 @@ class AccountingAction extends CommonAction{
 
 	        		for ($j=$i+1; $j<=$highestRow; $j++) { 
 	        			if($objPHPExcel->getActiveSheet()->getCell("A".$j)->getValue() == $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()){
-	        				$itemSku = $objPHPExcel->getActiveSheet()->getCell("N".$j)->getValue();
-			        		$itemQuantity = $objPHPExcel->getActiveSheet()->getCell("O".$j)->getValue();
-			        		$itemSalePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("P".$j)->getValue());
+	        				$itemSku = $objPHPExcel->getActiveSheet()->getCell("AF".$j)->getValue();
+			        		$itemQuantity = $objPHPExcel->getActiveSheet()->getCell("P".$j)->getValue();
+			        		$itemSalePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("Q".$j)->getValue());
 			        		$pmanager = $productTable->where(array(C('DB_PRODUCT_SKU')=>$itemSku))->getField(C('DB_PRODUCT_MANAGER'));
 			        		if($pmanager==null){
 			        			$pmanager='Yellow River';
@@ -401,6 +461,7 @@ class AccountingAction extends CommonAction{
 	        		}
         		}
         	}
+        	$kpiSaleRecordTable->commit();
         	$eurToUsd=M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTOUSD'));
         	$usdEbayFee = $usdEbayFee+$eurEbayFee*$eurToUsd;
         	$usdPaypalFee = $usdPaypalFee+$eurPaypalFee*$eurToUsd;
@@ -427,17 +488,19 @@ class AccountingAction extends CommonAction{
 	        	$result = $wagesTable->where($wmap)->find();
 	        	if($result !== null && $result !== false){
 	        		$result[C('DB_WAGES_PERFORMANCE')] = $usdPmpa[$key] + $result[C('DB_WAGES_PERFORMANCE')];
+	        		$result[C('DB_WAGES_PERCENT')] = $this->getProductManagerPercent($key, $result[C('DB_WAGES_PERFORMANCE')] );
 	        		$wagesTable->save($result);
 	        	}else{
 	        		$newWages[C('DB_WAGES_NAME')] = C('PRODUCT_MANAGER_NAME')[$key];
 	        		$newWages[C('DB_WAGES_MONTH')] = $_POST['month'];
 	        		$newWages[C('DB_WAGES_PERFORMANCE')] = $usdPmpa[$key];
-	        		$newWages[C('DB_WAGES_PERCENT')] = C('WAGES_PERFORMANCE_PERCENT')[$newWages[C('DB_WAGES_NAME')]];
+	        		$newWages[C('DB_WAGES_PERCENT')] = $this->getProductManagerPercent($key, $newWages[C('DB_WAGES_PERFORMANCE')]);
 	        		$newWages[C('DB_WAGES_BASE')] = C('WAGES_BASE')[$newWages[C('DB_WAGES_NAME')]];
 	        		$wagesTable->add($newWages);
 	        	}
         	}
         	$wagesTable->commit();
+			$this->setBonus($_POST['month']);
         	$this->redirect('incomeCost');
         }else{
         	$this->error("模板不正确，请检查");
@@ -470,7 +533,7 @@ class AccountingAction extends CommonAction{
         for($c='A';$c!=$highestColumn;$c++){
             $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue(); 
         }
-        if($this->verifyEbayDeSaleRecordColumnName($firstRow)){
+        if($this->verifyEbayEnSaleRecordColumnName($firstRow)){
         	$usdIncome = 0;
         	$usdPaypalFee = 0;
         	$usdEbayFee = 0;
@@ -488,9 +551,9 @@ class AccountingAction extends CommonAction{
         	$pfa = $this->getPlatformFeeArray($_POST['sellerID']);
         	$productTable=M(C('DB_PRODUCT'));
         	for($i=2;$i<=$highestRow;$i++){
-        		$sku = $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
-        		$quantity = $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
-        		$salePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue());
+        		$sku = $objPHPExcel->getActiveSheet()->getCell("AF".$i)->getValue();
+        		$quantity = $objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
+        		$salePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue());
         		$shippingPriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue());
     			$totalCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue());
         		$pmanager = $productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_MANAGER'));
@@ -567,9 +630,9 @@ class AccountingAction extends CommonAction{
 
 	        		for ($j=$i+1; $j<=$highestRow; $j++) { 
 	        			if($objPHPExcel->getActiveSheet()->getCell("A".$j)->getValue() == $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()){
-	        				$itemSku = $objPHPExcel->getActiveSheet()->getCell("N".$j)->getValue();
-			        		$itemQuantity = $objPHPExcel->getActiveSheet()->getCell("O".$j)->getValue();
-			        		$itemSalePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("P".$j)->getValue());
+	        				$itemSku = $objPHPExcel->getActiveSheet()->getCell("AF".$j)->getValue();
+			        		$itemQuantity = $objPHPExcel->getActiveSheet()->getCell("P".$j)->getValue();
+			        		$itemSalePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("Q".$j)->getValue());
 			        		$pmanager = $productTable->where(array(C('DB_PRODUCT_SKU')=>$itemSku))->getField(C('DB_PRODUCT_MANAGER'));
 			        		if($pmanager==null){
 			        			$pmanager='Yellow River';
@@ -606,6 +669,7 @@ class AccountingAction extends CommonAction{
         	$data[C('DB_INCOMECOST_MARKETFEE')] = $usdEbayFee;
         	$data[C('DB_INCOMECOST_PAYPALFEE')] = $usdPaypalFee;
         	$data[C('DB_INCOMECOST_TAX_COLLECTION')] = $usdTaxCollection;
+        	
         	M(C('DB_INCOMECOST'))->add($data);
         	$wagesTable = M(C('DB_WAGES'));
         	$wagesTable->startTrans();
@@ -616,17 +680,19 @@ class AccountingAction extends CommonAction{
 	        	$result = $wagesTable->where($wmap)->find();
 	        	if($result !== null && $result !== false){
 	        		$result[C('DB_WAGES_PERFORMANCE')] = $usdPmpa[$key] + $result[C('DB_WAGES_PERFORMANCE')];
+	        		$result[C('DB_WAGES_PERCENT')] =  $this->getProductManagerPercent($key, $result[C('DB_WAGES_PERFORMANCE')]);
 	        		$wagesTable->save($result);
 	        	}else{
 	        		$newWages[C('DB_WAGES_NAME')] = C('PRODUCT_MANAGER_NAME')[$key];
 	        		$newWages[C('DB_WAGES_MONTH')] = $_POST['month'];
 	        		$newWages[C('DB_WAGES_PERFORMANCE')] = $usdPmpa[$key];
-	        		$newWages[C('DB_WAGES_PERCENT')] = C('WAGES_PERFORMANCE_PERCENT')[$newWages[C('DB_WAGES_NAME')]];
+	        		$newWages[C('DB_WAGES_PERCENT')] = $this->getProductManagerPercent($key, $newWages[C('DB_WAGES_PERFORMANCE')]);
 	        		$newWages[C('DB_WAGES_BASE')] = C('WAGES_BASE')[$newWages[C('DB_WAGES_NAME')]];
 	        		$wagesTable->add($newWages);
 	        	}
         	}
-        	$wagesTable->commit();
+        	$wagesTable->commit();        	
+			$this->setBonus($_POST['month']);
         	$this->redirect('incomeCost');
         }else{
         	$this->error("模板不正确，请检查");
@@ -675,6 +741,8 @@ class AccountingAction extends CommonAction{
         	$eurPmpa = null;
         	$eurShippingFee=0;
         	$productTable=M(C('DB_PRODUCT'));
+        	$kpiSaleRecordTable=M(C('DB_KPI_SALE_RECORD'));
+        	$kpiSaleRecordTable->startTrans();
         	for($i=5;$i<=$highestRow;$i++){
         		$sku = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
         		$transactionType = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
@@ -683,6 +751,29 @@ class AccountingAction extends CommonAction{
         		$amountCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue());
         		$quantity = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
         		$pmanager = $productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_MANAGER'));
+
+        		//检测该记录是否需要保存到销售绩效考核表里
+        		$kpiSaleRecord=$kpiSaleRecordTable->where(array(C('DB_KPI_SALE_RECORD_MARKET_NO')=>$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue()))->find();
+        		if($kpiSaleRecord!=null && $kpiSaleRecord!=false){
+    				if($objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue() == 'Order Payment' && $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue() == 'Product charges'){
+    					$kpiSaleRecord[C('DB_KPI_SALE_RECORD_PRICE')] = $amountCM;
+    					$kpiSaleRecordTable->save($kpiSaleRecord);
+    				}
+    				if($objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue() == 'Order Payment' && $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue() == 'Other' && $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue() == 'Shipping'){
+    					$kpiSaleRecord[C('DB_KPI_SALE_RECORD_SHIPPING_FEE')] = $amountCM;
+    					$kpiSaleRecordTable->save($kpiSaleRecord);
+    				}
+    				if($objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue() == 'Refund'){
+    					$kpiSaleRecord[C('DB_KPI_SALE_RECORD_SHIPPING_FEE')] = $kpiSaleRecord[C('DB_KPI_SALE_RECORD_PRICE')]+$amountCM;
+    					$kpiSaleRecordTable->save($kpiSaleRecord);
+    				}
+    				if($objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue() == 'Shipping services purchased through Amazon' && $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue() == 'Shipping Service Charges' && $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue() == 'Postage for return'){
+    					$kpiSaleRecord[C('DB_KPI_SALE_RECORD_SHIPPING_FEE')] = $kpiSaleRecord[C('DB_KPI_SALE_RECORD_SHIPPING_FEE')]+$amountCM;
+    					$kpiSaleRecordTable->save($kpiSaleRecord);
+    				}
+    			}
+
+
         		if($pmanager==null){
         			$pmanager='Yellow River';
         		}
@@ -711,6 +802,13 @@ class AccountingAction extends CommonAction{
         				$eurTaxCollection = $eurTaxCollection+$amountCM['amount'];
         			}
         		}elseif($transactionType=='Refund' && $paymentType=='Other' && $paymentDetail=='Shipping'){
+        			if($amountCM['currency']=='usd'){
+        				$usdShippingFee = $usdShippingFee+$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurShippingFee = $eurShippingFee+$amountCM['amount'];
+        			}
+        		}elseif($transactionType=='Refund' && $paymentType=='Other' && $paymentDetail=='Return shipping concession'){
         			if($amountCM['currency']=='usd'){
         				$usdShippingFee = $usdShippingFee+$amountCM['amount'];
         			}
@@ -756,6 +854,20 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurTaxCollection = $eurTaxCollection+$amountCM['amount'];
         			}
+        		}elseif($transactionType=='Order Payment' && $paymentType=='Promo rebates' && $paymentDetail==''){
+        			if($amountCM['currency']=='usd'){
+        				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
+        			}
+        		}elseif($transactionType=='Order Payment' && $paymentType=='Promo rebates' && $paymentDetail=='Shipping'){
+        			if($amountCM['currency']=='usd'){
+        				$usdShippingFee = $usdShippingFee+$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurShippingFee = $eurShippingFee+$amountCM['amount'];
+        			}
         		}elseif($transactionType=='Shipping services purchased through Amazon' && $paymentType=='Amazon fees'){
         			if($amountCM['currency']=='usd'){
         				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
@@ -769,6 +881,13 @@ class AccountingAction extends CommonAction{
         			}
         			if($amountCM['currency']=='eur'){
         				$eurShippingFee = $eurShippingFee-$amountCM['amount'];
+        			}
+        		}elseif($transactionType=='Shipping services purchased through Amazon' && $paymentType=='Shipping Service Refunds'){
+        			if($amountCM['currency']=='usd'){
+        				$usdRefund = $usdRefund-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurRefund = $eurRefund-$amountCM['amount'];
         			}
         		}elseif($transactionType=='Shipping services purchased through Amazon' && $paymentType=='Shipping Services - Carrier Adjustments'){
         			if($amountCM['currency']=='usd'){
@@ -791,10 +910,19 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
         			}
-        		}else{
+        		}elseif($transactionType=='Other' && $paymentType=='Other'){
+        			if($amountCM['currency']=='usd'){
+        				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
+        			}
+        		}
+        		else{
         			$this->error('第 '.$i.' 行费用无法确认！');
         		}
         	}
+        	$kpiSaleRecordTable->commit();
         	$eurToUsd=M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTOUSD'));
         	$usdAmazonFee = $usdAmazonFee+$eurAmazonFee*$eurToUsd;
         	$usdTaxCollection = $usdTaxCollection+$eurTaxCollection*$eurToUsd;
@@ -819,12 +947,13 @@ class AccountingAction extends CommonAction{
 	        	$result = $wagesTable->where($wmap)->find();
 	        	if($result !== null && $result !== false){
 	        		$result[C('DB_WAGES_PERFORMANCE')] = $usdPmpa[$key] + $result[C('DB_WAGES_PERFORMANCE')];
+	        		$result[C('DB_WAGES_PERCENT')] = $this->getProductManagerPercent($key, $result[C('DB_WAGES_PERFORMANCE')]);
 	        		$wagesTable->save($result);
 	        	}else{
 	        		$newWages[C('DB_WAGES_NAME')] = C('PRODUCT_MANAGER_NAME')[$key];
 	        		$newWages[C('DB_WAGES_MONTH')] = $_POST['month'];
 	        		$newWages[C('DB_WAGES_PERFORMANCE')] = $usdPmpa[$key];
-	        		$newWages[C('DB_WAGES_PERCENT')] = C('WAGES_PERFORMANCE_PERCENT')[$newWages[C('DB_WAGES_NAME')]];
+	        		$newWages[C('DB_WAGES_PERCENT')] = $this->getProductManagerPercent($key, $newWages[C('DB_WAGES_PERFORMANCE')]);
 	        		$newWages[C('DB_WAGES_BASE')] = C('WAGES_BASE')[$newWages[C('DB_WAGES_NAME')]];
 	        		$wagesTable->add($newWages);
 	        	}
@@ -842,11 +971,48 @@ class AccountingAction extends CommonAction{
         		$newSaleFee[C('DB_SALEFEE_USSWSFLOCAL')]=$usdShippingFee+$eurShippingFee*$eurToUsd;
         		$saleFeeTable->add($newSaleFee);
         	}
-        	$saleFeeTable->commit();
+        	$saleFeeTable->commit();        	
+			$this->setBonus($_POST['month']);
         	$this->redirect('incomeCost');
         }else{
         	$this->error("模板不正确，请检查");
         }
+	}
+
+	private function getProductManagerPercent($manager,$performance){
+		if($manager=='Yangtze'){
+			if($performance<7000){
+				return 0;
+			}elseif ($performance<20000) {
+				return 1.1;
+			}elseif ($performance<30000) {
+				return 1.2;
+			}elseif ($performance<40000) {
+				return 1.3;
+			}elseif ($performance<50000) {
+				return 1.4;
+			}elseif ($performance<60000) {
+				return 1.5;
+			}elseif ($performance<70000) {
+				return 1.6;
+			}elseif ($performance<80000) {
+				return 1.7;
+			}elseif ($performance<90000) {
+				return 1.8;
+			}elseif ($performance<100000) {
+				return 1.9;
+			}else{
+				return 2;
+			}
+		}elseif($manager=='Pearl River'){
+			if($performance>7000){
+				return 1;
+			}else{
+				return 0;
+			}
+		}else{
+			return C('WAGES_PERFORMANCE_PERCENT')[$manager];
+		}
 	}
 
 	private function getSellerIDType($sellerID){
@@ -956,7 +1122,7 @@ class AccountingAction extends CommonAction{
 		}
 	}
 
-	private function getCurrencyAmount($price){
+	public function getCurrencyAmount($price){
 		if(is_numeric($price)){
 			return array('currency'=>'usd','amount'=>$price);
 		}
@@ -975,26 +1141,26 @@ class AccountingAction extends CommonAction{
 		return array('currency'=>null,'amount'=>null);
 	}
 
-	private function verifyGroupOnOrderAnalyzeColumnName(){
-		for($c='A';$c<=max(array_keys(C('verifyGroupOnOrderAnalyzeColumnName')))-1;$c++){
-            if(trim($secondRow[$c]) != C('verifyGroupOnOrderAnalyzeColumnName')[$c]){
+	private function verifyGroupOnOrderAnalyzeColumnName($firstRow){
+		for($c='A';$c<max(array_keys(C('verifyGroupOnOrderAnalyzeColumnName')));$c++){
+            if(trim($firstRow[$c]) != C('verifyGroupOnOrderAnalyzeColumnName')[$c]){
                 return false;
             }      
         }
         return true;
 	}
 
-	private function verifyEbayEnSaleRecordColumnName(){
-		for($c='A';$c<=max(array_keys(C('IMPORT_EBAY_EN_ORDER')))-1;$c++){
-            if(trim($secondRow[$c]) != C('IMPORT_EBAY_EN_ORDER')[$c]){
-                return false;
+	private function verifyEbayEnSaleRecordColumnName($firstRow){
+		for($c='A';$c<max(array_keys(C('IMPORT_EBAY_DE_ORDER')));$c++){
+            if(trim($firstRow[$c]) != C('IMPORT_EBAY_EN_ORDER')[$c]){
+ 				return false;   
             }      
         }
         return true;
 	}
 
-	private function verifyEbayDeSaleRecordColumnName(){
-		for($c='A';$c<=max(array_keys(C('IMPORT_EBAY_DE_ORDER')))-1;$c++){
+	private function verifyEbayDeSaleRecordColumnName($firstRow){
+		for($c='A';$c<max(array_keys(C('IMPORT_EBAY_DE_ORDER')));$c++){
             if(trim($firstRow[$c]) != C('IMPORT_EBAY_DE_ORDER')[$c]){
                 return false;
             }       
@@ -1002,8 +1168,8 @@ class AccountingAction extends CommonAction{
         return true;
 	}
 
-	private function verifyAmazonEnSaleRecordColumnName(){
-		for($c='A';$c<=max(array_keys(C('IMPORT_AMAZON_TV')))-1;$c++){
+	private function verifyAmazonEnSaleRecordColumnName($firstRow){
+		for($c='A';$c<max(array_keys(C('IMPORT_AMAZON_TV')));$c++){
             if(trim($firstRow[$c]) != C('IMPORT_AMAZON_TV')[$c]){
                 return false;
             }       
@@ -1011,8 +1177,8 @@ class AccountingAction extends CommonAction{
         return true;
 	}
 
-	private function verifyGrouponSaleRecordColumnName(){
-		for($c='A';$c<=max(array_keys(C('IMPORT_GROUPON_UNSHIPPED_ORDER')))-1;$c++){
+	private function verifyGrouponSaleRecordColumnName($firstRow){
+		for($c='A';$c<max(array_keys(C('IMPORT_GROUPON_UNSHIPPED_ORDER')));$c++){
             if(trim($firstRow[$c]) != C('IMPORT_GROUPON_UNSHIPPED_ORDER')[$c]){
                 return false;
             }       
@@ -1197,13 +1363,16 @@ class AccountingAction extends CommonAction{
 		}elseif($incomeCost[C('DB_INCOMECOST_USDITEMCOST')]==null ||$incomeCost[C('DB_INCOMECOST_USDITEMCOST')]=='' ||$incomeCost[C('DB_INCOMECOST_USDITEMCOST')]==0){
 			$this->error('vtkg5755的 '.$month.' 的美元售出产品成本查不到！','incomeCost');
 			return false;
-		}elseif($incomeCost[C('DB_INCOMECOST_EURINCOME')]==null ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]=='' ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]==0){
+		}
+		/*vtkg只做美国，不需要检查欧元收入和成本
+		elseif($incomeCost[C('DB_INCOMECOST_EURINCOME')]==null ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]=='' ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]==0){
 			$this->error('vtkg5755的 '.$month.' 的欧元收入查不到！','incomeCost');
 			return false;
 		}elseif($incomeCost[C('DB_INCOMECOST_EURITEMCOST')]==null ||$incomeCost[C('DB_INCOMECOST_EURITEMCOST')]=='' ||$incomeCost[C('DB_INCOMECOST_EURITEMCOST')]==0){
 			$this->error('vtkg5755的 '.$month.' 的欧元售出产品成本查不到！','incomeCost');
 			return false;
-		}elseif($incomeCost[C('DB_INCOMECOST_MARKETFEE')]==null ||$incomeCost[C('DB_INCOMECOST_MARKETFEE')]=='' ||$incomeCost[C('DB_INCOMECOST_MARKETFEE')]==0){
+		}*/
+		elseif($incomeCost[C('DB_INCOMECOST_MARKETFEE')]==null ||$incomeCost[C('DB_INCOMECOST_MARKETFEE')]=='' ||$incomeCost[C('DB_INCOMECOST_MARKETFEE')]==0){
 			$this->error('vtkg5755的 '.$month.' 的ebay费用查不到！','incomeCost');
 			return false;
 		}elseif($incomeCost[C('DB_INCOMECOST_PAYPALFEE')]==null ||$incomeCost[C('DB_INCOMECOST_PAYPALFEE')]=='' ||$incomeCost[C('DB_INCOMECOST_PAYPALFEE')]==0){
@@ -1337,7 +1506,7 @@ class AccountingAction extends CommonAction{
 	private function getManagementOther($month,$dataPara){
 		$ui['subject']='-其他';
 		$map[C('DB_MANAGEMENTFEE_MONTH')] = array('eq',$month);
-		$map[C('DB_MANAGEMENTFEE_SHARE_TYPE')] = array('eq','other');
+		$map[C('DB_MANAGEMENTFEE_PURPOSE')] = array('eq','other');
 		$ui['total']=M(C('DB_MANAGEMENTFEE'))->where($map)->sum(C('DB_MANAGEMENTFEE_AMOUNT'));
 		foreach (C('COOPERATE_SELLERID') as $key => $value) {
 			$ui[$value]=round($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['management_percent']][$value]*$ui['total'],2);
@@ -1384,7 +1553,7 @@ class AccountingAction extends CommonAction{
 		$ui['subject']='-房屋租赁费（年租金/12）';
 		$map[C('DB_MANAGEMENTFEE_MONTH')] = array('eq',$month);
 		$map[C('DB_MANAGEMENTFEE_PURPOSE')] = array('eq','rent');
-		$ui['total']=M(C('DB_MANAGEMENTFEE'))->where($map)->sum(C('DB_MANAGEMENTFEE_AMOUNT'));
+		$ui['total']=M(C('DB_MANAGEMENTFEE'))->where($map)->sum(C('DB_MANAGEMENTFEE_AMOUNT'))+M(C('DB_SALEFEE'))->where(array(C('DB_SALEFEE_MONTH')=>$month))->getField(C('DB_SALEFEE_USSWSTORAGEFEE'))*M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USDTORMB'));
 		foreach (C('COOPERATE_SELLERID') as $key => $value) {
 			$ui[$value]=round($dataPara[C('PROFIT_STATISTIC_SUBJECT_ROW')['management_percent']][$value]*$ui['total'],2);
 			$ui['coSub']=$ui['coSub']+$ui[$value];
@@ -1677,7 +1846,8 @@ class AccountingAction extends CommonAction{
 			$si_company = $wages->where($map)->getField(C('DB_WAGES_SI_COMPANY'));
 			$si_person = $wages->where($map)->getField(C('DB_WAGES_SI_PERSON'));
 			$leave_days = $wages->where($map)->getField(C('DB_WAGES_LEAVE_DAYS'));
-			$wageCostSum = $wageCostSum+$base+$performance*$percent/100*$usdToRmb+$si_company-$base/26*$leave_days;
+			$bonus = $wages->where($map)->getField(C('DB_WAGES_BONUS'));
+			$wageCostSum = $wageCostSum+$base+$performance*$percent/100*$usdToRmb+$si_company-$base/26*$leave_days+$bonus;
 		}
 		return $wageCostSum;		
 	}
@@ -1691,6 +1861,18 @@ class AccountingAction extends CommonAction{
 
 	private function updateSaleFeeSzswPShippingFee($month){
 		M(C('DB_SALEFEE'))->where(array(C('DB_SALEFEE_MONTH')=>$month))->setField(C('DB_SALEFEE_SZSWSF'),$this->getSzswPurchasingShippingFee($month));
+	}
+
+	private function getWarehouse($sellerID,$currency){
+		if($sellerID=='rc-helicar' && $currency=='eur'){
+			return C('winit_de_warehouse');
+		}elseif($sellerID=='rc-helicar' && $currency=='usd'){
+			return C('winit_uswc_warehouse');
+		}elseif($sellerID=='vtkg5755' || $sellerID=='y-zhan816'){
+			return C('SZSW');
+		}else{
+			return C('USSW');
+		}
 	}
 }
 

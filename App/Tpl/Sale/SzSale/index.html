@@ -87,10 +87,17 @@
 							<th><div class="tl">毛利润$</div></th>
 						</if>
 						<th><div class="tl">毛利率</div></th>
-						<th><div class="tl">重量g</div></th>
-						<th><div class="tl">长cm</div></th>
-						<th><div class="tl">宽cm</div></th>
-						<th><div class="tl">高cm</div></th>
+						<if condition="$country eq 'us' ">
+							<th><div class="tl">重量oz</div></th>
+							<th><div class="tl">长in</div></th>
+							<th><div class="tl">宽in</div></th>
+							<th><div class="tl">高in</div></th>
+						<else /> 
+					    	<th><div class="tl">重量g</div></th>
+							<th><div class="tl">长cm</div></th>
+							<th><div class="tl">宽cm</div></th>
+							<th><div class="tl">高cm</div></th>
+						</if>
 					</tr>
 					<volist name="data" id="vo">
 						<tr>
@@ -104,7 +111,7 @@
 						<td><div class="tl">{$vo['global_shipping_way']}</div></td>
 						<td><div class="tl">{$vo['global_shipping_fee']}</div></td>
 						<td><div class="tl">{$vo.cost}</div></td>
-						<td><div class="tl">{$vo[C('DB_SZ_US_SALE_PLAN_PRICE')]}</div></td>
+						<td><div class="tl"><font style="color:#F00;">{$vo[C('DB_SZ_US_SALE_PLAN_PRICE')]}</font></div></td>
 						<td><div class="tl">{$vo.gprofit}</div></td>
 						<td><div class="tl">{$vo.grate}</div></td>
 						<td><div class="tl">{$vo.weight}</div></td>

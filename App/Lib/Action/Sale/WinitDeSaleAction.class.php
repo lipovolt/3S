@@ -375,6 +375,17 @@ class WinitDeSaleAction extends CommonAction{
 		if($salePlanTable==null){
 			$this->error('无法找到匹配的销售表！');
 		}
+		if($usp[C('DB_RC_DE_SALE_PLAN_SUGGEST')]==C('USSW_SALE_PLAN_PRICE_UP') || $usp[C('DB_RC_DE_SALE_PLAN_SUGGEST')]==C('USSW_SALE_PLAN_PRICE_DOWN')){
+			$usp[C('DB_RC_DE_SALE_PLAN_PRICE')] = $usp[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')];
+			$usp[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')]=null;
+			$usp[C('DB_RC_DE_SALE_PLAN_SUGGEST')]=null;
+			$usp[C('DB_RC_DE_SALE_PLAN_LAST_MODIFY_DATE')]=date('Y-m-d H:i:s',time()); 
+			if($usp[C('DB_RC_DE_SALE_PLAN_PRICE_NOTE')]==null){
+				$usp[C('DB_RC_DE_SALE_PLAN_PRICE_NOTE')] =  $usp[C('DB_RC_DE_SALE_PLAN_PRICE')].' '.date('ymd',time());
+			}else{
+				$usp[C('DB_RC_DE_SALE_PLAN_PRICE_NOTE')] =  $usp[C('DB_RC_DE_SALE_PLAN_PRICE_NOTE')].' | '.$usp[C('DB_RC_DE_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+			}
+		}
 		$salePlanTable->save($usp);
 	}
 
@@ -446,28 +457,35 @@ class WinitDeSaleAction extends CommonAction{
 		$startDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period*2);
 		$endDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
 		$lspsq = $this->calWinitDeSaleQuantity($account,$sku,$startDate,$endDate)*$standard_period/$adjust_period;
+		$ainventory = M(C('DB_WINIT_DE_STORAGE'))->where(array(C('DB_WINIT_DE_STORAGE_SKU')=>$sku))->getField(C('DB_WINIT_DE_STORAGE_AINVENTORY'));
+
+		//检查是否需要清货
+		if($asqsq==0){
+			$firstShippingDate = M(C('DB_RESTOCK'))->order('shipping_date asc')->where(array('sku'=>$sku,'warehouse'=>'万邑通德国'))->limit(1)->getField(C('DB_RESTOCK_SHIPPING_DATE'));
+			if(strtotime($firstShippingDate)<(time()-60*60*24*$clear_nod)){
+				$startDate = date('Y-m-d H:i:s',time()-60*60*24*$clear_nod);
+				$clearNodSaleQuantity = $this->calWinitDeSaleQuantity($account,$sku,$startDate);
+				if($clearNodSaleQuantity==0){
+					$sugg=null;
+					$sugg[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
+					$sugg[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_CLEAR');
+					return $sugg;
+				}
+			}			
+		}
 
 		//检查是否需要重新刊登
 		if($asqsq==0){
-			$startDate = date('Y-m-d H:i:s',time()-60*60*24*$relisting_nod);
-			$relistingNodSaleQuantity = $this->calWinitDeSaleQuantity($account,$sku,$startDate);
-			if($relistingNodSaleQuantity==0){
-				$sugg=null;
-				$sugg[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = $cost+$cost*$this->getCostClass($cost)/100;
-				$sugg[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_RELISTING');
-				return $sugg;
-			}
-		}
-
-		//检查是否需要清货清货
-		if($asqsq==0){
-			$startDate = date('Y-m-d H:i:s',time()-60*60*24*$clear_nod);
-			$clearNodSaleQuantity = $this->calWinitDeSaleQuantity($account,$sku,$startDate);
-			if($clearNodSaleQuantity==0){
-				$sugg=null;
-				$sugg[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
-				$sugg[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_CLEAR');
-				return $sugg;
+			$firstShippingDate = M(C('DB_RESTOCK'))->order('shipping_date asc')->where(array('sku'=>$sku,'warehouse'=>'万邑通德国'))->limit(1)->getField(C('DB_RESTOCK_SHIPPING_DATE'));
+			if(strtotime($firstShippingDate)<(time()-60*60*24*$relisting_nod)){
+				$startDate = date('Y-m-d H:i:s',time()-60*60*24*$relisting_nod);
+				$relistingNodSaleQuantity = $this->calWinitDeSaleQuantity($account,$sku,$startDate);
+				if($relistingNodSaleQuantity==0){
+					$sugg=null;
+					$sugg[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = $cost+$cost*$this->getCostClass($cost)/100;
+					$sugg[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_RELISTING');
+					return $sugg;
+				}
 			}
 		}
 
@@ -483,7 +501,7 @@ class WinitDeSaleAction extends CommonAction{
 			$sugg[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_PRICE_UP');
 			return $sugg;
 		}
-		if($diff/$lspsq<-($grfr/100)){
+		if($ainventory>0 && $diff/$lspsq<-($grfr/100)){
 			$sugg=null;
 			if($price-$price*($pcr/100)<$cost){
 				$sugg[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
@@ -573,7 +591,7 @@ class WinitDeSaleAction extends CommonAction{
 		$data = $salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_ID')=>$id))->find();
 		if($data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_RC_DE_SALE_PLAN_SUGGEST')]!=null){
 			$data[C('DB_RC_DE_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
-			if($data[C('DB_RC_DE_SALE_PLAN_ID_SUGGEST')]=='relisting'){
+			if($data[C('DB_RC_DE_SALE_PLAN_SUGGEST')]=='relisting'){
 				$data[C('DB_RC_DE_SALE_PLAN_RELISTING_TIMES')] = intval($data[C('DB_RC_DE_SALE_PLAN_RELISTING_TIMES')])+1;
 			}
 
@@ -584,9 +602,25 @@ class WinitDeSaleAction extends CommonAction{
 			}
 
 			$data[C('DB_RC_DE_SALE_PLAN_PRICE')] = $data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')];
-			$data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = null;
-			$data[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = null;
-			$salePlanTable->save($data);
+			
+
+			$kpiSaleRecorde[C('DB_KPI_SALE_NAME')] = $_SESSION['username'];
+			$kpiSaleRecorde[C('DB_KPI_SALE_SKU')] = $data[C('DB_RC_DE_SALE_PLAN_SKU')];
+			$kpiSaleRecorde[C('DB_KPI_SALE_WAREHOUSE')] = C('winit_de_warehouse');
+			$kpiSaleRecorde[C('DB_KPI_SALE_TYPE')] = $data[C('DB_RC_DE_SALE_PLAN_SUGGEST')];
+			$kpiSaleRecorde[C('DB_KPI_SALE_BEGIN_DATE')] = time();
+			$kpiSaleRecorde[C('DB_KPI_SALE_BEGIN_SQUANTITY')] = M(C('DB_WINIT_DE_STORAGE'))->where(array(C('DB_WINIT_DE_STORAGE_SKU')=>$data[C('DB_RC_DE_SALE_PLAN_SKU')]))->sum(C('DB_WINIT_DE_STORAGE_AINVENTORY'));
+			$map[C('DB_KPI_SALE_SKU')] = array('eq', $kpiSaleRecorde[C('DB_KPI_SALE_SKU')]);
+			$map[C('DB_KPI_SALE_WAREHOUSE')] = array('eq', $kpiSaleRecorde[C('DB_KPI_SALE_WAREHOUSE')]);
+
+			if(M(C('DB_KPI_SALE'))->where($map)->getField(C('DB_KPI_SALE_ID'))!=null){
+				$this->error('仓库： '.$kpiSaleRecorde[C('DB_KPI_SALE_WAREHOUSE')] .' 里的该产品编码：'.$kpiSaleRecorde[C('DB_KPI_SALE_SKU')].' 已经在绩效考核表里，如需重新开始绩效考核请先把重复的记录从绩效考核表里删除。');
+			}else{
+				$data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = null;
+				$data[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = null;
+				$salePlanTable->save($data);
+				M(C('DB_KPI_SALE'))->add($kpiSaleRecorde);
+			}
 		}else{
 			$this->error('无法保存，当前产品没有销售建议');
 		}
@@ -622,7 +656,7 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	//Return the sale plan view model according to the account
-    private function getSalePlanViewModel($account){
+    public function getSalePlanViewModel($account){
     	switch ($account) {
     		case 'rc-helicar':
     			return 'RcDeSalePlanView';
@@ -656,16 +690,16 @@ class WinitDeSaleAction extends CommonAction{
 		$monthlyStorageFee = ($l*$w*$h)/1000000*1.2*30;
 		$itemInOutFee = 0;
 		if($weight>0 And $weight <= 500){
-			$itemInOutFee = 0.17 + 0.04;
+			$itemInOutFee = 0.17 + 0.05;
 		}
 		elseif($weight>500 and $weight <= 1000){
-			$itemInOutFee = 0.24 + 0.05;
+			$itemInOutFee = 0.24 + 0.06;
 		}
 		elseif($weight>1000 and $weight <= 2000){
-			$itemInOutFee = 0.39 + 0.06;
+			$itemInOutFee = 0.48 + 0.09;
 		}
 		elseif($weight>2000 and $weight <= 10000){
-			$itemInOutFee = 0.5 + 0.14;
+			$itemInOutFee = 0.62 + 0.17;
 		}
 		elseif($weight>10000 and $weight <= 20000){
 			$itemInOutFee = 1.05 + 0.2;
@@ -698,7 +732,7 @@ class WinitDeSaleAction extends CommonAction{
 		return round(($l * $w * $h) / 1000000 * 170  / $eurToUsd,2);
 	}
 
-	private function getWinitLocalShippingWay($salePrice,$weight,$l,$w,$h){
+	public function getWinitLocalShippingWay($salePrice,$weight,$l,$w,$h){
 		if($salePrice<13){
 			return $this->getWinitLocalUntrackedShippingWay($weight,$l,$w,$h);
 		}else{
@@ -801,23 +835,39 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	private function calWinitPostSmallFee($weight,$l,$w,$h){
-		if($weight>0 And $weight <= 500 and $l >=10 and $l<=35.3 and $w>=7 and $w<=25 and $h>0 and $h<=2){
-			return 1.67;
+		if($weight>0 And $weight <= 500 and $l<=35.3 and $w<=25 and $h<=2){
+			if($l<10 or $w<7){
+				return 1.67+0.1; //0.1 small parcel packing fee
+			}else{
+				return 1.67;
+			}			
 		}else{
 			return 0;
 		}		
 	}
 
 	private function calWinitPostLargeFee($weight,$l,$w,$h){
-		if($weight>0 And $weight <= 1000 and $l >=10 and $l<=35.3 and $w>=7 and $w<=30 and $h>0 and $h<=15){
+		if($weight>0 And $weight <= 1000 and $l<=35.3 and $w<=30 and $h<=15){
 			if($weight>=0 and $weight<=500){
-				return 2.06;
+				if($l<10 or $w<7){
+					return 2.06+0.1; //0.1 small parcel packing fee
+				}else{
+					return 2.06;
+				}
 			}
 			elseif($weight>500 and $weight<=800){
-				return 2.69;
+				if($l<10 or $w<7){
+					return 2.69+0.1; //0.1 small parcel packing fee
+				}else{
+					return 2.69;
+				}
 			}
 			elseif($weight>800 and $weight<=1000){
-				return 2.76;
+				if($l<10 or $w<7){
+					return 2.76+0.1; //0.1 small parcel packing fee
+				}else{
+					return 2.76;
+				}
 			}			
 		}
 		else{
@@ -826,8 +876,12 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	private function calWinitDPDSmallFee($weight,$l,$w,$h){
-		if($weight>0 And $weight <= 3000 and $l<=50 and $l>=16 and $w>=11 and $h>=2 and ($l + 2 * ($w + $h))<=110){
-			return 3.32;
+		if($weight>0 And $weight <= 3000 and $l<=50 and ($l + 2 * ($w + $h))<=110){
+			if($l<16 or $w<11){
+				return 3.4+0.1; //0.1 small parcel packing fee
+			}else{
+				return 3.4;
+			}
 		}
 		else{
 			return 0;
@@ -835,8 +889,12 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	private function calWinitDPDNormalFee($weight,$l,$w,$h){
-		if($weight>0 And $weight <= 31500 and $l<=175 and $l>=16 and $w>=11 and $h>=2 and ($l + 2 * ($w + $h))<=300){
-			return 3.75;
+		if($weight>0 And $weight <= 31500 and $l<=175 and ($l + 2 * ($w + $h))<=300){
+			if($l<16 or $w<11){
+				return 3.75+0.1; //0.1 small parcel packing fee
+			}else{
+				return 3.75;
+			}
 		}else{
 			return 0;
 		}
@@ -844,7 +902,7 @@ class WinitDeSaleAction extends CommonAction{
 
 	private function calWinitDHLFee($weight,$l,$w,$h){
 		$fee = 0;
-		if($weight>0 And $weight <= 31500 and $l<=200 and $w<=200 and $h<=200 and ($l + 2 * ($w + $h))<=360){
+		if($weight>0 And $weight <= 31500 and $l>=15 and $w>=11 and $h>=1 and $l<=200 and $w<=200 and $h<=200 and ($l + 2 * ($w + $h))<=360){
 			if($weight>0 and $weight<=1000){
 				$fee = 3.28;
 			}elseif($weight>1000 and $weight<=5000){
@@ -1058,7 +1116,7 @@ class WinitDeSaleAction extends CommonAction{
 	                		if($splitSku[0][1]==1){
 	                			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
 	                			$data[$j]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-	                			$data[$j][$firstRow['H']]=$ainventory;
+	                			$data[$j][$firstRow['H']]=$ainventory>0?$ainventory:0;
 	                			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TODE')) == '无' && $ainventory==0 && $iinventory==0){
 	                				$data[$j]['Suggest']='不做的商品，需要下架';
 	                			}else{
@@ -1068,7 +1126,7 @@ class WinitDeSaleAction extends CommonAction{
 	                		}else{
 	                			//Single sku and multiple sale quantity
 	                			$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-	                			$data[$j][$firstRow['H']]=intval($ainventory/$splitSku[0][1]);
+	                			$data[$j][$firstRow['H']]=intval($ainventory/$splitSku[0][1])>0?intval($ainventory/$splitSku[0][1]):0;
 	                			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TODE')) == '无' && $ainventory==0 && $iinventory==0){
 	                				$data[$j]['Suggest']='不做的商品，需要下架';
 	                			}else{
@@ -1102,6 +1160,14 @@ class WinitDeSaleAction extends CommonAction{
                 //find item in stock but not listed
                 $map[C('DB_WINIT_DE_STORAGE_AINVENTORY')] = array('gt',0);
                 $storages=$storageTable->where($map)->select();
+                /*//Check the item is ended manual. If the item in TODO. Then do not add to list.
+                $todoWhere[C('DB_TODO_STATUS')] = array('eq', 0);
+				$todoWhere[C('DB_TODO_TASK')] = array('like', '%'.$account.'销售建议重新刊登：%');		
+				$todo = M(C('DB_TODO'))->where($todoWhere)->getField(C('DB_TODO_TASK'));
+				$todo= str_replace(':', '：', $todo);
+				$todoTask = explode('：', str_replace(',', '，', $todo));
+				$relistSku = explode('，', $todoTask[1]);*/
+
                 foreach ($storages as $key => $value) {
 
                 	$listed=false;
@@ -1119,6 +1185,9 @@ class WinitDeSaleAction extends CommonAction{
                 			$listed=true;
                 		}
                 	}
+                	/*//Check the item is ended manual. If the item in TODO. Then do not add to list.
+                	$waitingRelist = array_search($value[C('DB_SZSTORAGE_SKU')], $relistSku) != false? true: false;
+                	if($listed==false && !$waitingRelist){*/
                 	if($listed==false){
                 		$data[$j][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
                 		$data[$j]['Suggest']="未刊登商品";
@@ -1206,6 +1275,59 @@ class WinitDeSaleAction extends CommonAction{
         $objWriter->save('php://output');
         exit;   
     }
+
+    public function winitDeItemTest(){
+		if($this->isPost()){
+			$p = I('post.price','','htmlspecialchars');
+			$wayToDe = I('post.way-to-de','','htmlspecialchars');
+			$wayToDeFee = $wayToDe=="air"?$this->getWinitAirFirstTransportFee(I('post.weight','','htmlspecialchars'),1,1,1):$this->getWinitSeaFirstTransportFee(I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
+			$shippingWay = $this->getWinitLocalShippingWay(I('post.saleprice','','htmlspecialchars'),I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
+			$shippingFee = $this->getWinitLocalShippingFee(I('post.saleprice','','htmlspecialchars'),I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
+			$wiosFee = $this->calWinitSIOFee(I('post.weight','','htmlspecialchars'),I('post.length','','htmlspecialchars'),I('post.width','','htmlspecialchars'),I('post.height','','htmlspecialchars'));
+			$salePrice = I('post.saleprice','','htmlspecialchars');
+			$testCost = $this->getWinitDeCost($p,0.05,$wiosFee,$wayToDeFee,$shippingFee,$salePrice);
+			$testData = array(
+						'price'=>$p,
+						'de-rate'=>5,
+						'winit-fee'=>$wiosFee,
+						'way-to-de'=>$wayToDe,
+						'way-to-de-fee'=>$wayToDeFee,
+						'local-shipping-way'=>$shippingWay,
+						'local-shipping-fee'=>$shippingFee,						
+						'saleprice'=> $salePrice,						
+						'cost'=>round(($testCost),2),
+						'gprofit'=>round($salePrice-$testCost,2),
+						'grate'=>round(($salePrice-$testCost)/$salePrice*100,2).'%',
+						'weight'=>I('post.weight','','htmlspecialchars'),
+						'length'=>I('post.length','','htmlspecialchars'),
+						'width'=>I('post.width','','htmlspecialchars'),
+						'height'=>I('post.height','','htmlspecialchars')
+					);
+			$this->testData=$testData;
+			$this->display();
+
+		}else{
+			$initData = array(
+						'price'=>0,
+						'de-rate'=>5,
+						'winit-fee'=>0,
+						'way-to-de'=>'sea',
+						'way-to-de-fee'=>0,
+						'local-shipping-way'=>'',
+						'local-shipping-fee'=>0,						
+						'saleprice'=> 0,						
+						'cost'=>0,
+						'gprofit'=>0,
+						'grate'=>'0%',
+						'weight'=>0,
+						'length'=>0,
+						'width'=>0,
+						'height'=>0
+					);
+			$this->testData=$initData;
+			$this->display();
+		}
+	}
 }
 
 ?>

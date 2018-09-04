@@ -62,6 +62,14 @@ class SzSaleAction extends CommonAction{
 			}else{
 				
 				$usp[C('DB_SZ_US_SALE_PLAN_COST')]=$this->calSuggestCost($p[C('DB_SZSTORAGE_SKU')],$account,$country,$usp[C('DB_SZ_US_SALE_PLAN_PRICE')]);
+
+				//Sale Price great than 5 USD/EUR, then register shipping, Otherwise economy shipping.
+				if($usp[C('DB_SZ_US_SALE_PLAN_PRICE')]>5){
+					$usp[C('DB_SZ_US_SALE_PLAN_REGISTER')] = 1;
+				}else{
+					$usp[C('DB_SZ_US_SALE_PLAN_REGISTER')] = 0;
+				}
+
 				$salePlan->save($usp);
 				$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$p[C('DB_SZSTORAGE_SKU')]))->find();
 			}
@@ -84,8 +92,18 @@ class SzSaleAction extends CommonAction{
 					//开始计算该产品的销售建议
 					$suggest=null;
 					$suggest = $this->calSuggest($p[C('DB_SZSTORAGE_SKU')],$account,$country);
-					$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')];
-					$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_SZ_US_SALE_PLAN_SUGGEST')];
+					if($suggest[C('DB_SZ_US_SALE_PLAN_SUGGEST')]==C('SZ_SALE_PLAN_PRICE_UP') || $suggest[C('DB_SZ_US_SALE_PLAN_SUGGEST')]==C('SZ_SALE_PLAN_PRICE_DOWN')){
+						$usp[C('DB_SZ_US_SALE_PLAN_PRICE')]=$suggest[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')];
+						$usp[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+						if($usp[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')]==null){
+							$usp[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')] =  $usp[C('DB_SZ_US_SALE_PLAN_PRICE')].' '.date('ymd',time());
+						}else{
+							$usp[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')] =  $usp[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')].' | '.$usp[C('DB_SZ_US_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+						}
+					}else{
+						$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')];
+						$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_SZ_US_SALE_PLAN_SUGGEST')];
+					}					
 					$salePlan->save($usp);
 				}
 			}
@@ -96,7 +114,7 @@ class SzSaleAction extends CommonAction{
 		import('ORG.Util.Date');// 导入日期类
 		$Date = new Date();
 		$salePlan=M($this->getSalePlanTableName($account,$country));
-		$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$usp[C('DB_SZ_US_SALE_PLAN_SKU')]))->find();
+		$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_ID')=>$id))->find();
 		if($usp == null){
 			$this->addProductToUsp($usp[C('DB_SZ_US_SALE_PLAN_SKU')],$account,$country);
 			$usp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$usp[C('DB_SZ_US_SALE_PLAN_SKU')]))->find();
@@ -125,8 +143,18 @@ class SzSaleAction extends CommonAction{
 				//开始计算该产品的销售建议
 				$suggest=null;
 				$suggest = $this->calSuggest($usp[C('DB_SZ_US_SALE_PLAN_SKU')],$account,$country);
-				$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')];
-				$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_SZ_US_SALE_PLAN_SUGGEST')];
+				if($suggest[C('DB_SZ_US_SALE_PLAN_SUGGEST')]==C('SZ_SALE_PLAN_PRICE_UP') || $suggest[C('DB_SZ_US_SALE_PLAN_SUGGEST')]==C('SZ_SALE_PLAN_PRICE_DOWN')){
+					$usp[C('DB_SZ_US_SALE_PLAN_PRICE')]=$suggest[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')];
+					$usp[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+					if($usp[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')]==null){
+						$usp[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')] =  $usp[C('DB_SZ_US_SALE_PLAN_PRICE')].' '.date('ymd',time());
+					}else{
+						$usp[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')] =  $usp[C('DB_SZ_US_SALE_PLAN_PRICE_NOTE')].' | '.$usp[C('DB_SZ_US_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+					}
+				}else{
+					$usp[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')];
+					$usp[C('DB_SZ_US_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_SZ_US_SALE_PLAN_SUGGEST')];
+				}				
 				$salePlan->save($usp);
 			}
 		}
@@ -243,7 +271,7 @@ class SzSaleAction extends CommonAction{
 		$data = $table->where(array(C('DB_SZ_US_SALE_PLAN_ID')=>$id))->find();
 		if($data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] !=null){
 			$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
-			if($data[C('DB_SZ_US_SALE_PLAN_ID_SUGGEST')]=='relisting'){
+			if($data[C('DB_SZ_US_SALE_PLAN_SUGGEST')]=='relisting'){
 				$data[C('DB_SZ_US_SALE_PLAN_RELISTING_TIMES')] = intval($data[C('DB_SZ_US_SALE_PLAN_RELISTING_TIMES')])+1;
 			}
 
@@ -254,9 +282,24 @@ class SzSaleAction extends CommonAction{
 			}
 
 			$data[C('DB_SZ_US_SALE_PLAN_PRICE')] = $data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')];
-			$data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
-			$data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = null;
-			$table->save($data);
+
+			$kpiSaleRecorde[C('DB_KPI_SALE_NAME')] = $_SESSION['username'];
+			$kpiSaleRecorde[C('DB_KPI_SALE_SKU')] = $data[C('DB_SZ_US_SALE_PLAN_SKU')];
+			$kpiSaleRecorde[C('DB_KPI_SALE_WAREHOUSE')] = C('SZSW');
+			$kpiSaleRecorde[C('DB_KPI_SALE_TYPE')] = $data[C('DB_SZ_US_SALE_PLAN_SUGGEST')];
+			$kpiSaleRecorde[C('DB_KPI_SALE_BEGIN_DATE')] = time();
+			$kpiSaleRecorde[C('DB_KPI_SALE_BEGIN_SQUANTITY')] = M(C('DB_SZSTORAGE'))->where(array(C('DB_SZSTORAGE_SKU')=>$data[C('DB_SZ_US_SALE_PLAN_SKU')]))->sum(C('DB_SZSTORAGE_AINVENTORY'));
+			$map[C('DB_KPI_SALE_SKU')] = array('eq', $kpiSaleRecorde[C('DB_KPI_SALE_SKU')]);
+			$map[C('DB_KPI_SALE_WAREHOUSE')] = array('eq', $kpiSaleRecorde[C('DB_KPI_SALE_WAREHOUSE')]);
+
+			if(M(C('DB_KPI_SALE'))->where($map)->getField(C('DB_KPI_SALE_ID'))!=null){
+				$this->error('仓库： '.$kpiSaleRecorde[C('DB_KPI_SALE_WAREHOUSE')] .' 里的该产品编码：'.$kpiSaleRecorde[C('DB_KPI_SALE_SKU')].' 已经在绩效考核表里，如需重新开始绩效考核请先把重复的记录从绩效考核表里删除。');
+			}else{
+				$data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
+				$data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = null;
+				$table->save($data);
+				M(C('DB_KPI_SALE'))->add($kpiSaleRecorde);
+			}
 		}else{
 			$this->error('无法保存，当前产品没有销售建议');
 		}
@@ -307,8 +350,7 @@ class SzSaleAction extends CommonAction{
 		$data[C('DB_SZ_US_SALE_PLAN_REGISTER')]=$register;
 		$salePlan->save($data);
 		$salePlan->commit();
-
-		$this->getSuggestHandleSingle($account,$country, $id);
+		$this->getSuggestHandleSingle($account,$country,$obj);
 		$this->success('保存成功！', U('suggest',array('account'=>$account,'country'=>$country,'kw'=>$kw,'kwv'=>$kwv)));
 	}
 
@@ -437,12 +479,13 @@ class SzSaleAction extends CommonAction{
 			return $this->getSzUsSw($weight,$l,$w,$h);
 		}*/
 
-		//计算出运德深圳发美国的最低运费方式
+		/*//计算出运德深圳发美国的最低运费方式
 		if($register || $register ==1){
 			return "运德南京EUB";
 		}else{
 			return $this->getWedoSzUsSw($weight,$l,$w,$h);
-		}
+		}*/
+		return $this->calSpeedPAKUSStandardWay($weight,$l,$w,$h);
 	}
 
 	private function getSzUsShippingFee($weight,$l,$w,$h,$register){
@@ -453,15 +496,43 @@ class SzSaleAction extends CommonAction{
 			return $this->getSzUsSf($weight,$l,$w,$h);
 		}*/
 
-		//计算出运德深圳发美国的最低运费
+		/*//计算出运德深圳发美国的最低运费
 		if($register || $register==1){
 			$fee = $this->calWedoNjEubFee($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
 		}else{
 			$fee = $this->getWedoSzUsSf($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
+		}*/
+		return $this->calSpeedPAKUSStandardFee($weight,$l,$w,$h);
+	}
+
+	private function calSpeedPAKUSStandardWay($weight,$l,$w,$h){
+		if($weight>31500 || $l>66 || ($l+2*($w+$h))>330){
+			return 'No way';
+		}else{
+			return "SpeedPAK Standard";
 		}
-		
+	}
+
+	private function calSpeedPAKUSStandardFee($weight,$l,$w,$h){
+		if($weight>31500 || $l>66 || ($l+2*($w+$h))>330){
+			return 65536;
+		}elseif ($weight<66) {
+			return 13+66*0.083;
+		}elseif ($weight>=66 && $weight<=100) {
+			return 13+$weight*0.083;
+		}elseif ($weight>100 && $weight<=200) {
+			return 13+$weight*0.083;
+		}elseif ($weight>200 && $weight<=500) {
+			return 12+$weight*0.078;
+		}elseif ($weight>500 && $weight<=2000) {
+			return 12+$weight*0.073;
+		}elseif ($weight>2000 && $weight<=31500) {
+			return 12+$weight*0.067;
+		}else{
+			return 65536;
+		}
 	}
 
 	private function getSzUsRsw($weight,$l,$w,$h){
@@ -646,10 +717,10 @@ class SzSaleAction extends CommonAction{
 	private function calWedoNjEubFee($weight,$l,$w,$h){
 		if($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
 			if($weight<=200){
-				return $weight<50?(9+50*0.08):(9+$weight*0.08);
+				return $weight<50?(10+50*0.08):(10+$weight*0.08);
 			}
 			else{
-				return 9+$weight*0.075;
+				return 10+$weight*0.075;
 			}
 		}
 		else{
@@ -702,11 +773,25 @@ class SzSaleAction extends CommonAction{
 			return $this->getSzDeSw($weight,$l,$w,$h);
 		}*/
 
-		//计算出当前合作物流的深圳发德国发货方式
+		/*//计算出当前合作物流的深圳发德国发货方式
 		if($register||$register==1){
 			return "运德德国小包（新加坡）挂号";
 		}else{
 			return "运德德国小包（新加坡）平邮";
+		}*/
+		if($register||$register==1){
+			if($weight>2000 || $l>60 || ($l+$w+$h)>90){
+				return "No way";
+			}else{
+				return "SpeedPAK Standard";
+			}
+			
+		}else{
+			if($weight>2000 || $l>60 || ($l+$w+$h)>90){
+				return "No way";
+			}else{
+				return "SpeedPAK Economy";	
+			}
 		}
 	}
 
@@ -718,13 +803,40 @@ class SzSaleAction extends CommonAction{
 			return $this->getSzDeSf($weight,$l,$w,$h);
 		}*/
 
-		//计算出当前合作物流的深圳发德国发货运费
+		/*//计算出当前合作物流的深圳发德国发货运费
 		if($register||$register==1){
 			$fee=$this->calWedoHDRFee($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
 		}else{
 			$fee=$this->calWedoHDFee($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
+		}*/
+		if($register||$register==1){
+			$fee=$this->calSpeedPAKStandardFee($weight,$l,$w,$h);
+			return $fee==0?65536:$fee;
+		}else{
+			$fee=$this->calSpeedPAKEconomyFee($weight,$l,$w,$h);
+			return $fee==0?65536:$fee;
+		}
+	}
+
+	private function calSpeedPAKStandardFee($weight,$l,$w,$h){
+		if($weight>2000 || $l>60 || ($l+$w+$h)>90){
+			return 65536;
+		}elseif ($weight>0 && $weight<=400) {
+			return 14.5+$weight*0.0767;
+		}elseif ($weight>400 && $weight<=2000) {
+			return 20.2+$weight*0.0484;
+		}
+	}
+
+	private function calSpeedPAKEconomyFee($weight,$l,$w,$h){
+		if($weight>2000 || $l>60 || ($l+$w+$h)>90){
+			return 65536;
+		}elseif ($weight>0 && $weight<=220) {
+			return 7.3+$weight*0.0747;
+		}elseif ($weight>220 && $weight<=2000) {
+			return 11.8+$weight*0.0484;
 		}
 	}
 
@@ -854,7 +966,7 @@ class SzSaleAction extends CommonAction{
 
 	private function calWedoHDRFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 14.8+64.71*$weight/1000;
+			return 16.52+74.2*$weight/1000;
 		}
 		else{
 			return 0;
@@ -864,7 +976,7 @@ class SzSaleAction extends CommonAction{
 	//运德德国小包（香港）平邮
 	private function calWedoHDFee($weight,$l,$w,$h){
 		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 2.36+86.76*$weight/1000;
+			return 3.66+110.5*$weight/1000;
 		}
 		else{
 			return 0;
@@ -1077,10 +1189,18 @@ class SzSaleAction extends CommonAction{
         	
         	$data[$key]['gprofit']=round($data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]-$data[$key]['cost'],2);
         	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]*100,2).'%';
-        	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')],2);
-        	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')],2);
-        	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')],2);
-        	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')],2);
+        	if($country=='us'){
+        		$data[$key]['weight']=round($value[C('DB_PRODUCT_PWEIGHT')]*0.0352740,2);
+	        	$data[$key]['length']=round($value[C('DB_PRODUCT_PLENGTH')]*0.3937008,2);
+	        	$data[$key]['width']=round($value[C('DB_PRODUCT_PWIDTH')]*0.3937008,2);
+	        	$data[$key]['height']=round($value[C('DB_PRODUCT_PHEIGHT')]*0.3937008,2);
+        	}else{
+        		$data[$key]['weight']=round($value[C('DB_PRODUCT_PWEIGHT')],2);
+	        	$data[$key]['length']=round($value[C('DB_PRODUCT_PLENGTH')],2);
+	        	$data[$key]['width']=round($value[C('DB_PRODUCT_PWIDTH')],2);
+	        	$data[$key]['height']=round($value[C('DB_PRODUCT_PHEIGHT')],2);
+        	}
+        	
         }
         $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
         $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
@@ -1106,7 +1226,7 @@ class SzSaleAction extends CommonAction{
     }
 
     //Return the sale plan table view model name according to the account
-    private function getSalePlanViewModelName($account,$country){
+    public function getSalePlanViewModelName($account,$country){
     	if($account=="vtkg5755" && $country=="us")
     		return "SzUsSalePlanView";
     	elseif($account=="vtkg5755" && $country=="de")
@@ -1363,7 +1483,8 @@ class SzSaleAction extends CommonAction{
             				}
             			}
             		}
-                	if($countryOfItem==$_POST['updateType'] || ($countryOfItem=='eBayMotors' && $_POST['updateType']=='US')){
+            		$listing4OtherWarehouse = explode('_', $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
+                	if(($countryOfItem==$_POST['updateType'] || ($countryOfItem=='eBayMotors' && $_POST['updateType']=='US'))&& count($listing4OtherWarehouse)==1){
 
                 		$data[$j][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
 	        			$data[$j][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
@@ -1379,46 +1500,108 @@ class SzSaleAction extends CommonAction{
 
 	                	
 	            		if($product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!=null && ($product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无' || $product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无')){
-	            			$data[$j][$firstRow['H']]=30;
+	            			$data[$j][$firstRow['H']]=50;
+	            			
+							/*//按照实际库存更新在线listing数量。
+	            			$data[$j][$firstRow['H']]=$storageTable->where(array(C('DB_SZSTORAGE_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_SZSTORAGE_AINVENTORY'))>0?$storageTable->where(array(C('DB_SZSTORAGE_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_SZSTORAGE_AINVENTORY')):0;*/
 	            		}	
 	            		$salePlan=$salePlanTables[$countryOfItem]->where(array('sku'=>$data[$j][$firstRow['K']]))->find();
 	            		$data[$j]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
 	                	$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+	                	/*
+						德国站不允许刊登22欧元以上物品，所以售价拆分到运费里一部分。这类产品不能根据系统价格自动修改售价。
 	                	if($account !='vtkg5755' || ($account=='vtkg5755' &&  !$this->szFxtPriceException($data[$j][$firstRow['K']]))){
 	                		$data[$j][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
-	                	}
+	                	}*/
+	                	$data[$j][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
 	                	$j++;
                 	}               	                
                 }
-                //find item in stock but not listed
+                //find item in stock but not listed without excepted sku, that can not be sold on the market.
+                if($_POST['updateType']=='US'){
+                	$map[C('DB_SZSTORAGE_SKU')] = array('not in', $this->szFxtUsException());
+                }                
                 $storages=$storageTable->where($map)->select();
 				$countOfData=count($data);
-                foreach ($storages as $key => $value) { 
-                	if($_POST['updateType']=='US'){
-                		$toCountry = 'DB_PRODUCT_TOUS';
-                	}elseif($_POST['updateType']=='Germany'){
-                		$toCountry = 'DB_PRODUCT_TODE';
+				/*//Check the item is ended manual. If the item in TODO. Then do not add to list.
+				$todoWhere[C('DB_TODO_STATUS')] = array('eq', 0);
+				if($_POST['updateType']=='Germany'){
+					$todoWhere[C('DB_TODO_TASK')] = array('like', '%'.$account.'德国销售建议重新刊登：%');
+				}
+				if($_POST['updateType']=='US'){
+					$todoWhere[C('DB_TODO_TASK')] = array('like', '%'.$account.'美国销售建议重新刊登：%');
+				}		
+				$todo = M(C('DB_TODO'))->where($todoWhere)->getField(C('DB_TODO_TASK'));
+				$todo= str_replace(':', '：', $todo);
+				$todoTask = explode('：', str_replace(',', '，', $todo));
+				$relistSku = explode('，', $todoTask[1]);*/
+                foreach ($storages as $key => $value) {
+                	//Check weight and dimesion of the parcel, if the weight and dimension exceeds the limit, then do not add the item to list
+                	$pweight = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_PWEIGHT'));
+                	$plength = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_PLENGTH'));
+                	$pwidth = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_PWIDTH'));
+                	$pheight = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C('DB_PRODUCT_PHEIGHT'));
+                	//weight limit 2000g
+                	$weightLimit = $pweight>2000?false:true;
+                	//dimension limit                 	
+                	if($pwidth == $pheight){
+                		//cylinder parcel l+2*w<104cm AND l<=90cm
+                		if($plength<=90 && ($plength+2*$pwidth)<104){
+                			$sizeLimit = true;
+                		}else{
+                			$sizeLimit = false;
+                		}
+                	}else{
+                		//square parcel l+w+h<=90cm AND L<=60cm AND l*w>100cm²
+                		if($plength<=60 && ($plength+$pwidth+$pheight)<=90 && $plength*$pwidth>100){
+                			$sizeLimit = true;
+                		}else{
+                			$sizeLimit = false;
+                		}
                 	}
-                	            	
-                	$active = ($product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C($toCountry))!='无' || $value[C('DB_SZSTORAGE_AINVENTORY')]>0);
-            		if($active){
-            			$listed=false;
-            			for ($i=0;$i<$countOfData;$i++) {
-	                		if($data[$i][$firstRow['K']]==$value[C('DB_WINIT_DE_STORAGE_SKU')]){
-	                			$listed=true;
-	                			break;
-	                		}
+                	/*//Check the item is ended manual. If the item in TODO. Then do not add to list.
+                	$waitingRelist = array_search($value[C('DB_SZSTORAGE_SKU')], $relistSku) != false? true: false;
+
+                	if($weightLimit&&$sizeLimit&&!$waitingRelist){*/
+                	if($weightLimit&&$sizeLimit){
+                		if($_POST['updateType']=='US'){
+	                		$toCountry = 'DB_PRODUCT_TOUS';
+	                	}elseif($_POST['updateType']=='Germany'){
+	                		$toCountry = 'DB_PRODUCT_TODE';
 	                	}
-	                	if($listed==false){
-	                		$data[$j][$firstRow['D']]=$_POST['updateType'];
-	                		$data[$j][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
-	                		$data[$j]['Suggest']="未刊登商品";
-	                		$j++;
-	                	}
-            		}
+
+	                	$active = ($product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_SZSTORAGE_SKU')]))->getField(C($toCountry))!='无' && $value[C('DB_SZSTORAGE_AINVENTORY')]>0);
+	            		if($active){
+	            			/*$listed=false;
+	            			for ($i=0;$i<$countOfData;$i++) {
+		                		if($data[$i][$firstRow['K']]==$value[C('DB_WINIT_DE_STORAGE_SKU')]){
+		                			$listed=true;
+		                			break;
+		                		}
+		                	}*/
+		                	if(!$this->in_listedItem($value[C('DB_WINIT_DE_STORAGE_SKU')],$data)){
+		                		$data[$j][$firstRow['D']]=$_POST['updateType'];
+		                		$data[$j][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
+		                		$data[$j]['Suggest']="未刊登商品";
+		                		$j++;
+		                	}
+	            		}
+                	}	
                 }
+
+                
                 if($_POST['updateType']=='Germany'){
 	            	$excelCellName[0] = 'Action(SiteID=Germany|Country=CN|Currency=EUR|Version=941)';
+	            	//添加深圳仓德国站可以销售的产品
+	                $validSkus = array('1597','1456.02','1664','1666','1788.01','1837.02','1857.02','1866.02','1960.02','1961.02','2012.02','1997.02','1996.02',);
+	                foreach ($validSkus as $vsKey => $vaValue) {
+	                	if(!$this->in_listedItem($vaValue,$data)){
+	                		$data[$j][$firstRow['D']]=$_POST['updateType'];
+		            		$data[$j][$firstRow['K']]=$vaValue;
+		            		$data[$j]['Suggest']="未刊登商品";
+		            		$j++;
+	                	}	                	
+	                }
 	            }
 	            if($_POST['updateType'] == 'US'){
 	            	$excelCellName[0] = 'Action(SiteID=US|Country=CN|Currency=USD|Version=585|CC=ISO-8859-1)';
@@ -1448,8 +1631,13 @@ class SzSaleAction extends CommonAction{
 		$exception = array(
 			'1076.01','1082','1111','1154','1181.02','1225','1234','1252','1254','1256','1259.01','1274.01','1347','1359','1362','1369','1370.01','1370.02','1375','1376','1412.02','1412.03','1412.04','1415','1424','1431','1432.01','1432.02','1433','1440','1512','1519','1544','1546.01','1546.02','1546.03','1549','1565','1585.01','1585.02','1593','1597','1602','1604','1608.04','1608.05','1621','1666','1681','1692','1704','1724','1764.03','1765.01','1765.02'
 		);
-		return in_array($sku, $exception);
-		
+		return in_array($sku, $exception);	
+	}
+
+
+	//sku can not be sold on the ebay.com from sz warehouse
+	private function szFxtUsException(){
+		return array('1517','1588');
 	}
 
     private function getSalePlanTableNames($account){
@@ -1517,6 +1705,23 @@ class SzSaleAction extends CommonAction{
         $objWriter->save('php://output');
         exit;   
     }
+
+    private function in_listedItem($sku, $listedItem) {   
+	    foreach($listedItem as $item) {   
+	        if(!is_array($item)) {   
+	            if ($item == $sku) {  
+	                return true;  
+	            } else {  
+	                continue;   
+	            }  
+	        }else{
+	        	if(in_array($sku, $item)) {  
+		            return true;      
+		        }
+	        }   
+	    }   
+	    return false;   
+	}
 }
 
 ?>

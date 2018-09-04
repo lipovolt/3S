@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>销售绩效表</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>待办事项</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/todo.html" />	
+			</div>
+		</div>
+	<div class="content">
+<!-- 主页面开始  -->
+<div id="WarehouseOutbound" class="main">
+
+<!--产品列表-->
+<div class="block-outer">
+	<form name="search_product" id="search_product" action="{:U('Kpi/Kpi/kpiSaleSearch')}" method="POST">
+		<div class="search-area">
+					<div class="item">
+						<div class="form-group">
+							<label for="keyword" class="control-label">关键字</label>
+							<div class="control-wrap">
+								<select name="keyword" id="keyword" data-value="">
+									<if condition="($keyword eq 'sku')"> 
+										<option value="{:C('DB_KPI_SALE_SKU')}" selected="">产品编码</option>
+										<option value="{:C('DB_KPI_SALE_WAREHOUSE')}">仓库</option>
+										<option value="{:C('DB_KPI_SALE_TYPE')}" >类型</option>
+									<elseif condition="$keyword eq 'warehouse'"/>
+										<option value="{:C('DB_KPI_SALE_SKU')}">产品编码</option>
+										<option value="{:C('DB_KPI_SALE_WAREHOUSE')}" selected="">仓库</option>
+										<option value="{:C('DB_KPI_SALE_TYPE')}">类型</option>
+									<else /> 
+										<option value="{:C('DB_KPI_SALE_SKU')}">产品编码</option>
+										<option value="{:C('DB_KPI_SALE_WAREHOUSE')}">仓库</option>
+										<option value="{:C('DB_KPI_SALE_TYPE')}" selected="">类型</option>
+									</if>
+								</select>
+							</div>
+							<div class="control-wrap">
+								<input type="text" class="form-control"  name="keywordValue" id="keywordValue" value="{$keywordValue}">
+							</div>
+						</div>
+						<button class="btn btn-s btn-blue" onClick="search_product.submit();"><span>查询</span></button>
+					</div>			
+				</div>
+    </form>	
+    <form name="form" id="search_product" action="#" method="POST">
+		<table  id="warehouseProduct" class="tablelist">              
+			
+				<tr>
+					<th>名字</th>
+					<th>产品编码</th>
+					<th>仓库</th>
+					<th>类型</th>
+					<th>起始日期</th>
+					<th>起始库存</th>
+					<th>销售数量</th>
+					<th>平均利润率</th>
+					<th>操作</th>
+				</tr> 
+
+				<volist name="sales" id="vo">
+					
+					<tr>
+					<td>
+						<label>{$vo[C('DB_KPI_SALE_NAME')]}</label>
+						<input type="hidden" id="id" name="id" value="{$vo[C('DB_KPI_SALE_ID')]}" readonly=""></input>
+					</td>
+					<td><label>{$vo[C('DB_KPI_SALE_SKU')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_WAREHOUSE')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_TYPE')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_BEGIN_DATE')]|date='Y-m-d',###}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_BEGIN_SQUANTITY')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_SALE_QUANTITY')]}</label></td>
+					<td><label>{$vo[C('DB_KPI_SALE_AVERAGE_PROFIT')]*100|number_format=###, 2, '.', ''}%</label></td>
+					<td>
+						<a href="{:U('Kpi/Kpi/kpiSaleDetail',array('id'=>$vo['id']))}">详细</a>
+						<a href="{:U('Kpi/Kpi/kpiSaleEdit',array('id'=>$vo['id']))}">编辑</a>
+						<a class="btn-blue btn-s" href="{:U('Kpi/Kpi/kpiSaleDelete',array('id'=>$vo['id']))}"
+								onclick="
+									if(confirm('确定要删除吗?')){
+										return true;
+									}else{
+										return false;
+									}
+									">删除
+							</a>
+					</td>
+					</tr>
+					
+				</volist>	
+		</table>
+	</form>
+</div>
+
+</div>
+</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

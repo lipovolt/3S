@@ -116,22 +116,22 @@
 													<option value="">请选择状态</option>
 													<option value="已发货" selected>已发货</option>
 													<option value="待发货">待发货</option>
-													<option value="部分发货">部分发货</option>
+													<option value="延迟发货">延迟发货</option>
 												<elseif condition="($restockOrder[C('DB_RESTOCK_STATUS')] eq '待发货')"/>
 													<option value="">请选择状态</option>
 													<option value="已发货">已发货</option>
 													<option value="待发货" selected>待发货</option>
-													<option value="部分发货">部分发货</option>
-												<elseif condition="($restockOrder[C('DB_RESTOCK_STATUS')] eq '部分发货')"/>
+													<option value="延迟发货">延迟发货</option>
+												<elseif condition="($restockOrder[C('DB_RESTOCK_STATUS')] eq '延迟发货')"/>
 													<option value="">请选择状态</option>
 													<option value="已发货">已发货</option>
 													<option value="待发货">待发货</option>
-													<option value="部分发货" selected>部分发货</option>
+													<option value="延迟发货" selected>延迟发货</option>
 												<else /> 
 													<option value="" selected>请选择状态</option>
 													<option value="已发货">已发货</option>
 													<option value="待发货">待发货</option>
-													<option value="部分发货">部分发货</option>
+													<option value="延迟发货">延迟发货</option>
 												</if>
 											</select>
 										</div>

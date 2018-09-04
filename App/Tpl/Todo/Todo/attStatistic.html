@@ -53,11 +53,13 @@
 					<table id="tablelist" class="tablelist">
 						<tr>
 							<th><div class="tl">名字</div></th>
+							<th><div class="tl">加班时长</div></th>
 							<th><div class="tl">工作总时长</div></th>
 						</tr>
 						<volist name="data" id="vo">
 							<tr>
 								<td><div class="tl">{$vo['name']}</div></td>
+								<td><div class="tl">{$vo['overtime']}</div></td>
 								<td><div class="tl">{$vo['hour']}</div></td>
 							</tr>
 						</volist>

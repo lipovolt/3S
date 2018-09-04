@@ -74,6 +74,7 @@
 											<p>ebay未发货订单： ebay->orders, 导出的ebay未发货订单是CVS文件，需要转换成XLS文件，文件内容无需修改</p>
 											<p>amazon未发货订单： Orders->order reports->Unshipped orders->Request report->Download 下载的是txt格式文件，需要用excel另存为xls文件，其他无需修改。</p>
 											<p>groupon未发货订单： groupon->Orders->Postage required->Order CSV, 下载的是CSV格式文件，需要用excel另存为xls文件，其他无需修改。</p>
+											<p>Amazon FBA 订单： Report->Fullfillment->Sales->Amazon Fullfillment Shipments->Request Download, 下载的是CSV格式文件，需要用excel另存为xls文件，其他无需修改。</p>
 											<div >
 												<form action="{:U('Ussw/Outbound/importUOOHandel')}" method="post" enctype="multipart/form-data" onsubmit="return check()">
 												 	<div>
@@ -83,6 +84,7 @@
 																<option value="amazon">amazon</option>
 																<option value="ebay">ebay</option>
 																<option value="groupon">groupon</option>
+																<option value="amazon_fba">amazon FBA</option>
 														</select>
 														<select2></select2>
 													<script>
@@ -104,6 +106,12 @@
 													         $.get('20160911.php',null,function(data){
 													             $("select2").empty();
 													             $("select2").append("<label>账号</label><select name='sellerID' id='sellerID'><option>g-lipovolt</option></select>");
+													         })
+													     }
+													     if(id=="amazon_fba"){
+													         $.get('20160911.php',null,function(data){
+													             $("select2").empty();
+													             $("select2").append("<label>账号</label><select name='sellerID' id='sellerID'><option>lipovolt</option></select>");
 													         })
 													     }
 													     if(id==""){

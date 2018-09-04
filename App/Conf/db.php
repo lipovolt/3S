@@ -94,6 +94,38 @@ return array(
 	'DB_PRODUCT_EBAY_DE_PRICE_LOWEST' => 'ebay_de_cheapest',
 	'DB_PRODUCT_PURCHASE_LINK' => 'purchase_link',
 
+	//product_prohibit
+	/*
+	create table if not exists `3s_product_prohibit`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`product_id` smallint(6) default null,
+	`seller_id` smallint(6) default null,
+	`prohibit` tinyint(1) default 0
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_PRODUCT_PROHIBIT' => 'product_prohibit', 
+	'DB_PRODUCT_PROHIBIT_ID' => 'id',
+	'DB_PRODUCT_PROHIBIT_PRODUCT_ID' => 'product_id', 
+	'DB_PRODUCT_PROHIBIT_SELLER_ID' => 'seller_id',
+	'DB_PRODUCT_PROHIBIT_PROHIBIT' => 'prohibit',
+
+
+	//product_pack_requirement
+	/*
+	create table if not exists `3s_product_pack_requirement`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`product_id` smallint(6) default null,
+	`warehouse` varchar(20) default null,
+	`requirement` varchar(100) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_PRODUCT_PACK_REQUIREMENT' => 'product_pack_requirement', 
+	'DB_PRODUCT_PACK_REQUIREMENT_ID' => 'id',
+	'DB_PRODUCT_PACK_REQUIREMENT_PRODUCT_ID' => 'product_id', 
+	'DB_PRODUCT_PACK_REQUIREMENT_WAREHOUSE' => 'warehouse', 
+	'DB_PRODUCT_PACK_REQUIREMENT_REQUIREMENT' => 'requirement',
+
+
 	//session
 	/*创建session表
     CREATE TABLE `3s_session` (
@@ -117,7 +149,11 @@ return array(
 	    `loginip` varchar(30) not null,
 	    `logintime` int(10) unsigned not null,
 	    `lock` tinyint(1) default 0,
-	    `email` varchar(30) default null
+	    `email` varchar(30) default null,
+	    `position` varchar(30) default null,
+	    `lunch_break` tinyint unsigned default 60,
+	    `basic_wage` int(10) unsigned default null,
+	    `performace_percent` decimal(5,2) default null
 	    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;        
     */
 	'DB_3S_USER' => 'user',
@@ -127,7 +163,11 @@ return array(
 	'DB_3S_USER_LOGINIP' => 'loginip',
 	'DB_3S_USER_LOGINTIME' => 'logintime',
 	'DB_3S_USER_LOCK' => 'lock',
-	'DB_3s_USER_EMAIL' => 'email',
+	'DB_3S_USER_EMAIL' => 'email',
+	'DB_3S_USER_POSITION' => 'position', //主管，员工
+	'DB_3S_USER_LUNCH_BREAK' => 'lunch_break', //分钟
+	'DB_3S_USER_BASIC_WAGE' => 'basic_wage',
+	'DB_3S_USER_PERFOMANCE_PERCENT' => 'performace_percent',
 
 	//us_inventory
 	'DB_US_INVENTORY' => 'us_inventory',
@@ -171,7 +211,8 @@ return array(
 	`length` decimal(10,2) default 0,
 	`width`  decimal(10,2) default 0,
 	`height`  decimal(10,2) default 0
-	)ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	)ENGINE=MyISAM  DEFAULT CHARSET=utf
+	8;
 	*/
 	'DB_USSW_INBOUND_PACKAGE' => 'ussw_inbound_package',
 	'DB_USSW_INBOUND_PACKAGE_ID' => 'id',
@@ -187,7 +228,7 @@ return array(
 	//ussw_inbound_item
 	/*创建美国自建仓入库产品明细表
     create table if not exists `3s_ussw_inbound_item` (
-    `id` smallint(6) unsigned primary key not null auto_increment,
+    `id` smallint(10) unsigned primary key not null auto_increment,
     `inbound_id` smallint(6),
     `package_number` varchar(10) default null,
     `restock_id` smallint(6),
@@ -208,7 +249,7 @@ return array(
 	//ussw_outbound
 	/*创建美国仓出库表
 	create table if not exists `3s_ussw_outbound`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`market` varchar(10) default null,
 	`market_no` varchar(20) default null,
 	`status` varchar(10) default null,
@@ -254,8 +295,8 @@ return array(
 	/*
 	创建美国出库单产品明细表
 	create table if not exists `3s_ussw_outbound_item`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
-	`outbound_id` smallint(6),
+	`id` smallint(10) unsigned primary key not null auto_increment,
+	`outbound_id` smallint(10),
 	`sku` varchar(10) default null,
 	`position` varchar(10) default null,
 	`quantity` smallint(3) default 0,
@@ -305,11 +346,102 @@ return array(
 	'DB_USSTORAGE_REMARK' => 'remark',
 	'DB_USSTORAGE_SALE_STATUS' => 'sale_status', //待下架，已下架, Null
 
+	//amazon_us_storage
+	/*
+	CREATE TABLE IF NOT EXISTS `3s_amazon_us_storage` (
+	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
+	  `sku` varchar(15) NOT NULL,
+	  `cinventory` smallint(6) DEFAULT 0,
+	  `ainventory` smallint(6) DEFAULT 0,
+	  `oinventory` smallint(6) DEFAULT 0,
+	  `iinventory` smallint(6) DEFAULT 0,
+	  `csales` smallint(6) DEFAULT 0,
+	  `last_restock_time` datetime
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
+	'DB_AMAZON_US_STORAGE' => 'amazon_us_storage',
+	'DB_AMAZON_US_STORAGE_ID' => 'id',
+	'DB_AMAZON_US_STORAGE_SKU' => 'sku',
+	'DB_AMAZON_US_STORAGE_CINVENTORY' => 'cinventory',
+	'DB_AMAZON_US_STORAGE_AINVENTORY' => 'ainventory',
+	'DB_AMAZON_US_STORAGE_OINVENTORY' => 'oinventory',
+	'DB_AMAZON_US_STORAGE_IINVENTORY' => 'iinventory',
+	'DB_AMAZON_US_STORAGE_CSALES' => 'csales',
+	'DB_AMAZON_US_STORAGE_LASTTIME' => 'last_restock_time',
+
+	//amazon_us_fba_outbound
+	/*创建amazon us fba仓出库表
+	create table if not exists `3s_amazon_us_fba_outbound`(
+	`id` smallint(10) unsigned primary key not null auto_increment,
+	`market` varchar(10) default null,
+	`market_no` varchar(20) default null,
+	`status` varchar(10) default null,
+	`shipping_company` varchar(20),
+	`shipping_way` varchar(30) default null,
+	`tracking_number` varchar(30) default null,
+	`create_time` datetime,
+	`seller_id` varchar(20) default null,
+	`buyer_id` varchar(20) default null,
+	`buyer_name` varchar(30) default null,
+	`buyer_tel` varchar(20) default null,
+	`buyer_email` varchar(30) default null,
+	`buyer_address1` varchar(50) default null,
+	`buyer_address2` varchar(50) default null,
+	`buyer_city` varchar(30) default null,
+	`buyer_state` varchar(30) default null,
+	`buyer_country` varchar(30) default null,
+	`buyer_zip` varchar(20) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_AMAZON_US_FBA_OUTBOUND' => 'amazon_us_fba_outbound',
+	'DB_AMAZON_US_FBA_OUTBOUND_ID' => 'id',
+	'DB_AMAZON_US_FBA_OUTBOUND_MARKET' => 'market', //ebay,amazon,groupon
+	'DB_AMAZON_US_FBA_OUTBOUND_MARKET_NO' => 'market_no',
+	'DB_AMAZON_US_FBA_OUTBOUND_STATUS' => 'status', //待出库，已出库
+	'DB_AMAZON_US_FBA_OUTBOUND_SHIPPING_COMPANY' => 'shipping_company',
+	'DB_AMAZON_US_FBA_OUTBOUND_SHIPPING_WAY' => 'shipping_way',
+	'DB_AMAZON_US_FBA_OUTBOUND_TRACKING_NUMBER' => 'tracking_number',
+	'DB_AMAZON_US_FBA_OUTBOUND_CREATE_TIME' => 'create_time',
+	'DB_AMAZON_US_FBA_OUTBOUND_SELLER_ID' => 'seller_id',
+	'DB_AMAZON_US_FBA_OUTBOUND_BUYER_ID' => 'buyer_id',
+	'DB_AMAZON_US_FBA_OUTBOUND_BUYER_NAME' => 'buyer_name',
+	'DB_AMAZON_US_FBA_OUTBOUND_BUYER_TEL' => 'buyer_tel',
+	'DB_AMAZON_US_FBA_OUTBOUND_BUYER_EMAIL' => 'buyer_email',
+	'DB_AMAZON_US_FBA_OUTBOUND_BUYER_ADDRESS1' => 'buyer_address1',
+	'DB_AMAZON_US_FBA_OUTBOUND_BUYER_ADDRESS2' => 'buyer_address2',
+	'DB_AMAZON_US_FBA_OUTBOUND_BUYER_CITY' => 'buyer_city',
+	'DB_AMAZON_US_FBA_OUTBOUND_BUYER_STATE' => 'buyer_state',
+	'DB_AMAZON_US_FBA_OUTBOUND_BUYER_COUNTRY' => 'buyer_country',
+	'DB_AMAZON_US_FBA_OUTBOUND_BUYER_ZIP' => 'buyer_zip',
+
+	//amazon_us_fba_outbound_item
+	/*
+	创建美国出库单产品明细表
+	create table if not exists `3s_amazon_us_fba_outbound_item`(
+	`id` smallint(10) unsigned primary key not null auto_increment,
+	`outbound_id` smallint(10),
+	`sku` varchar(15) default null,
+	`position` varchar(10) default null,
+	`quantity` smallint(3) default 0,
+	`market_no` varchar(20) default null,
+	`transaction_no` varchar(20) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_AMAZON_US_FBA_OUTBOUND_ITEM' => 'amazon_us_fba_outbound_item',
+	'DB_AMAZON_US_FBA_OUTBOUND_ITEM_ID' => 'id',
+	'DB_AMAZON_US_FBA_OUTBOUND_ITEM_OOID' => 'outbound_id',
+	'DB_AMAZON_US_FBA_OUTBOUND_ITEM_SKU' => 'sku',
+	'DB_AMAZON_US_FBA_OUTBOUND_ITEM_POSITION' => 'position',
+	'DB_AMAZON_US_FBA_OUTBOUND_ITEM_QUANTITY' => 'quantity',
+	'DB_AMAZON_US_FBA_OUTBOUND_ITEM_MARKET_NO' => 'market_no',
+	'DB_AMAZON_US_FBA_OUTBOUND_ITEM_TRANSACTION_NO' => 'transaction_no',
+
+
 
 	//restock
 	/*创建补货表
 	CREATE TABLE IF NOT EXISTS `3s_restock` (
-	  `id` smallint(6) unsigned primary key auto_increment,
+	  `id` smallint(10) unsigned primary key auto_increment,
 	  `create_date` datetime default NULL,
 	  `shipping_date` datetime default NULL,
 	  `manager` varchar(20) default null,
@@ -330,15 +462,62 @@ return array(
 	'DB_RESTOCK_QUANTITY' => 'quantity',
 	'DB_RESTOCK_WAREHOUSE' => 'warehouse', //美自建仓,万邑通美西，万邑通德国
 	'DB_RESTOCK_TRANSPORT' => 'transport', //空运，海运
-	'DB_RESTOCK_STATUS' => 'status', //待发货，部分发货，已发货
+	'DB_RESTOCK_STATUS' => 'status', //待发货，已发货,延迟发货
 	'DB_RESTOCK_REMARK' => 'remark',
 
-
+	//restock parameters
+	/*创建补货参数表
+	CREATE TABLE IF NOT EXISTS `3s_restock_parameters` (
+	  `id` smallint(6) unsigned primary key auto_increment,
+	  `ussw_air_ad` smallint(6) DEFAULT 15,
+	  `ussw_air_td` smallint(6) DEFAULT 30,
+	  `ussw_air_id` smallint(6) DEFAULT 6,
+	  `ussw_sea_ad` smallint(6) DEFAULT 15,
+	  `ussw_sea_td` smallint(6) DEFAULT 30,
+	  `ussw_sea_id` smallint(6) DEFAULT 6,
+	  `winitde_air_ad` smallint(6) DEFAULT 30,
+	  `winitde_air_td` smallint(6) DEFAULT 90,
+	  `winitde_air_id` smallint(6) DEFAULT 25,
+	  `winitde_sea_ad` smallint(6) DEFAULT 30,
+	  `winitde_sea_td` smallint(6) DEFAULT 90,
+	  `winitde_sea_id` smallint(6) DEFAULT 25,
+	  `szsw_ad` smallint(6) DEFAULT 0,
+	  `szsw_min_ai` smallint(6) default 0,
+	  `ussw_lock` tinyint(1) default 0,
+	  `winitde_lock` tinyint(1) default 0,
+	  `ussw_auto_move` tinyint(1) default 0,
+	  `winitde_auto_move` tinyint(1) default 0,
+	  `exclude_large_quantity` smallint(6) default 0,
+	  `no_order_days` smallint(6) default 0
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
+	'DB_RESTOCK_PARA' => 'restock_parameters',
+	'DB_RESTOCK_PARA_ID' => 'id',
+	'DB_RESTOCK_PARA_USSW_AIR_AD' => 'ussw_air_ad',
+	'DB_RESTOCK_PARA_USSW_AIR_tD' => 'ussw_air_td',
+	'DB_RESTOCK_PARA_USSW_AIR_iD' => 'ussw_air_id',
+	'DB_RESTOCK_PARA_USSW_SEA_AD' => 'ussw_sea_ad',
+	'DB_RESTOCK_PARA_USSW_SEA_tD' => 'ussw_sea_td',
+	'DB_RESTOCK_PARA_USSW_SEA_iD' => 'ussw_sea_id',
+	'DB_RESTOCK_PARA_WINITDE_AIR_AD' => 'winitde_air_ad',
+	'DB_RESTOCK_PARA_WINITDE_AIR_tD' => 'winitde_air_td',
+	'DB_RESTOCK_PARA_WINITDE_AIR_iD' => 'winitde_air_id',
+	'DB_RESTOCK_PARA_WINITDE_SEA_AD' => 'winitde_sea_ad',
+	'DB_RESTOCK_PARA_WINITDE_SEA_tD' => 'winitde_sea_td',
+	'DB_RESTOCK_PARA_WINITDE_SEA_ID' => 'winitde_sea_id',
+	'DB_RESTOCK_PARA_SZSW_AD' => 'szsw_ad',
+	'DB_RESTOCK_PARA_SZSW_MIN_AI' => 'szsw_min_ai',
+	'DB_RESTOCK_PARA_USSW_LOCK' => 'ussw_lock',
+	'DB_RESTOCK_PARA_USSW_AUTO_MOVE' => 'ussw_auto_move',
+	'DB_RESTOCK_PARA_WINITDE_LOCK' => 'winitde_lock',
+	'DB_RESTOCK_PARA_WINITDE_AUTO_MOVE' => 'winitde_auto_move',
+	'DB_RESTOCK_PARA_ELQ' => 'exclude_large_quantity',
+	'DB_RESTOCK_PARA_NOD' => 'no_order_days',
 
 	//purchase
 	/*创建采购表
 	create table if not exists `3s_purchase`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`manager` varchar(20) default null,
 	`create_date` datetime,
 	`purchase_date` datetime,
@@ -368,8 +547,8 @@ return array(
 	//purchase_item
 	/*创建补货产品表
 	create table if not exists `3s_purchase_item`(
-	`purchase_item_id` smallint(6) unsigned primary key not null auto_increment,
-	`purchase_id` smallint(6) default null,
+	`purchase_item_id` smallint(10) unsigned primary key not null auto_increment,
+	`purchase_id` smallint(10) default null,
 	`sku` varchar(10) default null,
 	`price` decimal(6,2) default 0,
 	`purchase_quantity` smallint(6) default 0,
@@ -438,7 +617,7 @@ return array(
 	//sz_outbound
 	/*创建深圳仓出库表
 	create table if not exists `3s_sz_outbound`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`market` varchar(20) default null,
 	`market_no` varchar(20) default null,
 	`status` varchar(10) default null,
@@ -485,8 +664,8 @@ return array(
 	/*
 	创建美国出库单产品明细表
 	create table if not exists `3s_sz_outbound_item`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
-	`outbound_id` smallint(6) not null,
+	`id` smallint(10) unsigned primary key not null auto_increment,
+	`outbound_id` smallint(10) not null,
 	`sku` varchar(10) default null,
 	`position` varchar(10) default null,
 	`quantity` smallint(3) default 0,
@@ -585,7 +764,7 @@ return array(
 	/*
 	create table if not exists `3s_ussw_sale_plan2`(
 	`id` smallint(6) unsigned primary key not null auto_increment,
-	`sku` varchar(10) not null,
+	`sku` varchar(15) not null,
 	`first_sale_date` timestamp default NOW(),
 	`last_modify_date` datetime default null,
 	`relisting_times` smallint(6) default 0,
@@ -643,6 +822,37 @@ return array(
 
 
 
+	//ussw_sale_plan4 for ebay blackfive
+	/*
+	create table if not exists `3s_ussw_sale_plan4`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`sku` varchar(10) not null,
+	`first_sale_date` timestamp default NOW(),
+	`last_modify_date` datetime default null,
+	`relisting_times` smallint(6) default 0,
+	`price_note` varchar(255) default null,
+	`cost` decimal(5,2) default null,
+	`sale_price` decimal(5,2) default null,
+	`suggested_price` decimal(5,2) default null,
+	`suggest` varchar(20) default null,
+	`status` tinyint(1) default 1
+	) engine=myisam default charset=utf8;	
+	*/
+	'DB_USSW_SALE_PLAN4' => 'ussw_sale_plan4',
+	'DB_USSW_SALE_PLAN_ID' => 'id',
+	'DB_USSW_SALE_PLAN_SKU' => 'sku',
+	'DB_USSW_SALE_PLAN_FIRST_DATE' => 'first_sale_date',
+	'DB_USSW_SALE_PLAN_LAST_MODIFY_DATE' => 'last_modify_date',
+	'DB_USSW_SALE_PLAN_RELISTING_TIMES' => 'relisting_times',
+	'DB_USSW_SALE_PLAN_PRICE_NOTE' => 'price_note',
+	'DB_USSW_SALE_PLAN_COST' => 'cost',
+	'DB_USSW_SALE_PLAN_PRICE' => 'sale_price',
+	'DB_USSW_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
+	'DB_USSW_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
+	'DB_USSW_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+
+
+
 	'USSW_SALE_PLAN_COMPLETE_PRODUCT_INFO' => '完善产品信息',
 	'USSW_SALE_PLAN_COMPLETE_SALE_INFO' => '完善销售信息',
 	'USSW_SALE_PLAN_CLEAR' => '清货',
@@ -681,7 +891,7 @@ return array(
 		5. adjust_period: number of days
 		6. spr1, spr2, spr3, spr4, spr5: item cost classify. To define different start and floor sale price for different item. The cheap item can be sold with spr1 profit rate. The expensivest item must be sold with spr5 profit rate.
 		7. pcr: price change rate, define the proce change rate of each adjust.
-		8. sqnr: smallest sale quantity need to be replaced with a determine denominator. For example the lsq=1 and the asp=2. The growth rate is (asp-lsp)/lsp equal 100%. In this situation, the growth rate is high. But the price needn't to be adjusted. So we need to define a sqnr. For example, if the lsq<5, the growth rate should be (asp-lsp)/denominator.
+		8. sqnr: smallest sale quantity need to be replaced with a determine denominator. For example the lsq=1 and the asq=2. The growth rate is (asq-lsp)/lsp equal 100%. In this situation, the growth rate is high. But the price needn't to be adjusted. So we need to define a sqnr. For example, if the lsq<5, the growth rate should be (asq-lsp)/denominator.
 		9. denominator: see the 8.
 		10. grfr: growth rate fluctuation range. growth rate >grfr then increse price, growth rate <-grfr then reduct price.
 		11. standard_period: define the standard period, the sale quantity of adjust period must be changed to the sale quantity of standard period. Then classify the sale quantity of standard period to decide the grfr.
@@ -963,7 +1173,7 @@ return array(
 	*/
 	'DB_ROLE' => 'role',
 	'DB_ROLE_ID' => 'id',
-	'DB_ROLE_NAME' => 'name',
+	'DB_ROLE_NAME' => 'name',//产品经理，销售，仓库管理，客服
 	'DB_ROLE_PID' =>'pid',
 	'DB_ROLE_STATUS' => 'status',
 	'DB_ROLE_REMARK' => 'remark',
@@ -1055,14 +1265,14 @@ return array(
 	'DB_TODO_CREATER' => 'creater',
 	'DB_TODO_PERSON' => 'person',
 	'DB_TODO_STATUS' => 'status',
-	'DB_TODO_TASK' => 'task',
+	'DB_TODO_TASK' => 'task', //0, 待处理，1 已处理
 	'DB_TODO_REMARK' => 'remark',
 
 
 	//winit_outbound
 	/*创建万邑通出库表
 	create table if not exists `3s_winit_outbound`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`market` varchar(10) default null,
 	`market_no` varchar(20) default null,
 	`status` varchar(10) default null,
@@ -1108,8 +1318,8 @@ return array(
 	/*
 	创建万邑通出库单产品明细表
 	create table if not exists `3s_winit_outbound_item`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
-	`outbound_id` smallint(6),
+	`id` smallint(10) unsigned primary key not null auto_increment,
+	`outbound_id` smallint(10),
 	`sku` varchar(10) default null,
 	`position` varchar(10) default null,
 	`quantity` smallint(3) default 0,
@@ -1131,7 +1341,7 @@ return array(
 	CREATE TABLE IF NOT EXISTS `3s_winit_de_storage` (
 	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
 	  `position` varchar(10) NOT NULL,
-	  `sku` varchar(10) NOT NULL,
+	  `sku` varchar(15) NOT NULL,
 	  `cname` varchar(255) DEFAULT NULL,
 	  `ename` varchar(255) DEFAULT NULL,
 	  `attribute` varchar(50) DEFAULT NULL,
@@ -1158,6 +1368,39 @@ return array(
 	'DB_WINIT_DE_STORAGE_CSALES' => 'csales',
 	'DB_WINIT_DE_STORAGE_REMARK' => 'remark',
 	'DB_WINIT_DE_STORAGE_SALE_STATUS' => 'sale_status', //待下架，已下架, Null
+
+	//winit_us_storage
+	/*
+	CREATE TABLE IF NOT EXISTS `3s_winit_us_storage` (
+	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
+	  `position` varchar(10) NOT NULL,
+	  `sku` varchar(15) NOT NULL,
+	  `cname` varchar(255) DEFAULT NULL,
+	  `ename` varchar(255) DEFAULT NULL,
+	  `attribute` varchar(50) DEFAULT NULL,
+	  `cinventory` smallint(6) DEFAULT 0,
+	  `ainventory` smallint(6) DEFAULT 0,
+	  `oinventory` smallint(6) DEFAULT 0,
+	  `iinventory` smallint(6) DEFAULT 0,
+	  `csales` smallint(6) DEFAULT 0,
+	  `remark` varchar(255) DEFAULT NULL,
+	  `sale_status` varchar(10) DEFAULT NULL
+	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
+	'DB_WINIT_US_STORAGE' => 'winit_us_storage',
+	'DB_WINIT_US_STORAGE_ID' => 'id',
+	'DB_WINIT_US_STORAGE_POSITION' => 'position',
+	'DB_WINIT_US_STORAGE_SKU' => 'sku',
+	'DB_WINIT_US_STORAGE_CNAME' => 'cname',
+	'DB_WINIT_US_STORAGE_ENAME' => 'ename',
+	'DB_WINIT_US_STORAGE_ATTRIBUTE' => 'attribute',
+	'DB_WINIT_US_STORAGE_CINVENTORY' => 'cinventory',
+	'DB_WINIT_US_STORAGE_AINVENTORY' => 'ainventory',
+	'DB_WINIT_US_STORAGE_OINVENTORY' => 'oinventory',
+	'DB_WINIT_US_STORAGE_IINVENTORY' => 'iinventory',
+	'DB_WINIT_US_STORAGE_CSALES' => 'csales',
+	'DB_WINIT_US_STORAGE_REMARK' => 'remark',
+	'DB_WINIT_US_STORAGE_SALE_STATUS' => 'sale_status', //待下架，已下架, Null
 
 	//rc_de_sale_plan for rc-helicar ebay.de items
 	/*
@@ -1282,6 +1525,7 @@ return array(
 	`percent` decimal(5,2) default null,
 	`si_company` decimal(10,2) default null,
 	`si_person` decimal(10,2) default null,
+	`bonus` decimal(10,2) default 0,
 	`leave_days` decimal(5,2) default null,
 	`remark` varchar(255) default null
 	) engine=myisam default charset=utf8;
@@ -1297,12 +1541,13 @@ return array(
 	'DB_WAGES_SI_PERSON' => 'si_person',
 	'DB_WAGES_LEAVE_DAYS' => 'leave_days',
 	'DB_WAGES_REMARK' => 'remark',
+	'DB_WAGES_BONUS' => 'bonus',
 
 
 	//Attendance table
 	/*
 	create table if not exists `3s_attendance`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`name` varchar(20) not null,
 	`come_ip` varchar(30) default null,
 	`leave_ip` varchar(30) default null,
@@ -1311,7 +1556,9 @@ return array(
 	`rest1_begin` varchar(30) default null,
 	`rest1_end` varchar(30) default null,
 	`rest2_begin` varchar(30) default null,
-	`rest2_end` varchar(30) default null
+	`rest2_end` varchar(30) default null,
+	`overtime_begin` varchar(30) default null,
+	`overtime_end` varchar(30) default null
 	) engine=myisam default charset=utf8;
 	*/
 	'DB_ATTENDANCE' => 'attendance',
@@ -1325,5 +1572,158 @@ return array(
 	'DB_ATTENDANCE_REST1_END' => 'rest1_end',
 	'DB_ATTENDANCE_REST2_BEGIN' => 'rest2_begin',
 	'DB_ATTENDANCE_REST2_END' => 'rest2_end',
+	'DB_ATTENDANCE_OVERTIME_BEGIN' => 'overtime_begin',
+	'DB_ATTENDANCE_OVERTIME_END' => 'overtime_end',
+
+	//kpi_sale
+	/*
+	create table if not exists `3s_kpi_sale`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`name` varchar(20) not null,
+	`sku` varchar(10) default null,
+	`warehouse` varchar(30) default null,
+	`type` varchar(30) default null, 
+	`begin_date` int(30) not null,
+	`begin_squantity` int(10) unsigned default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_KPI_SALE' => 'kpi_sale',
+	'DB_KPI_SALE_ID' => 'id',
+	'DB_KPI_SALE_NAME' => 'name',
+	'DB_KPI_SALE_SKU' => 'sku',
+	'DB_KPI_SALE_WAREHOUSE' => 'warehouse',
+	'DB_KPI_SALE_TYPE' => 'type', //重新刊登，清货
+	'DB_KPI_SALE_BEGIN_DATE' => 'begin_date',
+	'DB_KPI_SALE_BEGIN_SQUANTITY' => 'begin_squantity',
+	//以下三个不需要数据库列。实时计算
+	'DB_KPI_SALE_SALE_QUANTITY' => 'sale_quantity',
+	'DB_KPI_SALE_AVERAGE_PROFIT' => 'average_profit',
+	'DB_KPI_SALE_DETAILS' => 'details',
+
+	//kpi_sale_record
+	/*
+	create table if not exists `3s_kpi_sale_record`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`kpi_sale_id` smallint(6) unsigned not null,
+	`sku` varchar(10) default null,
+	`warehouse` varchar(30) default null,
+	`sold_date` int(30) not null,
+	`quantity` tinyint unsigned not null,
+	`price` decimal(10,2) default null,
+	`shipping_fee` decimal(10,2) default null,
+	`market` varchar(30) default null,
+	`seller_id` varchar(30) default null,
+	`market_no` varchar(30) default null,
+	`transaction_no` varchar(30) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_KPI_SALE_RECORD' => 'kpi_sale_record',
+	'DB_KPI_SALE_RECORD_ID' => 'id',
+	'DB_KPI_SALE_RECORD_SALE_ID' => 'kpi_sale_id',
+	'DB_KPI_SALE_RECORD_SKU' => 'sku',
+	'DB_KPI_SALE_RECORD_WAREHOUSE' => 'warehouse',
+	'DB_KPI_SALE_RECORD_SOLD_DATE' => 'sold_date',
+	'DB_KPI_SALE_RECORD_QUANTITY' => 'quantity',
+	'DB_KPI_SALE_RECORD_PRICE' => 'price',
+	'DB_KPI_SALE_RECORD_SHIPPING_FEE' => 'shipping_fee',
+	'DB_KPI_SALE_RECORD_MARKET' => 'market',
+	'DB_KPI_SALE_RECORD_SELLER_ID' => 'seller_id',
+	'DB_KPI_SALE_RECORD_MARKET_NO' => 'market_no',
+	'DB_KPI_SALE_RECORD_TRANSACTION_NO' => 'transaction_no',
+
+	//kpi_storage
+	/*
+	create table if not exists `3s_kpi_storage_mistake`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`name` varchar(20) not null,
+	`month` varchar(10) default null,
+	`mistake` varchar(100) default null,
+	`score` tinyint signed default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_KPI_STORAGE_MISTAKE' => 'kpi_storage_mistake',
+	'DB_KPI_STORAGE_MISTAKE_ID' => 'id',
+	'DB_KPI_STORAGE_MISTAKE_NAME' => 'name',
+	'DB_KPI_STORAGE_MISTAKE_MONTH' => 'month',
+	'DB_KPI_STORAGE_MISTAKE_MISTAKE' => 'mistake',
+	'DB_KPI_STORAGE_MISTAKE_SCORE' => 'score',
+
+	//kpi_customer
+	/*
+	create table if not exists `3s_kpi_customer`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`name` varchar(20) not null,
+	`month` varchar(10) default null,
+	`performance` varchar(100) default null,
+	`score` tinyint signed default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_KPI_CUSTOMER' => 'kpi_customer',
+	'DB_KPI_CUSTOMER_ID' => 'id',
+	'DB_KPI_CUSTOMER_NAME' => 'name',
+	'DB_KPI_CUSTOMER_MONTH' => 'month',
+	'DB_KPI_CUSTOMER_PERFORMANCE' => 'performance',
+	'DB_KPI_CUSTOMER_SCORE' => 'score',
+
+	//kpi_statistic
+	/*
+	create table if not exists `3s_kpi_statistic`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`name` varchar(20) not null,
+	`month` varchar(10) default null,
+	`type` varchar(30) default null,
+	`score` int(30) default null,
+	`pass` tinyint(1) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_KPI_STATISTIC' => 'kpi_statistic',
+	'DB_KPI_STATISTIC_ID' => 'id',
+	'DB_KPI_STATISTIC_NAME' => 'name',
+	'DB_KPI_STATISTIC_MONTH' => 'month',
+	'DB_KPI_STATISTIC_TYPE' => 'type',//new_item_quantity,relisting,clear,mistake,customer_performance
+	'DB_KPI_STATISTIC_SCORE' => 'score',
+	'DB_KPI_STATISTIC_PASS' => 'pass',
+
+	//kpi_parameters
+	/*
+	create table if not exists `3s_kpi_parameters`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`product_month_minium` smallint(6) default null,
+	`product_year_standard` smallint(6) default null,
+	`sale_month_minium` smallint(6) default null,
+	`sale_year_standard` smallint(6) default null,
+	`storage_month_minium` smallint(6) default null,
+	`storage_year_standard` smallint(6) default null,
+	`customer_year_standard` smallint(6) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_KPI_PARAMETERS' => 'kpi_parameters', 
+	'DB_KPI_PARAMETERS_ID' => 'id',
+	'DB_KPI_PARAMETERS_PMM' => 'product_month_minium', 
+	'DB_KPI_PARAMETERS_PYS' => 'product_year_standard',
+	'DB_KPI_PARAMETERS_SMM' => 'sale_month_minium',
+	'DB_KPI_PARAMETERS_SYS' => 'sale_year_standard',
+	'DB_KPI_PARAMETERS_STMM' => 'storage_month_minium',
+	'DB_KPI_PARAMETERS_STYS' => 'storage_year_standard',
+	'DB_KPI_PARAMETERS_CYS' => 'customer_year_standard',
+
+
+	//block buyer
+	/*
+	create table if not exists `3s_block_buyer`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`buyer_id` varchar(50) default null,
+	`platform` varchar(50) default null,
+	`block_date`  timestamp default NOW()
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_BLOCK_BUYER' => 'block_buyer', 
+	'DB_BLOCK_BUYER_ID' => 'id',
+	'DB_BLOCK_BUYER_BID' => 'buyer_id', 
+	'DB_BLOCK_BUYER_PLATFORM' => 'platform',
+	'DB_BLOCK_BUYER_BDATE' => 'block_date',
+
+	//block_buyer_constant
+	'DB_BLOCK_BUYER_PLATFORM_CONSTANT' =>array('amazon.com','ebay.com','ebay.de',),
 	);
 ?>

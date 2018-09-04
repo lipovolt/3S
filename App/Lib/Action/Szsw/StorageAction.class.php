@@ -4,31 +4,19 @@ class StorageAction extends CommonAction{
 
 	public function index(){
       if($_POST['keyword']==""){
-            $Data = M(C('DB_SZSTORAGE'));
+            $Data = D('SzStorageView');
             import('ORG.Util.Page');
             $count = $Data->count();
             $Page = new Page($count,20);            
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
-            $szstorage = $Data->order('sku asc')->limit($Page->firstRow.','.$Page->listRows)->select();
-
-            foreach ($szstorage as $key => $value) {
-              $szstorage[$key]['cname'] = $this->getCname($value[C('DB_SZSTORAGE_SKU')]);
-              $szstorage[$key]['iinventory'] = $this->getIInventory($value[C('DB_SZSTORAGE_SKU')]);
-              $szstorage[$key]['oinventory'] = $this->getOInventory($value[C('DB_SZSTORAGE_SKU')]);            
-            }
+            $szstorage = $Data->order('sku asc')->limit($Page->firstRow.','.$Page->listRows)->select(); 
             $this->assign('szstorage',$szstorage);
             $this->assign('page',$show);
         }
         else{
             $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
-            $szstorage = M(C('DB_szstorage'))->where($where)->select();
-            $products = M(C('DB_PRODUCT'));
-            foreach ($szstorage as $key => $value) {
-              $szstorage[$key]['cname'] = $this->getCname($value[C('DB_SZSTORAGE_SKU')]);
-              $szstorage[$key]['iinventory'] = $this->getIInventory($value[C('DB_SZSTORAGE_SKU')]);
-              $szstorage[$key]['oinventory'] = $this->getOInventory($value[C('DB_SZSTORAGE_SKU')]);
-            }
+            $szstorage = D('SzStorageView')->where($where)->select();
             $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
             $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
             $this->assign('szstorage',$szstorage);
@@ -94,20 +82,28 @@ class StorageAction extends CommonAction{
       $result =  $szstorage->save($data);
       $result = true;
       if(false !== $result || 0 !== $result) {
-        $restockData[C('DB_RESTOCK_CREATE_DATE')]=date("Y-m-d H:i:s" ,time());
-        $restockData[C('DB_RESTOCK_SKU')]=$sku;
-        $restockData[C('DB_RESTOCK_QUANTITY')]=$quantity;
-        $restockData[C('DB_RESTOCK_WAREHOUSE')]=$warehouse;
-        $product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
-        $restockData[C('DB_RESTOCK_MANAGER')]=$product[C('DB_PRODUCT_MANAGER')];
-        if($warehouse=='美自建仓' || $warehouse=='万邑通美西'){
-          $restockData[C('DB_RESTOCK_TRANSPORT')]=$product[C('DB_PRODUCT_TOUS')];
-        }
-        if($warehouse=='万邑通德国'){
-          $restockData[C('DB_RESTOCK_TRANSPORT')]=$product[C('DB_PRODUCT_TODE')];
-        }
-        $restockData[C('DB_RESTOCK_STATUS')]='待发货';
-        $result =  $restock->add($restockData);
+        $isInRestock = $restock->where(array(C('DB_RESTOCK_SKU')=>$sku,C('DB_RESTOCK_WAREHOUSE')=>$warehouse,C('DB_RESTOCK_STATUS')=>'延迟发货'))->find();
+        if($isInRestock !=null && $isInRestock!=false){
+            $isInRestock[C('DB_RESTOCK_QUANTITY')] = $isInRestock[C('DB_RESTOCK_QUANTITY')]+$quantity;
+            $restock->where(array(C('DB_RESTOCK_ID')=>$isInRestock[C('DB_RESTOCK_ID')]))->save($isInRestock);
+        }else{
+            $restockData[C('DB_RESTOCK_CREATE_DATE')]=date("Y-m-d H:i:s" ,time());
+            $restockData[C('DB_RESTOCK_SKU')]=$sku;
+            $restockData[C('DB_RESTOCK_QUANTITY')]=$quantity;
+            $restockData[C('DB_RESTOCK_WAREHOUSE')]=$warehouse;
+            $product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
+            $restockData[C('DB_RESTOCK_MANAGER')]=$product[C('DB_PRODUCT_MANAGER')];
+            if($warehouse=='美自建仓' || $warehouse=='万邑通美西'){
+              $restockData[C('DB_RESTOCK_TRANSPORT')]=$product[C('DB_PRODUCT_TOUS')];
+            }
+            if($warehouse=='万邑通德国'){
+              $restockData[C('DB_RESTOCK_TRANSPORT')]=$product[C('DB_PRODUCT_TODE')];
+            }
+            $restockData[C('DB_RESTOCK_STATUS')]='延迟发货';
+
+            $result =  $restock->add($restockData);
+        }   
+        
         if(false !== $result) {
           $this->success('操作成功！');}
         else{

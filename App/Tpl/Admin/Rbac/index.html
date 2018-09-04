@@ -64,6 +64,10 @@
 						<th><div class="tl">上次登录IP</div></th>
 						<th><div class="tl">锁定状态</div></th>
 						<th><div class="tl">用户所属组别</div></th>
+						<th><div class="tl">级别</div></th>
+						<th><div class="tl">午休时间</div></th>
+						<th><div class="tl">基本工资</div></th>
+						<th><div class="tl">提成比例0-1</div></th>
 						<th width="230">操作</th>
 					</tr>
 					<volist name="user" id="vo">
@@ -81,7 +85,11 @@
 								</foreach>
 							</ul>
 							</div>
-						</td>	
+						</td>					
+						<td><div class="tl">{$vo[C('DB_3S_USER_POSITION')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_3S_USER_LUNCH_BREAK')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_3S_USER_BASIC_WAGE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_3S_USER_PERFOMANCE_PERCENT')]}</div></td>							
 						<td>
 							<if condition='$vo["lock"]'><a href="{:U('Admin/Rbac/unlockUser',array(uid=>$vo[C('DB_3S_USER_ID')]))}">解锁</a><else /><a href="{:U('Admin/Rbac/lockUser',array(uid=>$vo[C('DB_3S_USER_ID')]))}">锁定</a></if>
 							<a href="{:U('Admin/Rbac/deleteUser',array(uid=>$vo[C('DB_3S_USER_ID')]))}">删除</a>

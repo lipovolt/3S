@@ -15,7 +15,7 @@ function save(){
 	form.action="{:U('Sale/GgsUsswSale/updateUsswSalePlan',array('account'=>$account))}?kw="+kw+"&kwv="+kwv;
 	form.submit();
 }
-function saveSingle(Obj){
+function saveSingle(Obj){	
 	var kw = document.getElementById('keyword').value;
 	var kwv = document.getElementById('keywordValue').value;
 	var salePrice = document.getElementById('sale_price-'+Obj).value;
@@ -24,7 +24,7 @@ function saveSingle(Obj){
 	}else{
 		var status = 0;
 	}
-	form.action="{:U('Sale/GgsUsswSale/updateUsswSalePlanSingle',array('account'=>$account))}?kw="+kw+"&kwv="+kwv+"&id="+Obj+"&salePrice="+salePrice+"&status="+status;
+	form.action="{:U('Sale/GgsUsswSale/updateUsswSalePlanSingle',array('account'=>$account))}?kw="+kw+"&kwv="+kwv+"&id="+Obj+"&salePrice="+salePrice+"&status="+status;	
 	form.submit();
 }
 function  cli(Obj){

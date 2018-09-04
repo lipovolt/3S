@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>绩效考核</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript" src='__PUBLIC__/Js/jquery-1.7.2.min.js'></script>
+<script>
+function search(){
+	var month = document.getElementById('month').value;
+	var name = document.getElementById('name').value;
+	if(month==''){
+		alert('请给出月份');
+	}else if(name=='' || name=='all'){
+		alert('请给出名字');
+	}else{
+		form.action="{:U('Kpi/Kpi/index')}";
+		form.submit();
+	}	
+}
+
+function statistic(){
+	var month = document.getElementById('month').value;
+	var name = document.getElementById('name').value;
+	if(month==''){
+		alert('请给出月份');
+	}else if(name==''){
+		alert('请给出名字');
+	}else{
+		form.action="{:U('Kpi/Kpi/statistic')}";
+		form.submit();
+	}	
+}
+
+function reStatistic(){
+	var month = document.getElementById('month').value;
+	var name = document.getElementById('name').value;
+	if(month==''){
+		alert('请给出月份');
+	}else if(name=='' || name=='all'){
+		alert('请给出名字');
+	}else{
+		form.action="{:U('Kpi/Kpi/reStatistic')}";
+		form.submit();
+	}
+}
+</script>
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>待办事项</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/todo.html" />	
+			</div>
+		</div>
+	<div class="content">
+		<form name="form" id="form" action="#" method="POST">
+			<div class="search-area">
+				<div class="item">
+					<div class="form-group">
+						<label for="month" class="control-label">月份</label>
+						<div class="control-wrap">
+							<input type="text" name="month" id="month" onclick="WdatePicker({dateFmt:'yyyy-MM'});" value="{$month}" size="17" class="date" readonly>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="name" class="control-label">名字</label>
+						<div class="control-wrap">
+							<select name="name" id="name" data-value="">
+								<option value="">请选择</option>
+								<foreach name="names" item="vo">
+									<if condition="$name eq $vo"><option value="{:$vo}" selected="">{:$vo}</option>
+									    <else /> <option value="{:$vo}">{:$vo}</option>
+									</if>
+								</foreach>
+							</select>
+						</div>
+					</div>
+					<button class="btn btn-s btn-blue" onclick="search(); return false;"><span>查询</span></button>
+					<button class="btn btn-s btn-blue" onclick="statistic(); return false;"><span>统计</span></button>
+					<button class="btn btn-s btn-blue" onclick="reStatistic(); return false;"><span>重新统计</span></button>
+				</div>			
+			</div>
+    	</form>	
+	<div id="ProductInfo" class="main">
+		<div>
+			<div class="tab-content">
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th><div class="tl">姓名</div></th>
+						<th><div class="tl">月份</div></th>
+						<th><div class="tl">绩效分</div></th>
+					</tr>
+					<volist name="kpi_statistic" id="vo">
+						<tr>
+						<td><div class="tl">{$vo[C('DB_KPI_STATISTIC_NAME')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_KPI_STATISTIC_MONTH')]}</div></td>						
+						<td><div class="tl">{$vo[C('DB_KPI_STATISTIC_SCORE')]}</div></td>
+						</tr>	
+					</volist> 								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

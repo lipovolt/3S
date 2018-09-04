@@ -46,14 +46,22 @@
 									<option value="{:C('DB_PRODUCT_SKU')}" >产品编码</option>
 									<option value="{:C('DB_PRODUCT_CNAME')}" selected="">产品名称</option>
 									<option value="{:C('DB_PRODUCT_MANAGER')}">产品经理</option>
+									<option value="{:C('DB_PURCHASE_TRACKING_NUMBER')}">快递单号</option>
 								<elseif condition="$keyword eq 'manager'"/>
 									<option value="{:C('DB_PRODUCT_SKU')}" >产品编码</option>
 									<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
 									<option value="{:C('DB_PRODUCT_MANAGER')}" selected>产品经理</option>
+									<option value="{:C('DB_PURCHASE_TRACKING_NUMBER')}">快递单号</option>
+								<elseif condition="$keyword eq 'tracking_number'"/>
+									<option value="{:C('DB_PRODUCT_SKU')}" >产品编码</option>
+									<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
+									<option value="{:C('DB_PRODUCT_MANAGER')}">产品经理</option>
+									<option value="{:C('DB_PURCHASE_TRACKING_NUMBER')}" selected>快递单号</option>
 								<else /> 
 									<option value="{:C('DB_PRODUCT_SKU')}" selected>产品编码</option>
 									<option value="{:C('DB_PRODUCT_CNAME')}">产品名称</option>
 									<option value="{:C('DB_PRODUCT_MANAGER')}" >产品经理</option>
+									<option value="{:C('DB_PURCHASE_TRACKING_NUMBER')}">快递单号</option>
 								</if>
 							</select>
 						</div>
@@ -91,7 +99,15 @@
 						<td><div class="tl">{$vo[C('DB_PURCHASE_REMARK')]}</div></td>
 						<td>
 							<a href="{:U('Purchase/Purchase/editPurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]))}">编辑</a>
-							<a href="{:U('Purchase/Purchase/deletePurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]))}">删除</a>
+							<a href="{:U('Purchase/Purchase/deletePurchaseOrder',array(purchaseID=>$vo[C('DB_PURCHASE_ID')]))}"
+								onclick="
+									if(confirm('确定要删除吗?')){
+										return true;
+									}else{
+										return false;
+									}
+									">删除
+							</a>
 						</td>
 						</tr>	
 					</volist> 								

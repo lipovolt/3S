@@ -1,8 +1,21 @@
 <a class="logo" href="__PUBLIC__/index.php">
-				<img src="__PUBLIC__/Images/logo.png" alt="">
-			</a>
+	<img src="__PUBLIC__/Images/logo.png" alt="">
+	<img src="__PUBLIC__/Images/slogan.png">
+</a>
 <span>
 	<i class="icon user"></i>
 	<span class="blue"><?= I('session.username',0);  ?></span>
 	<a class="blue" style="margin:0px 10px;" href="{:U('Index/Index/logout')}">退出</a>
 </span>
+<div class="droplist" style="top:-1px;">
+	<div class="label" id='messagerieNum' style="padding-right:20px;border:none;background:none;box-shadow:none;">
+		<if condition="I('session.username',0) eq '张旻'">
+			<a class="blue"  href="{:U('Todo/Todo/index',['keyword'=>'person','keywordValue'=>'Jade'])}">待办<font style="color:#F00;"><b> {$todoQuantity}</b></font></a>
+		  <elseif condition="I('session.username',0) eq 'admin'"/>
+		  	<a class="blue"  href="{:U('Todo/Todo/index',['keyword'=>'person','keywordValue'=>'张昱'])}">待办<font style="color:#F00; font-size: 16px"><b> {$todoQuantity}</b></font></a>
+		  <else />
+		  	<a class="blue"  href="{:U('Todo/Todo/index',['keyword'=>'person','keywordValue'=>I('session.username',0)])}">待办<font style="color:#F00;"><b> {$todoQuantity}</b></font></a>
+		</if>		
+	</div>
+	<div id='messagerieList'></div>
+</div>

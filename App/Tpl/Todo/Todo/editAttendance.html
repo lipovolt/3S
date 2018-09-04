@@ -49,7 +49,7 @@
 								<select name="name"  id="name">
 									<option value="unknow">请选择</option>
 									<volist name="names" id="vo">
-										<if condition="($name eq $vo)"> <option value="{$vo}" selected="">{$vo}</option>
+										<if condition="($att[C('DB_ATTENDANCE_NAME')] eq $vo)"> <option value="{$vo}" selected="">{$vo}</option>
 										<else /> <option value="{$vo}">{$vo}</option>
 										</if>											
 									</volist> 	
@@ -110,6 +110,20 @@
 							<label for="rest2_end" class="control-label">间休2结束时间</label>
 							<div class="control-wrap">
 								<input type="text"  id="rest2_end" name="rest2_end" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="{$att[C('DB_ATTENDANCE_REST2_END')]}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="overtime_begin" class="control-label">加班开始时间</label>
+							<div class="control-wrap">
+								<input type="text"  id="overtime_begin" name="overtime_begin" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="{$att[C('DB_ATTENDANCE_OVERTIME_BEGIN')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="overtime_end" class="control-label">加班结束时间</label>
+							<div class="control-wrap">
+								<input type="text"  id="overtime_end" name="overtime_end" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'});" value="{$att[C('DB_ATTENDANCE_OVERTIME_END')]}" />
 							</div>
 						</div>
 					</div>

@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>新增采购单</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>采购管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/purchaseMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+<!-- 主页面开始  -->
+<div id="WarehouseOutbound" class="main">
+<script>
+function refresh(){
+	form.action="{:U('Purchase/Purchase/newPurchaseOrder')}";
+	form.submit();	
+}
+function deleteItem(sku){
+	form.action="{:U('Purchase/Purchase/newPurchaseOrder')}?deletedSku="+sku;
+	form.submit();	
+}
+function save(){
+	if(checkForm()){
+		form.action="{:U('Purchase/Purchase/saveNewPurchaseOrder')}";
+		form.submit();
+	}
+}
+function checkForm(){
+	var sku = document.getElementsByName("sku[]");
+	var warehouse = document.getElementsByName("warehouse[]");
+	var price = document.getElementsByName("price[]");
+	var quantity = document.getElementsByName("purchase_quantity[]");
+	var strSku = [];
+	var strWarehouse = [];
+	for (var i =0;i<sku.lengt;i++) {
+		strSku[i]=String(sku[i].value);
+		strWarehouse[i]=String(warehouse[i].value);
+	}
+	for(var i=0;i<strSku.length;i++){
+		if(strSku[i]==strSku[i+1] && strWarehouse[i]==strWarehouse[i+1]){
+			alert("商品编码： "+strSku[i]+' 和仓库: '+strWarehouse[i]+' 组合重复。');
+			return false;			
+		}
+	}
+	return true;
+}
+</script>
+
+<!--产品列表-->
+<div class="block-outer">
+	<form method="POST" id="form" name="form" action="#" method="POST">
+	<div class="block-outer-hd">
+		<div class="form-group">
+            <label for="" class="control-label">订单号：</label>
+            <div class="control-wrap">
+            	<input id="order_number" name="order_number" value="{$order_number}"></input>
+            </div>
+            <label for="" class="control-label">运费：</label>
+            <div class="control-wrap">
+            	<input id="shipping_fee" name="shipping_fee" value="{$shipping_fee}"></input>
+            </div>
+        </div>
+        <button class="btn btn-blue btn-s" id="savePurchaseItemInfo" onclick="save();return false;">保存</button>
+    </div>
+
+	<table  id="warehouseProduct" class="tablelist">              
+		
+			<tr>
+				<th>商品编码</th>
+				<th>商品名称</th>
+				<th>单价</th>				
+				<th>采购数量</th>
+				<th>仓库</th>
+				<th>操作</th>
+			</tr> 
+
+			<volist name="purchaseItem" id="vo" key="k">
+				
+				<tr>
+				<td><input id="{:C('DB_PURCHASE_ITEM_SKU')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_SKU')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_SKU')]}" onblur="refresh()"></input></td>
+
+				<td><input id="{:C('DB_PRODUCT_CNAME')}[{$k.value}]" name="{:C('DB_PRODUCT_CNAME')}[{$k.value}]" value="{$vo[C('DB_PRODUCT_CNAME')]}" readonly=""></input></td>
+				<td><input id="{:C('DB_PURCHASE_ITEM_PRICE')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_PRICE')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_PRICE')]}"></input></td>
+				<td><input id="{:C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')]}"></input></td>
+				<td>
+					<select id="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}[{$k.value}]">
+									<?php 
+										if($vo[C('DB_PURCHASE_ITEM_WAREHOUSE')] == '深圳仓'){
+											echo '<option value="" >请选择</option>
+												<option value="深圳仓" selected>深圳仓</option>
+												<option value="美自建仓" >美自建仓</option>
+												<option value="万邑通德国" >万邑通德国</option>
+												<option value="万邑通美西" >万邑通美西</option>';
+										}elseif($vo[C('DB_PURCHASE_ITEM_WAREHOUSE')] == '美自建仓'){
+											echo '<option value="" >请选择</option>
+												<option value="深圳仓">深圳仓</option>
+												<option value="美自建仓" selected>美自建仓</option>
+												<option value="万邑通德国" >万邑通德国</option>
+												<option value="万邑通美西" >万邑通美西</option>';
+										}elseif($vo[C('DB_PURCHASE_ITEM_WAREHOUSE')] == '万邑通德国'){
+											echo '<option value="" >请选择</option>
+												<option value="深圳仓">深圳仓</option>
+												<option value="美自建仓">美自建仓</option>
+												<option value="万邑通德国" selected>万邑通德国</option>
+												<option value="万邑通美西" >万邑通美西</option>';
+										}elseif($vo[C('DB_PURCHASE_ITEM_WAREHOUSE')] == '万邑通美西'){
+											echo '<option value="" >请选择</option>
+												<option value="深圳仓">深圳仓</option>
+												<option value="美自建仓">美自建仓</option>
+												<option value="万邑通德国">万邑通德国</option>
+												<option value="万邑通美西" selected>万邑通美西</option>';
+										}else{
+											echo '<option value="" selected>请选择</option>
+												<option value="深圳仓">深圳仓</option>
+												<option value="美自建仓">美自建仓</option>
+												<option value="万邑通德国" >万邑通德国</option>
+												<option value="万邑通美西" >万邑通美西</option>';
+										}
+									?>							
+								</select>
+				</td>
+				<td>
+					 <button class="btn btn-blue btn-s" id="savePurchaseItemInfo" onclick="deleteItem({$vo[C('DB_PURCHASE_ITEM_SKU')]})">删除</button>
+				</td>
+				</tr>
+				
+			</volist>	
+		</table>
+	</form>	
+</div>
+
+</div>
+</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

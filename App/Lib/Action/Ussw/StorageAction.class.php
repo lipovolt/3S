@@ -3,7 +3,6 @@
 class StorageAction extends CommonAction{
 
     public function index(){
-        $this->setSaleStatus();
     	if($_POST['keyword']=="" && $_GET['sortword']==""){
             $Data = D("UsstorageView");
             import('ORG.Util.Page');
@@ -126,60 +125,52 @@ class StorageAction extends CommonAction{
         }
     }
 
-    private function setSaleStatus(){
+    public function moveToAmazon($quantity,$sku){
+        $restock = M(C('DB_RESTOCK'));
+        $data = $this->getUsswStorage($sku);
+        if($data==null){
+            $sku = $sku.'0';
+            $data=$this->getUsswStorage($sku);
+        }
+        if($data==null){
+            $this->error('无法转仓，货号： '.$sku.' 不在美自建仓！');
+        }
+        $data[C('DB_USSTORAGE_AINVENTORY')]=$data[C('DB_USSTORAGE_AINVENTORY')]-$quantity;
+        $data[C('DB_USSTORAGE_CINVENTORY')]=$data[C('DB_USSTORAGE_CINVENTORY')]-$quantity;
         $usstorage = M(C('DB_USSTORAGE'));
-        $usstorage->startTrans();
-        $data = $usstorage->select();
-        foreach ($data as $key => $value) {
-            if($value[C('DB_USSTORAGE_AINVENTORY')]<=1 && $value[C('DB_USSTORAGE_SALE_STATUS')]!='已下架'){
-                $saleStatus[C('DB_USSTORAGE_SALE_STATUS')]='待下架';
-                $usstorage->where(array(C('DB_USSTORAGE_ID')=>$value[C('DB_USSTORAGE_ID')]))->save($saleStatus);
+        $result =  $usstorage->save($data);
+        $result = true;
+        if(false !== $result || 0 !== $result) {
+            $amazonUsStorage = M(C('DB_AMAZON_US_STORAGE'))->where(array(C('DB_AMAZON_US_STORAGE_SKU')=>'FBA_'.$sku))->find();
+            if($amazonUsStorage!==false && $amazonUsStorage!==null){
+                $amazonUsStorage[C('DB_AMAZON_US_STORAGE_CINVENTORY')] = $amazonUsStorage[C('DB_AMAZON_US_STORAGE_CINVENTORY')]+$quantity;
+                $amazonUsStorage[C('DB_AMAZON_US_STORAGE_LASTTIME')] = Date('Y-m-d H:i:s');
+                $result=M(C('DB_AMAZON_US_STORAGE'))->save($amazonUsStorage);
+            }else{
+                $amazonUsStorage[C('DB_AMAZON_US_STORAGE_CINVENTORY')] = $quantity;
+                $amazonUsStorage[C('DB_AMAZON_US_STORAGE_SKU')] = 'FBA_'.$sku;
+                $amazonUsStorage[C('DB_AMAZON_US_STORAGE_LASTTIME')] = Date('Y-m-d H:i:s');
+                $result=M(C('DB_AMAZON_US_STORAGE'))->add($amazonUsStorage);
             }
-            if($value[C('DB_USSTORAGE_AINVENTORY')]>1 && $value[C('DB_USSTORAGE_SALE_STATUS')]=='待下架'){
-                $saleStatus[C('DB_USSTORAGE_SALE_STATUS')]=null;
-                $usstorage->where(array(C('DB_USSTORAGE_ID')=>$value[C('DB_USSTORAGE_ID')]))->save($saleStatus);
-            }
+
+            if(false !== $result) {
+              $this->success('操作成功！');}
+            else{
+                $this->error('写入错误！');
+             }
+        }else{
+            $this->error('写入错误！');
         }
-        $usstorage->commit();
     }
 
-    public function stopListing($id){
-        $data[C('DB_USSTORAGE_SALE_STATUS')] = '已下架';
-        if(M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_ID')=>$id))->getField(C('DB_USSTORAGE_SALE_STATUS'))=='待下架'){
-            M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_ID')=>$id))->save($data);
-        }
-        else{
-            $this->error('该产品库存大于0，不需要下架！');
-        }
-        $this->success('更新成功');
-    }
-
-    public function awaitingToStop(){
-        $map[C('DB_USSTORAGE_SALE_STATUS')] = array('eq','待下架');
-        $usstorage = D("UsstorageView")->where($map)->select();
-        foreach ($usstorage as $key => $value) {
-          $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
-          $usstorage[$key][C('DB_USSTORAGE_IINVENTORY')] = $this->getIInventory($value[C('DB_USSTORAGE_SKU')]);
-        }
-        $this->assign('usstorage',$usstorage);
-        $this->display('index');
-
-    }
-
-    public function stopped(){
-        $usstorage = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SALE_STATUS')=>'已下架'))->select();
-        $products = M(C('DB_PRODUCT'));
-        foreach ($usstorage as $key => $value) {
-          $usstorage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
-          $usstorage[$key][C('DB_USSTORAGE_IINVENTORY')] = $this->getIInventory($value[C('DB_USSTORAGE_SKU')]);
-          if($value[C('DB_USSTORAGE_CNAME')]==null){
-            $usstorage[$key][C('DB_USSTORAGE_CNAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
-            $usstorage[$key][C('DB_USSTORAGE_ENAME')] = $products->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_PRODUCT_ENAME'));
-          }
-        }
-        $this->assign('usstorage',$usstorage);
-        $this->display('index');
-
+    private function getUsswStorage($sku){
+      $map[C('DB_USSTORAGE_SKU')]=array('eq',$sku);
+      $usswstorage = M(C('DB_USSTORAGE'));
+      $data = $usswstorage->where($map)->find();
+      if($data==false || $data==null){
+        return null;
+      }
+      return $data;
     }
 }
 

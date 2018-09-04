@@ -120,7 +120,10 @@ class TodoAction extends CommonAction{
         $actualDay=substr($actualDate, 8,2);
         $j=0;
         for($i=$actualDay;$i>=1;$i--){
-            $map[C('DB_ATTENDANCE_COMETIME')] = array('like',substr($actualDate, 0,7).'-'.$this->addZero($i).'%');
+            $where[C('DB_ATTENDANCE_COMETIME')] = array('like',substr($actualDate, 0,7).'-'.$this->addZero($i).'%');
+            $where[C('DB_ATTENDANCE_OVERTIME_BEGIN')] = array('like',substr($actualDate, 0,7).'-'.$this->addZero($i).'%');
+            $where['_logic'] = 'or';
+            $map['_complex'] = $where;
             $map[C('DB_ATTENDANCE_NAME')] = array('eq',$_SESSION['username']);
             $att=$attendaceTable->where($map)->find();
             if($att!=null){
@@ -133,6 +136,8 @@ class TodoAction extends CommonAction{
                 $data[$j]['rest1_end']=substr($att[C('DB_ATTENDANCE_REST1_END')], 10,9);
                 $data[$j]['rest2_begin']=substr($att[C('DB_ATTENDANCE_REST2_BEGIN')], 10,9);
                 $data[$j]['rest2_end']=substr($att[C('DB_ATTENDANCE_REST2_END')], 10,9);
+                $data[$j]['overtime_begin']=substr($att[C('DB_ATTENDANCE_OVERTIME_BEGIN')], 10,9);
+                $data[$j]['overtime_end']=substr($att[C('DB_ATTENDANCE_OVERTIME_END')], 10,9);
                 $rest=((strtotime($data[$j]['rest1_end'])-strtotime($data[$j]['rest1_begin']))+(strtotime($data[$j]['rest2_end'])-strtotime($data[$j]['rest2_begin'])))/3600;
                 if($rest==null||$rest==''||$rest==0){
                     $data[$j]['hour']=round((strtotime($data[$j]['leave'])-strtotime($data[$j]['come']))/3600-C('NOON_BREAK')[$_SESSION['username']],2);
@@ -141,6 +146,9 @@ class TodoAction extends CommonAction{
                 }
                 if($data[$j]['hour']<0){
                     $data[$j]['hour']=0;
+                }
+                if($data[$j]['overtime_begin']!=null && $data[$j]['overtime_end']!=null){
+                     $data[$j]['overtime_hour']=round((strtotime($data[$j]['overtime_end'])-strtotime($data[$j]['overtime_begin']))/3600-$rest,2);
                 }
                 $j++;
             }
@@ -167,7 +175,7 @@ class TodoAction extends CommonAction{
             $result[C('DB_ATTENDANCE_COMETIME')]=$comeTime;
             $result=M(C('DB_ATTENDANCE'))->add($result);
             if($result!==false){
-                $this->success('3万5的目标还没达到，继续努力！');
+                $this->success('3万5不是我们的终点，只是新的起点，继续努力！');
             }else{
                 $this->error('开工失败，请重新点击开工按钮！');
             }
@@ -186,7 +194,7 @@ class TodoAction extends CommonAction{
             $result[C('DB_ATTENDANCE_LEAVETIME')]=$leaveTime;
             $result=M(C('DB_ATTENDANCE'))->save($result);
             if($result!==false){
-                $this->success('烈日炎炎，注意防暑！');
+                $this->success('锻炼身体很重要！去做做操，跑跑步吧！');
             }else{
                 $this->error('收工失败，请重新点击收工按钮！');
             }
@@ -240,12 +248,65 @@ class TodoAction extends CommonAction{
         }
     }
 
+    public function overtimeBegin($overtimeBeginTime){
+        $map[C('DB_ATTENDANCE_NAME')]=array('eq',$_SESSION['username']);
+        $map[C('DB_ATTENDANCE_COMETIME')] = array('like',substr($overtimeBeginTime, 0,10).'%');
+        $result = M(C('DB_ATTENDANCE'))->where($map)->find();
+        if($result!==null && $result!==false){
+            if($result[C('DB_ATTENDANCE_OVERTIME_BEGIN')]==null){
+                $result[C('DB_ATTENDANCE_OVERTIME_BEGIN')]=$overtimeBeginTime;
+                $result=M(C('DB_ATTENDANCE'))->save($result);
+                if($result!==false){
+                    $this->success('加班开始！');
+                }else{
+                    $this->error('加班开始失败，请重新点击加班开始按钮！');
+                }
+            }else{
+                $this->error('加班已经开始，请勿重复点击加班开始按钮！');
+            }            
+        }else{
+            $result[C('DB_ATTENDANCE_NAME')]=$_SESSION['username'];
+            $result[C('DB_ATTENDANCE_COMEIP')]=$_SESSION['loginip'];
+            $result[C('DB_ATTENDANCE_OVERTIME_BEGIN')]=$overtimeBeginTime;
+            $result=M(C('DB_ATTENDANCE'))->add($result);
+            if($result!==false){
+                $this->success('加班开始！');
+            }else{
+                $this->error('加班开始失败，请重新点击加班开始按钮！');
+            }
+        }
+    }
+
+    public function overtimeEnd($overtimeEndTime){
+        $where[C('DB_ATTENDANCE_COMETIME')] = array('like',substr($overtimeEndTime, 0,10).'%');
+        $where[C('DB_ATTENDANCE_OVERTIME_BEGIN')] = array('like',substr($overtimeEndTime, 0,10).'%');
+        $where['_logic'] = 'or';
+        $map['_complex'] = $where;
+        $map[C('DB_ATTENDANCE_NAME')]=array('eq',$_SESSION['username']);
+        $result = M(C('DB_ATTENDANCE'))->where($map)->find();
+        if($result!==null && $result!==false){
+            if($result[C('DB_ATTENDANCE_OVERTIME_BEGIN')]!=null){
+                $result[C('DB_ATTENDANCE_OVERTIME_END')]=$overtimeEndTime;
+                $result=M(C('DB_ATTENDANCE'))->save($result);
+                if($result!==false){
+                    $this->success('加班结束');
+                }else{
+                    $this->error('加班结束结束失败，请重新点击加班结束按钮！');
+                }
+            }else{
+                $this->error(substr($overtimeEndTime, 0,10).' 尚未开始加班！');
+            }
+            
+        }else{
+            $this->error(substr($overtimeEndTime, 0,10).' 尚未开工或者尚未开始加班！');
+        }
+    }
+
     public function editAttendance($id=null){
         if($id!=null){
             $map[C('DB_ATTENDANCE_ID')]=array('eq',$id);
             $att=M(C('DB_ATTENDANCE'))->where($map)->find();
             $this->assign('att',$att);
-            $this->assign('name',$_SESSION['username']);
         }
         $this->assign('names',array_keys(C('NOON_BREAK')));
         $this->display();
@@ -288,7 +349,7 @@ class TodoAction extends CommonAction{
             $map[C('DB_ATTENDANCE_NAME')]=array('eq',$key);
             $atts=$attendaceTable->where($map)->select();
             foreach ($atts as $attKey => $attValue) {
-                $tmRest1=(strtotime(substr($attValue[C('DB_ATTENDANCE_REST1_END')], 10,9))-strtotime(substr($attValue[C('DB_ATTENDANCE_REST1_BEGIN')], 10,9)))/3600;
+                $tmpRest1=(strtotime(substr($attValue[C('DB_ATTENDANCE_REST1_END')], 10,9))-strtotime(substr($attValue[C('DB_ATTENDANCE_REST1_BEGIN')], 10,9)))/3600;
                 $tmpRest2=(strtotime(substr($attValue[C('DB_ATTENDANCE_REST2_END')], 10,9))-strtotime(substr($attValue[C('DB_ATTENDANCE_REST2_BEGIN')], 10,9)))/3600;
                 $tmpTotalHour=(strtotime(substr($attValue[C('DB_ATTENDANCE_LEAVETIME')], 10,9))-strtotime(substr($attValue[C('DB_ATTENDANCE_COMETIME')], 10,9)))/3600;
                 $tmpRest=$tmpRest1+$tmpRest2;
@@ -302,7 +363,8 @@ class TodoAction extends CommonAction{
                      if($tmpRealHour>0){
                         $data[$i]['hour'] = $data[$i]['hour']+$tmpRealHour;
                     } 
-                } 
+                }
+                $data[$i]['overtime']=$data[$i]['overtime']+(strtotime(substr($attValue[C('DB_ATTENDANCE_OVERTIME_END')], 10,9))-strtotime(substr($attValue[C('DB_ATTENDANCE_OVERTIME_BEGIN')], 10,9)))/3600;
             }
             $i++; 
         }

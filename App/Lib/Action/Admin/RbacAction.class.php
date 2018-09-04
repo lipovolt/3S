@@ -40,9 +40,12 @@ class RbacAction extends CommonAction{
 			C('DB_3S_USER_USERNAME') => I(C('DB_3S_USER_USERNAME')),
 			C('DB_3S_USER_PASSWORD') => I(C('DB_3S_USER_PASSWORD'),'','md5'),
 			C('DB_3S_USER_LOGINTIME') => time(),
-			C('DB_3S_USER_LOGINIP') => get_client_ip()
+			C('DB_3S_USER_LOGINIP') => get_client_ip(),
+			C('DB_3S_USER_POSITION') => I(C('DB_3S_USER_POSITION')),
+			C('DB_3S_USER_LUNCH_BREAK') => I(C('DB_3S_USER_LUNCH_BREAK')),
+			C('DB_3S_USER_BASIC_WAGE') => I(C('DB_3S_USER_BASIC_WAGE')),
+			C('DB_3S_USER_PERFOMANCE_PERCENT') => I(C('DB_3S_USER_PERFOMANCE_PERCENT'))
 			);
-
 		$role = array();
 		if($uid = M(C('DB_3S_USER'))->add($user)){
 			foreach ($_POST[C('DB_ROLE_ID')] as $key => $value) {

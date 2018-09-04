@@ -3,6 +3,7 @@
 		<i class="icon dropdown-s"></i><strong>采购单</strong>								
 	</dt>
 	<dd><a href="{:U('Purchase/Purchase/importPurchase')}" >导入采购单</a></dd>
+	<dd><a href="{:U('Purchase/Purchase/newPurchaseOrder')}" >新增采购单</a></dd>
 	<dd><a href="{:U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待确认'))}" >待确认</a></dd>
 	<dd><a href="{:U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'待发货'))}" >待发货</a></dd>
 	<dd><a href="{:U('Purchase/Purchase/index',array(C('DB_PURCHASE_STATUS')=>'部分到货'))}" >部分到货</a></dd>
@@ -11,11 +12,11 @@
 	<dt>
 		<strong>缺货补货</strong>								
 	</dt>
-	<dd><a href="{:U('Purchase/Restock/importStorage')}" >导出缺货表</a></dd>
-	<dd><a href="{:U('Purchase/Restock/importStorage',array('country'=>'US'))}" >导出美国缺货表</a></dd>
-	<dd><a href="{:U('Purchase/Restock/importStorage',array('country'=>'DE'))}" >导出德国缺货表</a></dd>
-	<dd><a href="{:U('Purchase/Restock/exportSzOutOfStock')}" >导出深圳缺货表</a></dd>
+	<dd><a href="{:U('Purchase/Restock/findUsOutOfStockItem')}" onclick="if(confirm('是否已经上传亚马逊FBA库存，FBA出库单，万邑通美西仓库存？如果没有上传这两个仓库的缺货建议不准确！')){return true;}else{return false;	}">导出美国缺货表</a></dd>
+	<dd><a href="{:U('Purchase/Restock/findDeOutOfStockItem')}"  onclick="if(confirm('是否已经上传万邑通德国仓库存？')){return true;}else{return false;	}">导出德国缺货表</a></dd>
+	<dd><a href="{:U('Purchase/Restock/findSzswOutOfStockItem')}" >导出深圳缺货表</a></dd>
 	<dd><a href="{:U('Purchase/Restock/index')}" >补货表</a></dd>
+	<dd><a href="{:U('Purchase/Restock/editRestockPara')}" >编辑补货参数</a></dd>
 </dl>
 <dl>
 	<dt>
@@ -29,6 +30,7 @@
 		<i class="icon dropdown-s"></i><strong>试算</strong>								
 	</dt>
 	<dd><a href="{:U('Sale/GgsUsswSale/ggsUsswItemTest')}" >美国自建仓试算</a></dd>
+	<dd><a href="{:U('Sale/WinitDeSale/winitDeItemTest')}" >万邑通德国仓试算</a></dd>
 	<dd><a href="{:U('Sale/SzSale/usTestCal')}" >深圳直发美国试算</a></dd>
 	<dd><a href="{:U('Sale/SzSale/deTestCal')}" >深圳直发德国试算</a></dd>
 </dl>

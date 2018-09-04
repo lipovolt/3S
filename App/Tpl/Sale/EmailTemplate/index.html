@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<!-- InstanceBeginEditable name="doctitle" -->
+
+<title>客服模板</title>
+<!-- InstanceEndEditable -->
+
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+
+<body>
+
+
+
+	<div class="header">
+
+		<div class="top">
+
+			<div class="area">
+
+				<span>
+
+					<include file="./Public/Tpl/header.html" />
+
+			</div>
+
+		</div>		
+
+		<div class="nav">
+
+			<div class="area">
+
+				<include file="./Public/Tpl/top.html" />
+
+			</div>
+
+		</div>
+
+	</div>	
+
+	
+
+    <!-- InstanceBeginEditable name="左边栏" -->
+
+	<div class="area clearfix">
+
+		<div class="sidenav">
+
+			<div class="sidenav-hd"><strong>销售</strong></div>
+
+			<div class="sidenav-bd">
+
+				<include file="./Public/Tpl/saleMenu.html" />	
+
+			</div>
+
+		</div>
+
+		<div class="content">
+
+	<div id="ProductInfo" class="main">
+
+		<div>
+
+			<div class="tab-content">	
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th><div class="tl">模板名称</div></th>
+						<th><div class="tl">回复内容</div></th>
+					</tr>
+					<volist name="templates" id="vo">
+						<tr>
+						<td><div class="tl">{$key}</div></td>
+						<td><div class="tl">{$vo}</div></td>
+						</tr>	
+					</volist> 								
+
+				</table>
+
+				<div class="result page" align="center">{$page}</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+
+
+
+
+	</div>
+
+	</div>
+
+	</div>
+
+	<!-- InstanceEndEditable -->
+
+	<div class="area footer">
+
+		<include file="./Public/Tpl/footer.html" />
+
+	</div> 
+
+</body>
+
+<!-- InstanceEnd --></html>
+

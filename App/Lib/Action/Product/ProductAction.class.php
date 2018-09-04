@@ -66,6 +66,8 @@ class ProductAction extends CommonAction{
                 if($this->verifyImportedProductTemplateColumnName($firstRow)){    
                     $products = M(C('db_product'));
                     $products-> startTrans();
+                    $szStorage = M(C('DB_SZSTORAGE'));
+                    $szStorage-> startTrans();
                     for($i=2;$i<=$highestRow;$i++)
                     {   
                         if($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()==''){
@@ -101,16 +103,19 @@ class ProductAction extends CommonAction{
                             if($verifyError != null){
                                 $this->error($verifyError);
                             }else{
-                                if($products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->find() != null){
+                                $p=$products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->find();
+                                if($p!=null && $p!==false){
                                     $result = $products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->save($data);
                                 }else{
                                     $result = $products->add($data);
+                                    $this->addToSzStorage( $data[C('DB_PRODUCT_SKU')]);
                                 }
                             }
                         }
                          
                     } 
                     $products->commit();
+                    $szStorage->commit();
                     if(false !== $result || 0 !== $result){
                         $this->success('导入成功！');
                     }else{
@@ -127,12 +132,61 @@ class ProductAction extends CommonAction{
              }    
     }
 
+    private function addToSzStorage($sku){
+        $szstorage = M(C('DB_SZSTORAGE'));
+        $szs = $szstorage->where(array(C('DB_SZSTORAGE_SKU')=>$sku))->find();
+        if($szs==null){
+            $szs[C('DB_SZSTORAGE_SKU')] = $sku;
+            $szs[C('DB_SZSTORAGE_CINVENTORY')] = 0;
+            $szs[C('DB_SZSTORAGE_AINVENTORY')] = 0;
+            $szstorage->add($szs);
+        }
+    }
+
     Public function productEdit($sku){
         $product = M(C('db_product'))->where(array(C('db_product_sku')=>$sku))->select();
         $product[0][C('DB_METADATA_USED_UPC')] = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USED_UPC'));
         $this->assign('product',$product);
         $this->display();
 
+    }
+
+    public function barcode($sku){
+        Vendor('tcpdf.tcpdf_barcodes_1d');
+        Vendor('tcpdf.tcpdf');
+        $barcodeobj = new TCPDFBarcode('P', 'mmm',array(400,300));
+        $barcode = $barcodeobj->getBarcodeHTML(1, 20, 'black');
+        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        // set document information
+        $pdf->SetCreator(PDF_CREATOR);
+        // set font
+        $pdf->SetFont('helvetica', '', 11);
+        // define barcode style
+        $style = array(
+            'position' => '',
+            'align' => 'C',
+            'stretch' => false,
+            'fitwidth' => true,
+            'cellfitalign' => '',
+            'border' => false,
+            'hpadding' => 'auto',
+            'vpadding' => 'auto',
+            'fgcolor' => array(0,0,0),
+            'bgcolor' => false, //array(255,255,255),
+            'text' => true,
+            'font' => 'helvetica',
+            'fontsize' => 12,
+            'stretchtext' => 4
+        );
+        $pdf->AddPage('L');
+
+        // CODE 128 AUTO 
+        $style['position'] = 'C';       
+        $pdf->write1DBarcode('1001.01', 'C128A', '', '', '', 18, 0.4, $style, 'N');
+        $pdf->Cell(0, 0, '  MADE IN CHINA', 0, 1, 'C');
+
+        $pdf->Ln();
+        $pdf->Output('sku', 'I');
     }
 
     public function update(){
@@ -191,8 +245,45 @@ class ProductAction extends CommonAction{
             }else{
                 $this->error('写入错误！');
             }
-        } 
-               
+        }                
+    }
+
+    public function saveUPC($upc,$id){
+        $data[C('db_product_id')] = $id;
+        $data[C('db_product_upc')] = $upc;
+        M(C('DB_PRODUCT'))->save($data);
+        $mdata[C('DB_METADATA_USED_UPC')]=$upc;
+        $mdata[C('DB_METADATA_ID')]=1;
+        M(C('DB_METADATA'))->save($mdata);
+        $this->success("UPC码已保存");
+    }
+
+    public function allocatUpc($id){
+        $product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_ID')=>$id))->find();
+        $product[C('DB_PRODUCT_UPC')] = $this->generateUPC();
+        M(C('DB_PRODUCT'))->save($product);
+        $this->success("UPC码已保存");
+    }
+
+    private function generateUPC(){
+        $usedUpc = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USED_UPC'));
+        $num=str_split($usedUpc);
+        if((int)$num[10]==9){
+            $oddSum = (int)$num[0]+(int)$num[2]+(int)$num[4]+(int)$num[6]+(int)$num[8];
+            $evenSum = (int)$num[1]+(int)$num[3]+(int)$num[5]+(int)$num[7]+(int)$num[9]+1;
+        }else{
+            $oddSum = (int)$num[0]+(int)$num[2]+(int)$num[4]+(int)$num[6]+(int)$num[8]+(int)$num[10]+1;
+            $evenSum = (int)$num[1]+(int)$num[3]+(int)$num[5]+(int)$num[7]+(int)$num[9];
+        }        
+        $sum = $oddSum*3+$evenSum;
+        $verifyNumber = (10-round($sum%10))==10?0:(10-round($sum%10));
+        if($verifyNumber==0){;
+            $upc = (substr($usedUpc, 0,11)+1)*10;
+        }else{
+            $upc = (substr($usedUpc, 0,11)+1)*10+$verifyNumber;
+        }
+        M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->setField(C('DB_METADATA_USED_UPC'),$upc);
+        return $upc;
     }
 
     private function verifyImportedProductTemplateColumnName($firstRow){
@@ -267,9 +358,11 @@ class ProductAction extends CommonAction{
                     }      
                 }
                 //excel firt column name verify
-                for($c='A';$c<='Q';$c++){
-                    $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+                for($c='A';$c!=$highestColumn;$c++){
+                    $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();                    
                 }
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($highestColumn.'1')->getValue();   
+
                 if($this->verifyImportedWinitProductTemplateColumnName($firstRow)){    
                     $products = M(C('db_product'));
                     $products-> startTrans();
@@ -281,17 +374,18 @@ class ProductAction extends CommonAction{
                             $data=null;
                             
                             if(I('post.country','','htmlspecialchars')=="de"){
-                                $data[C('db_product_sku')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),"utf-8","auto"); 
-                                $data[C('db_product_pweight')] = $objPHPExcel->getActiveSheet()->getCell("T".$i)->getValue()*1000;
-                                $data[C('db_product_plength')] = $objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
-                                $data[C('db_product_pwidth')]= $objPHPExcel->getActiveSheet()->getCell("V".$i)->getValue();
-                                $data[C('db_product_pheight')]= $objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue();
-                                $data[C('db_product_detariff')]= $objPHPExcel->getActiveSheet()->getCell("AC".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AC".$i)->getValue();
+                                $data[C('db_product_sku')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue(),"utf-8","auto"); 
+                                $data[C('db_product_pweight')] = $objPHPExcel->getActiveSheet()->getCell("X".$i)->getValue()*1000;
+                                $data[C('db_product_plength')] = $objPHPExcel->getActiveSheet()->getCell("Y".$i)->getValue();
+                                $data[C('db_product_pwidth')]= $objPHPExcel->getActiveSheet()->getCell("Z".$i)->getValue();
+                                $data[C('db_product_pheight')]= $objPHPExcel->getActiveSheet()->getCell("AA".$i)->getValue();
+                                $data[C('db_product_detariff')]= $objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
+
                             }elseif(I('post.country','','htmlspecialchars')=="us"){
-                                $data[C('db_product_sku')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue(),"utf-8","auto"); 
-                                $data[C('db_product_ustariff')]= $objPHPExcel->getActiveSheet()->getCell("AC".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AC".$i)->getValue();
+                                $data[C('db_product_sku')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue(),"utf-8","auto"); 
+                                $data[C('db_product_ustariff')]= $objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
                             }                           
-                            
+
                             if($products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->find() != null){
                                 $result = $products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->save($data);
                             }
@@ -316,12 +410,90 @@ class ProductAction extends CommonAction{
     }
 
     private function verifyImportedWinitProductTemplateColumnName($firstRow){
-        for($c='A';$c<=max(array_keys(C('IMPORT_WINIT_PRODUCT')));$c++){
+        for($c='A';$c!=end(array_keys(C('IMPORT_WINIT_PRODUCT')));$c++){
             if($firstRow[$c] != C('IMPORT_WINIT_PRODUCT')[$c]){ 
                 return false;
             }      
         }
-        return true;
+        if($firstRow[end(array_keys(C('IMPORT_WINIT_PRODUCT')))] != C('IMPORT_WINIT_PRODUCT')[end(array_keys(C('IMPORT_WINIT_PRODUCT')))]){
+            return false;
+        }else{
+            return true;
+        }        
+    }
+
+    public function productPackRequirement(){
+        $this->assign('products', D('ProductPackRequirementView')->select());
+        $this->display();
+    }
+
+    public function pprSearch(){
+         if($_POST['keywordValue']==""){
+            $Data = D('ProductPackRequirementView');
+            import('ORG.Util.Page');
+            $count = $Data->count();
+            $Page = new Page($count,20);            
+            $Page->setConfig('header', '条数据');
+            $show = $Page->show();
+            $products = $Data->order(C('DB_PRODUCT_SKU'))->limit($Page->firstRow.','.$Page->listRows)->select();
+            $this->assign('products',$products);
+            $this->assign('page',$show);
+        }
+        else{
+            $where[C('DB_PRODUCT_SKU')] = array('eq',I('post.keywordValue','','htmlspecialchars'));
+            $pId=M(C('DB_PRODUCT'))->where($where)->getField(C('DB_PRODUCT_ID'));
+            $products = D('ProductPackRequirementView')->where(array(C('DB_PRODUCT_PACK_REQUIREMENT_PRODUCT_ID')=>$pId))->select();
+            $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
+            $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
+            $this->assign('products',$products);
+        }
+        $this->display("productPackRequirement");
+    }
+
+    public function newPackRequirement(){
+        $this->display();
+    }
+
+    public function newPackRequirementHandle(){
+        $product_id = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$_POST[C('DB_PRODUCT_SKU')]))->getField(C('DB_PRODUCT_ID'));
+        $map[C('DB_PRODUCT_PACK_REQUIREMENT_WAREHOUSE')] = array('eq', $_POST[C('DB_PRODUCT_PACK_REQUIREMENT_WAREHOUSE')]);
+        $map[C('DB_PRODUCT_PACK_REQUIREMENT_PRODUCT_ID')] = array('eq', $product_id);
+        $existSku = M(C('DB_PRODUCT_PACK_REQUIREMENT'))->where($map)->find();
+        if($product_id!=null && $existSku==null){
+            $data[C('DB_PRODUCT_PACK_REQUIREMENT_PRODUCT_ID')] = $product_id;
+            $data[C('DB_PRODUCT_PACK_REQUIREMENT_WAREHOUSE')] = $_POST[C('DB_PRODUCT_PACK_REQUIREMENT_WAREHOUSE')];
+            $data[C('DB_PRODUCT_PACK_REQUIREMENT_REQUIREMENT')] = $_POST[C('DB_PRODUCT_PACK_REQUIREMENT_REQUIREMENT')];
+            if(M(C('DB_PRODUCT_PACK_REQUIREMENT'))->add($data)){
+                $this->redirect('productPackRequirement','',1,'已保存');
+            }else{
+                $this->error('保存失败，请重新保存');
+            }
+            
+        }else{
+            $this->error($_POST[C('DB_PRODUCT_SKU')].' 该产品不存在 或者该产品已经在包装要求表里');
+        }
+    }
+
+    public function pprEdit($id){
+        $this->assign('requirement',D('ProductPackRequirementView')->where(array(C('DB_PRODUCT_PACK_REQUIREMENT_ID')=>$id))->find());
+        $this->assign('warehouse',C('WAREHOUSE'));
+        $this->display();
+    }
+
+    public function editPackRequirementHandle(){
+        if(M(C('DB_PRODUCT_PACK_REQUIREMENT'))->save($_POST)){
+            $this->redirect('productPackRequirement','',1,'已保存');
+        }else{
+            $this->error('保存失败，请重新保存');
+        }
+    }
+
+    public function pprDelete($id){
+        if(M(C('DB_PRODUCT_PACK_REQUIREMENT'))->where(array(C('DB_PRODUCT_PACK_REQUIREMENT_ID')=>$id))->delete()){
+            $this->success('已删除');
+        }else{
+            $this->error('删除失败，请重新删除');
+        }
     }
 }
 

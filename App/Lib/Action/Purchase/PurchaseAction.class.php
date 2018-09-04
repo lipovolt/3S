@@ -34,6 +34,10 @@ class PurchaseAction extends CommonAction{
                 $map[C('DB_PURCHASE_ID')] = array('in',$purchaseOrders);  
                 $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->order('id desc')->where($map)->select());
             }
+            if($_POST['keyword']==C('DB_PURCHASE_TRACKING_NUMBER') && $_POST['keyword']!=''){
+                $where[I('post.keyword','','htmlspecialchars')] = array('eq',I('post.keywordValue','','htmlspecialchars')); 
+                $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->order('id desc')->where($where)->select());
+            }
             $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
             $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
             $this->display();
@@ -189,6 +193,8 @@ class PurchaseAction extends CommonAction{
             return '数量是必填项！';
         elseif($purchaseOrderToVerify[C('DB_PURCHASE_MANAGER')] == null or $purchaseOrderToVerify[C('DB_PURCHASE_MANAGER')] == '')
             return '产品经理是必填项！';
+        elseif($purchaseOrderToVerify[C('DB_PURCHASE_ITEM_WAREHOUSE')] != '美自建仓' && $purchaseOrderToVerify[C('DB_PURCHASE_ITEM_WAREHOUSE')] != '万邑通德国' && $purchaseOrderToVerify[C('DB_PURCHASE_ITEM_WAREHOUSE')] != '深圳仓')
+            return '仓库不正确！';
         else
             return null;
     }
@@ -224,9 +230,14 @@ class PurchaseAction extends CommonAction{
        
         $purchaseItem = M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_PURCHASE_ID')=>$purchaseID))->select();
         $total = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->getField(C('DB_PURCHASE_SHIPPING_FEE'));
+        $productTable = M(C('DB_PRODUCT'));
+        $productPackRequirementTable = M(C('DB_PRODUCT_PACK_REQUIREMENT'));
         foreach ($purchaseItem as $key => $value) {
             $total = $total+$value[C('DB_PURCHASE_ITEM_PRICE')]*$value[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')];
-            $purchaseItem[$key][C('DB_PRODUCT_CNAME')] = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_PURCHASE_ITEM_SKU')]))->getField(C('DB_PRODUCT_CNAME'));         
+            $purchaseItem[$key][C('DB_PRODUCT_CNAME')] = $productTable->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_PURCHASE_ITEM_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
+            $map[C('DB_PRODUCT_PACK_REQUIREMENT_PRODUCT_ID')] = array('eq', $productTable->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_PURCHASE_ITEM_SKU')]))->getField(C('DB_PRODUCT_ID')));
+            $map[C('DB_PRODUCT_PACK_REQUIREMENT_WAREHOUSE')] = array('eq', C($value[C('DB_PURCHASE_ITEM_WAREHOUSE')]));
+            $purchaseItem[$key][C('DB_PRODUCT_PACK_REQUIREMENT_REQUIREMENT')] = $productPackRequirementTable->where($map)->getField(C('DB_PRODUCT_PACK_REQUIREMENT_REQUIREMENT'));   
         }
         $this->assign('purchaseOrder',$purchaseOrder);
         $this->assign('total',$total);
@@ -277,19 +288,25 @@ class PurchaseAction extends CommonAction{
                 $purchaseItem->commit();
                 $this->success('保存成功');
             }elseif($purchaseOrderStatus=="待发货" or $purchaseOrderStatus=="部分到货"){
+                $szstorage = M(C('DB_SZSTORAGE'));
                 for ($i=0; $i < $count; $i++) { 
                     if(I('post.new_received_quantity','','htmlspecialchars')[$i]>0){
                         $this->receivePurchasedItem(I('post.'.C('DB_PURCHASE_ITEM_ID'),'','htmlspecialchars')[$i],I('post.new_received_quantity','','htmlspecialchars')[$i]);
-                    }
-                    
+                        if(I('post.warehouse','','htmlspecialchars')[$i] == '深圳仓'){
+                            $skuPosition = $skuPosition.'</br>'.I('post.sku','','htmlspecialchars')[$i];
+                            $skuPosition = $skuPosition.' 深圳仓货位： '.$szstorage->where(array('sku'=>I('post.sku','','htmlspecialchars')[$i]))->getField(C('DB_SZSTORAGE_POSITION'));
+                        }
+
+                    }  
                 }
                 $this->changeItemReceiveStatus($id);
-                $this->success('保存成功');
+                $this->success('保存成功'.$skuPosition,'',(count(explode('</br>', $skuPosition))-1)*3+1);
             }else{
                 $this->error('已完成的采购单，无法修改');
             }
         }
     }
+
 
     public function deletePurchaseItem($purchase_item_id){
         if(M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_ID')=>$purchase_item_id))->delete() == false)
@@ -384,12 +401,12 @@ class PurchaseAction extends CommonAction{
         $data[C('DB_RESTOCK_WAREHOUSE')] = $purchaseItem->where(array(C('DB_PURCHASE_ITEM_ID')=>$id))->getField(C('DB_PURCHASE_ITEM_WAREHOUSE'));
         if($data[C('DB_RESTOCK_WAREHOUSE')]=='美自建仓' || $data[C('DB_RESTOCK_WAREHOUSE')]=='万邑通美西'){
             $data[C('DB_RESTOCK_TRANSPORT')] = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$data[C('DB_RESTOCK_SKU')]))->getField(C('DB_PRODUCT_TOUS'));
-            $data[C('DB_RESTOCK_STATUS')] = '待发货';
+            $data[C('DB_RESTOCK_STATUS')] = '延迟发货';
             $this->updateRestock($data,$newReceived);
         }
         if($data[C('DB_RESTOCK_WAREHOUSE')]=='万邑通德国'){
             $data[C('DB_RESTOCK_TRANSPORT')] = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$data[C('DB_RESTOCK_SKU')]))->getField(C('DB_PRODUCT_TODE'));
-            $data[C('DB_RESTOCK_STATUS')] = '待发货';
+            $data[C('DB_RESTOCK_STATUS')] = '延迟发货';
             $this->updateRestock($data,$newReceived);
         }
         if($data[C('DB_RESTOCK_WAREHOUSE')]=='深圳仓'){
@@ -436,6 +453,99 @@ class PurchaseAction extends CommonAction{
             }
         }
         M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->setField(C('DB_PURCHASE_STATUS'),$status);
+    }
+
+    public function newPurchaseOrder($deletedSku=null){
+        if(IS_POST){
+            $product = M(C('DB_PRODUCT'));
+            $index = 0;
+            foreach ($_POST['sku'] as $key => $value) {
+                if($value!='' && $value!=$deletedSku){
+                    $data[$index]['sku'] = $value;
+                    $data[$index]['cname'] = $product->where(array(C('DB_PRODUCT_SKU')=>$value))->getField(C('DB_PRODUCT_CNAME'));
+                    $data[$index]['price'] = $product->where(array(C('DB_PRODUCT_SKU')=>$value))->getField(C('DB_PRODUCT_PRICE'));
+                    $data[$index]['purchase_quantity'] = $_POST['purchase_quantity'][$key];
+                    $data[$index]['warehouse'] = $_POST['warehouse'][$key];
+                    $index++;
+                }                
+            }
+            $data[$index] = null;
+            $this->assign('purchaseItem',$data);
+            $this->assign('order_number',$_POST['order_number']);
+            $this->assign('shipping_fee',$_POST['shipping_fee']);
+            $this->display();
+        }else{
+            $purchaseItem[0] = null;
+            $this->assign('purchaseItem',$purchaseItem);
+            $this->display();
+        }        
+    }
+
+    public function saveNewPurchaseOrder(){
+        if(IS_POST){
+            $index = 0;
+            foreach ($_POST['sku'] as $key => $value) {
+                if($value!=''){
+                    if($this->verifySkuWarehouse($value,$_POST['warehouse'][$key])){
+                        if($_POST['purchase_quantity'][$key]>0){
+                            $data[$index]['sku'] = $value;
+                            $data[$index]['cname'] = $_POST['cname'][$key];
+                            $data[$index]['price'] = $_POST['price'][$key];
+                            $data[$index]['purchase_quantity'] = $_POST['purchase_quantity'][$key];
+                            $data[$index]['warehouse'] = $_POST['warehouse'][$key];
+                            $index++;
+                        }else{
+                            $this->error('商品编码: '.$value.' 采购数量不正确');
+                            break;
+                        }   
+                    }else{
+                        $this->error('商品编码: '.$value.' 不做 '.$_POST['warehouse'][$key]);
+                        break;
+                    }  
+                }
+            }
+            $productTable = M(C('DB_PRODUCT'));
+            $pOrder[C('DB_PURCHASE_MANAGER')] = $productTable->where(array(C('DB_PRODUCT_SKU')=>$data[0]['sku']))->getField(C('DB_PRODUCT_MANAGER'));
+            $pOrder[C('DB_PURCHASE_CREATE_DATE')] = date("Y-m-d H:i:s" ,time());
+            $pOrder[C('DB_PURCHASE_SHIPPING_FEE')] = $_POST[C('DB_PURCHASE_SHIPPING_FEE')];
+            $pOrder[C('DB_PURCHASE_STATUS')] = '待确认';
+            $pOrder[C('DB_PURCHASE_ORDER_NUMBER')] = $_POST[C('DB_PURCHASE_ORDER_NUMBER')];
+            $pOrder[C('DB_PURCHASE_SUPPLIER_ID')] = $productTable->where(array(C('DB_PRODUCT_SKU')=>$data[0]['sku']))->getField(C('DB_PRODUCT_SUPPLIER'));
+            $pOrderId = M(C('DB_PURCHASE'))->add($pOrder);
+
+            $purchaseItemTable = M(C('DB_PURCHASE_ITEM'));
+            $purchaseItemTable->startTrans();
+            foreach ($data as $key => $value) {
+                $value[C('DB_PURCHASE_ITEM_PURCHASE_ID')] = $pOrderId;
+                if($value['warehouse']=='美自建仓' || $value['warehouse']=='万邑通美西'){
+                    $value[C('DB_PURCHASE_ITEM_TRANSPORT_METHOD')] = $productTable->where(array(C('DB_PRODUCT_SKU')=>$value['sku']))->getField(C('DB_PRODUCT_TOUS'));
+                }elseif($value['warehouse']=='万邑通德国'){
+                    $value[C('DB_PURCHASE_ITEM_TRANSPORT_METHOD')] = $productTable->where(array(C('DB_PRODUCT_SKU')=>$value['sku']))->getField(C('DB_PRODUCT_TODE'));
+                }
+                $purchaseItemTable->add($value);
+            }
+            $purchaseItemTable->commit();
+            $this->redirect('index');
+        }
+    }
+
+    public function verifySkuWarehouse($sku,$warehouse){
+        if($warehouse=='美自建仓' || $warehouse=='万邑通美西'){
+            if(M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_TOUS')) != '无')
+                return true;
+            else
+                return false;
+        }elseif($warehouse=='万邑通德国'){
+            if(M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_TODE')) != '无')
+                return true;
+            else
+                return false;
+        }else{
+            if(M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_TODE')) != '无' || M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_TOUS')) != '无' )
+                return true;
+            else
+                return false;
+        }
     }
 }
 

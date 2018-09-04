@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>万邑通德国退货单品入库</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	<div class="area clearfix">
+		<!-- 左边栏 -->
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>万邑通</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/winitMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="itemInbound" class="main">
+		<form name="search_outbound" id="search_outbound" action="{:U('Winit/Storage/dtSimpleIn')}" method="POST">			
+		<div class="block-indent search-area">
+			<div><strong>单品入库</strong></div>
+			<div class="form-group">
+				<label for="" class="control-label" name="sku" id="position" >货号</label>
+				<div class="control-wrap">
+					<input type="text" name="sku" id="sku" value="">
+				</div>
+				<label for="" class="control-label" name="quantity" id="position" >数量</label>
+				<div class="control-wrap">
+					<input type="text" name="quantity" id="quantity" value="1">
+				</div>
+			</div>
+			<button class="btn btn-s btn-blue">
+				<i class="icon search"></i>
+				<i class="vline-inline"></i>
+				<span>入库</span>
+			</button>
+        </div></form>
+	</div>
+		</div>
+	</div>
+		
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

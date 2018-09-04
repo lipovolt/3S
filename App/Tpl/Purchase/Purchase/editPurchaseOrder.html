@@ -63,18 +63,18 @@ function checkForm()
 
 function checkNewReceived()
 {
-    var array = document.getElementsByName('new_received_quantity[]');
-    var returnValue = false;
-    for (var i = 0; i < array.length; i++)
-    {
-        if(array[i].value > 0){
-        	returnValue = true;
+    var purchased = document.getElementsByName('purchase_quantity[]');
+    var received = document.getElementsByName('received_quantity[]');
+    var newReceived = document.getElementsByName('new_received_quantity[]');
+    for (var i = 0; i < newReceived.length; i++)
+    {	
+    	var tmp = parseInt(newReceived[i].value)+parseInt(received[i].value);
+        if(tmp>purchased[i].value){
+        	alert('到货数量大于采购数量，无法保存');
+        	return false;
         }
     }
-    if(!returnValue){
-    	alert('新到数量全部为0，无法保存');
-    }
-    return returnValue;
+    return true;
 }
 
 function in_warehouse(search){
@@ -94,7 +94,7 @@ function in_warehouse(search){
     <div class="block-outer-hd">
         <strong>基本信息</strong>
     </div>
-    <form method="POST" id="edit_productImg" action="{:U('Purchase/Purchase/updatePurchaseOrder')}" onsubmit="return checkForm()">
+    <form method="POST" id="edit_productImg" action="{:U('Purchase/Purchase/updatePurchaseOrder')}">
     <div class="block-outer-bd viewBaseCheckStatus">
         <div class="item">
             <div class="form-group">
@@ -162,7 +162,8 @@ function in_warehouse(search){
 						<option value="unSelected" >请选择</option>
 						<option value="Yellow River" <?php echo $purchaseOrder[0][C('DB_PURCHASE_MANAGER')]=="Yellow River"?selected:'' ?>>Yellow River</option>
 						<option value="Yangtze" <?php echo $purchaseOrder[0][C('DB_PURCHASE_MANAGER')]=="Yangtze"?selected:'' ?>>Yangtze</option>
-						<option value="Amur River" <?php echo $purchaseOrder[0][C('DB_PURCHASE_MANAGER')]=="Amur River"?selected:'' ?>>Amur River</option>		
+						<option value="Amur River" <?php echo $purchaseOrder[0][C('DB_PURCHASE_MANAGER')]=="Amur River"?selected:'' ?>>Amur River</option>	
+						<option value="Pearl River" <?php echo $purchaseOrder[0][C('DB_PURCHASE_MANAGER')]=="Pearl River"?selected:'' ?>>Pearl	 River</option>		
 					</select>
                 </div>
             </div>
@@ -260,24 +261,26 @@ function in_warehouse(search){
 				<th>已到数量</th>
 				<th>新到数量</th>
 				<th>仓库</th>
+				<th>包装要求</th>
 				<th>操作</th>
 			</tr> 
 
 			<volist name="purchaseItem" id="vo" key="k">
 				
 				<tr>
-				<td><input id="{:C('DB_PURCHASE_ITEM_SKU')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_SKU')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_SKU')]}"></input>
+				<td><input id="{:C('DB_PURCHASE_ITEM_SKU')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_SKU')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_SKU')]}" size="8" readonly=""></input>
 					<input type="hidden" id="{:C('DB_PURCHASE_ITEM_ID')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_ID')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_ID')]}"></input>
 				</td>
 
-				<td><input id="{:C('DB_PRODUCT_CNAME')}[{$k.value}]" name="{:C('DB_PRODUCT_CNAME')}[{$k.value}]" value="{$vo[C('DB_PRODUCT_CNAME')]}"></input></td>
-				<td><input id="{:C('DB_PURCHASE_ITEM_PRICE')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_PRICE')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_PRICE')]}"></input></td>
-				<td><input id="{:C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')]}"></input></td>
-				<td><input id="{:C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]}" readonly="readonly"></input></td>
-				<td><input id="new_received_quantity[{$k.value}]" name="new_received_quantity[{$k.value}]" value="0"></input></td>
+				<td><input id="{:C('DB_PRODUCT_CNAME')}[{$k.value}]" name="{:C('DB_PRODUCT_CNAME')}[{$k.value}]" value="{$vo[C('DB_PRODUCT_CNAME')]}" size="58" readonly=""></input></td>
+				<td><input id="{:C('DB_PURCHASE_ITEM_PRICE')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_PRICE')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_PRICE')]}" size="8"></input></td>
+				<td><input id="purchase_quantity[{$k.value}]" name="purchase_quantity[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY')]}" size="8"></input></td>
+				<td><input id="received_quantity[{$k.value}]" name="received_quantity[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_RECEIVED_QUANTITY')]}" size="8" readonly="readonly"></input></td>
+				<td><input id="new_received_quantity[{$k.value}]" name="new_received_quantity[{$k.value}]" value="0" size="8"></input></td>
 				<td>
-					<input id="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_WAREHOUSE')]}"></input>
+					<input id="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}[{$k.value}]" name="{:C('DB_PURCHASE_ITEM_WAREHOUSE')}[{$k.value}]" value="{$vo[C('DB_PURCHASE_ITEM_WAREHOUSE')]}" size="12"></input>
 				</td>
+				<td><input id="{:C('DB_PRODUCT_PACK_REQUIREMENT_REQUIREMENT')}" name="{:C('DB_PRODUCT_PACK_REQUIREMENT_REQUIREMENT')}" value="{$vo[C('DB_PRODUCT_PACK_REQUIREMENT_REQUIREMENT')]}" readonly=""></input></td>
 				<td>
 					<a class="btn btn-blue btn-s-auto " href="{:U('Purchase/Purchase/deletePurchaseItem',array(C('DB_PURCHASE_ITEM_ID')=>$vo[C('DB_PURCHASE_ITEM_ID')]))}" onclick="return checkForm()">删除</a>
 				</td>

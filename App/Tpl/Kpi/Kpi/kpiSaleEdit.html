@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>编辑销售考核记录</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	<div class="area clearfix">
+		<!-- 左边栏 -->
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>待办事项</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/todo.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form method="POST" id="edit_productInfo" action="{:U('Kpi/Kpi/kpiSaleSave')}">
+		<div class="block-outer BaseInfo">
+			<div class="block-outer-bd">
+				<div class="inline-block block-indent">
+					<div class="item">
+						<div class="form-group">
+							<label for="name" class="control-label">销售人员</label>
+							<input type="hidden"  id="{:C('DB_KPI_SALE_ID')}" name="{:C('DB_KPI_SALE_ID')}" value="{$saleRecorde[C('DB_KPI_SALE_ID')]}"/>
+							<div class="control-wrap">
+								<select name="{:C('DB_KPI_SALE_NAME')}"  id="{:C('DB_KPI_SALE_NAME')}">
+									<option value=''>请选择</option>
+									<foreach name="sellerName" item="name">
+										<if condition="$name eq $saleRecorde['name']"><option value='{:$name}' selected="">{$name}</option>
+										    <else /> <option value='{:$name}'>{$name}</option>
+										</if>									    
+									</foreach>							
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="sku" class="control-label">产品编码</label>
+							<div class="control-wrap">
+								<input type="text" name="{:C('DB_KPI_SALE_SKU')}" value="{$saleRecorde[C('DB_KPI_SALE_SKU')]}" id="{:C('DB_KPI_SALE_SKU')}" />
+							</div>
+						</div>
+					</div>
+					<div class="item">
+						<div class="form-group">
+							<label for="warehouse" class="control-label">仓库</label>
+							<div class="control-wrap">
+								<input type="text" name="{:C('DB_KPI_SALE_WAREHOUSE')}" id="{:C('DB_KPI_SALE_WAREHOUSE')}" value="{$saleRecorde[C('DB_KPI_SALE_WAREHOUSE')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="type" class="control-label">类型</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_KPI_SALE_TYPE')}" name="{:C('DB_KPI_SALE_TYPE')}" value="{$saleRecorde[C('DB_KPI_SALE_TYPE')]}" />
+							</div>
+						</div>
+					</div>
+                    <div class="item">
+                        <div class="form-group">
+							<label for="begin_date" class="control-label">起始日期</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_KPI_SALE_BEGIN_DATE')}" name="{:C('DB_KPI_SALE_BEGIN_DATE')}" value="{$saleRecorde[C('DB_KPI_SALE_BEGIN_DATE')]}" />
+							</div>
+						</div>
+                        <div class="form-group">
+							<label for="begin_squantity" class="control-label">起始库存</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_KPI_SALE_BEGIN_SQUANTITY')}" name="{:C('DB_KPI_SALE_BEGIN_SQUANTITY')}" value="{$saleRecorde[C('DB_KPI_SALE_BEGIN_SQUANTITY')]}" />
+							</div>
+						</div>
+                    </div>
+                    <div class="item">
+                        <div class="form-group">
+							<label for="sale_quantity" class="control-label">销售数量</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_KPI_SALE_SALE_QUANTITY')}" name="{:C('DB_KPI_SALE_SALE_QUANTITY')}" value="{$saleRecorde[C('DB_KPI_SALE_SALE_QUANTITY')]}" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="average_profit" class="control-label">平均利润率</label>
+							<div class="control-wrap">
+								<input type="text"  id="{:C('DB_KPI_SALE_AVERAGE_PROFIT')}" name="{:C('DB_KPI_SALE_AVERAGE_PROFIT')}" value="{$saleRecorde[C('DB_KPI_SALE_AVERAGE_PROFIT')]}" readonly="true" />
+							</div>
+						</div>
+                    </div>
+                    <div class="item">
+                        <div class="form-group">
+							<label for="details" class="control-label">详细</label>
+							<div class="control-wrap">
+								<textarea  type="text"  id="{:C('DB_KPI_SALE_DETAILS')}" name="{:C('DB_KPI_SALE_DETAILS')}" readonly="">{$saleRecorde[C('DB_KPI_SALE_DETAILS')]}</textarea>
+							</div>
+						</div>
+                    </div>
+				</div>
+			</div>
+		</div>
+		<div class="item tc">
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+			<button class="btn btn-blue btn-s" id="saveProductInfo">保存</button>
+		</div>
+		</form> 
+	</div>
+
+
+		</div>
+	</div>
+		
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

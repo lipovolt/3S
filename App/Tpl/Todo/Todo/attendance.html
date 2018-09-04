@@ -33,6 +33,18 @@ function restEnd(){
 	form.action="{:U('Todo/Todo/restEnd')}?restEndTime="+strDate;
 	form.submit();
 }
+function overtimeBegin(){
+	var date = new Date();
+	var strDate=date.getFullYear()+'-'+add_zero(date.getMonth()+1)+'-'+add_zero(date.getDate())+' '+add_zero(date.getHours())+':'+add_zero(date.getMinutes())+':'+add_zero(date.getSeconds());
+	form.action="{:U('Todo/Todo/overtimeBegin')}?overtimeBeginTime="+strDate;
+	form.submit();
+}
+function overtimeEnd(){
+	var date = new Date();
+	var strDate=date.getFullYear()+'-'+add_zero(date.getMonth()+1)+'-'+add_zero(date.getDate())+' '+add_zero(date.getHours())+':'+add_zero(date.getMinutes())+':'+add_zero(date.getSeconds());
+	form.action="{:U('Todo/Todo/overtimeEnd')}?overtimeEndTime="+strDate;
+	form.submit();
+}
 function add_zero(temp){ 
  if(temp<10) 
  	return "0"+temp; 
@@ -67,16 +79,22 @@ function add_zero(temp){
 		</div>
 	<div class="content">
 	<div><span style="color: #F00; font-size:18px">必须用自己的工作电脑打卡。不许用手机或者在家打卡。不许代打卡。</span></div>
-	<div><span style="color: #F00; font-size:18px">6月份总工作时间22*8+4*7=204小时。</span></div>
+	<div><span style="color: #F00; font-size:18px">8月份工作时间 23*8+2*7=198小时</span></div>
+	<div><span style="color: #F00; font-size:18px">9月份工作时间 20*8+3*7=181小时</span></div>
+	<div><span style="color: #F00; font-size:18px">10月份工作时间 18*8+2*7=158小时</span></div>
+	<div><span style="color: #F00; font-size:18px">11月份工作时间 22*8+2*7=190小时</span></div>
+	<div><span style="color: #F00; font-size:18px">12月份工作时间 20*8+3*7=181小时</span></div>
+	<div><span style="color: #F00; font-size:22px">认真工作，少玩儿手机。</span></div>
 	<div id="ProductInfo" class="main">
-
 		<form name="form" id="search_product" action="#" method="POST">
 			<div class="search-area">
 				<div class="item">
-					<button class="btn btn-s btn-blue" onClick="come();"><span>开工</span></button>
-					<button class="btn btn-s btn-blue" onClick="leave();"><span>收工</span></button>
-					<button class="btn btn-s btn-blue" onClick="restBegin();"><span>间休开始</span></button>
-					<button class="btn btn-s btn-blue" onClick="restEnd();"><span>间休结束</span></button>
+					<button class="btn btn-s btn-blue" onclick="come();return false;"><span>开工</span></button>
+					<button class="btn btn-s btn-blue" onclick="leave();return false;;"><span>收工</span></button>
+					<button class="btn btn-s btn-grey" onclick="restBegin();return false;"><span>间休开始</span></button>
+					<button class="btn btn-s btn-grey" onclick="restEnd();return false;"><span>间休结束</span></button>
+					<button class="btn btn-s btn-red" onclick="overtimeBegin();return false;"><span>加班开始</span></button>
+					<button class="btn btn-s btn-red" onclick="overtimeEnd();return false;"><span>加班结束</span></button>
 				</div>		
 			</div>
 		</form>
@@ -93,6 +111,9 @@ function add_zero(temp){
 						<th><div class="tl">间休2开始</div></th>
 						<th><div class="tl">间休2结束</div></th>
 						<th><div class="tl">工作时长（小时）</div></th>
+						<th><div class="tl">加班开始</div></th>
+						<th><div class="tl">加班结束</div></th>
+						<th><div class="tl">加班时长（小时）</div></th>
 					</tr>
 					<volist name="atts" id="vo">
 						<tr>
@@ -105,6 +126,9 @@ function add_zero(temp){
 						<td><div class="tl">{$vo['rest2_begin']}</div></td>
 						<td><div class="tl">{$vo['rest2_end']}</div></td>
 						<td><div class="tl">{$vo['hour']}</div></td>
+						<td><div class="tl">{$vo['overtime_begin']}</div></td>
+						<td><div class="tl">{$vo['overtime_end']}</div></td>
+						<td><div class="tl">{$vo['overtime_hour']}</div></td>
 						</tr>	
 					</volist> 								
 				</table>

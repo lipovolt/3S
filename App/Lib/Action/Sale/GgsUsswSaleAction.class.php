@@ -55,6 +55,9 @@ class GgsUsswSaleAction extends CommonAction{
 
 	public function calUsswSaleInfo($account){
 		$this->calUsswSaleInfoHandle($account);
+		if($this->getMarketByAccount($account)=='amazon'){
+			$this->calFBASaleInfoHandle($account);
+		}		
 		$this->redirect('usswSaleSuggest',array('account'=>$account));
 	}
 
@@ -104,6 +107,69 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 	}
 
+	private function calFBASaleInfoHandle($account){
+		import('ORG.Util.Date');// 导入日期类
+		$Date = new Date();
+		$fbaProduct = M(C('DB_AMAZON_US_STORAGE'))->distinct(true)->field(C('DB_USSTORAGE_SKU'))->select();
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error("无法找到匹配的销售表！");
+		}
+		foreach ($fbaProduct as $key => $p) {
+			$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
+			if($usp == null){
+				$this->addFBAToUsp($account,$p[C('DB_USSTORAGE_SKU')]);
+				$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
+			}else{
+
+				$usp[C('DB_USSW_SALE_PLAN_COST')]=$this->calFBASuggestCost($account,$p[C('DB_USSTORAGE_SKU')],$usp[C('DB_USSW_SALE_PLAN_PRICE')]);
+				$this->updateUsp($account,$usp);
+				$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
+			}
+			if(!$this->isProductInfoComplete($this->fbaSkuToStandardSku($p[C('DB_USSTORAGE_SKU')]))){
+				//产品信息不全，建议完善产品信息
+				$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+				$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_COMPLETE_PRODUCT_INFO');
+				$this->updateUsp($account,$usp);
+				$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
+			}elseif(!$this->isUsswSaleInfoComplete($usp)){
+				//无法计算，建议完善销售信息
+				$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+				$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_COMPLETE_SALE_INFO');
+				$this->updateUsp($account,$usp);
+				$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$p[C('DB_USSTORAGE_SKU')]))->find();
+			}else{
+				$lastModifyDate = $salePlanTable->where(array('sku'=>$p['sku']))->getField('last_modify_date');
+				$adjustPeriod = M(C('DB_USSW_SALE_PLAN_METADATA'))->where(array('id'=>1))->getField('adjust_period');
+				if(-($Date->dateDiff($lastModifyDate))>$adjustPeriod){
+					//开始计算该产品的销售建议
+					$suggest=null;
+					$suggest = $this->calFBASuggest($account,$p[C('DB_USSTORAGE_SKU')]);
+					$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+					$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_USSW_SALE_PLAN_SUGGEST')];
+					$this->updateUsp($account,$usp);
+				}
+			}
+			$usp=null;
+		}
+	}
+
+	private function fbaSkuToStandardSku($fbaSku){
+		if(count(explode('FBA_', $fbaSku))==1){
+			return $fbaSku;
+		}else{
+			return explode('FBA_', $fbaSku)[1];
+		}		
+	}
+
+	private function isFBASku($sku){
+		if(count(explode('FBA_', $sku))==1){
+			return false;
+		}else{
+			return true;
+		}	
+	}
+
 	private function calUsswSaleInfoHandleSingle($account, $id){
 		import('ORG.Util.Date');// 导入日期类
 		$Date = new Date();
@@ -146,6 +212,48 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 	}
 
+	private function calFBASaleInfoHandleSingle($account, $id){
+		import('ORG.Util.Date');// 导入日期类
+		$Date = new Date();
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error("无法找到匹配的销售表！");
+		}
+		$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->find();
+		if($usp == null){
+			$this->addFBAToUsp($account,$usp[C('DB_USSW_SALE_PLAN_SKU')]);
+			$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$usp[C('DB_USSW_SALE_PLAN_SKU')]))->find();
+		}else{
+			$usp[C('DB_USSW_SALE_PLAN_COST')]=$this->calFBASuggestCost($account,$usp[C('DB_USSW_SALE_PLAN_SKU')],$usp[C('DB_USSW_SALE_PLAN_PRICE')]);
+			$this->updateUsp($account,$usp);
+			$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$usp[C('DB_USSW_SALE_PLAN_SKU')]))->find();
+		}
+		if(!$this->isProductInfoComplete($this->fbaSkuToStandardSku($usp[C('DB_USSW_SALE_PLAN_SKU')]))){
+			//产品信息不全，建议完善产品信息
+			$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+			$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_COMPLETE_PRODUCT_INFO');
+			$this->updateUsp($account,$usp);
+			$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$usp[C('DB_USSW_SALE_PLAN_SKU')]))->find();
+		}elseif(!$this->isUsswSaleInfoComplete($usp)){
+			//无法计算，建议完善销售信息
+			$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+			$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_COMPLETE_SALE_INFO');
+			$this->updateUsp($account,$usp);
+			$usp = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$usp[C('DB_USSW_SALE_PLAN_SKU')]))->find();
+		}else{
+			$lastModifyDate = $salePlanTable->where(array('sku'=>$usp[C('DB_USSW_SALE_PLAN_SKU')]))->getField('last_modify_date');
+			$adjustPeriod = M(C('DB_USSW_SALE_PLAN_METADATA'))->where(array('id'=>1))->getField('adjust_period');
+			if(-($Date->dateDiff($lastModifyDate))>$adjustPeriod){
+				//开始计算该产品的销售建议
+				$suggest=null;
+				$suggest = $this->calFBASuggest($account,$usp[C('DB_USSW_SALE_PLAN_SKU')]);
+				$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $suggest[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+				$usp[C('DB_USSW_SALE_PLAN_SUGGEST')] =  $suggest[C('DB_USSW_SALE_PLAN_SUGGEST')];
+				$this->updateUsp($account,$usp);
+			}
+		}
+	}
+
 	public function confirmSuggest($account,$id){
 		$salePlanTable = M($this->getSalePlanTableName($account));
 		if($salePlanTable==null){
@@ -154,20 +262,35 @@ class GgsUsswSaleAction extends CommonAction{
 		$data = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->find();
 		if($data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_USSW_SALE_PLAN_SUGGEST')]!=null){
 			$data[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
-			if($data[C('DB_USSW_SALE_PLAN_ID_SUGGEST')]=='relisting'){
+			if($data[C('DB_USSW_SALE_PLAN_ID_SUGGEST')]=='重新刊登'){
 				$data[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')] = intval($data[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')])+1;
 			}
 
 			if($data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]==null){
 				$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('ymd',time());
 			}else{
-				$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')].' | '.$data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+				$data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $data[C('DB_USSW_SALE_PLAN_PRICE_NOTE')].' | '.$data[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('ymd',time());
 			}
 
 			$data[C('DB_USSW_SALE_PLAN_PRICE')] = $data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-			$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
-			$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
-			$salePlanTable->save($data);
+
+			$kpiSaleRecorde[C('DB_KPI_SALE_NAME')] = $_SESSION['username'];
+			$kpiSaleRecorde[C('DB_KPI_SALE_SKU')] = $data[C('DB_USSW_SALE_PLAN_SKU')];
+			$kpiSaleRecorde[C('DB_KPI_SALE_WAREHOUSE')] = C('USSW');
+			$kpiSaleRecorde[C('DB_KPI_SALE_TYPE')] = $data[C('DB_USSW_SALE_PLAN_SUGGEST')];
+			$kpiSaleRecorde[C('DB_KPI_SALE_BEGIN_DATE')] = time();
+			$kpiSaleRecorde[C('DB_KPI_SALE_BEGIN_SQUANTITY')] = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$data[C('DB_USSW_SALE_PLAN_SKU')]))->sum(C('DB_USSTORAGE_AINVENTORY'));
+			$map[C('DB_KPI_SALE_SKU')] = array('eq', $kpiSaleRecorde[C('DB_KPI_SALE_SKU')]);
+			$map[C('DB_KPI_SALE_WAREHOUSE')] = array('eq', $kpiSaleRecorde[C('DB_KPI_SALE_WAREHOUSE')]);
+
+			if(M(C('DB_KPI_SALE'))->where($map)->getField(C('DB_KPI_SALE_ID'))!=null){
+				$this->error('仓库： '.$kpiSaleRecorde[C('DB_KPI_SALE_WAREHOUSE')] .' 里的该产品编码：'.$kpiSaleRecorde[C('DB_KPI_SALE_SKU')].' 已经在绩效考核表里，如需重新开始绩效考核请先把重复的记录从绩效考核表里删除。');
+			}else{
+				$data[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+				$data[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
+				$salePlanTable->save($data);
+				M(C('DB_KPI_SALE'))->add($kpiSaleRecorde);
+			}
 		}else{
 			$this->error('无法保存，当前产品没有销售建议');
 		}
@@ -287,7 +410,12 @@ class GgsUsswSaleAction extends CommonAction{
 		$salePlanTable->startTrans();
 		$salePlanTable->save($data);
 		$salePlanTable->commit();
-		$this->calUsswSaleInfoHandleSingle($account, $id);
+		if($this->isFBASku($salePlanTable->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->getField(C('DB_USSW_SALE_PLAN_SKU')))){
+			$this->calFBASaleInfoHandleSingle($account, $id);
+		}else{
+			
+			$this->calUsswSaleInfoHandleSingle($account, $id);
+		}
 		if($kwv==null){
 			$this->success('保存成功');
 		}else{
@@ -327,7 +455,8 @@ class GgsUsswSaleAction extends CommonAction{
 		$sqnr = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SQNR')];
 		$denominator = $metadata[C('DB_USSW_SALE_PLAN_METADATA_DENOMINATOR')];
 		$grfr = $metadata[C('DB_USSW_SALE_PLAN_METADATA_GRFR')];
-		$standard_period = $metadata[C('DB_USSW_SALE_PLAN_METADATA_STANDARD_PERIOD')];	
+		$standard_period = $metadata[C('DB_USSW_SALE_PLAN_METADATA_STANDARD_PERIOD')];
+		$ainventory = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$sku))->getField(C('DB_USSTORAGE_AINVENTORY'));
 
 		$startDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
 		$asqsq = intval($this->calUsswSaleQuantity($account,$sku,$startDate))*intval($standard_period)/intval($adjust_period);
@@ -335,27 +464,33 @@ class GgsUsswSaleAction extends CommonAction{
 		$endDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
 		$lspsq = $this->calUsswSaleQuantity($account,$sku,$startDate,$endDate)*$standard_period/$adjust_period;
 
-		//检查是否需要重新刊登
+		//检查是否需要清货
 		if($asqsq==0){
-			$startDate = date('Y-m-d H:i:s',time()-60*60*24*$relisting_nod);
-			$relistingNodSaleQuantity = $this->calUsswSaleQuantity($account,$sku,$startDate);
-			if($relistingNodSaleQuantity==0){
-				$sugg=null;
-				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost+$cost*$this->getCostClass($cost)/100;
-				$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_RELISTING');
-				return $sugg;
-			}
+			$firstShippingDate = M(C('DB_RESTOCK'))->order('shipping_date asc')->where(array('sku'=>$sku,'warehouse'=>'美自建仓'))->limit(1)->getField(C('DB_RESTOCK_SHIPPING_DATE'));			
+			if(strtotime($firstShippingDate)<(time()-60*60*24*$clear_nod)){
+				$startDate = date('Y-m-d H:i:s',time()-60*60*24*$clear_nod);
+				$clearNodSaleQuantity = $this->calUsswSaleQuantity(null,$sku,$startDate);
+				if($clearNodSaleQuantity==0){
+					$sugg=null;
+					$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
+					$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_CLEAR');
+					return $sugg;
+				}
+			}			
 		}
 
-		//检查是否需要清货清货
+		//检查是否需要重新刊登
 		if($asqsq==0){
-			$startDate = date('Y-m-d H:i:s',time()-60*60*24*$clear_nod);
-			$clearNodSaleQuantity = $this->calUsswSaleQuantity($account,$sku,$startDate);
-			if($clearNodSaleQuantity==0){
-				$sugg=null;
-				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
-				$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_CLEAR');
-				return $sugg;
+			$firstShippingDate = M(C('DB_RESTOCK'))->order('shipping_date asc')->where(array('sku'=>$sku,'warehouse'=>'美自建仓'))->limit(1)->getField(C('DB_RESTOCK_SHIPPING_DATE'));
+			if(strtotime($firstShippingDate)<(time()-60*60*24*$relisting_nod)){
+				$startDate = date('Y-m-d H:i:s',time()-60*60*24*$relisting_nod);
+				$relistingNodSaleQuantity = $this->calUsswSaleQuantity($account,$sku,$startDate);
+				if($relistingNodSaleQuantity==0){
+					$sugg=null;
+					$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost+$cost*$this->getCostClass($cost)/100;
+					$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_RELISTING');
+					return $sugg;
+				}
 			}
 		}
 
@@ -371,7 +506,7 @@ class GgsUsswSaleAction extends CommonAction{
 			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_PRICE_UP');
 			return $sugg;
 		}
-		if($diff/$lspsq<-($grfr/100)){
+		if($ainventory>0 && $diff/$lspsq<-($grfr/100)){
 			$sugg=null;
 			if($price-$price*($pcr/100)<$cost){
 				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
@@ -381,7 +516,98 @@ class GgsUsswSaleAction extends CommonAction{
 			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_PRICE_DOWN');
 			return $sugg;
 		}
+	}
+	
+	private function calFBASuggest($account,$sku){
+		//返回数组包含销售建议和价格
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
+		$saleplan = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
+		$cost = $saleplan[C('DB_USSW_SALE_PLAN_COST')];
+		$price = $saleplan[C('DB_USSW_SALE_PLAN_PRICE')];
+		$status = $saleplan[C('DB_USSW_SALE_PLAN_STATUS')];
 
+		if($status==0){
+			//item needn't to calculate.
+			$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
+			return $sugg;
+		}
+
+		$metaMap[C('DB_USSW_SALE_PLAN_METADATA_ID')] = array('eq',1);
+		$metadata = M(C('DB_USSW_SALE_PLAN_METADATA'))->where($metaMap)->find();		
+		$clear_nod = $metadata[C('DB_USSW_SALE_PLAN_METADATA_CLEAR_NOD')];
+		$relisting_nod = $metadata[C('DB_USSW_SALE_PLAN_METADATA_RELISTING_NOD')];
+		$adjust_period = $metadata[C('DB_USSW_SALE_PLAN_METADATA_ADJUST_PERIOD')];
+		$spr1 = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR1')];
+		$spr2 = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR2')];
+		$spr3 = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR3')];
+		$spr4 = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR4')];
+		$spr5 = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR5')];
+		$pcr = $metadata[C('DB_USSW_SALE_PLAN_METADATA_PCR')];
+		$sqnr = $metadata[C('DB_USSW_SALE_PLAN_METADATA_SQNR')];
+		$denominator = $metadata[C('DB_USSW_SALE_PLAN_METADATA_DENOMINATOR')];
+		$grfr = $metadata[C('DB_USSW_SALE_PLAN_METADATA_GRFR')];
+		$standard_period = $metadata[C('DB_USSW_SALE_PLAN_METADATA_STANDARD_PERIOD')];
+		$ainventory = M(C('DB_AMAZON_US_STORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$sku))->getField(C('DB_USSTORAGE_AINVENTORY'));
+
+		$startDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
+		$asqsq = intval($this->calUsFBASaleQuantity($account,$sku,$startDate))*intval($standard_period)/intval($adjust_period);
+		$startDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period*2);
+		$endDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
+		$lspsq = $this->calUsFBASaleQuantity($account,$sku,$startDate,$endDate)*$standard_period/$adjust_period;
+		//检查是否需要清货
+		if($asqsq==0){
+			$firstShippingDate = M(C('DB_AMAZON_US_STORAGE'))->where(array('sku'=>$sku))->getField(C('DB_AMAZON_US_STORAGE_LASTTIME'));			
+			if(strtotime($firstShippingDate)<(time()-60*60*24*$clear_nod)){
+				$startDate = date('Y-m-d H:i:s',time()-60*60*24*$clear_nod);
+				$clearNodSaleQuantity = $this->calUsFBASaleQuantity(null,$sku,$startDate);
+				if($clearNodSaleQuantity==0){
+					$sugg=null;
+					$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
+					$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_CLEAR');
+					return $sugg;
+				}
+			}			
+		}
+
+		//检查是否需要重新刊登
+		if($asqsq==0){
+			$firstShippingDate = M(C('DB_AMAZON_US_STORAGE'))->where(array('sku'=>$sku))->getField(C('DB_AMAZON_US_STORAGE_LASTTIME'));			
+			if(strtotime($firstShippingDate)<(time()-60*60*24*$relisting_nod)){
+				$startDate = date('Y-m-d H:i:s',time()-60*60*24*$relisting_nod);
+				$relistingNodSaleQuantity = $this->calUsFBASaleQuantity($account,$sku,$startDate);
+				if($relistingNodSaleQuantity==0){
+					$sugg=null;
+					$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost+$cost*$this->getCostClass($cost)/100;
+					$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_RELISTING');
+					return $sugg;
+				}
+			}
+		}
+		//检查是否需要调价
+		$diff = $asqsq-$lspsq;
+		if($lspsq<$sqnr){
+			$lspsq = $denominator;
+		}
+		if($diff/$lspsq>$grfr/100){
+			$sugg=null;
+			$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $price+$price*($pcr/100);
+			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_PRICE_UP');
+			return $sugg;
+		}
+		if($ainventory>0 && $diff/$lspsq<-($grfr/100)){
+			$sugg=null;
+			if($price-$price*($pcr/100)<$cost){
+				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
+			}else{
+				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $price-$price*($pcr/100);
+			}			
+			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_PRICE_DOWN');
+			return $sugg;
+		}
 	}
 
 	private function getCostClass($cost){
@@ -405,13 +631,31 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function calUsswSaleQuantity($account, $sku, $startDate, $endDate=null){
-		if($endDate==null)
+		if($endDate==null){
 			$endDate = date('Y-m-d H:i:s',time());
-		$usswOutboundItem = D("UsswOutboundView");
+		}
+		if($account==null){
+			$usswOutboundItem = D("UsswOutboundView");
+			$map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('between',array($startDate,$endDate));
+			$map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
+			return $usswOutboundItem->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
+		}else{
+			$usswOutboundItem = D("UsswOutboundView");
+			$map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('between',array($startDate,$endDate));
+			$map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
+			$map[C('DB_USSW_OUTBOUND_SELLER_ID')] = array('eq',$account);
+			return $usswOutboundItem->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
+		}
+	}
+
+	private function calUsFBASaleQuantity($account, $sku, $startDate, $endDate=null){
+		if($endDate==null){
+			$endDate = date('Y-m-d H:i:s',time());
+		}
+		$usFBAOutboundItem = D("UsFBAOutboundView");
 		$map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('between',array($startDate,$endDate));
 		$map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
-		$map[C('DB_USSW_OUTBOUND_SELLER_ID')] = array('eq',$account);
-		return $usswOutboundItem->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
+		return $usFBAOutboundItem->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
 	}
 
 	private function addProductToUsp($account,$sku){
@@ -438,6 +682,30 @@ class GgsUsswSaleAction extends CommonAction{
 		$salePlanTable->add($newUsp);
 	}
 
+	private function addFBAToUsp($account,$sku){
+		//添加产品到ussw_sale_plan表
+		$newUsp[C('DB_USSW_SALE_PLAN_SKU')] = $sku;
+		$newUsp[C('DB_USSW_SALE_PLAN_FIRST_DATE')] = date('Y-m-d H:i:s',time()); 
+		$newUsp[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time()); 
+		$newUsp[C('DB_USSW_SALE_PLAN_RELISTING_TIMES')] = 0; 
+		$newUsp[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =null;
+		$price =  M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$this->fbaSkuToStandardSku($sku)))->getField(C('DB_PRODUCT_GGS_USSW_SALE_PRICE'));
+		if($price==null || $price==0){
+			$price = $newUsp[C('DB_USSW_SALE_PLAN_COST')];
+		}
+		$newUsp[C('DB_USSW_SALE_PLAN_PRICE')] = $this->calFBAInitialPrice($account,$sku);		
+		$newUsp[C('DB_USSW_SALE_PLAN_COST')] = $this->calFBASuggestCost($account,$sku,$newUsp[C('DB_USSW_SALE_PLAN_PRICE')]);
+		$newUsp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = null;
+		$newUsp[C('DB_USSW_SALE_PLAN_SUGGEST')] = null;
+		$newUsp[C('DB_USSW_SALE_PLAN_STATUS')] = 1;
+
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
+		$salePlanTable->add($newUsp);
+	}
+
 	private function inUsstorage($sku){
 		$result = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$sku))->find();
 		if(false !== $result && null !== $result){
@@ -452,6 +720,17 @@ class GgsUsswSaleAction extends CommonAction{
 		$salePlanTable = M($this->getSalePlanTableName($account));
 		if($salePlanTable==null){
 			$this->error('无法找到匹配的销售表！');
+		}
+		if($usp[C('DB_USSW_SALE_PLAN_SUGGEST')]==C('USSW_SALE_PLAN_PRICE_UP') || $usp[C('DB_USSW_SALE_PLAN_SUGGEST')]==C('USSW_SALE_PLAN_PRICE_DOWN')){
+			$usp[C('DB_USSW_SALE_PLAN_PRICE')] = $usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+			$usp[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+			$usp[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')]=null;
+			$usp[C('DB_USSW_SALE_PLAN_SUGGEST')]=null;
+			if($usp[C('DB_USSW_SALE_PLAN_PRICE_NOTE')]==null){
+				$usp[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $usp[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('ymd',time());
+			}else{
+				$usp[C('DB_USSW_SALE_PLAN_PRICE_NOTE')] =  $usp[C('DB_USSW_SALE_PLAN_PRICE_NOTE')].' | '.$usp[C('DB_USSW_SALE_PLAN_PRICE')].' '.date('Y-m-d',time());
+			}
 		}
 		$salePlanTable->save($usp);
 	}
@@ -515,6 +794,55 @@ class GgsUsswSaleAction extends CommonAction{
 			return $this->getUsswAmazonISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['local-shipping-fee1']);
 		}
 		$this->error('无法找到与 '.$account.' 匹配的平台！不能计算初始售价！');
+	}
+
+	private function calFBASuggestCost($account,$sku,$sale_price=null){
+		//计算产品FBA仓销售成本
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
+		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$this->fbaSkuToStandardSku($sku)))->find();
+    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
+    	$data[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
+    	$data['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+    	$data['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+    	$data['local-shipping-fee1']=$this->getFBAShippingWayFee($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')])[1];
+    	$data['transportToFbaFee'] = 0.5*$product[C('DB_PRODUCT_PWEIGHT')]/1000;
+		
+		$salePlan = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
+		if($sale_price!=null){
+			if($this->getMarketByAccount($account)=='amazon'){
+				return $this->getFBACost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['transportToFbaFee'],$data['local-shipping-fee1'],$sale_price);
+			}
+			$this->error($account.' 不是FBA账号，不能计算销售建议表成本！');
+		}elseif($salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=0 && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=null && $salePlan[C('DB_USSW_SALE_PLAN_PRICE')]!=''){
+			if($this->getMarketByAccount($account)=='amazon'){
+				return $this->getFBACost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['transportToFbaFee'],$data['local-shipping-fee1'],$salePlan[C('DB_USSW_SALE_PLAN_PRICE')]);
+			}
+			$this->error($account.' 不是FBA账号，不能计算销售建议表成本！');
+		}else{
+			if($this->getMarketByAccount($account)=='amazon'){
+				$tmpSalePrice = $this->getFBAISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['transportToFbaFee'],$data['local-shipping-fee1']);
+				return $this->getFBACost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['transportToFbaFee'],$data['local-shipping-fee1'],$tmpSalePrice);
+			}
+			$this->error($account.' 不是FBA账号，不能计算销售建议表成本！');		
+		}
+	}
+
+	private function calFBAInitialPrice($account,$sku){
+		//计算产品FBA仓初始售价
+		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$this->fbaSkuToStandardSku($sku)))->find();
+    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
+    	$data[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
+    	$data['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+    	$data['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
+    	$data['local-shipping-fee1']=$this->getFBAShippingWayFee($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product['length'],$product['width'],$product['height'])[1];
+    	$data['transportToFbaFee'] = 0.5*$product[C('DB_PRODUCT_PWEIGHT')]/1000;
+		if($this->getMarketByAccount($account)=='amazon'){
+			return $this->getFBAISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_USTARIFF')],$data['ussw-fee'],$data['way-to-us-fee'],$data['transportToFbaFee'],$data['local-shipping-fee1']);
+		}
+		$this->error($account.' 不是FBA账号，不能计算初始售价！');
 	}
 
 	private function isUsswSaleInfoComplete($usp){
@@ -727,6 +1055,24 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 	}
 
+	//calculate FBA cost according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee) $sPrice(sale price)
+	private function getFBACost($pPrice,$tariff,$wFee,$tFee,$tfFee,$sFee,$sPrice){
+		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
+		$aFee = $sPrice*0.15<1?1:$sPrice*0.15;
+		return round((($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$tfFee+$sFee+$aFee),2);
+	}
+
+	//calculate FBA initial sale price according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee)
+	private function getFBAISP($pPrice,$tariff,$wFee,$tFee,$tfFee,$sFee,$profitPercent=null){
+		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
+		$cost = ($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$tfFee+$sFee;
+		if($profitPercent==null){
+			return abs(round($cost/(1-0.15-$this->getCostClass($cost)/100),2));
+		}else{
+			return abs(round($cost/(1-0.15-$profitPercent/100),2));
+		}
+	}
+
 	private function calUsswSIOFee($weight,$l,$w,$h){
 		//月仓储费=立方米*每日每立方租金*30天
 		$monthlyStorageFee = ($l*$w*$h)/1000000*1.2*30;
@@ -759,7 +1105,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function getUsswAirFirstTransportFee($weight,$l,$w,$h){
-		return round($weight / 1000 * 5.8,2);	
+		return round($weight / 1000 * 6.5,2);	
 	}
 
 	private function getUsswSeaFirstTransportFee($l,$w,$h){
@@ -1265,6 +1611,92 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 	}
 
+	private function getUsswFbaTransportFee($weight){
+		return $weight*0.5;
+	}
+
+	private function getFBAShippingWayFee($weight,$l,$w,$h){
+		if($this->isSmallStandardSize($weight,$l,$w,$h)){
+			return array('Small Standard', 2.41);
+		}elseif($this->isLargeStandardSize($weight,$l,$w,$h) && $weigh*0.0022046<1){
+			return array('Large Standard', 3.19);
+		}elseif ($this->isLargeStandardSize($weight,$l,$w,$h) && $weigh*0.0022046<2) {
+			return array('Large Standard',4.71);
+		}elseif($this->isLargeStandardSize($weight,$l,$w,$h)){
+			return array('Large Standard', 4.71+ceil($weigh*0.0022046-2)*0.38);
+		}elseif ($this->isSmallOverSize($weight,$l,$w,$h)) {
+			return array('Small Oversize', 8.13+ceil($weigh*0.0022046-2)*0.38);
+		}elseif ($this->isMediumOverSize($weight,$l,$w,$h)) {
+			return array('Medium Oversize', 9.44+ceil($weigh*0.0022046-2)*0.38);
+		}elseif ($this->isLargeOverSize($weight,$l,$w,$h)) {
+			return array('Large Oversize', 73.18+ceil($weigh*0.0022046-2)*0.79);
+		}elseif ($this->isSpecialOverSize($weight,$l,$w,$h)) {
+			return array('Special Oversize', 137.32+ceil($weigh*0.0022046-2)*0.91);
+		}else{
+			return array('No way', 65536);
+		}
+	}
+
+	private function isSmallStandardSize($weight,$l,$w,$h){
+		$arr = array($l*0.3937008,$w*0.3937008,$h*0.3937008);
+		sort($arr);
+		if( $arr[0]<0.75 && $arr[1]<12 && $arr[2]<15 && $weight*0.035274<12){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	private function isLargeStandardSize($weight,$l,$w,$h){
+		$arr = array($l*0.3937008,$w*0.3937008,$h*0.3937008);
+		sort($arr);
+		if($arr[0]<8 && $arr[1]<14 && $arr[2]<18 && $weight*0.0022046<20){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	private function isSmallOverSize($weight,$l,$w,$h){
+		$arr = array($l*0.3937008,$w*0.3937008,$h*0.3937008);
+		sort($arr);
+		if((2*($arr[0]+$arr[1])+$arr[2])<130 && $arr[1]<30 && $arr[2]<60 && $weight*0.0022046<70){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	private function isMediumOverSize($weight,$l,$w,$h){
+		$arr = array($l*0.3937008,$w*0.3937008,$h*0.3937008);
+		sort($arr);
+		if((2*($arr[0]+$arr[1])+$arr[2])<130 && $arr[2]<108 && $weight*0.0022046<150){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	private function isLargeOverSize($weight,$l,$w,$h){
+		$arr = array($l*0.3937008,$w*0.3937008,$h*0.3937008);
+		sort($arr);
+		if((2*($arr[0]+$arr[1])+$arr[2])<165 && $arr[2]<108 && $weight*0.0022046<150){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	private function isSpecialOverSize($weight,$l,$w,$h){
+		$arr = array($l*0.3937008,$w*0.3937008,$h*0.3937008);
+		sort($arr);
+		if((2*($arr[0]+$arr[1])+$arr[2])>165 && $arr[2]>108 && $weight*0.0022046>150){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	public function fileExchange($market,$account){
 		$this->assign('market',$market);
 		$this->assign('account',$account);
@@ -1417,6 +1849,13 @@ class GgsUsswSaleAction extends CommonAction{
                 $map[C('DB_USSTORAGE_AINVENTORY')] = array('gt',0);
                 $storages=$storageTable->where($map)->select();
 
+                /*//Check the item is ended manual. If the item in TODO. Then do not add to list.
+                $todoWhere[C('DB_TODO_STATUS')] = array('eq', 0);
+				$todoWhere[C('DB_TODO_TASK')] = array('like', '%'.$account.'销售建议重新刊登：%');
+				$todo = M(C('DB_TODO'))->where($todoWhere)->getField(C('DB_TODO_TASK'));
+				$todo= str_replace(':', '：', $todo);
+				$todoTask = explode('：', str_replace(',', '，', $todo));
+				$relistSku = explode('，', $todoTask[1]);*/				
                 $newIndex = $highestRow-1;
                 foreach ($storages as $key => $value) {
 
@@ -1428,6 +1867,9 @@ class GgsUsswSaleAction extends CommonAction{
                 			break;
                 		}
                 	}
+                	/*//Check the item is ended manual. If the item in TODO. Then do not add to list.
+                	$waitingRelist = array_search($value[C('DB_USSTORAGE_SKU')], $relistSku) == false? false: true;
+                	if($listed==false && !$waitingRelist){*/
                 	if($listed==false){
                 		$data[$newIndex][$firstRow['K']]=$value[C('DB_USSTORAGE_SKU')];
                 		$data[$newIndex]['Suggest']="未刊登商品";
@@ -1448,7 +1890,7 @@ class GgsUsswSaleAction extends CommonAction{
                 $excelCellName[10]=$objPHPExcel->getActiveSheet()->getCell("I1")->getValue();
                 $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("J1")->getValue();
                 $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("K1")->getValue();
-                $this->exportEbayFileExchangeExcel('GgsFileExchange',$excelCellName,$data); 
+                $this->exportEbayFileExchangeExcel($account.'FileExchange',$excelCellName,$data); 
             }else{
                 $this->error("模板错误，请检查模板！");
             }   
@@ -1470,6 +1912,15 @@ class GgsUsswSaleAction extends CommonAction{
 	private function verifyExcludeFxt($firstRow){
         for($c='A';$c<=max(array_keys(C('IMPORT_EXCLUDE_STOCK_FXT')));$c++){
             if($firstRow[$c] != C('IMPORT_EXCLUDE_STOCK_FXT')[$c])
+                return false;
+        }
+        return true;
+    }
+
+    //Verify imported file exchange with sell template column name
+	private function verifyWithSellFxt($firstRow){
+        for($c='A';$c<=max(array_keys(C('IMPORT_WITHSELL_FXT')));$c++){
+            if($firstRow[$c] != C('IMPORT_WITHSELL_FXT')[$c])
                 return false;
         }
         return true;
@@ -1527,7 +1978,16 @@ class GgsUsswSaleAction extends CommonAction{
                 $excludeFirstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
 
-            if($this->verifyExcludeFxt($excludeFirstRow)){
+            $withSellSheet = $objPHPExcel->getSheet(1);
+			$withSellHighestRow = $withSellSheet->getHighestRow(); // 取得总行数
+			$withSellHighestColumn = $withSellSheet->getHighestColumn(); // 取得总列数
+			//excel first column name verify
+            for($c='A';$c<=$withSellHighestColumn;$c++){
+                $withSellFirstRow[$c] = $withSellSheet->getCell($c.'1')->getValue();
+       		}
+				
+
+            if($this->verifyExcludeFxt($excludeFirstRow) && $this->verifyWithSellFxt($withSellFirstRow)){
             	$salePlan=M($this->getSalePlanTableName($account))->select();
 		    	$storageTable=M($this->getStorageTableName($account));
 		    	$productTable=M(C("DB_PRODUCT"));
@@ -1536,7 +1996,12 @@ class GgsUsswSaleAction extends CommonAction{
 		    	foreach ($salePlan as $key => $value) {
 		    		$data[$key]["sku"]=$value[C("DB_USSW_SALE_PLAN_SKU")];
 		    		$data[$key]["price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
-		    		$product = $productTable->where(array(C('DB_PRODUCT_SKU')=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->find();
+		    		if($this->isFBASku($value[C("DB_USSW_SALE_PLAN_SKU")])){
+		    			$product = $productTable->where(array(C('DB_PRODUCT_SKU')=>$this->fbaSkuToStandardSku($value[C("DB_USSW_SALE_PLAN_SKU")])))->find();
+		    		}else{
+		    			$product = $productTable->where(array(C('DB_PRODUCT_SKU')=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->find();
+		    		}
+		    		
 			    	$p[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
 			    	$p[C('DB_PRODUCT_USTARIFF')]=$product[C('DB_PRODUCT_USTARIFF')]/100;
 			    	$p['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
@@ -1559,16 +2024,88 @@ class GgsUsswSaleAction extends CommonAction{
             				$oinventory= $objPHPExcel->getActiveSheet()->getCell('B'.$e)->getValue();
             			}
             		}
-		    		if($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY"))==null){
-		    			$data[$key]["quantity"]=0;
-		    		}else{
-		    			$ainventory=($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY")))-$oinventory;
-		    			$data[$key]["quantity"]=$ainventory<0?0:$ainventory;
+		    		
+		    		if(!$this->isFBASku($value[C("DB_USSW_SALE_PLAN_SKU")])){
+		    			if($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY"))==null){
+			    			$data[$key]["quantity"]=0;
+			    		}else{
+			    			$ainventory=($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY")))-$oinventory;
+			    			$data[$key]["quantity"]=$ainventory<0?0:$ainventory;
+			    		}
+		    			$data[$key]["leadtime-to-ship"]=3; 
 		    		}
-
-		    		$data[$key]["leadtime-to-ship"]=3; 
+		    		
 		    		$data[$key]["suggested-price"]=$value[C("DB_USSW_SALE_PLAN_SUGGESTED_PRICE")];
 		    		$data[$key]["suggest"]=$value[C("DB_USSW_SALE_PLAN_SUGGEST")];		
+		    	}
+
+		    	$lengthOfData = count($data);
+	    		for ($wsi=2; $wsi <= $withSellHighestRow; $wsi++) { 
+		    		$data[$lengthOfData]['sku'] = $withSellSheet->getCell("A".$wsi)->getValue();
+		    		$data[$lengthOfData]['price'] = $withSellSheet->getCell("B".$wsi)->getValue();
+		    		$explodedSku = explode('_', $withSellSheet->getCell("A".$wsi)->getValue());
+		    		$splitSku = $this->splitSku($explodedSku[0]);
+		    		$oinventory=0;
+		    		if(count($splitSku)==1){
+		    			//single sku
+		    			if($splitSku[0][1]==1){
+                			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
+                			for($e=2;$e<=$excludeHighestRow;$e++){
+		            			if($excludeSheet->getCell("A".$e)->getValue()==$splitSku[0][0]){
+		            				$oinventory= $objPHPExcel->getSheet(0)->getCell('B'.$e)->getValue();
+		            				break;
+		            			}
+		            		}
+                			$ainventory=($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$splitSku[0][0]))->getField(C("DB_USSTORAGE_AINVENTORY")))-$oinventory;
+		    				$data[$lengthOfData]["quantity"]=$ainventory>0?$ainventory:0;
+                		}else{
+                			//Single sku and multiple sale quantity
+                			for($e=2;$e<=$excludeHighestRow;$e++){
+		            			if($excludeSheet->getCell("A".$e)->getValue()==$splitSku[0][0]){
+		            				$oinventory= $objPHPExcel->getSheet(0)->getCell('B'.$e)->getValue();
+		            				break;
+		            			}
+		            		}
+		            		$ainventory=($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$splitSku[0][0]))->getField(C("DB_USSTORAGE_AINVENTORY")))/$splitSku[0][1]-$oinventory;
+		            		$data[$lengthOfData]["quantity"]=$ainventory>0?$ainventory:0;
+                		}
+
+		    		}else{
+		    			//multiple sku
+		    			$data[$lengthOfData]["quantity"]=65536;
+		    			foreach ($splitSku as $key => $skuQuantity){
+                			$oinventory=0;
+	                		for($e=1;$e<=$excludeHighestRow;$e++){
+	                			if($excludeSheet->getCell("A".$e)->getValue()==$skuQuantity[0]){
+	                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
+	                			}
+	                		}
+                			if($skuQuantity[1]==1){
+                				//Multiple sku and Single sale quantity
+                				$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
+	                			if($ainventory!=null){
+	                				$ainventory=($ainventory-$oinventory)<0?0:($ainventory-$oinventory);
+	                			}
+                				if($ainventory<$data[$lengthOfData]["quantity"]){
+                					$data[$lengthOfData]["quantity"]=$ainventory;
+                				}
+                			}else{
+                				//Multiple sku and Multiple sale quantity
+                				$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
+	                			if($ainventory!=null){
+	                				$ainventory=($ainventory/$skuQuantity[1]-$oinventory)<0?0:($ainventory/$skuQuantity[1]-$oinventory);
+	                			}
+                				if(intval($ainventory/$skuQuantity[1])<$data[$lengthOfData]["quantity"]){
+                					$data[$lengthOfData]["quantity"]=intval($ainventory/$skuQuantity[1]);
+                				}
+
+                			}
+                		}
+                		if($data[$lengthOfData]["quantity"]==65536){
+        					$data[$lengthOfData]["quantity"]=0;
+        				}
+		    		}
+		    		$lengthOfData++;
 		    	}
 		    	$productTable->commit();
 		    	$storageTable->commit();
@@ -1635,7 +2172,7 @@ class GgsUsswSaleAction extends CommonAction{
             if($this->verifyGrouponFxt($firstRow) && $this->verifyExcludeFxt($excludeFirstRow)){
             	$storageTable=M($this->getStorageTableName($account));
             	$salePlanTable=M($this->getSalePlanTableName($account));
-
+            	$product = M(C('DB_PRODUCT'));
                 for($i=2;$i<=$highestRow;$i++){
                 	$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
 
@@ -1646,10 +2183,10 @@ class GgsUsswSaleAction extends CommonAction{
         			$data[$i-2][$firstRow['E']]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
         			$data[$i-2][$firstRow['F']]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
         			$data[$i-2][$firstRow['G']]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
-                	$data[$i-2][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+                	$data[$i-2][$firstRow['H']]='open';
         			$data[$i-2][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
         			$data[$i-2][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
-        			$data[$i-2][$firstRow['L']]=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
+        			$data[$i-2][$firstRow['L']]=$product->where(array(C('DB_PRODUCT_SKU')=>$data[$i-2][$firstRow['K']]))->getField(C('DB_PRODUCT_UPC'));
         			$data[$i-2][$firstRow['M']]=$objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
         			$data[$i-2][$firstRow['N']]=$objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
         			$data[$i-2][$firstRow['O']]=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
@@ -1790,6 +2327,9 @@ class GgsUsswSaleAction extends CommonAction{
     		case 'g-lipovolt':
     			return C('DB_USSTORAGE');
     			break;
+    		case 'blackfive':
+    			return C('DB_USSTORAGE');
+    			break;
     		default:
     			return null;
     			break;
@@ -1808,6 +2348,9 @@ class GgsUsswSaleAction extends CommonAction{
     		case 'g-lipovolt':
     			return C('DB_USSW_SALE_PLAN3');
     			break;
+    		case 'blackfive':
+    			return C('DB_USSW_SALE_PLAN4');
+    			break;
     		default:
     			return null;
     			break;
@@ -1815,7 +2358,7 @@ class GgsUsswSaleAction extends CommonAction{
     }
 
     //Return the sale plan view model according to the account
-    private function getSalePlanViewModel($account){
+    public function getSalePlanViewModel($account){
     	switch ($account) {
     		case 'greatgoodshop':
     			return 'UsswSalePlanView';
@@ -1825,6 +2368,9 @@ class GgsUsswSaleAction extends CommonAction{
     			break;
 			case 'g-lipovolt':
 				return 'UsswSalePlan3View';
+				break;
+			case 'blackfive':
+				return 'UsswSalePlan4View';
 				break;
     		default:
     			return null;
@@ -1843,6 +2389,9 @@ class GgsUsswSaleAction extends CommonAction{
     			break;
     		case 'g-lipovolt':
     			return 'groupon';
+    			break;
+    		case 'blackfive':
+    			return 'ebay';
     			break;
     		default:
     			return null;
@@ -1898,6 +2447,7 @@ class GgsUsswSaleAction extends CommonAction{
         } 
 
         for($i=0;$i<$dataNum;$i++){
+        	$objPHPExcel->getActiveSheet()->getStyle('L'.($i+2))->getNumberFormat()->setFormatCode(PHPExcel_Style_NumberFormat::FORMAT_NUMBER);
             for($j=0;$j<$cellNum;$j++){
             	if($i>0 && $expTableData[$i][$expCellName[14]] !=null && $expTableData[$i][$expCellName[14]]!=$expTableData[$i][$expCellName[13]]){
             		$objPHPExcel->getActiveSheet()->getStyle( 'O'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
@@ -2168,6 +2718,48 @@ class GgsUsswSaleAction extends CommonAction{
     	}else{
     		$this->error("请选择上传的文件");
     	}
+    }
+
+    public function compareFbaUsswCost(){
+    	$where[C('DB_PRODUCT_TOUS')] = array('neq', '无');
+    	$products = M(C('DB_PRODUCT'))->where($where)->select();
+    	$usStorageTable = M(C('DB_USSTORAGE'));
+    	foreach ($products as $key => $p) {
+    		$data[$key][C('DB_PRODUCT_SKU')] = $p[C('DB_PRODUCT_SKU')];
+    		$data[$key][C('DB_PRODUCT_CNAME')] = $p[C('DB_PRODUCT_CNAME')];
+    		$data[$key][C('DB_PRODUCT_MANAGER')] = $p[C('DB_PRODUCT_MANAGER')];
+    		$data[$key]['quantity'] = $usStorageTable->where(array(C('DB_USSTORAGE_SKU')=>$p[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSTORAGE_AINVENTORY'));
+    		$data[$key]['fba_shipping_fee'] = $this->getFBAShippingWayFee($p[C('DB_PRODUCT_PWEIGHT')]==0?$p[C('DB_PRODUCT_WEIGHT')]:$p[C('DB_PRODUCT_PWEIGHT')],$p[C('DB_PRODUCT_LENGTH')],$p[C('DB_PRODUCT_WIDTH')],$p[C('DB_PRODUCT_HEIGHT')])[1];
+    		$data[$key]['fba_cost'] = $this->calFBASuggestCost('lipovolt', $p[C('DB_PRODUCT_SKU')]);
+    		$data[$key]['ussw_shipping_fee'] = $this->getUsswLocalShippingFee1($p[C('DB_PRODUCT_PWEIGHT')]==0?$p[C('DB_PRODUCT_WEIGHT')]:$p[C('DB_PRODUCT_PWEIGHT')],$p[C('DB_PRODUCT_LENGTH')],$p[C('DB_PRODUCT_WIDTH')],$p[C('DB_PRODUCT_HEIGHT')]);
+    		$data[$key]['ussw_cost'] = $this->calUsswSuggestCost('lipovolt', $p[C('DB_PRODUCT_SKU')]);
+    		$data[$key]['difference'] = $data[$key]['ussw_cost']-$data[$key]['fba_cost'];
+    		$startDate = date('Y-m-d H:i:s',time()-60*60*24*30);
+    		$data[$key]['30DaysSaleQuantity'] = $this->calUsswSaleQuantity('lipovolt',$p[C('DB_PRODUCT_SKU')],$startDate);
+    		$startDate = date('Y-m-d H:i:s',time()-60*60*24*15);
+    		$data[$key]['15DaysSaleQuantity'] = $this->calUsswSaleQuantity('lipovolt',$p[C('DB_PRODUCT_SKU')],$startDate);
+    		$startDate = date('Y-m-d H:i:s',time()-60*60*24*7);
+    		$data[$key]['7DaysSaleQuantity'] = $this->calUsswSaleQuantity('lipovolt',$p[C('DB_PRODUCT_SKU')],$startDate);
+    	}
+    	foreach($data as $val){
+			$key_arrays[]=$val['difference'];
+		}
+    	array_multisort($key_arrays,SORT_DESC, $data);
+    	$xlsCell  = array(
+	        array(C('DB_PRODUCT_SKU'),'产品编码'),
+	        array(C('DB_PRODUCT_CNAME'),'产品名称'),
+	        array(C('DB_PRODUCT_MANAGER'),'产品经理'),
+	        array('quantity','自建仓可用库存'),
+	        array('fba_shipping_fee','FBA本地运费'),
+	        array('fba_cost','FBA成本'),
+	        array('ussw_shipping_fee','自建仓本地运费'),
+	        array('ussw_cost','自建仓成本'),
+	        array('difference','USSW-FBA成本差'),
+	        array('30DaysSaleQuantity','amazon30天自发货销量'),
+	        array('15DaysSaleQuantity','amazon15天自发货销量'),
+	        array('7DaysSaleQuantity','amazon7天自发货销量')
+	        );
+    	$this->exportExcel('CompareFbaUssw',$xlsCell,$data);
     }
 }
 

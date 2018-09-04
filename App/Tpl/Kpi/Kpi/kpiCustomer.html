@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>客服绩效表</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<script  src="__PUBLIC__/Js/My97DatePicker/WdatePicker.js"></script>
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>待办事项</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/todo.html" />	
+			</div>
+		</div>
+	<div class="content">
+<!-- 主页面开始  -->
+<div id="WarehouseOutbound" class="main">
+<script>
+function deleteItem(id){
+	form.action="{:U('Kpi/Kpi/deleteCustomerPerformance')}?id="+id;
+	form.submit();	
+}
+function save(){
+	form.action="{:U('Kpi/Kpi/newCustomerPerformance')}";
+	form.submit();
+}
+</script>
+
+<!--产品列表-->
+<div class="block-outer">
+	<form method="POST" id="form" name="form" action="#" method="POST">
+	<div class="block-outer-hd">
+		<div class="item">
+			<div class="form-group">
+				<label for="" class="control-label">名字</label>
+	            <div class="control-wrap">
+	            	<select name="name"  id="name">
+	            		<option value="" selected>请选择</option>
+	            		<foreach name="names" item="vo">
+	            			<option value="{$vo}" >{$vo}</option>
+						</foreach>					
+					</select>
+	            </div>
+	            <label for="" class="control-label">月份</label>
+	            <div class="control-wrap">
+	            	<input type="text" name="month" id="month" onclick="WdatePicker({dateFmt:'yyyy-MM'});" value="{$selectedMonth}" size="17" class="date" readonly>
+	            </div>
+	            <label for="" class="control-label">绩效分：</label>
+	            <div class="control-wrap">
+	            	<input id="score" name="score" value="1"></input>
+	            </div>
+	        </div>
+        </div>
+        <div class="item">
+        	<div class="form-group">
+	            <label for="" class="control-label">绩效</label>
+	            <div class="control-wrap">
+	            	<textarea  type="text"  id="performance" name="performance"></textarea>
+	            </div> 
+	        </div>  
+        </div>
+        <div class="item">
+        	<div class="form-group">
+	            <button class="btn btn-blue btn-s" id="savePurchaseItemInfo" onclick="save();return false;">保存</button>
+	        </div>  
+        </div>
+    </div>
+
+	<table  id="warehouseProduct" class="tablelist">              
+		
+			<tr>
+				<th>名字</th>
+				<th>月份</th>
+				<th>绩效</th>				
+				<th>绩效分</th>
+				<th>操作</th>
+			</tr> 
+
+			<volist name="performances" id="vo">
+				
+				<tr>
+				<td><input id="name" name="name" value="{$vo[C('DB_KPI_CUSTOMER_NAME')]}" readonly=""></input></td>
+
+				<td><input id="month" name="month" value="{$vo[C('DB_KPI_CUSTOMER_MONTH')]}" readonly=""></input></td>
+				<td><input id="performance" name="performance" value="{$vo[C('DB_KPI_CUSTOMER_PERFORMANCE')]}" readonly=""></input></td>
+				<td><input id="score" name="score" value="{$vo[C('DB_KPI_CUSTOMER_SCORE')]}"></input></td>
+				<td>
+					 <button class="btn btn-blue btn-s" id="savePurchaseItemInfo" onclick="
+										if(confirm('确定要删除吗?')){
+											deleteItem({$vo['id']})
+										}else{
+											return false;
+										}
+										">删除</button>
+				</td>
+				</tr>
+				
+			</volist>	
+		</table>
+	</form>	
+</div>
+
+</div>
+</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

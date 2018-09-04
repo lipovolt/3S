@@ -26,12 +26,11 @@ class OutboundAction extends CommonAction{
     }
 
     public function simpleOut(){
-        $this->addOutboundOrders($orders);
         if(IS_POST){
             if(I('post.sku','','htmlspecialchars')!=''){
                 
                 $where[C('DB_SZSTORAGE_SKU')] = I('post.sku','','htmlspecialchars');
-                if(I('post.position','','htmlspecialchars') == ''){
+                if(I('post.position','','htmlspecialchars') != ''){
                     $where[C('DB_SZSTORAGE_POSITION')] = I('post.position','','htmlspecialchars');
                 }                
                 $row = M(C('DB_SZSTORAGE'))->where($where)->find();
@@ -56,7 +55,7 @@ class OutboundAction extends CommonAction{
              $config=array(
                  'allowExts'=>array('xlsx','xls'),
                  'savePath'=>'./Public/upload/szEbayOrders/',
-                 'saveRule'=>I('post.sellerID').'_'.time(),
+                 'saveRule'=>$_POST['sellerID'].'_'.time(),
              );
              $upload = new UploadFile($config);
              if (!$upload->upload()) {
@@ -88,7 +87,7 @@ class OutboundAction extends CommonAction{
                     $buyerID =  $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
                     $sku = $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
                     //判断ebay订单号是否已存在
-                    if($this->duplicateSaleNo('ebay',I('post.sellerID'),$saleNo)){ 
+                    if($this->duplicateSaleNo($this->getMarket($objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue()),$_POST['sellerID'],$saleNo)){ 
                         //ebay订单号在出库表中，添加错误信息
                         $errorInFile[$indexForErrorOfFile]['saleno'] = $saleNo;
                         $errorInFile[$indexForErrorOfFile]['error'] = '该ebay订单号已存在';
@@ -104,8 +103,8 @@ class OutboundAction extends CommonAction{
                             }else{
                                 $outboundOrder[$j][C('DB_SZ_OUTBOUND_CREATE_TIME')]= Date(I('post.order_date'));
                             }
-                            $outboundOrder[$j][C('DB_SZ_OUTBOUND_MARKET')] = 'ebay';
-                            $outboundOrder[$j][C('DB_SZ_OUTBOUND_SELLER_ID')] = I('post.sellerID','','htmlspecialchars');
+                            $outboundOrder[$j][C('DB_SZ_OUTBOUND_MARKET')] = $this->getMarket($objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue());
+                            $outboundOrder[$j][C('DB_SZ_OUTBOUND_SELLER_ID')] = $_POST['sellerID'];
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_BUYER_ID')] = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_BUYER_NAME')] = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_BUYER_TEL')] = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
@@ -152,7 +151,7 @@ class OutboundAction extends CommonAction{
                                         $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_SKU')]=$departedSkuQuantityValue['sku'];
                                         $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_QUANTITY')]=$departedSkuQuantityValue['quantity'];
                                         $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-                                        $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
+                                        $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AL".$i)->getValue();
                                         $k=$k+1; 
                                     }
                                 }                         
@@ -190,7 +189,7 @@ class OutboundAction extends CommonAction{
                                     $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_SKU')]=$departedSkuQuantityValue['sku'];
                                     $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_QUANTITY')]=$departedSkuQuantityValue['quantity'];
                                     $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-                                    $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
+                                    $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AL".$i)->getValue();
                                     $k=$k+1;
                                 }
                             }                        
@@ -210,7 +209,7 @@ class OutboundAction extends CommonAction{
                     //更新已合并的订单数组到szsw_outbound 
                     $this->addOutboundOrder($this->mergeOrder($outboundOrder));                    
                     //更新订单产品数组到szsw_outbound_item 和 szstorage
-                    $this->addOutboundItem($outboundOrderItems);                    
+                    $this->addOutboundItem($outboundOrderItems,$_POST['sellerID']);                    
                     $this->success('导入成功！');
                 }*/
 
@@ -222,9 +221,10 @@ class OutboundAction extends CommonAction{
                 }else{
                     //无错误信息
                     //更新已合并的订单数组到szsw_outbound 
-                    $this->addOutboundOrder($this->mergeOrder($outboundOrder));                    
+                    $mergeOrder = $this->mergeOrder($outboundOrder,$outboundOrderItems);
+                    $this->addOutboundOrder($mergeOrder[0]);                    
                     //更新订单产品数组到szsw_outbound_item 和 szstorage
-                    $this->addOutboundItem($outboundOrderItems);                    
+                    $this->addOutboundItem($mergeOrder[1],$_POST['sellerID']);                    
                     $this->success('导入成功！');
                 }
             }else{
@@ -274,7 +274,7 @@ class OutboundAction extends CommonAction{
     /*
     Merge the orders from the same buyer
     */
-    private function mergeOrder($orders){
+    private function mergeOrder($orders,$outboundOrderItems){
         foreach ($orders as $key => $order) {
             $exist = $this->buyerExists($order,$filteredOutboundOrder);
             if ($exist==-1){
@@ -287,27 +287,49 @@ class OutboundAction extends CommonAction{
                 }
             }
         }
-        return $filteredOutboundOrder;
+        return array($filteredOutboundOrder,$outboundOrderItems);
     }
 
-    private function addOutboundItem($outboundItems){
+    private function addOutboundItem($outboundItems,$sellerId){
         $szstorage = M(C('DB_SZSTORAGE'));
         $szOutbound = M(C('DB_SZ_OUTBOUND'));
         $szOutboundItem = M(C('DB_SZ_OUTBOUND_ITEM'));
-        $szOutboundItem->startTrans();
+        $szOutboundItem->startTrans();        
+        $kpiSaleRecord = M(C('DB_KPI_SALE_RECORD'));
+        $kpiSaleRecord->startTrans();
         foreach ($outboundItems as $key => $value) {
             //add to sz_outbound_item
-            $oid=$szOutbound->where(array(C('DB_SZ_OUTBOUND_MARKET_NO')=>$value[C('DB_SZ_OUTBOUND_ITEM_OOID')]))->getField('id');
-            $value[C('DB_SZ_OUTBOUND_ITEM_OOID')]=$oid;
+            $oid = $szOutbound->where(array(C('DB_SZ_OUTBOUND_MARKET_NO')=>$value[C('DB_SZ_OUTBOUND_ITEM_OOID')]))->getField('id');
+            $value[C('DB_SZ_OUTBOUND_ITEM_OOID')]= $oid;
             $value[C('DB_SZ_OUTBOUND_ITEM_POSITION')] = $this->getPosition($value[C('DB_SZ_OUTBOUND_ITEM_SKU')]);
             $szOutboundItem->add($value);
+            
             //update sz usstorage
             $where = array(C('DB_SZSTORAGE_SKU')=>$value[C('DB_SZ_OUTBOUND_ITEM_SKU')]);
             $szstorage->where($where)->setDec(C('DB_SZSTORAGE_AINVENTORY'),$value[C('DB_SZ_OUTBOUND_ITEM_QUANTITY')]);
             $szstorage->where($where)->setInc(C('DB_SZSTORAGE_CSALES'),$value[C('DB_SZ_OUTBOUND_ITEM_QUANTITY')]);
+
+            //统计销售绩效考核的sku
+            $kpiMap[C('DB_KPI_SALE_SKU')] = array('eq', $value[C('DB_SZ_OUTBOUND_ITEM_SKU')]);
+            $kpiMap[C('DB_KPI_SALE_WAREHOUSE')] = array('eq', C('SZSW'));
+            $kpiSaleId = M(C('DB_KPI_SALE'))->where($kpiMap)->getField(C('DB_KPI_SALE_ID'));
+            $repeatOrder = $kpiSaleRecord->where(array(C('DB_KPI_SALE_RECORD_TRANSACTION_NO')=>$value[C('DB_SZ_OUTBOUND_ITEM_TRANSACTION_NO')]))->find();
+            if($kpiSaleId!=null && $repeatOrder==null){
+                $kpiSaleRecordData[C('DB_KPI_SALE_RECORD_SALE_ID')] = $kpiSaleId;
+                $kpiSaleRecordData[C('DB_KPI_SALE_RECORD_SKU')] = $value[C('DB_SZ_OUTBOUND_ITEM_SKU')];
+                $kpiSaleRecordData[C('DB_KPI_SALE_RECORD_WAREHOUSE')] = C('SZSW');
+                $kpiSaleRecordData[C('DB_KPI_SALE_RECORD_SOLD_DATE')] = time();
+                $kpiSaleRecordData[C('DB_KPI_SALE_RECORD_QUANTITY')] = $value[C('DB_SZ_OUTBOUND_ITEM_QUANTITY')];
+                $kpiSaleRecordData[C('DB_KPI_SALE_RECORD_MARKET')] = $szOutbound->where(array(C('DB_SZ_OUTBOUND_ID')=>$oid))->getField(C('DB_SZ_OUTBOUND_MARKET'));
+                $kpiSaleRecordData[C('DB_KPI_SALE_RECORD_SELLER_ID')] = $sellerId;
+                $kpiSaleRecordData[C('DB_KPI_SALE_RECORD_MARKET_NO')] = $value[C('DB_SZ_OUTBOUND_ITEM_MARKET_NO')];
+                $kpiSaleRecordData[C('DB_KPI_SALE_RECORD_TRANSACTION_NO')] = $value[C('DB_SZ_OUTBOUND_ITEM_TRANSACTION_NO')]; 
+                $kpiSaleRecord->add($kpiSaleRecordData);
+            }
         }
         $szOutboundItem->commit();
         $szstorage->commit();
+        $kpiSaleRecord->commit();
     }
 
     private function addOutboundOrder($orders){
@@ -331,8 +353,7 @@ class OutboundAction extends CommonAction{
         for($c='A';$c<=max(array_keys(C('IMPORT_EBAY_EN_ORDER')))-1;$c++){
             if(trim($secondRow[$c]) != C('IMPORT_EBAY_EN_ORDER')[$c]){
                 return false;
-            }
-                
+            }                
         }
         return true;
     }
@@ -396,6 +417,14 @@ class OutboundAction extends CommonAction{
             }
             M(C('DB_SZ_OUTBOUND'))->where(array(C('DB_SZ_OUTBOUND_ID')=>$id))->setField(array(C('DB_SZ_OUTBOUND_STATUS')=>'已出库'));
             $this->success('出库成功！');
+        }
+    }
+
+    private function getMarket($price){
+        if(substr($price,0,4)=='EUR '){
+            return 'ebay.de';
+        }else{
+            return 'ebay.com';
         }
     }
 }

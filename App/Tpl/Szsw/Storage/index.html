@@ -12,21 +12,26 @@
 function move(ainventory,sku,position){
 	position = position==''?-1:position;
 	var warehouse = prompt("仓库","");
-	if(warehouse != "万邑通德国" && warehouse != "万邑通美西" && warehouse != "美自建仓"){
+	if(warehouse==null){
+		return false;
+	}else if(warehouse != "万邑通德国" && warehouse != "万邑通美西" && warehouse != "美自建仓"){
 		alert("输入的仓库: "+warehouse+" 不存在！");
 		return false;
-	}
-	var quantity = prompt("数量","");
-	if(isNaN(quantity)){
-		alert("请输入数字！");
-		return false;
-	}
-	if(quantity>ainventory){
-		alert("可用数量： " + ainventory + " 小于转仓数量： " + quantity);
-		return false;
-	}
-	form.action="{:U('Szsw/Storage/moveTo')}?warehouse="+warehouse+"&quantity="+quantity+"&sku="+sku+"&position="+position;
-	form.submit();
+	}else{
+		var quantity = prompt("数量","");
+		if(isNaN(quantity)){
+			alert("请输入数字！");
+			return false;
+		}else if(quantity==null){
+			return false;
+		}else if(quantity>ainventory){
+			alert("可用数量： " + ainventory + " 小于转仓数量： " + quantity);
+			return false;
+		}else{
+			form.action="{:U('Szsw/Storage/moveTo')}?warehouse="+warehouse+"&quantity="+quantity+"&sku="+sku+"&position="+position;
+			form.submit();
+		}		
+	}	
 }
 </script>
 </head>

@@ -3,7 +3,9 @@
 class MetadataAction extends CommonAction{
 	public function index(){
 		$data = M(C('DB_METADATA'))->select();
+		$pw = array('ebay greatgoodshop'=>'04052016','ebay blackfive'=>'04052016','amazon 498307481@qq.com'=>'09092014','groupon 498307481@qq.com'=>'02072017','ebay rc-helicar'=>'09092014','ebay vtkg5755'=>'09092014','ebay yzhan-816'=>'04052016','阿里云 112.74.39.0'=>'administrator/Shangsi2018/shangs');
 		$this->assign('data',$data);
+		$this->assign('pw',$pw);
 		$this->display();
 	}
 

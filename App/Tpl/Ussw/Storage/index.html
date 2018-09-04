@@ -8,6 +8,24 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript">
+function move(ainventory,sku){
+	var quantity = prompt("数量","");
+	if(isNaN(quantity)){
+		alert("请输入数字！");
+		return false;
+	}else if(quantity==null){
+		return false;
+	}else if(quantity>ainventory){
+		alert("可用数量： " + ainventory + " 小于转仓数量： " + quantity);
+		return false;
+	}else{
+		form.action="{:U('Ussw/Storage/moveToAmazon')}?quantity="+quantity+"&sku="+sku;
+		form.submit();
+	}
+	
+}
+</script>
 </head>
 <body>
 
@@ -96,46 +114,42 @@
 					<span>导出</span>
 				</a>
 			</div>
-			<div class="tab-content">	
-				<table id="tablelist" class="tablelist">
-					<tr>
-						<th><div class="t1">货位</div></th>
-					    <th><div class="t1">产品编码</div></th>					    
-					    <th><div class="tl">中文名称</div></th>
-						<th><div class="tl">属性</div></th>
-						<th><div class="tr">历史入库</div></th>
-						<th><div class="tr">可用库存</div></th>
-						<th><div class="tr">待出库</div></th>
-						<th><div class="tr">在途库存</div></th>
-						<th><div class="tr">历史销量</div></th>
-						<th><div class="tr">30天销量</div></th>
-						<th><div class="t1">销售状态</div></th>
-						<th><div class="t1">备注</div></th>
-						<th width="230">操作</th>
-					</tr>    
-					<tr>
-						<volist name="usstorage" id="vo">
+			<div class="tab-content">
+				<form name="form" action="#" method="POST">	
+					<table id="tablelist" class="tablelist">
 						<tr>
-						<td><div class="tl">{$vo[C('DB_USSTORAGE_POSITION')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_USSTORAGE_SKU')]}</div></td>						
-						<td><div class="tl">{$vo[C('DB_USSTORAGE_CNAME')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_USSTORAGE_ATTRIBUTE')]}</div></td>
-						<td><div class="tr">{$vo[C('DB_USSTORAGE_CINVENTORY')]}</div></td>
-						<td><div class="tr">{$vo[C('DB_USSTORAGE_AINVENTORY')]}</div></td>
-						<td><div class="tr">{$vo[C('DB_USSTORAGE_OINVENTORY')]}</div></td>
-						<td><div class="tr">{$vo[C('DB_USSTORAGE_IINVENTORY')]}</div></td>
-						<td><div class="tr">{$vo[C('DB_USSTORAGE_CSALES')]}</div></td>
-						<td><div class="tr">{$vo['30dayssales']}</div></td>
-						<td><div class="tl">{$vo[C('DB_USSTORAGE_SALE_STATUS')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_USSTORAGE_REMARK')]}</div></td>
-						<td>
-							<a href="{:U('Ussw/Storage/edit',array(C('DB_USSTORAGE_ID')=>$vo[C('DB_USSTORAGE_ID')]))}">编辑</a>
-							<a href="{:U('Ussw/Storage/stopListing',array(C('DB_USSTORAGE_ID')=>$vo[C('DB_USSTORAGE_ID')]))}">已下架</a>
-						</td>
-						</tr>	
-					</volist> 		
-					</tr>								
-				</table>
+							<th><div class="t1">货位</div></th>
+						    <th><div class="t1">产品编码</div></th>					    
+						    <th><div class="tl">中文名称</div></th>
+							<th><div class="tr">历史入库</div></th>
+							<th><div class="tr">可用库存</div></th>
+							<th><div class="tr">待出库</div></th>
+							<th><div class="tr">在途库存</div></th>
+							<th><div class="tr">历史销量</div></th>
+							<th><div class="tr">30天销量</div></th>
+							<th width="230">操作</th>
+						</tr>    
+						<tr>
+							<volist name="usstorage" id="vo">
+							<tr>
+							<td><div class="tl">{$vo[C('DB_USSTORAGE_POSITION')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_USSTORAGE_SKU')]}</div></td>						
+							<td><div class="tl">{$vo[C('DB_USSTORAGE_CNAME')]}</div></td>
+							<td><div class="tr">{$vo[C('DB_USSTORAGE_CINVENTORY')]}</div></td>
+							<td><div class="tr">{$vo[C('DB_USSTORAGE_AINVENTORY')]}</div></td>
+							<td><div class="tr">{$vo[C('DB_USSTORAGE_OINVENTORY')]}</div></td>
+							<td><div class="tr">{$vo[C('DB_USSTORAGE_IINVENTORY')]}</div></td>
+							<td><div class="tr">{$vo[C('DB_USSTORAGE_CSALES')]}</div></td>
+							<td><div class="tr">{$vo['30dayssales']}</div></td>
+							<td>
+								<a href="{:U('Ussw/Storage/edit',array(C('DB_USSTORAGE_ID')=>$vo[C('DB_USSTORAGE_ID')]))}">编辑</a>
+								<input class="btn btn-blue" type="button" onclick="move({$vo.ainventory},{$vo.sku},'{$vo.position}')" value="转亚马逊仓"/>
+							</td>
+							</tr>	
+						</volist> 		
+						</tr>								
+					</table>
+				</form>
 				<div class="result page" align="center">{$page}</div>
 			</div>
 		</div>

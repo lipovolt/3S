@@ -13,7 +13,7 @@ Class UserRelationModel extends RelationModel{
 			'foreign_key' => 'user_id',
 			'relation_key' => 'role_id',
 			/*'relation_table' => 'lipovolt_3s_role_user',//web */
-			'relation_table' => '3s_role_user',//local
+			'relation_table' => 'lipovolt_3s_role_user',//local
 			'mapping_fields' => 'id,name,remark'
 			)
 		);

@@ -63,24 +63,86 @@
 												<strong>{$noteForAllCountry}</strong></p>
 											<div>
 												 <form action="{:U('Purchase/Restock/findOutOfStockItem',array('country'=>$country))}" method="post" enctype="multipart/form-data">
-												 	<div class="form-group">
+												 	<div class="tab-inner-content" style="">
+											            <div class="form-group">
+											            	<div class="block-bd">
+																<label for="price" class="control-label">德国空运可用库存可售天数</label>
+																<input type="text"  id="winitde_air_ad" name="winitde_air_ad" value="{:$restockPara['winitde_air_ad']}" readonly="" />
+																<label for="price" class="control-label">德国空运补货间隔天数</label>
+																<input type="text"  id="winitde_air_id" name="winitde_air_id" value="{:$restockPara['winitde_air_id']}" readonly="" />
+																<label for="price" class="control-label">德国空运可用加在途最大可售天数</label>
+																<input type="text"  id="winitde_air_td" name="winitde_air_td" value="{$restockPara['winitde_air_td']}" readonly="" />
+															</div>
+															<div class="form-group">
+																<label for="price" class="control-label">德国海运可用库存可售天数</label>
+																<input type="text"  id="winitde_sea_ad" name="winitde_sea_ad" value="{:$restockPara['winitde_sea_ad']}" readonly="" />
+																<label for="price" class="control-label">德国海运补货间隔天数</label>
+																<input type="text"  id="winitde_sea_id" name="winitde_sea_id" value="{:$restockPara['winitde_sea_id']}" readonly="" />
+																<label for="price" class="control-label">德国海运可用加在途最大可售天数</label>
+																<input type="text"  id="winitde_sea_td" name="winitde_sea_td" value="{:$restockPara['winitde_sea_td']}" readonly="" />
+															</div>
+														</div>
+														<div class="block-bd">
+															<div class="form-group">
+																<label for="price" class="control-label">美自建仓空运可用库存可售天数</label>
+																<input type="text"  id="ussw_air_ad" name="ussw_air_ad" value="{:$restockPara['ussw_air_ad']}" readonly="" />
+																<label for="price" class="control-label">美自建仓空运补货间隔天数</label>
+																<input type="text"  id="ussw_air_id" name="ussw_air_id" value="{:$restockPara['ussw_air_id']}" readonly="" />
+																<label for="price" class="control-label">美自建仓空运可用加在途最大可售天数</label>
+																<input type="text"  id="ussw_air_td" name="ussw_air_td" value="{:$restockPara['ussw_air_td']}" readonly="" />
+															</div>															
+														</div>
+														<div class="block-bd">
+															<div class="form-group">
+																<label for="price" class="control-label">美自建仓海运可用库存可售天数</label>
+																<input type="text"  id="ussw_sea_ad" name="ussw_sea_ad" value="{:$restockPara['ussw_sea_ad']}" readonly="" />
+																<label for="price" class="control-label">美自建仓海运补货间隔天数</label>
+																<input type="text"  id="ussw_sea_id" name="ussw_sea_id" value="{:$restockPara['ussw_sea_id']}" readonly="" />
+																<label for="price" class="control-label">美自建仓海运可用加在途最大可售天数</label>
+																<input type="text"  id="ussw_sea_td" name="ussw_sea_td" value="{:$restockPara['ussw_sea_td']}" readonly="" />
+															</div>
+														</div>
+														<div class="block-bd">
+															<div class="form-group">
+																<label for="price" class="control-label">深圳仓库存可售天数</label>
+																<input type="text"  id="szsw_day4sale" name="szsw_day4sale" value="{:$restockPara['szsw_ad']}" readonly="" />
+																<label for="price" class="control-label">转仓时深圳仓库存最低库存数</label>
+																<input type="text"  id="szsw_day4sale" name="szsw_day4sale" value="{:$restockPara['szsw_min_ai']}" readonly="" />
+															</div>
+														</div>
+														<div class="block-bd">
+															<div class="form-group">
+																<label for="price" class="control-label">美自建仓自动转仓</label>
+																<if condition="($restockPara['ussw_auto_move'] eq 1)"> 
+																	<input type="text"  id="szsw_day4sale" name="szsw_day4sale" value="是" readonly="" />
+																<else /> 
+																	<input type="text"  id="szsw_day4sale" name="szsw_day4sale" value="否" readonly="" />
+																</if>
+																<label for="price" class="control-label">万邑通德国自动转仓</label>
+																<if condition="($restockPara['winitde_auto_move'] eq 1)"> 
+																	<input type="text"  id="szsw_day4sale" name="szsw_day4sale" value="是" readonly="" />
+																<else /> 
+																	<input type="text"  id="szsw_day4sale" name="szsw_day4sale" value="否" readonly="" />
+																</if>
+															</div>
+														</div>
+														<div class="block-bd">
+															<div class="form-group">
+																<label for="noOrderDays" class="control-label">当可用库存大于零</label>
+																<input type="text"  id="no_order_days" name="no_order_days" value="{$restockPara['no_order_days']}" />
+																<label for="noOrderDays" class="control-label">天没有订单不补货</label>
+																<label for="excludeLargeQuantity" class="control-label">单个订单单品购买数量大于</label>
+																<input type="text"  id="exclude_large_quantity" name="exclude_large_quantity" value="{$restockPara['exclude_large_quantity']}" />
+																<label for="excludeLargeQuantity" class="control-label">不在周期销量里统计</label>
+															</div>
+														</div>
+													</div>
+										            <div class="form-group">
 												 		<label for="winitUsStorage" class="control-label">万邑通{$country}仓库存表</label>
 													 	<div class="control-wrap">
 											            	<input type="file" name="winitUsStorage"/>
 											            </div>
 										            </div>
-										            <div class="form-group">
-														<label for="price" class="control-label">空运库存可售天数</label>
-														<div class="control-wrap">
-															<input type="text"  id="dfa" name="dfa" value="15" />
-														</div>
-													</div>
-													<div class="form-group">
-														<label for="price" class="control-label">海运库存可售天数</label>
-														<div class="control-wrap">
-															<input type="text"  id="dfs" name="dfs" value="60" />
-														</div>
-													</div>
 										            <div class="form-group">
 										             	<input class="btn btn-blue btn-s" type="submit" value="导入"/>
 										            </div>

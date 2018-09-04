@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>新增包装要求</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>产品管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/productMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form method="POST" id="edit_productInfo" action="{:U('Product/Product/newPackRequirementHandle')}">
+		<div class="inline-block block-indent">
+			<div class="form-group">
+				<label for="creater" class="control-label">产品编码</label>
+				<input type="text" name="{:C('DB_PRODUCT_SKU')}" id="{:C('DB_PRODUCT_SKU')}" value=""/>
+			</div>
+			<div class="form-group checkbox">
+				<label for="person" class="control-label">仓库</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_PRODUCT_PACK_REQUIREMENT_WAREHOUSE')}"  id="{:C('DB_PRODUCT_PACK_REQUIREMENT_WAREHOUSE')}">
+						<option value="" selected>请选择</option>
+						<option value="USSW" >美自建仓</option>
+						<option value="winit_de_warehouse" >万邑通德国</option>
+						<option value="winit_uswc_warehouse" >万邑通美西</option>		
+						<option value="SZSW" >深圳仓</option>								
+					</select>
+				</div>							
+			</div>
+			<div class="item">
+				<div class="form-group">
+					<label for="task" class="control-label">包装要求</label>
+					<div class="control-wrap">
+						<textarea  type="text"  id="{:C('DB_PRODUCT_PACK_REQUIREMENT_REQUIREMENT')}" name="{:C('DB_PRODUCT_PACK_REQUIREMENT_REQUIREMENT')}"></textarea>
+					</div>
+				</div>
+			</div>				
+		</div>
+		<div class="item tc"><input type='hidden' name='ProductID' value='1030634'>
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">取消</a>
+			<button class="btn btn-blue btn-s" id="saveProductInfo" name="saveProductInfo">新增</button>
+		</div>
+	</form> 
+	</div>
+
+
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

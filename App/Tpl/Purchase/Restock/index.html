@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript" src='__PUBLIC__/Js/jquery-1.7.2.min.js'></script>
 <script language="javascript">
 	function  cli(Obj){
 		var collid = document.getElementById("all");
@@ -147,12 +148,50 @@
 			<div class="tab-content">
 				<form name="form" id="search_product" action="#" method="POST">
 				<div class="form-group">
-					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/importRestock')}" >导入表格更新状态</a>
-					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/exportRestock')}" >导出</a>
-					<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/newRestockOrder')}" >新增补货单	</a>
-					<input class="btn btn-s btn-blue" type="button" onclick="eInvoice();" value="导出美国发票"/>
-					<input class="btn btn-s btn-blue" type="button" onclick="wInbound();" value="导出万邑通入库单"/>
-					<input class="btn btn-s btn-blue" type="button" onclick="winitOutConfirme();" value="万邑通确认发货"/>
+					<div class="block-bd">
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/importRestock')}" >导入表格更新状态</a>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/exportRestock')}" >导出</a>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/newRestockOrder')}" >新增补货单	</a>
+						<input class="btn btn-s btn-blue" type="button" onclick="eInvoice();" value="导出美国发票"/>
+						<input class="btn btn-s btn-blue" type="button" onclick="wInbound();" value="导出万邑通入库单"/>
+						<input class="btn btn-s btn-blue" type="button" onclick="winitOutConfirme();" value="万邑通确认发货"/>
+					</div>
+				</div>
+			</br>
+				<div class="form-group">
+					<div class="block-bd">
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalUsswRestockTable')}" >预算美自补货表</a>
+						<if condition="($ussw_lock eq 1)"> 
+							<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/unlockUsswRestockTable')}" >解锁美自补货表</a>
+						<else /> 
+							<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/lockUsswRestockTable')}" >锁定美自补货表</a>
+						</if>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/updateUsswRestockTable')}" >更新美自补货表</a>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/resetUsswRestockTable')}" >重置美自补货表</a>
+					</div>
+				</div>
+			</br>
+				<div class="form-group">
+					<div class="block-bd">
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalWinitdeRestockTable')}" >预算万德补货表</a>
+						<if condition="($winitde_lock eq 1)"> 
+							<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/unlockWinitdeRestockTable')}" >解锁万德补货表</a>
+						<else /> 
+							<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/lockWinitdeRestockTable')}" >锁定万德补货表</a>
+						</if>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/updateWinitdeRestockTable')}" >更新万德补货表</a>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/resetWinitdeRestockTable')}" >重置万德补货表</a>
+					</div>
+				</div>
+				<div class="block-bd">
+					<label for="keyword" class="control-label">空运待发货体积： {$arvolume} m³</label>
+					<label for="keyword" class="control-label">空运待发货重量： {$arweight} kg</label>
+					<label for="keyword" class="control-label">海运待发货体积： {$srvolume} m³</label>
+					<label for="keyword" class="control-label">海运待发货重量： {$srweight} kg</label>
+				</div>
+				<div class="block-bd">
+					<label for="keyword" class="control-label">延迟发货体积： {$dvolume} m³</label>
+					<label for="keyword" class="control-label">延迟发货重量： {$dweight} kg</label>
 				</div>
 				<table id="tablelist" class="tablelist">
 					<tr>

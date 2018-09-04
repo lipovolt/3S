@@ -44,7 +44,11 @@
 						<div class="form-group">
 							<label for="way" class="control-label">运输方式</label>
 							<div class="control-wrap">
-								<input type="text" name="{:C('DB_USSW_INBOUND_SHIPPING_WAY')}" value="" id="{:C('DB_USSW_INBOUND_SHIPPING_WAY')}"/>
+								<select name="{:C('DB_USSW_INBOUND_SHIPPING_WAY')}" id="{:C('DB_USSW_INBOUND_SHIPPING_WAY')}">
+									<option value="" selected>请选择</option>
+									<option value="空运" >空运</option>
+									<option value="海运" >海运</option>							
+								</select>
 							</div>
 						</div>
 					</div>
