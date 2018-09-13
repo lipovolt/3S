@@ -399,22 +399,19 @@ class OutboundAction extends CommonAction{
     }
 
     private function explodeBuyerCity($city){
-        $ot = explode('OT', $city);
-        if(count($ot)==2){
-            $ot[1] = 'OT '.$ot[1];
-            return $ot;
-        }else{
-            $slash = explode('/', $city);
-            if(count($slash)==2){
-                $slash[1] = 'OT '.$slash[1];
-                return $slash;
+        $delimiters = array('/', 'OT ', 'ot ', 'Ot ','OT-');
+        foreach ($delimiters as $key => $value) {
+            $ot = explode($value, $city);
+            if(count($ot)==2){
+                $ot[1] = 'OT '.$ot[1];
+                return $ot;
             }
         }
         return $city;
     }
 
     private function is5DigitsZipCountry($country){
-        $countrys = array('Germany','France','United States');
+        $countrys = array('Germany','France','United States','Finland');
         if(array_search($country, $countrys)===false){
             return false;
         }else{
@@ -608,6 +605,9 @@ class OutboundAction extends CommonAction{
               return "OSF811934|DPD - Domestic Economic Parcel (Standard 1-3 Business Days)";
               break;
             case 'DPD Normal Parcels':
+              return "OSF811934|DPD - Domestic Economic Parcel (Standard 1-3 Business Days)";
+              break;
+            case 'DPD Classic':
               return "OSF811934|DPD - Domestic Economic Parcel (Standard 1-3 Business Days)";
               break;
             default:
