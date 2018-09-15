@@ -1722,6 +1722,86 @@ class SzSaleAction extends CommonAction{
 	    }   
 	    return false;   
 	}
+
+	public function exportUsEbayBulkDiscount($account){
+    	$szStorage = M(C('DB_SZSTORAGE'))->select();
+    	$productTable = M(C('DB_PRODUCT'));
+    	$salePlanTable = M($this->getSalePlanTableName($account));
+    	$data = array();
+    	foreach ($szStorage as $key => $value) {
+    		$product = $productTable->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->find();
+    		$sale_price = $salePlanTable->where(array(C('DB_USSTORAGE_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_USSW_SALE_PLAN_PRICE'));
+    		//2 PCS
+    		$tmp[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')]*2;
+    		$tmp['way-to-us-fee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')]==0?($product[C('DB_PRODUCT_WEIGHT')]+20)*2:$product[C('DB_PRODUCT_PWEIGHT')]*2,$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]*2,$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+    		$tier2Cost =  $this->getSzUsCost($tmp[C('DB_PRODUCT_PRICE')],$tmp['way-to-us-fee'],$sale_price*2);
+    		$tier2ProfitRate = ((2*$sale_price)-$tier2Cost)/(2*$sale_price);
+
+    		//3 PCS
+    		$tmp[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')]*3;
+    		$tmp['way-to-us-fee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')]==0?($product[C('DB_PRODUCT_WEIGHT')]+20)*3:$product[C('DB_PRODUCT_PWEIGHT')]*3,$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]*3,$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+    		$tier3Cost =  $this->getSzUsCost($tmp[C('DB_PRODUCT_PRICE')],$tmp['way-to-us-fee'],$sale_price*3);
+    		$tier3ProfitRate = ((3*$sale_price)-$tier2Cost)/(3*$sale_price);
+
+			//4 PCS
+    		$tmp[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')]*4;
+    		$tmp['way-to-us-fee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')]==0?($product[C('DB_PRODUCT_WEIGHT')]+20)*4:$product[C('DB_PRODUCT_PWEIGHT')]*4,$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]*4,$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
+    		$tier4Cost =  $this->getSzUsCost($tmp[C('DB_PRODUCT_PRICE')],$tmp['way-to-us-fee'],$sale_price*4);
+    		$tier4ProfitRate = ((4*$sale_price)-$tier2Cost)/(4*$sale_price);
+
+    		if($tier2ProfitRate>0.15 && $tier3ProfitRate>0.2 && $tier4ProfitRate>0.3){
+    			$tmpData['sku'] = $value[C('DB_USSTORAGE_SKU')];
+    			$tmpData['offsetType'] = "Percentage";
+    			$tmpData['t1MinQty'] = 1;
+    			$tmpData['t1MaxQty'] = 1;
+    			$tmpData['t1Offset'] = 0;
+    			$tmpData['t2MinQty'] = 2;
+    			$tmpData['t2MaxQty'] = 2;
+    			$tmpData['t2Offset'] = 5;
+    			$tmpData['t2Cost'] = $tier2Cost;
+    			$tmpData['t2SalePrice'] = 2*$sale_price;
+    			$tmpData['t2ProfitRate'] = $tier2ProfitRate;
+    			$tmpData['t3MinQty'] = 3;
+    			$tmpData['t3MaxQty'] = 3;
+    			$tmpData['t3Offset'] = 10;
+    			$tmpData['t3Cost'] = $tier3Cost;
+    			$tmpData['t3SalePrice'] = 3*$sale_price;
+    			$tmpData['t3ProfitRate'] = $tier3ProfitRate;
+    			$tmpData['t4MinQty'] = 4;
+    			$tmpData['t4Offset'] = 15;
+    			$tmpData['t4Cost'] = $tier4Cost;
+    			$tmpData['t4SalePrice'] = 4*$sale_price;
+    			$tmpData['t4ProfitRate'] = $tier4ProfitRate;
+    			array_push($data, $tmpData);
+    		}
+    	}
+    	$xlsCell  = array(
+	        array('sku','SKU'),
+	        array('offsetType','Offset Type(Amount or Percentage)'),
+	        array('t1MinQty','T1 Min. Qty'),
+	        array('t1MaxQty','T1 Max. Qty'),
+	        array('t1Offset','T1 Offset Value'),
+	        array('t2MinQty','T2 Min. Qty'),
+	        array('t2MaxQty','T2 Max. Qty'),
+	        array('t2Offset','T2 Offset Value'),
+	        array('t2Cost','t2成本'),
+	        array('t2SalePrice','t2售价'),
+	        array('t2ProfitRate','t2利润率'),
+	        array('t3MinQty','T3 Min. Qty'),
+	        array('t3MaxQty','T3 Max. Qty'),
+	        array('t3Offset','T3 Offset Value'),
+	        array('t3Cost','t3成本'),
+	        array('t3SalePrice','t3售价'),
+	        array('t3ProfitRate','t3利润率'),
+	        array('t4MinQty','T4 Min. Qty'),
+	        array('t4MaxQty','T4 Max. Qty'),
+	        array('t4Offset','T4 Offset Value'),
+	        array('t4Cost','t4成本'),
+	        array('t4SalePrice','t4售价'),
+	        array('t4ProfitRate','t4利润率')
+	        );
+    	$this->exportExcel($account.'BulkDiscount',$xlsCell,$data);
+    }
 }
 
 ?>

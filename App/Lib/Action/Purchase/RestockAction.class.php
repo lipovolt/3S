@@ -365,7 +365,7 @@ class RestockAction extends CommonAction{
 			$product = M(C('db_product'))->where(array(C('db_product_sku')=>$this->fbaSkuToStandardSku($fbasv[C('DB_AMAZON_US_STORAGE_SKU')])))->find();
 			if($product!=null && ($product[C('DB_PRODUCT_TOUS')]!=='无')){
 				$msq = $this->getFBADaysSaleQuantity($fbasv[C('DB_AMAZON_US_STORAGE_SKU')],30,$restockPara['exclude_large_quantity']);
-				if($fbasv[C('DB_AMAZON_US_STORAGE_AINVENTORY')]<$msq){
+				if(($fbasv[C('DB_AMAZON_US_STORAGE_IINVENTORY')]+$fbasv[C('DB_AMAZON_US_STORAGE_AINVENTORY')])<$msq){
 					$this->addRestockOrder('美国FBA',$msq-$fbasv[C('DB_AMAZON_US_STORAGE_AINVENTORY')]-$fbasv[C('DB_AMAZON_US_STORAGE_IINVENTORY')],$product,$fbasv[C('DB_AMAZON_US_STORAGE_AINVENTORY')],0,$msq);
 				}
 			}

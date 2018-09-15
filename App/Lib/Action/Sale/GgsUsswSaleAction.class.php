@@ -2792,7 +2792,7 @@ class GgsUsswSaleAction extends CommonAction{
     		$tier4Cost =  $this->getUsswEbayCost($tmp[C('DB_PRODUCT_PRICE')],$tmp[C('DB_PRODUCT_USTARIFF')],$tmp['ussw-fee'],$tmp['way-to-us-fee'],$tmp['local-shipping-fee1'],$sale_price*4);
     		$tier4ProfitRate = ((4*$sale_price)-$tier2Cost)/(4*$sale_price);
 
-    		if($tier2ProfitRate>0.15 && $tier3ProfitRate>0.2 && $tier4ProfitRate>0.3){
+    		if($tier2ProfitRate>0.15 && $tier3ProfitRate>0.2 && $tier4ProfitRate>0.3 && !$this->isLongSku($value[C('DB_USSTORAGE_SKU')])){
     			$tmpData['sku'] = $value[C('DB_USSTORAGE_SKU')];
     			$tmpData['offsetType'] = "Percentage";
     			$tmpData['t1MinQty'] = 1;
@@ -2843,7 +2843,14 @@ class GgsUsswSaleAction extends CommonAction{
 	        array('t4SalePrice','t4售价'),
 	        array('t4ProfitRate','t4利润率')
 	        );
-    	$this->exportExcel('ggsBulkDiscount',$xlsCell,$data);
+    	$this->exportExcel($account.'BulkDiscount',$xlsCell,$data);
+    }
+
+    public function isLongSku($sku){
+    	if(strlen($sku)>4)
+    		return true;
+    	else
+    		return false;    		
     }
 }
 
