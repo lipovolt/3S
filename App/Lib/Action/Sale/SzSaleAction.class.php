@@ -1726,7 +1726,7 @@ class SzSaleAction extends CommonAction{
 	public function exportUsEbayBulkDiscount($account){
     	$szStorage = M(C('DB_SZSTORAGE'))->select();
     	$productTable = M(C('DB_PRODUCT'));
-    	$salePlanTable = M($this->getSalePlanTableName($account));
+    	$salePlanTable = M($this->getSalePlanTableName($account,'us'));
     	$data = array();
     	foreach ($szStorage as $key => $value) {
     		$product = $productTable->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->find();

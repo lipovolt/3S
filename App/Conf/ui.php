@@ -115,8 +115,7 @@ return array(
 	'NOON_BREAK' => array(
 		'张昱' => 1,
 		'孙志磊' => 1,
-		'张清铨' => 1,
-		'褚金键' => 1,
+		'李海坤' => 1,
 		),
 
 	//performace percent

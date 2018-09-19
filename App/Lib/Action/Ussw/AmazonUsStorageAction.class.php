@@ -11,6 +11,9 @@ class amazonUsStorageAction extends CommonAction{
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
             $storage = $Data->order('sku asc')->limit($Page->firstRow.','.$Page->listRows)->select();
+            foreach ($storage as $key => $value) {
+              $storage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
+            }
             $this->assign('storage',$storage);
             $this->assign('page',$show);
             $this->display();
@@ -18,6 +21,9 @@ class amazonUsStorageAction extends CommonAction{
         elseif($_POST['keyword']!="" && $_GET['sortword']==""){
             $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
             $storage = D('AmazonUsStorageView')->where($where)->select();
+            foreach ($storage as $key => $value) {
+              $storage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
+            }
             $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
             $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
             $this->assign('storage',$storage);
@@ -38,6 +44,17 @@ class amazonUsStorageAction extends CommonAction{
             $this->assign('storage',$storage);
             $this->assign('page',$show);
             $this->display();
+        }
+    }
+
+    private function get30DaysSales($sku){
+        $map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('gt',date("Y-m-d H:i:s",strtotime("last month")));
+        $map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
+        $result = D("UsFBAOutboundView")->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
+        if($result!=null){
+            return $result;
+        }else{
+            return 0;
         }
     }
 
