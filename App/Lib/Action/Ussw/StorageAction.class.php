@@ -114,7 +114,7 @@ class StorageAction extends CommonAction{
         $this->exportExcel($xlsName,$xlsCell,$xlsData);
     }
 
-    private function getIInventory($sku){
+    public function getIInventory($sku){
         $map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
         $map[C('DB_USSW_INBOUND_STATUS')] = '待入库';
         $result = D("UsswInboundView")->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));

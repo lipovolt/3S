@@ -815,6 +815,13 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurShippingFee = $eurShippingFee+$amountCM['amount'];
         			}
+        		}elseif($transactionType=='Refund' && $paymentType=='Other' && $paymentDetail=='Shipping tax'){
+        			if($amountCM['currency']=='usd'){
+        				$usdShippingFee = $usdShippingFee+$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurShippingFee = $eurShippingFee+$amountCM['amount'];
+        			}
         		}elseif($transactionType=='Order Payment' && $paymentType=='Amazon fees'){
         			if($amountCM['currency']=='usd'){
         				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
@@ -911,6 +918,20 @@ class AccountingAction extends CommonAction{
         				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
         			}
         		}elseif($transactionType=='Other' && $paymentType=='Other'){
+        			if($amountCM['currency']=='usd'){
+        				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
+        			}
+        		}elseif($transactionType=='Other' && $paymentType=='FBA Inventory Reimbursement - Lost:Warehouse'){
+        			if($amountCM['currency']=='usd'){
+        				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
+        			}
+        		}elseif($transactionType=='Other' && $paymentType=='FBA Inventory Reimbursement - Customer Return'){
         			if($amountCM['currency']=='usd'){
         				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
         			}
@@ -1834,20 +1855,11 @@ class AccountingAction extends CommonAction{
 	}
 
 	private function getWagesCostSum($month){
-		$wages = M(C('DB_WAGES'));
 		$wageCostSum=0;
 		$usdToRmb=M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
-		foreach (C('WAGES_BASE') as $key => $value) {
-			$map[C('DB_WAGES_MONTH')]=array('eq',$month);
-			$map[C('DB_WAGES_NAME')]=array('eq',$key);
-			$base = $wages->where($map)->getField(C('DB_WAGES_BASE'));
-			$performance = $wages->where($map)->getField(C('DB_WAGES_PERFORMANCE'));
-			$percent = $wages->where($map)->getField(C('DB_WAGES_PERCENT'));
-			$si_company = $wages->where($map)->getField(C('DB_WAGES_SI_COMPANY'));
-			$si_person = $wages->where($map)->getField(C('DB_WAGES_SI_PERSON'));
-			$leave_days = $wages->where($map)->getField(C('DB_WAGES_LEAVE_DAYS'));
-			$bonus = $wages->where($map)->getField(C('DB_WAGES_BONUS'));
-			$wageCostSum = $wageCostSum+$base+$performance*$percent/100*$usdToRmb+$si_company-$base/26*$leave_days+$bonus;
+		$wages = M(C('DB_WAGES'))->where(array(C('DB_WAGES_MONTH')=>$month))->select();
+		foreach ($wages as $key => $value) {
+			$wageCostSum = $wageCostSum+$value[C('DB_WAGES_BASE')]+$value[C('DB_WAGES_PERFORMANCE')]*$value[C('DB_WAGES_PERCENT')]/100*$usdToRmb+$value[C('DB_WAGES_SI_COMPANY')]-$value[C('DB_WAGES_BASE')]/26*$value[C('DB_WAGES_LEAVE_DAYS')]+$value[C('DB_WAGES_BONUS')];
 		}
 		return $wageCostSum;		
 	}

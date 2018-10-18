@@ -35,7 +35,7 @@ class PurchaseAction extends CommonAction{
                 $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->order('id desc')->where($map)->select());
             }
             if($_POST['keyword']==C('DB_PURCHASE_TRACKING_NUMBER') && $_POST['keyword']!=''){
-                $where[I('post.keyword','','htmlspecialchars')] = array('eq',I('post.keywordValue','','htmlspecialchars')); 
+                $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars')); 
                 $this->assign('purchaseOrder',M(C('DB_PURCHASE'))->order('id desc')->where($where)->select());
             }
             $this->assign('keyword',I('post.keyword','','htmlspecialchars'));

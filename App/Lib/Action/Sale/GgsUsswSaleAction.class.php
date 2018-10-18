@@ -1983,7 +1983,12 @@ class GgsUsswSaleAction extends CommonAction{
 				
 
             if($this->verifyExcludeFxt($excludeFirstRow) && $this->verifyWithSellFxt($withSellFirstRow)){
-            	$salePlan=M($this->getSalePlanTableName($account))->select();
+            	if($_POST['fbaFxc']==0){
+            		$fxcmap['sku'] = array('notlike',array('FBA_%'));
+            		$salePlan=M($this->getSalePlanTableName($account))->where($fxcmap)->select();
+            	}else{
+            		$salePlan=M($this->getSalePlanTableName($account))->select();
+            	}            	
 		    	$storageTable=M($this->getStorageTableName($account));
 		    	$productTable=M(C("DB_PRODUCT"));
 		    	$storageTable->startTrans();

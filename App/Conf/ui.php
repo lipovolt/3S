@@ -69,14 +69,14 @@ return array(
 	'PRODUCT_MANAGER_NAME' =>array(
 		'Yangtze' => '孙志磊',
 		'Yellow River' => '张昱',
-		'Pearl River' => '张清铨',
+		'Pearl River' => '张昱',
 		),
 
 	//product manager cn name
 	'PRODUCT_MANAGER_ENAME' =>array(
 		'孙志磊' => 'Yangtze',
 		'张昱' => 'Yellow River',
-		'张清铨' => 'Pearl River',
+		'张昱' => 'Pearl River',
 		),
 
 	'DEPARTMENT' => array(
@@ -122,7 +122,6 @@ return array(
 	'WAGES_PERFORMANCE_PERCENT' => array(
 		'孙志磊' => 1,
 		'张旻' => 0,
-		'张清铨' => 1,
 		),
 
 	//wages base
@@ -130,8 +129,7 @@ return array(
 		'张昱' => 6500,
 		'张旻' => 2000,
 		'孙志磊' => 4000,
-		'张清铨' => 3500,
-		'褚金键' => 4000,
+		'李海坤' => 4000,
 		),
 
 	//cooperate sellerID

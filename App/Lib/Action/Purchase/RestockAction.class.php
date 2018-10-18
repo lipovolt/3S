@@ -208,7 +208,7 @@ class RestockAction extends CommonAction{
 		$GLOBALS["indexOfOutOfStock"] = 0;
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
 		$this->findUsswOutOfStockItem();
-		$this->findWinitUsOutOfStockItem();
+		//$this->findWinitUsOutOfStockItem();
 		$this->findUsFbaOutOfStockItemPurhaseView();
 		F('out',$GLOBALS["outOfStock"]);
 		$this->assign('outofstock',$GLOBALS["outOfStock"]);
@@ -379,8 +379,11 @@ class RestockAction extends CommonAction{
 		$usFbastorage = M(C('DB_AMAZON_US_STORAGE'))->select();
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
 		$productTable = M(C('db_product'));
+		$usStorageTable = M(C('DB_USSTORAGE'));
+		$usStorageAction = A('Ussw/Storage');
 		foreach ($usFbastorage as $ussk => $ussv) {
 			$product = $productTable->where(array(C('db_product_sku')=>$this->fbaSkuToStandardSku($ussv[C('DB_AMAZON_US_STORAGE_SKU')])))->find();
+			$usstorage = $usStorageTable->where(array(C('DB_USSTORAGE_SKU')=>$this->fbaSkuToStandardSku($ussv[C('DB_AMAZON_US_STORAGE_SKU')])))->find();
 			if($product[C('db_product_tous')] !== null && $product[C('db_product_tous')] !== '无'){
 				$preCalRQ = $this->preCalRestockQuantity('美国FBA',$ussv[C('DB_AMAZON_US_STORAGE_SKU')]);
 				if($preCalRQ==0){
@@ -391,7 +394,7 @@ class RestockAction extends CommonAction{
 					$msq = round($preCalRQ/$restockPara[C('DB_RESTOCK_PARA_NOD')]*$restockPara['ussw_sea_ad']);
 				}					
 				$neededQuantity = $msq/$restockPara['ussw_sea_ad']*$restockPara['ussw_sea_td'];
-				$availableQuantity = $ussv[C('DB_AMAZON_US_STORAGE_AINVENTORY')] + $ussv[C('DB_AMAZON_US_STORAGE_IINVENTORY')] + $this->getRestockQuantity('美自建仓', $this->fbaSkuToStandardSku($ussv[C('DB_AMAZON_US_STORAGE_SKU')])) + $this->getPurchasedQuantity('美自建仓', $this->fbaSkuToStandardSku($ussv[C('DB_AMAZON_US_STORAGE_SKU')])) - $this->getUsswMads($this->fbaSkuToStandardSku($ussv[C('DB_AMAZON_US_STORAGE_SKU')]), $restockPara['ussw_sea_ad'],$restockPara['exclude_large_quantity']);
+				$availableQuantity = $ussv[C('DB_AMAZON_US_STORAGE_AINVENTORY')] + $ussv[C('DB_AMAZON_US_STORAGE_IINVENTORY')] + $usstorage[C('DB_USSTORAGE_AINVENTORY')] + $usStorageAction->getIInventory($this->fbaSkuToStandardSku($ussv[C('DB_AMAZON_US_STORAGE_SKU')])) + $this->getRestockQuantity('美自建仓', $this->fbaSkuToStandardSku($ussv[C('DB_AMAZON_US_STORAGE_SKU')])) + $this->getPurchasedQuantity('美自建仓', $this->fbaSkuToStandardSku($ussv[C('DB_AMAZON_US_STORAGE_SKU')])) - $this->getUsswMads($this->fbaSkuToStandardSku($ussv[C('DB_AMAZON_US_STORAGE_SKU')]), $restockPara['ussw_sea_ad'],$restockPara['exclude_large_quantity']);
 				if($msq==0 && ($ussv[C('DB_AMAZON_US_STORAGE_AINVENTORY')]+$ussv[C('DB_AMAZON_US_STORAGE_IINVENTORY')] + $this->getRestockQuantity('美自建仓', $this->fbaSkuToStandardSku($ussv[C('DB_AMAZON_US_STORAGE_SKU')])) + $this->getPurchasedQuantity('美自建仓', $this->fbaSkuToStandardSku($ussv[C('DB_AMAZON_US_STORAGE_SKU')])))==0){
 					$this->addRestockOrder('美国FBA',0,$product,0,0,0);
 				}
@@ -418,7 +421,7 @@ class RestockAction extends CommonAction{
 	 * And calculate 0-7days, 8-15days, 16-23days, 24-31days sold quantity. If the quantitys are decremented, then the restock * quantity of this item should be calculated according to the minimum value.
 	 * @param warehouse
 	 * @param sku
-	 * @return int or null, 0=needn't restock, int=last 7 days sale quantity exclude large order quantity, null=no result need 
+	 * @return int or -1, 0=needn't restock, int=last 7 days sale quantity exclude large order quantity, -1=no result need 
 	 * to be calculated more.
 	*/
 	private function preCalRestockQuantity($warehouse,$sku){
@@ -1393,9 +1396,9 @@ class RestockAction extends CommonAction{
                 	if($restockItem[C('DB_RESTOCK_STATUS')] == '已发货'){
                 		$errorInFile[$i] = '该产品已经发出，无法再次更改状态';
                 	}
-                	if($restockItem[C('DB_RESTOCK_WAREHOUSE')] == '美自建仓'){
+                	/*if($restockItem[C('DB_RESTOCK_WAREHOUSE')] == '美自建仓'){
                 		$errorInFile[$i] = '该产品目的仓是美自建仓';
-                	}
+                	}*/
                 }
                 if($errorInFile != null){
                 	dump($errorInFile);
