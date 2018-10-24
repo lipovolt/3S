@@ -1432,6 +1432,36 @@ return array(
 	'DB_RC_DE_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
 
 
+	//yzhan_816_pl_sale_plan for rc-helicar ebay.de items
+	/*
+	create table if not exists `3s_yzhan_816_pl_sale_plan`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`sku` varchar(10) not null,
+	`first_sale_date` timestamp default NOW(),
+	`last_modify_date` datetime default null,
+	`relisting_times` smallint(6) default 0,
+	`price_note` varchar(255) default null,
+	`cost` decimal(5,2) default null,
+	`sale_price` decimal(5,2) default null,
+	`suggested_price` decimal(5,2) default null,
+	`suggest` varchar(20) default null,
+	`status` tinyint(1) default 1
+	) engine=myisam default charset=utf8;	
+	*/
+	'DB_YZHAN_816_PL_SALE_PLAN' => 'yzhan_816_pl_sale_plan',
+	'DB_YZHAN_816_PL_SALE_PLAN_ID' => 'id',
+	'DB_YZHAN_816_PL_SALE_PLAN_SKU' => 'sku',
+	'DB_YZHAN_816_PL_SALE_PLAN_FIRST_DATE' => 'first_sale_date',
+	'DB_YZHAN_816_PL_SALE_PLAN_LAST_MODIFY_DATE' => 'last_modify_date',
+	'DB_YZHAN_816_PL_SALE_PLAN_RELISTING_TIMES' => 'relisting_times',
+	'DB_YZHAN_816_PL_SALE_PLAN_PRICE_NOTE' => 'price_note',
+	'DB_YZHAN_816_PL_SALE_PLAN_COST' => 'cost',
+	'DB_YZHAN_816_PL_SALE_PLAN_PRICE' => 'sale_price',
+	'DB_YZHAN_816_PL_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
+	'DB_YZHAN_816_PL_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
+	'DB_YZHAN_816_PL_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+
+
 	//Income cost table
 	/*
 	create table if not exists `3s_income_cost`(

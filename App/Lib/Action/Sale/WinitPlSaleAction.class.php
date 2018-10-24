@@ -1,12 +1,12 @@
 <?php
 
-class WinitDeSaleAction extends CommonAction{
+class WinitPlSaleAction extends CommonAction{
 	public function index($account){
 		if($_POST['keyword']==""){
-			$this->getWinitDeSaleInfo($account);
+			$this->getWinitPlSaleInfo($account);
         }
         else{           
-            $this->getWinitDeKeywordSaleInfo($account);
+            $this->getWinitPlKeywordSaleInfo($account);
         }
 	}
 
@@ -1082,7 +1082,7 @@ class WinitDeSaleAction extends CommonAction{
             for($c='A';$c<=$highestColumn;$c++){
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
-            $firstRow['A'] = '*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
+            $firstRow['A'] = '*Action(SiteID=Germany|Country=PL|Currency=EUR|Version=941)';
 
             if($this->verifyEbayFxtcn($firstRow)){
             	$storageTable=M($this->getStorageTableName($account));
@@ -1090,6 +1090,7 @@ class WinitDeSaleAction extends CommonAction{
             	$productTable=M(C('DB_PRODUCT'));
             	$j=0;
                 for($i=2;$i<=$highestRow;$i++){
+
                 	$country = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
 	        		if($country==null || $country==''){
 	        			for ($r=$i-1; $r>1; $r--) { 
@@ -1119,26 +1120,32 @@ class WinitDeSaleAction extends CommonAction{
 	                		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][0]))->find();
 	                		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
 	                		$iinventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('iinventory');
-	                		if($splitSku[0][1]==1){
-	                			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
-	                			$data[$j]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-	                			$data[$j][$firstRow['H']]=$ainventory>0?$ainventory:0;
-	                			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TODE')) == '无' && $ainventory==0 && $iinventory==0){
-	                				$data[$j]['Suggest']='不做的商品，需要下架';
-	                			}else{
-	                				$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
-	                			}
-	                			$data[$j][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
+	                		if(($ainventory===null || $ainventory===false)&&$data[$j][$firstRow['F']]!=null){
+	                			$data[$j]['Suggest']="不在万邑通德国仓的产品，需要下架";
+	                			$data[$j][$firstRow['H']]=0;
 	                		}else{
-	                			//Single sku and multiple sale quantity
-	                			$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
-	                			$data[$j][$firstRow['H']]=intval($ainventory/$splitSku[0][1])>0?intval($ainventory/$splitSku[0][1]):0;
-	                			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TODE')) == '无' && $ainventory==0 && $iinventory==0){
-	                				$data[$j]['Suggest']='不做的商品，需要下架';
-	                			}else{
-	                				$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
-	                			}
+	                			if($splitSku[0][1]==1){
+		                			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
+		                			$data[$j]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+		                			$data[$j][$firstRow['H']]=$ainventory>0?$ainventory:0;
+		                			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TODE')) == '无' && $ainventory==0 && $iinventory==0){
+		                				$data[$j]['Suggest']='不做的商品，需要下架';
+		                			}else{
+		                				$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+		                			}
+		                			$data[$j][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
+		                		}else{
+		                			//Single sku and multiple sale quantity
+		                			$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+		                			$data[$j][$firstRow['H']]=intval($ainventory/$splitSku[0][1])>0?intval($ainventory/$splitSku[0][1]):0;
+		                			if($productTable->where(array(C('DB_PRODUCT_SKU')=>$splitSku[0][0]))->getField(C('DB_PRODUCT_TODE')) == '无' && $ainventory==0 && $iinventory==0){
+		                				$data[$j]['Suggest']='不做的商品，需要下架';
+		                			}else{
+		                				$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+		                			}
+		                		}
 	                		}
+	                		
 
 	                	}else{
 	                		//Multiple sku
@@ -1201,7 +1208,7 @@ class WinitDeSaleAction extends CommonAction{
                 	}
                 }
 
-                $excelCellName[0]='*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
+                $excelCellName[0]='*Action(SiteID=Germany|Country=PL|Currency=EUR|Version=941)';
                 $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
                 $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
                 $excelCellName[3]=$objPHPExcel->getActiveSheet()->getCell("D1")->getValue();
