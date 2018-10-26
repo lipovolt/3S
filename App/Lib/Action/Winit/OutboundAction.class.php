@@ -285,7 +285,7 @@ class OutboundAction extends CommonAction{
             $tmpdata['A'] = $value['Sales Record Number'];
             $tmpdata['B'] = $value['Warehouse'];
             $tmpdata['C'] = $value['Shipping Service'];
-            $tmpdata['G'] = 'rc-helicar';
+            $tmpdata['G'] = '';
             $tmpdata['H'] = $value['User Id'];
             $tmpdata['I'] = $value['Buyer Fullname'];
             $tmpdata['J'] = $value['Buyer Phone Number']==null?0:$value['Buyer Phone Number'];

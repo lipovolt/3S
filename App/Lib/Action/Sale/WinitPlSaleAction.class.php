@@ -1221,7 +1221,7 @@ class WinitPlSaleAction extends CommonAction{
                 $excelCellName[10]=$objPHPExcel->getActiveSheet()->getCell("I1")->getValue();
                 $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("J1")->getValue();
                 $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("K1")->getValue();
-                $this->exportEbayFileExchangeExcel('RcFileExchange',$excelCellName,$data); 
+                $this->exportEbayFileExchangeExcel($account.'FileExchange',$excelCellName,$data); 
             }else{
                 $this->error("模板错误，请检查模板！");
             }   
