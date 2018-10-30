@@ -41,22 +41,7 @@
 				_PRODUCTINFO_BATCHADD_PRODUCTIMPORT_ERROR_FILE_TYPE_NOT_MATCH_:"产品信息导入只支持XLS格式文件!",
 				_COMMON_PLEASE_SELECT_FILE_:"请选择文件！"
 			}
-			function check(){ 
-				var sellerID = document.getElementById("sellerID").value;
-				if(sellerID == "unSelected"){ 
-					alert("请选择ebay账号"); 
-					return false; 
-				}
-
-				var date = document.getElementById("order_date").value;
-			 	if(date !="" && date !="如使用当前日期可不填"){
-			    	if(!confirm("不使用当前日期？")){
-			    		return false;
-			    	}
-			 	}else{
-			 		document.getElementById("order_date").value='';
-			 	}
-			}
+			
 			</script>
 			
 			<!-- 主页面开始  -->
@@ -73,6 +58,32 @@
 										<div style="float:left;width:456px;">
 											<div >
 												<form action="{:U('Winit/Outbound/convertToWinitOutboundFileHandle')}" method="post" enctype="multipart/form-data">
+													<div>
+														<label for="market" class="control-label">平台</label>
+													 	<select name="market"  id="market">
+																<option value="ebay">ebay</option>
+																<option value="" selected>请选择</option>
+														</select>
+														<select2></select2>
+														<script>
+														 $("#market").change(function(){
+														     var id=$("#market").val();
+														     if(id=="ebay"){
+														         $.get('20160911.php',null,function(data){
+														             $("select2").empty();
+														             $("select2").append("<label>账号</label><select name='sellerID' id='sellerID'><option>rc-helicar</option><option>yzhan-816</option>");
+														         })
+														     }
+														     if(id==""){
+														         $.get('20160911.php',null,function(data){
+														             $("select2").empty();
+														             $("select2").append("<label>账号</label><select name='sellerID' id='sellerID'><option>请选择平台</option></select>");
+														         })
+														     }
+
+														})
+														</script>
+													</div>
 													<div>
 											            <input type="file" name="import" value=""/>
 									          			<input type="hidden" name="table" value="tablename"/>

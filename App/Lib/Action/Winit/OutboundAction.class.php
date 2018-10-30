@@ -220,7 +220,7 @@ class OutboundAction extends CommonAction{
     }
 
     public function convertToWinitOutboundFileHandle(){
-        if(!empty($_FILES)){
+        if($_POST['sellerID']!=null){
              import('ORG.Net.UploadFile');
              $config=array(
                  'allowExts'=>array('xls'),
@@ -274,6 +274,8 @@ class OutboundAction extends CommonAction{
                 }
                 $this->preTypeExportWinitOutOrder($winitOutOrder);
             }
+        }else{
+            $this->error('请给出卖家账号');
         }
     }
 
@@ -285,7 +287,7 @@ class OutboundAction extends CommonAction{
             $tmpdata['A'] = $value['Sales Record Number'];
             $tmpdata['B'] = $value['Warehouse'];
             $tmpdata['C'] = $value['Shipping Service'];
-            $tmpdata['G'] = '';
+            $tmpdata['G'] = $_POST['sellerID'];
             $tmpdata['H'] = $value['User Id'];
             $tmpdata['I'] = $value['Buyer Fullname'];
             $tmpdata['J'] = $value['Buyer Phone Number']==null?0:$value['Buyer Phone Number'];
