@@ -1755,19 +1755,5 @@ return array(
 
 	//block_buyer_constant
 	'DB_BLOCK_BUYER_PLATFORM_CONSTANT' =>array('amazon.com','ebay.com','ebay.de',),
-
-
-	//tmp Out of Stock Tabel
-	/*
-	create table if not exists `3s_tmp_outofstock`(
-	`sku` varchar(50),
-	`quantity` smallint(6),
-	`warehouse`  varchar(20)
-	) engine=myisam default charset=utf8;
-	*/
-	'DB_TMP_OUTOFSTOCK' => 'tmp_outofstock', 
-	'DB_TMP_OUTOFSTOCK_SKU' => 'sku',
-	'DB_TMP_OUTOFSTOCK_QTY' => 'quantity', 
-	'DB_TMP_OUTOFSTOCK_WAREHOUSE' => 'warehouse',
 	);
 ?>
