@@ -15,7 +15,7 @@ class OutboundAction extends CommonAction{
             $this->assign('page',$show);
         }
         else{
-            $where[I('post.keyword','','htmlspecialchars')] = I('post.keywordValue','','htmlspecialchars');
+            $where[I('post.keyword','','htmlspecialchars')] = array('eq',I('post.keywordValue','','htmlspecialchars'));
             $this->outboundOrders = M(C('DB_USSW_OUTBOUND'))->where($where)->select();
         }
         $this->display();

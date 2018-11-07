@@ -164,7 +164,35 @@ class RestockAction extends CommonAction{
 	        array('pheight','包装高cm')
 
 	        );
-        $this->exportExcel('OutOfStock',$xlsCell,F('out'));
+        $outofstockItems = M(C('DB_TMP_OUTOFSTOCK'))->select();
+
+        foreach ($outofstockItems as $key => $value) {
+        	$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$value['sku']))->find();
+        	if($value['warehosue']=='美自建仓' || $value['warehosue']=='万邑通美西' ){
+        		$outofstockItems[$key]['warehouse'] = $product[C('DB_PRODUCT_TOUS')];				
+	        }elseif( $value['warehosue']=='万邑通德国'){
+	        	$outofstockItems[$key]['warehouse'] = $product[C('DB_PRODUCT_TODE')];
+	        }
+			$outofstockItems[$key]['cname'] = $product[C('DB_USSTORAGE_CNAME')];
+			$outofstockItems[$key]['manager'] = $product[C('db_product_manager')];
+			$outofstockItems[$key]['price'] = $product[C('DB_PRODUCT_PRICE')];
+			$outofstockItems[$key]['supplier'] = $product[C('DB_PRODUCT_SUPPLIER')];
+			$outofstockItems[$key]['purchase_link'] = $product[C('DB_PRODUCT_PURCHASE_LINK')];
+			$outofstockItems[$key]['date'] = Date('Y-m-d');
+			$outofstockItems[$key]['rquantity'] = $this->getRestockQuantity($value['warehosue'],$value['sku']);
+			$outofstockItems[$key]['iquantity'] = $this->getPurchasedQuantity($value['warehosue'],$value['sku']);
+			$outofstockItems[$key]['sz_ainventory'] = $this->getSzIinventory($value['sku']);
+			$outofstockItems[$key]['ainventory'] = $ainventory;
+			$outofstockItems[$key]['iinventory'] = $iinventory;
+			$outofstockItems[$key]['csales'] = $csales;
+			$outofstockItems[$key]['sz_ainventory'] = $this->getSzAinventory($value['sku']);
+			$outofstockItems[$key]['pweight'] = $product[C('DB_PRODUCT_PWEIGHT')];
+			$outofstockItems[$key]['plength'] = $product[C('DB_PRODUCT_PLENGTH')];
+			$outofstockItems[$key]['pwidth'] = $product[C('DB_PRODUCT_PWIDTH')];
+			$outofstockItems[$key]['pheight'] = $product[C('DB_PRODUCT_PHEIGHT')];
+        }
+        //$this->exportExcel('OutOfStock',$xlsCell,F('out'));
+        $this->exportExcel('OutOfStock',$xlsCell,$outofstockItems);
 	}
 	
 	public function importStorage($country=null){
@@ -203,20 +231,24 @@ class RestockAction extends CommonAction{
 		$this->display('exportOutOfStock');   
 	}
 
-	public function findUsOutOfStockItem(){
+	public function findUsOutOfStockItem($start, $end){
         $GLOBALS["outOfStock"] = null;
 		$GLOBALS["indexOfOutOfStock"] = 0;
+		M(C('DB_TMP_OUTOFSTOCK'))->where('1')->delete();
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
-		$this->findUsswOutOfStockItem();
+		$this->findUsswOutOfStockItem($start, $end);
+		if($end==-1){
+			$this->findUsFbaOutOfStockItemPurhaseView();
+		}
 		//$this->findWinitUsOutOfStockItem();
-		$this->findUsFbaOutOfStockItemPurhaseView();
-		F('out',$GLOBALS["outOfStock"]);
-		$this->assign('outofstock',$GLOBALS["outOfStock"]);
+		//F('out',$GLOBALS["outOfStock"]);
+		//$this->assign('outofstock',$GLOBALS["outOfStock"]);
+		$this->assign('outofstock',M(C('DB_TMP_OUTOFSTOCK'))->select());
 		$this->display('exportOutOfStock');
 	}
 
-	private function findUsswOutOfStockItem(){
-		$usstorage = M(C('DB_USSTORAGE'))->select();
+	private function findUsswOutOfStockItem($start, $end){
+		$usstorage = M(C('DB_USSTORAGE'))->limit($start, $end)->select();
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
 		$productTable = M(C('db_product'));
 		foreach ($usstorage as $ussk => $ussv) {
@@ -1020,7 +1052,8 @@ class RestockAction extends CommonAction{
 			}
 			
 		}else{
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $warehouse;
+			M(C('DB_TMP_OUTOFSTOCK'))->add(array('sku'=>$product[C('DB_USSTORAGE_SKU')], 'quantity'=>$quantity, 'warehouse'=>$warehouse));
+			/*$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $warehouse;
 			if($warehouse=='美自建仓' || $warehouse=='万邑通美西'){
 				$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['wayToWarehouse'] = $product[C('DB_PRODUCT_TOUS')];
 			}elseif($warehouse=='万邑通德国') {
@@ -1046,7 +1079,7 @@ class RestockAction extends CommonAction{
 			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['plength'] = $product[C('DB_PRODUCT_PLENGTH')];
 			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['pwidth'] = $product[C('DB_PRODUCT_PWIDTH')];
 			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['pheight'] = $product[C('DB_PRODUCT_PHEIGHT')];
-			$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+			$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;*/
 		}		
 	}
 
