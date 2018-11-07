@@ -248,6 +248,9 @@ class RestockAction extends CommonAction{
 	}
 
 	private function findUsswOutOfStockItem($start, $end){
+		if($end==-1){
+			$end=M(C('DB_USSTORAGE'))->count();
+		}
 		$usstorage = M(C('DB_USSTORAGE'))->limit($start, $end)->select();
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
 		$productTable = M(C('db_product'));
