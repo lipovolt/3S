@@ -207,7 +207,11 @@ class WinitPlSaleAction extends CommonAction{
 		if($salePlanTable==null){
 			$this->error('无法找到匹配的销售表！');
 		}
-		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
+		if(substr($sku, 0,2)=='DT_'){
+			$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>substr($sku, 3)))->find();
+		}else{
+			$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
+		}
     	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
     	$data[C('DB_PRODUCT_DETARIFF')]=$product[C('DB_PRODUCT_DETARIFF')]/100;
     	$data['winit-fee']=$this->calWinitSIOFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]);
