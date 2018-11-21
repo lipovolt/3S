@@ -49,6 +49,14 @@ class CommonAction extends Action{
         $objWriter->save('php://output'); 
         exit;   
     }
+
+    public function toTextSku($sku){
+        if(strlen($sku)==6 && substr($sku, 4,1)=='.' && (substr($sku, 5,1)==1 || substr($sku, 5,1)==2 || substr($sku, 5,1)==3 || substr($sku, 5,1)==4)){
+            return $sku.'0';
+        }else{
+            return $sku;
+        }
+    }
 }
 
 ?>

@@ -374,7 +374,7 @@ class ProductAction extends CommonAction{
                             $data=null;
                             
                             if(I('post.country','','htmlspecialchars')=="de"){
-                                $data[C('db_product_sku')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue(),"utf-8","auto"); 
+                                $data[C('db_product_sku')]= $this->toTextSku(mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue(),"utf-8","auto")); 
                                 $data[C('db_product_pweight')] = $objPHPExcel->getActiveSheet()->getCell("X".$i)->getValue()*1000;
                                 $data[C('db_product_plength')] = $objPHPExcel->getActiveSheet()->getCell("Y".$i)->getValue();
                                 $data[C('db_product_pwidth')]= $objPHPExcel->getActiveSheet()->getCell("Z".$i)->getValue();

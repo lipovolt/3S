@@ -25,7 +25,7 @@ class AccountingAction extends CommonAction{
 	}
 
 	public function saleFee(){
-		$this->assign('saleFees',M(C('DB_SALEFEE'))->select());
+		$this->assign('saleFees',M(C('DB_SALEFEE'))->order('id desc')->select());
 		$this->display();
 	}
 
@@ -55,7 +55,15 @@ class AccountingAction extends CommonAction{
 	}
 
 	public function managementFee(){
-		$this->assign('managementFees',M(C('DB_MANAGEMENTFEE'))->order('id desc')->select());
+	 	$Data = M(C('DB_MANAGEMENTFEE'));
+        import('ORG.Util.Page');
+        $count = $Data->count();
+        $Page = new Page($count,20);            
+        $Page->setConfig('header', '条数据');
+        $show = $Page->show();
+        $managementFees = $Data->order('id desc')->limit($Page->firstRow.','.$Page->listRows)->select();
+		$this->assign('managementFees',$managementFees);
+		$this->assign('page',$show);
 		$this->display();
 	}
 
@@ -87,13 +95,20 @@ class AccountingAction extends CommonAction{
 	}
 
 	public function wages(){
-		$wages=M(C('DB_WAGES'))->select();
+		$Data = M(C('DB_WAGES'));
+        import('ORG.Util.Page');
+        $count = $Data->count();
+        $Page = new Page($count,20);            
+        $Page->setConfig('header', '条数据');
+        $show = $Page->show();
+        $wages = $Data->order('id desc')->limit($Page->firstRow.','.$Page->listRows)->select();
 		$usdToRmb=M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		foreach ($wages as $key => $value) {
 			$wages[$key]['paidWages']=round($value[C('DB_WAGES_BASE')]+$value[C('DB_WAGES_PERFORMANCE')]*$value[C('DB_WAGES_PERCENT')]/100*$usdToRmb-$value[C('DB_WAGES_SI_PERSON')]-$value[C('DB_WAGES_BASE')]/26*$value[C('DB_WAGES_LEAVE_DAYS')],2)+$value[C('DB_WAGES_BONUS')];
 			$wages[$key]['WagesCost']=round($value[C('DB_WAGES_BASE')]+$value[C('DB_WAGES_PERFORMANCE')]*$value[C('DB_WAGES_PERCENT')]/100*$usdToRmb+$value[C('DB_WAGES_SI_COMPANY')]-$value[C('DB_WAGES_BASE')]/26*$value[C('DB_WAGES_LEAVE_DAYS')],2)+$value[C('DB_WAGES_BONUS')];
 		}
 		$this->assign('wages',$wages);
+		$this->assign('page',$show);
 		$this->display();
 	}
 

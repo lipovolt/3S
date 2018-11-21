@@ -1759,6 +1759,9 @@ class GgsUsswSaleAction extends CommonAction{
             	$usswInboundViewTable=D("UsswInboundView");
                 for($i=2;$i<=$highestRow;$i++){
                 	$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
+                	foreach ($splitSku as $splitskukey => $splitskuvalue) {
+                		$splitSku[$splitskukey][0]=$this->toTextSku($splitskuvalue[0]);
+                	}
 
                 	$data[$i-2][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
         			$data[$i-2][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
@@ -1857,10 +1860,13 @@ class GgsUsswSaleAction extends CommonAction{
                 	$listed=false;
 
                 	for ($i=2;$i<=$highestRow;$i++) {
-                		if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()==$value[C('DB_USSTORAGE_SKU')]){
-                			$listed=true;
-                			break;
-                		}
+                		$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
+	                	if(count($splitSku)==1){
+	                		if($this->toTextSku($splitSku[0][0])==$this->toTextSku($value[C('DB_USSTORAGE_SKU')])){
+	                			$listed=true;
+	                			break;
+	                		}
+	                	}                		
                 	}
                 	/*//Check the item is ended manual. If the item in TODO. Then do not add to list.
                 	$waitingRelist = array_search($value[C('DB_USSTORAGE_SKU')], $relistSku) == false? false: true;
@@ -2421,7 +2427,12 @@ class GgsUsswSaleAction extends CommonAction{
             		$objPHPExcel->getActiveSheet()->getStyle( 'G'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
             		$objPHPExcel->getActiveSheet()->getStyle( 'G'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
             	}
-                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $expTableData[$i][$expCellName[$j]]);
+                if($cellName[$j]=='M' && strlen($expTableData[$i][$expCellName[$j]])==6 && substr($expTableData[$i][$expCellName[$j]], 4,1)=='.' && substr($expTableData[$i][$expCellName[$j]], 5,1)==1){
+            		$objPHPExcel->getActiveSheet()->getStyle ($cellName[$j].($i+2))->getNumberFormat()->setFormatCode ("0.00");
+            		$objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), number_format($expTableData[$i][$expCellName[$j]],2,".",""));
+            	}else{
+            		$objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $expTableData[$i][$expCellName[$j]]);
+            	}
             }             
         }  
 

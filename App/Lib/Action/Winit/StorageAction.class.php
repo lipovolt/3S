@@ -144,7 +144,7 @@ class StorageAction extends CommonAction{
                 $winitDeStorage=M(C('DB_WINIT_DE_STORAGE'));
                 $winitDeStorage->startTrans();
                 for($i=2;$i<=$highestRow;$i++){
-                    $product=$winitDeStorage->where(array(C('DB_WINIT_DE_STORAGE_SKU')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->find();
+                    $product=$winitDeStorage->where(array(C('DB_WINIT_DE_STORAGE_SKU')=>$this->toTextSku($objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue())))->find();
                     if($product!==null && $product!==false){
                         $product[C('DB_WINIT_DE_STORAGE_CINVENTORY')]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
                         $product[C('DB_WINIT_DE_STORAGE_AINVENTORY')]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();

@@ -1496,7 +1496,7 @@ class SzSaleAction extends CommonAction{
 	                	$data[$j][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
 	                	$data[$j][$firstRow['I']]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
 	        			$data[$j][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
-	        			$data[$j][$firstRow['K']]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+	        			$data[$j][$firstRow['K']]=$this->toTextSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
 
 	                	
 	            		if($product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!=null && ($product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无' || $product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无')){
