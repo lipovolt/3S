@@ -554,7 +554,7 @@ class OutboundAction extends CommonAction{
         $winitDeSale = M(C('DB_RC_DE_SALE_PLAN'));
         $tmpPrice=0;
         foreach ($winitOutOrder['items'] as $key => $value) {
-            $tmpPrice = $tmpPrice+$winitDeSale->where(array(C('DB_RC_DE_SALE_PLAN_SKU')=>$value['item_sku']))->getField(C('DB_RC_DE_SALE_PLAN_PRICE'));           
+            $tmpPrice = $tmpPrice+($winitDeSale->where(array(C('DB_RC_DE_SALE_PLAN_SKU')=>$value['item_sku']))->getField(C('DB_RC_DE_SALE_PLAN_PRICE')))*$value['item_qty'];           
         }
         if($tmpPrice>13){
             return $this->shippingServiceMapEbayWinitDe('DHL Paket');

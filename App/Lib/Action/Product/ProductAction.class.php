@@ -375,15 +375,15 @@ class ProductAction extends CommonAction{
                             
                             if(I('post.country','','htmlspecialchars')=="de"){
                                 $data[C('db_product_sku')]= $this->toTextSku(mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue(),"utf-8","auto")); 
-                                $data[C('db_product_pweight')] = $objPHPExcel->getActiveSheet()->getCell("X".$i)->getValue()*1000;
-                                $data[C('db_product_plength')] = $objPHPExcel->getActiveSheet()->getCell("Y".$i)->getValue();
-                                $data[C('db_product_pwidth')]= $objPHPExcel->getActiveSheet()->getCell("Z".$i)->getValue();
-                                $data[C('db_product_pheight')]= $objPHPExcel->getActiveSheet()->getCell("AA".$i)->getValue();
-                                $data[C('db_product_detariff')]= $objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
+                                $data[C('db_product_pweight')] = $objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue()*1000;
+                                $data[C('db_product_plength')] = $objPHPExcel->getActiveSheet()->getCell("X".$i)->getValue();
+                                $data[C('db_product_pwidth')]= $objPHPExcel->getActiveSheet()->getCell("Y".$i)->getValue();
+                                $data[C('db_product_pheight')]= $objPHPExcel->getActiveSheet()->getCell("Z".$i)->getValue();
+                                $data[C('db_product_detariff')]= $objPHPExcel->getActiveSheet()->getCell("AF".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AF".$i)->getValue();
 
                             }elseif(I('post.country','','htmlspecialchars')=="us"){
                                 $data[C('db_product_sku')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue(),"utf-8","auto"); 
-                                $data[C('db_product_ustariff')]= $objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
+                                $data[C('db_product_ustariff')]= $objPHPExcel->getActiveSheet()->getCell("AF".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AF".$i)->getValue();
                             }                           
 
                             if($products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->find() != null){

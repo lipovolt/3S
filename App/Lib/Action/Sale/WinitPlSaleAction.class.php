@@ -523,9 +523,6 @@ class WinitPlSaleAction extends CommonAction{
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($pPrice+0.5)/$exchange+($pPrice/$exchange)*$tariff+$wFee+$tFee+$sFee;
 		$salePrice = abs(round((($cost+0.35)/(1-0.144-$this->getCostClass($cost)/100)),2));
-		if($salePrice<12){
-			$salePrice = abs(round((($cost+0.05)/(1-0.16-$this->getCostClass($cost)/100)),2));
-		}
 		return $salePrice;
 	}
 

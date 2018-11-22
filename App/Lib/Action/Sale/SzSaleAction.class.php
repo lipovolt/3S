@@ -243,9 +243,6 @@ class SzSaleAction extends CommonAction{
 		$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USDTORMB'));
 		$cost = ($productPrice+0.5+$shippingFee)/$exchange;
 		$salePrice = abs(round(($cost+0.3)/(1-0.139-$this->getCostClass($cost)/100),2));
-		if($salePrice<12){
-			$salePrice = abs(round(($cost+0.05)/(1-0.16-$this->getCostClass($cost)/100),2));
-		}
 		return $salePrice;
 	}
 
@@ -253,9 +250,6 @@ class SzSaleAction extends CommonAction{
 		$exchange = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_EURTORMB'));
 		$cost = ($productPrice+0.5+$shippingFee)/$exchange;
 		$salePrice = abs(round(($cost+0.3)/(1-0.139-$this->getCostClass($cost)/100),2));
-		if($salePrice<12){
-			$salePrice = abs(round(($cost+0.05)/(1-0.16-$this->getCostClass($cost)/100),2));
-		}
 		return $salePrice;
 	}
 
@@ -1280,11 +1274,7 @@ class SzSaleAction extends CommonAction{
 		if($salePrice==null || $salePrice==0){
 			$salePrice = $this->calDeInitialPrice($productPrice,$shippingFee);
 		}
-		if($salePrice<12){
-			$cost = $cost + $salePrice*0.185+0.05;
-		}else{
-			$cost = $cost+$salePrice*0.164+0.3;
-		}
+		$cost = $cost+$salePrice*0.164+0.3;
 		return round($cost,2);
     }
 
@@ -1295,11 +1285,7 @@ class SzSaleAction extends CommonAction{
 		if($salePrice==null || $salePrice==0){
 			$salePrice = $this->calUsInitialPrice($productPrice,$shippingFee);
 		}
-		if($salePrice<12){
-			$cost = $cost+$salePrice*0.16+0.05;
-		}else{
-			$cost = $cost+$salePrice*0.139+0.3;
-		}
+		$cost = $cost+$salePrice*0.139+0.3;
 		return round($cost,2);
     }
 
