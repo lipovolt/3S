@@ -496,8 +496,8 @@ class AccountingAction extends CommonAction{
         	M(C('DB_INCOMECOST'))->add($data);
         	$wagesTable = M(C('DB_WAGES'));
         	$wagesTable->startTrans();
-        	foreach ($usdPmpa as $key => $value) {
-        		$usdPmpa[$key] = $value + $eurPmpa[$key]*$eurToUsd;
+        	foreach (C('PRODUCT_MANAGER_NAME') as $key => $value) {
+        		$usdPmpa[$key] = $usdPmpa[$key] + $eurPmpa[$key]*$eurToUsd;
         		$wmap[C('DB_WAGES_MONTH')] = array('eq', $_POST['month']);
 	        	$wmap[C('DB_WAGES_NAME')] = array('eq', C('PRODUCT_MANAGER_NAME')[$key]);
 	        	$result = $wagesTable->where($wmap)->find();
@@ -759,7 +759,7 @@ class AccountingAction extends CommonAction{
         	$kpiSaleRecordTable=M(C('DB_KPI_SALE_RECORD'));
         	$kpiSaleRecordTable->startTrans();
         	for($i=5;$i<=$highestRow;$i++){
-        		$sku = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+        		$sku = $this->fbaSkuToStandardSku($objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue());
         		$transactionType = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
         		$paymentType = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
         		$paymentDetail = $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
@@ -1320,10 +1320,10 @@ class AccountingAction extends CommonAction{
 		}elseif($saleFee[C('DB_SALEFEE_THIRDPARTYSFLOCAL')]==null || $saleFee[C('DB_SALEFEE_THIRDPARTYSFLOCAL')]=='' || $saleFee[C('DB_SALEFEE_THIRDPARTYSFLOCAL')]==0){
 			$this->error($month.' 的销售费用里的海外仓本地运费查不到','saleFee');
 			return false;
-		}elseif($saleFee[C('DB_SALEFEE_SZSWSF')]==null || $saleFee[C('DB_SALEFEE_SZSWSF')]=='' || $saleFee[C('DB_SALEFEE_SZSWSF')]==0){
+		}/*elseif($saleFee[C('DB_SALEFEE_SZSWSF')]==null || $saleFee[C('DB_SALEFEE_SZSWSF')]=='' || $saleFee[C('DB_SALEFEE_SZSWSF')]==0){
 			$this->error($month.' 的销售费用里的深圳仓运费查不到','saleFee');
 			return false;
-		}else{
+		}*/else{
 			return true;
 		}
 	}
@@ -1369,13 +1369,13 @@ class AccountingAction extends CommonAction{
 		if($incomeCost == null || $incomeCost == false){
 			$this->error('rc-helicar的 '.$month.' 的收入成本查不到！','incomeCost');
 			return false;
-		}elseif($incomeCost[C('DB_INCOMECOST_USDINCOME')]==null ||$incomeCost[C('DB_INCOMECOST_USDINCOME')]=='' ||$incomeCost[C('DB_INCOMECOST_USDINCOME')]==0){
+		}/*elseif($incomeCost[C('DB_INCOMECOST_USDINCOME')]==null ||$incomeCost[C('DB_INCOMECOST_USDINCOME')]=='' ||$incomeCost[C('DB_INCOMECOST_USDINCOME')]==0){
 			$this->error('rc-helicar的 '.$month.' 的美元收入查不到！','incomeCost');
 			return false;
 		}elseif($incomeCost[C('DB_INCOMECOST_USDITEMCOST')]==null ||$incomeCost[C('DB_INCOMECOST_USDITEMCOST')]=='' ||$incomeCost[C('DB_INCOMECOST_USDITEMCOST')]==0){
 			$this->error('rc-helicar的 '.$month.' 的美元售出产品成本查不到！','incomeCost');
 			return false;
-		}elseif($incomeCost[C('DB_INCOMECOST_EURINCOME')]==null ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]=='' ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]==0){
+		}*/elseif($incomeCost[C('DB_INCOMECOST_EURINCOME')]==null ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]=='' ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]==0){
 			$this->error('rc-helicar的 '.$month.' 的欧元收入查不到！','incomeCost');
 			return false;
 		}elseif($incomeCost[C('DB_INCOMECOST_EURITEMCOST')]==null ||$incomeCost[C('DB_INCOMECOST_EURITEMCOST')]=='' ||$incomeCost[C('DB_INCOMECOST_EURITEMCOST')]==0){

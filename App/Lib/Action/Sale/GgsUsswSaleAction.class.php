@@ -154,22 +154,6 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 	}
 
-	private function fbaSkuToStandardSku($fbaSku){
-		if(count(explode('FBA_', $fbaSku))==1){
-			return $fbaSku;
-		}else{
-			return explode('FBA_', $fbaSku)[1];
-		}		
-	}
-
-	private function isFBASku($sku){
-		if(count(explode('FBA_', $sku))==1){
-			return false;
-		}else{
-			return true;
-		}	
-	}
-
 	private function calUsswSaleInfoHandleSingle($account, $id){
 		import('ORG.Util.Date');// 导入日期类
 		$Date = new Date();

@@ -57,6 +57,22 @@ class CommonAction extends Action{
             return $sku;
         }
     }
+
+    public function fbaSkuToStandardSku($fbaSku){
+        if(count(explode('FBA_', $fbaSku))==1){
+            return $fbaSku;
+        }else{
+            return explode('FBA_', $fbaSku)[1];
+        }       
+    }
+
+    public function isFBASku($sku){
+        if(count(explode('FBA_', $sku))==1){
+            return false;
+        }else{
+            return true;
+        }   
+    }
 }
 
 ?>

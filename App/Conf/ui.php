@@ -76,7 +76,7 @@ return array(
 	'PRODUCT_MANAGER_ENAME' =>array(
 		'孙志磊' => 'Yangtze',
 		'张昱' => 'Yellow River',
-		'张昱' => 'Pearl River',
+		'刘经明' => 'Pearl River',
 		),
 
 	'DEPARTMENT' => array(
