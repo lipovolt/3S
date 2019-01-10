@@ -19,7 +19,7 @@ class IndexAction extends Action {
         if (!$user || $user[C('db_3s_user_password')] != $pwd){
             $this->error('账号或密码错误');
         }
-        if($user[C('db_3s_user_lock')]) $this->error('用户被锁定');
+        if($user[C('db_3s_user_lock')]) $this->error('用户被锁定');        
 
         $data = array(
                 C('db_3s_user_id') => $user[C('db_3s_user_id')],

@@ -1083,8 +1083,8 @@ class WinitPlSaleAction extends CommonAction{
             for($c='A';$c<=$highestColumn;$c++){
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
-            //$firstRow['A'] = '*Action(SiteID=Germany|Country=PL|Currency=EUR|Version=941)';
-            $firstRow['A'] = '*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
+            $firstRow['A'] = '*Action(SiteID=Germany|Country=PL|Currency=EUR|Version=941)';
+            //$firstRow['A'] = '*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
 
             if($this->verifyEbayFxtcn($firstRow)){
             	$storageTable=M($this->getStorageTableName($account));
@@ -1210,8 +1210,8 @@ class WinitPlSaleAction extends CommonAction{
                 	}
                 }
 
-                //$excelCellName[0]='*Action(SiteID=Germany|Country=PL|Currency=EUR|Version=941)';
-                $excelCellName[0]='*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
+                $excelCellName[0]='*Action(SiteID=Germany|Country=PL|Currency=EUR|Version=941)';
+                //$excelCellName[0]='*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
                 $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
                 $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
                 $excelCellName[3]=$objPHPExcel->getActiveSheet()->getCell("D1")->getValue();

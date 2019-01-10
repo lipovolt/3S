@@ -369,7 +369,7 @@ class RestockAction extends CommonAction{
 		foreach ($fbastorage as $fbask => $fbasv) {
 			$product = M(C('db_product'))->where(array(C('db_product_sku')=>$this->fbaSkuToStandardSku($fbasv[C('DB_AMAZON_US_STORAGE_SKU')])))->find();
 			if($product!=null && ($product[C('DB_PRODUCT_TOUS')]!=='无')){
-				$msq = $this->getFBADaysSaleQuantity($fbasv[C('DB_AMAZON_US_STORAGE_SKU')],30,$restockPara['exclude_large_quantity']);
+				$msq = $this->getFBADaysSaleQuantity($fbasv[C('DB_AMAZON_US_STORAGE_SKU')],$restockPara['ussw_air_ad'],$restockPara['exclude_large_quantity']);
 				if(($fbasv[C('DB_AMAZON_US_STORAGE_IINVENTORY')]+$fbasv[C('DB_AMAZON_US_STORAGE_AINVENTORY')])<$msq){
 					$this->addRestockOrder('美国FBA',$msq-$fbasv[C('DB_AMAZON_US_STORAGE_AINVENTORY')]-$fbasv[C('DB_AMAZON_US_STORAGE_IINVENTORY')],$product,$fbasv[C('DB_AMAZON_US_STORAGE_AINVENTORY')],0,$msq);
 				}
@@ -408,14 +408,6 @@ class RestockAction extends CommonAction{
 					$this->addRestockOrder('美国FBA',$q,$product,$ussv[C('DB_AMAZON_US_STORAGE_AINVENTORY')],$ussv[C('DB_AMAZON_US_STORAGE_IINVENTORY')],$msq);
 				}
 			}			
-		}		
-	}
-
-	private function fbaSkuToStandardSku($fbaSku){
-		if(count(explode('FBA_', $fbaSku))==1){
-			return $fbaSku;
-		}else{
-			return explode('FBA_', $fbaSku)[1];
 		}		
 	}
 
@@ -1328,11 +1320,10 @@ class RestockAction extends CommonAction{
     }
 
     private function getUsswIInventory($sku){
-    	$iinventory = 0;
     	$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
 		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
 		$iinventory = D("UsswInboundView")->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
-		return $iinventory;  
+		return $iinventory==null?0:$iinventory;  
     }
 
     private function reallyOutOfStock($warehouse,$sku,$neededQuantity){

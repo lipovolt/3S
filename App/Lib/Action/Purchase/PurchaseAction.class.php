@@ -193,7 +193,7 @@ class PurchaseAction extends CommonAction{
             return '数量是必填项！';
         elseif($purchaseOrderToVerify[C('DB_PURCHASE_MANAGER')] == null or $purchaseOrderToVerify[C('DB_PURCHASE_MANAGER')] == '')
             return '产品经理是必填项！';
-        elseif($purchaseOrderToVerify[C('DB_PURCHASE_ITEM_WAREHOUSE')] != '美自建仓' && $purchaseOrderToVerify[C('DB_PURCHASE_ITEM_WAREHOUSE')] != '万邑通德国' && $purchaseOrderToVerify[C('DB_PURCHASE_ITEM_WAREHOUSE')] != '深圳仓')
+        elseif($purchaseOrderToVerify[C('DB_PURCHASE_ITEM_WAREHOUSE')] != '美自建仓' && $purchaseOrderToVerify[C('DB_PURCHASE_ITEM_WAREHOUSE')] != '万邑通德国' && $purchaseOrderToVerify[C('DB_PURCHASE_ITEM_WAREHOUSE')] != '深圳仓' && $purchaseOrderToVerify[C('DB_PURCHASE_ITEM_WAREHOUSE')] != '万邑通美西')
             return '仓库不正确！';
         else
             return null;

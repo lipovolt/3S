@@ -1388,7 +1388,7 @@ class AccountingAction extends CommonAction{
 			$this->error('rc-helicar的 '.$month.' 的paypal费用查不到！','incomeCost');
 			return false;
 		}
-		$incomeCostMap[C('DB_INCOMECOST_SLLERID')] = array('eq','vtkg5755');
+		/*$incomeCostMap[C('DB_INCOMECOST_SLLERID')] = array('eq','vtkg5755');
 		$incomeCost = $incomeCostTable->where($incomeCostMap)->find();
 		if($incomeCost == null || $incomeCost == false){
 			$this->error('vtkg5755的 '.$month.' 的收入成本查不到！','incomeCost');
@@ -1399,7 +1399,7 @@ class AccountingAction extends CommonAction{
 		}elseif($incomeCost[C('DB_INCOMECOST_USDITEMCOST')]==null ||$incomeCost[C('DB_INCOMECOST_USDITEMCOST')]=='' ||$incomeCost[C('DB_INCOMECOST_USDITEMCOST')]==0){
 			$this->error('vtkg5755的 '.$month.' 的美元售出产品成本查不到！','incomeCost');
 			return false;
-		}
+		}*/
 		/*vtkg只做美国，不需要检查欧元收入和成本
 		elseif($incomeCost[C('DB_INCOMECOST_EURINCOME')]==null ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]=='' ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]==0){
 			$this->error('vtkg5755的 '.$month.' 的欧元收入查不到！','incomeCost');

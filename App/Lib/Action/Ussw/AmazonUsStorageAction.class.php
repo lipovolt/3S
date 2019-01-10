@@ -12,7 +12,7 @@ class amazonUsStorageAction extends CommonAction{
             $show = $Page->show();
             $storage = $Data->order('sku asc')->limit($Page->firstRow.','.$Page->listRows)->select();
             foreach ($storage as $key => $value) {
-              $storage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
+                $storage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
             }
             $this->assign('storage',$storage);
             $this->assign('page',$show);
@@ -39,6 +39,9 @@ class amazonUsStorageAction extends CommonAction{
             $Page->setConfig('header', '条数据');
             $show = $Page->show();
             $storage = $Data->order(array($sortword=>$sort))->limit($Page->firstRow.','.$Page->listRows)->select();
+            foreach ($storage as $key => $value) {
+              $storage[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
+            }
             $this->assign('selected',$sortword); 
             $this->assign('sort',$sort); 
             $this->assign('storage',$storage);

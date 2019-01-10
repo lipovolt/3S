@@ -1596,19 +1596,19 @@ class GgsUsswSaleAction extends CommonAction{
 
 	private function getFBAShippingWayFee($weight,$l,$w,$h){
 		if($this->isSmallStandardSize($weight,$l,$w,$h)){
-			return array('Small Standard', 2.41);
+			return array('Small Standard', 2.48);
 		}elseif($this->isLargeStandardSize($weight,$l,$w,$h) && $weigh*0.0022046<1){
-			return array('Large Standard', 3.19);
+			return array('Large Standard', 3.28);
 		}elseif ($this->isLargeStandardSize($weight,$l,$w,$h) && $weigh*0.0022046<2) {
-			return array('Large Standard',4.71);
+			return array('Large Standard',4.76);
 		}elseif($this->isLargeStandardSize($weight,$l,$w,$h)){
-			return array('Large Standard', 4.71+ceil($weigh*0.0022046-2)*0.38);
+			return array('Large Standard', 5.26+ceil($weigh*0.0022046-2)*0.38);
 		}elseif ($this->isSmallOverSize($weight,$l,$w,$h)) {
-			return array('Small Oversize', 8.13+ceil($weigh*0.0022046-2)*0.38);
+			return array('Small Oversize', 8.26+ceil($weigh*0.0022046-2)*0.38);
 		}elseif ($this->isMediumOverSize($weight,$l,$w,$h)) {
-			return array('Medium Oversize', 9.44+ceil($weigh*0.0022046-2)*0.38);
+			return array('Medium Oversize', 9.79+ceil($weigh*0.0022046-2)*0.38);
 		}elseif ($this->isLargeOverSize($weight,$l,$w,$h)) {
-			return array('Large Oversize', 73.18+ceil($weigh*0.0022046-2)*0.79);
+			return array('Large Oversize', 75.58+ceil($weigh*0.0022046-2)*0.79);
 		}elseif ($this->isSpecialOverSize($weight,$l,$w,$h)) {
 			return array('Special Oversize', 137.32+ceil($weigh*0.0022046-2)*0.91);
 		}else{
