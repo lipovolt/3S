@@ -1975,9 +1975,9 @@ class GgsUsswSaleAction extends CommonAction{
             if($this->verifyExcludeFxt($excludeFirstRow) && $this->verifyWithSellFxt($withSellFirstRow)){
             	if($_POST['fbaFxc']==0){
             		$fxcmap['sku'] = array('notlike',array('FBA_%'));
-            		$salePlan=M($this->getSalePlanTableName($account))->where($fxcmap)->select();
+            		$salePlan=M($this->getSalePlanTableName($account))->where($fxcmap)->limit($_POST['startRow'], $_POST['endRow']==-1?M($this->getSalePlanTableName($account))->count():$_POST['endRow'])->select();
             	}else{
-            		$salePlan=M($this->getSalePlanTableName($account))->select();
+            		$salePlan=M($this->getSalePlanTableName($account))->limit($_POST['startRow'], $_POST['endRow']==-1?M($this->getSalePlanTableName($account))->count():$_POST['endRow'])->select();
             	}            	
 		    	$storageTable=M($this->getStorageTableName($account));
 		    	$productTable=M(C("DB_PRODUCT"));

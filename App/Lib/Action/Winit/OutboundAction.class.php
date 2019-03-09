@@ -86,19 +86,19 @@ class OutboundAction extends CommonAction{
                     }else{
                         $woo[C('DB_WINIT_OUTBOUND_CREATE_TIME')]=Date(I('post.order_date'));
                     }
-                    $woo[C('DB_WINIT_OUTBOUND_SELLER_ID')]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
-                    $woo[C('DB_WINIT_OUTBOUND_BUYER_ID')]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
-                    $woo[C('DB_WINIT_OUTBOUND_BUYER_NAME')]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
-                    $woo[C('DB_WINIT_OUTBOUND_BUYER_TEL')]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
-                    $woo[C('DB_WINIT_OUTBOUND_BUYER_EMAIL')]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
-                    $woo[C('DB_WINIT_OUTBOUND_BUYER_ADDRESS1')]=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-                    $woo[C('DB_WINIT_OUTBOUND_BUYER_ADDRESS2')]=$objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
-                    $woo[C('DB_WINIT_OUTBOUND_BUYER_CITY')]=$objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
-                    $woo[C('DB_WINIT_OUTBOUND_BUYER_STATE')]=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
-                    $woo[C('DB_WINIT_OUTBOUND_BUYER_COUNTRY')]=$objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
-                    $woo[C('DB_WINIT_OUTBOUND_BUYER_ZIP')]=$objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_SELLER_ID')]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_BUYER_ID')]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_BUYER_NAME')]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_BUYER_TEL')]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_BUYER_EMAIL')]=$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_BUYER_ADDRESS1')]=$objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_BUYER_ADDRESS2')]=$objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_BUYER_CITY')]=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_BUYER_STATE')]=$objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_BUYER_COUNTRY')]=$objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue();
+                    $woo[C('DB_WINIT_OUTBOUND_BUYER_ZIP')]=$objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
                     $index=$winitOutboundOrder->add($woo);
-                    for($j='T'; $j!=$highestColumn;$j++) { 
+                    for($j='U'; $j!=$highestColumn;$j++) { 
                         if($objPHPExcel->getActiveSheet()->getCell($j.$i)->getValue()!=null && $objPHPExcel->getActiveSheet()->getCell($j.$i)->getValue()!='' && $index!= false){
                             $wooi[C('DB_WINIT_OUTBOUND_ITEM_OOID')]=$index;
                             $wooi[C('DB_WINIT_OUTBOUND_ITEM_SKU')]=$objPHPExcel->getActiveSheet()->getCell($j.$i)->getValue();

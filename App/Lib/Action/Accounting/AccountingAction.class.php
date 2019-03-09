@@ -830,6 +830,13 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurShippingFee = $eurShippingFee+$amountCM['amount'];
         			}
+        		}elseif($transactionType=='Refund' && $paymentType=='Promo rebates' && $paymentDetail=='Shipping'){
+        			if($amountCM['currency']=='usd'){
+        				$usdShippingFee = $usdShippingFee+$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurShippingFee = $eurShippingFee+$amountCM['amount'];
+        			}
         		}elseif($transactionType=='Refund' && $paymentType=='Other' && $paymentDetail=='Shipping tax'){
         			if($amountCM['currency']=='usd'){
         				$usdShippingFee = $usdShippingFee+$amountCM['amount'];
