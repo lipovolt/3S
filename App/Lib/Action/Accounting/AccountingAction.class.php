@@ -354,12 +354,12 @@ class AccountingAction extends CommonAction{
         	$kpiSaleRecordTable=M(C('DB_KPI_SALE_RECORD'));
         	$kpiSaleRecordTable->startTrans();
         	for($i=2;$i<=$highestRow;$i++){
-        		$sku = $objPHPExcel->getActiveSheet()->getCell("AF".$i)->getValue();
+        		$sku = $objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
         		$quantity = $objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
         		$salePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue());
         		$shippingPriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue());
         		$taxCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("S".$i)->getValue());
-    			$totalCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue());
+    			$totalCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("V".$i)->getValue());
         		$pmanager = $productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_MANAGER'));
         		if($pmanager==null){
         			$pmanager='Yellow River';
@@ -453,7 +453,7 @@ class AccountingAction extends CommonAction{
 
 	        		for ($j=$i+1; $j<=$highestRow; $j++) { 
 	        			if($objPHPExcel->getActiveSheet()->getCell("A".$j)->getValue() == $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()){
-	        				$itemSku = $objPHPExcel->getActiveSheet()->getCell("AF".$j)->getValue();
+	        				$itemSku = $objPHPExcel->getActiveSheet()->getCell("AG".$j)->getValue();
 			        		$itemQuantity = $objPHPExcel->getActiveSheet()->getCell("P".$j)->getValue();
 			        		$itemSalePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("Q".$j)->getValue());
 			        		$pmanager = $productTable->where(array(C('DB_PRODUCT_SKU')=>$itemSku))->getField(C('DB_PRODUCT_MANAGER'));
