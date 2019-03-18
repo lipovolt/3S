@@ -698,7 +698,7 @@ class WinitDeSaleAction extends CommonAction{
 
 	private function calWinitSIOFee($weight,$l,$w,$h){
 		//月仓储费=立方米*每日每立方租金*30天
-		$monthlyStorageFee = ($l*$w*$h)/1000000*1.2*30;
+		$monthlyStorageFee = ($l*$w*$h)/1000000*2*30;
 		$itemInOutFee = 0;
 		if($weight>0 And $weight <= 500){
 			$itemInOutFee = 0.17 + 0.05;
@@ -848,9 +848,9 @@ class WinitDeSaleAction extends CommonAction{
 	private function calWinitPostSmallFee($weight,$l,$w,$h){
 		if($weight>0 And $weight <= 500 and $l<=35.3 and $w<=25 and $h<=2){
 			if($l<10 or $w<7){
-				return 1.67+0.1; //0.1 small parcel packing fee
+				return 1.94+0.1; //0.1 small parcel packing fee
 			}else{
-				return 1.67;
+				return 1.94;
 			}			
 		}else{
 			return 0;
@@ -861,23 +861,23 @@ class WinitDeSaleAction extends CommonAction{
 		if($weight>0 And $weight <= 1000 and $l<=35.3 and $w<=30 and $h<=15){
 			if($weight>=0 and $weight<=500){
 				if($l<10 or $w<7){
-					return 2.06+0.1; //0.1 small parcel packing fee
+					return 2.32+0.1; //0.1 small parcel packing fee
 				}else{
-					return 2.06;
+					return 2.32;
 				}
 			}
 			elseif($weight>500 and $weight<=800){
 				if($l<10 or $w<7){
-					return 2.69+0.1; //0.1 small parcel packing fee
+					return 2.95+0.1; //0.1 small parcel packing fee
 				}else{
-					return 2.69;
+					return 2.95;
 				}
 			}
 			elseif($weight>800 and $weight<=1000){
 				if($l<10 or $w<7){
-					return 2.76+0.1; //0.1 small parcel packing fee
+					return 3.03+0.1; //0.1 small parcel packing fee
 				}else{
-					return 2.76;
+					return 3.03;
 				}
 			}			
 		}
@@ -889,9 +889,9 @@ class WinitDeSaleAction extends CommonAction{
 	private function calWinitDPDSmallFee($weight,$l,$w,$h){
 		if($weight>0 And $weight <= 3000 and $l<=50 and ($l + 2 * ($w + $h))<=110){
 			if($l<16 or $w<11){
-				return 3.4+0.1; //0.1 small parcel packing fee
+				return 3.79+0.1; //0.1 small parcel packing fee
 			}else{
-				return 3.4;
+				return 3.79;
 			}
 		}
 		else{
@@ -902,9 +902,9 @@ class WinitDeSaleAction extends CommonAction{
 	private function calWinitDPDNormalFee($weight,$l,$w,$h){
 		if($weight>0 And $weight <= 31500 and $l<=175 and ($l + 2 * ($w + $h))<=300){
 			if($l<16 or $w<11){
-				return 3.75+0.1; //0.1 small parcel packing fee
+				return 5.28+0.1; //0.1 small parcel packing fee
 			}else{
-				return 3.75;
+				return 5.28;
 			}
 		}else{
 			return 0;
@@ -915,15 +915,19 @@ class WinitDeSaleAction extends CommonAction{
 		$fee = 0;
 		if($weight>0 And $weight <= 31500 and $l>=15 and $w>=11 and $h>=1 and $l<=200 and $w<=200 and $h<=200 and ($l + 2 * ($w + $h))<=360){
 			if($weight>0 and $weight<=1000){
-				$fee = 3.28;
-			}elseif($weight>1000 and $weight<=5000){
-				$fee = 3.52;
+				$fee = 3.58;
+			}elseif($weight>1000 and $weight<=2000){
+				$fee = 3.64;
+			}elseif($weight>2000 and $weight<=3000){
+				$fee = 3.87;
+			}elseif($weight>3000 and $weight<=5000){
+				$fee = 3.98;
 			}elseif($weight>5000 and $weight<=10000){
-				$fee = 3.95;
+				$fee = 4.26;
 			}elseif($weight>10000 and $weight<=20000){
-				$fee = 4.76;
+				$fee = 5.47;
 			}elseif($weight>20000 and $weight<=31500){
-				$fee = 5.2;
+				$fee = 5.47;
 			}
 			if(($l>=120 or $w>=60 or $h>=60) and ($l<=200 or $w<=200 or $h<=200) and ($l + 2 * ($w + $h))<=360){
 				$fee = $fee+12;

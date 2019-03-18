@@ -844,6 +844,13 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurShippingFee = $eurShippingFee+$amountCM['amount'];
         			}
+        		}elseif($transactionType=='Refund' && $paymentType=='Other' && $paymentDetail=='Restocking fee'){
+        			if($amountCM['currency']=='usd'){
+        				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
+        			}
         		}elseif($transactionType=='Order Payment' && $paymentType=='Amazon fees'){
         			if($amountCM['currency']=='usd'){
         				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
@@ -954,6 +961,20 @@ class AccountingAction extends CommonAction{
         				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
         			}
         		}elseif($transactionType=='Other' && $paymentType=='FBA Inventory Reimbursement - Customer Return'){
+        			if($amountCM['currency']=='usd'){
+        				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
+        			}
+        		}elseif($transactionType=='Other' && $paymentType=='FBA Inventory Reimbursement - Customer Service Issue'){
+        			if($amountCM['currency']=='usd'){
+        				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
+        			}
+        		}elseif($transactionType=='Other' && $paymentType=='FBA Inventory Reimbursement - Damaged:Warehouse'){
         			if($amountCM['currency']=='usd'){
         				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
         			}

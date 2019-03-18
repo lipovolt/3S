@@ -1054,6 +1054,7 @@ return array(
 	'DB_SZ_SALE_PLAN_METADATA_DENOMINATOR' =>'denominator',//denominator to avoid small sale quantity with higher growth rate.
 	'DB_SZ_SALE_PLAN_METADATA_GRFR' =>'grfr',//growth rate fluctuation range
 	'DB_SZ_SALE_PLAN_METADATA_STANDARD_PERIOD' =>'standard_period',//the sale quantity of adjust period should be change to sale quantity of standard period
+	'DB_SZ_SALE_PLAN_METADATA_PROFIT_LIMIT' =>'0.30', // Profit limit 35%
 
 	//sz_wish_sale_plan
 	/*

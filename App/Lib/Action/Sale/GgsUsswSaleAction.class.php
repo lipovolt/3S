@@ -484,7 +484,7 @@ class GgsUsswSaleAction extends CommonAction{
 		if($lspsq<$sqnr){
 			$lspsq = $denominator;
 		}
-		if($diff/$lspsq>$grfr/100){
+		if($diff/$lspsq>$grfr/100 && $cost/$price<C('DB_SZ_SALE_PLAN_METADATA_PROFIT_LIMIT')){
 			$sugg=null;
 			$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $price+$price*($pcr/100);
 			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_PRICE_UP');
