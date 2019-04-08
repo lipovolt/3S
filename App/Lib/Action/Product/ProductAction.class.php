@@ -233,13 +233,6 @@ class ProductAction extends CommonAction{
             $product-> startTrans();
             $result =  $product->save($data);
             $product->commit();
-            if($data[C('db_product_upc')]!=0 && $data[C('db_product_upc')]!=null && $data[C('db_product_upc')]!='0') {
-                $metadata = M(C('DB_METADATA'));
-                $mdata[C('DB_METADATA_USED_UPC')]=$data[C('db_product_upc')];
-                $mdata[C('DB_METADATA_ID')]=1;
-                $metadata->save($mdata);
-                $metadata->commit();
-            }
             if(false !== $result || 0 !== $result) {
                 $this->success('操作成功！');
             }else{
@@ -248,7 +241,7 @@ class ProductAction extends CommonAction{
         }                
     }
 
-    public function saveUPC($upc,$id){
+    /*public function saveUPC($upc,$id){
         $data[C('db_product_id')] = $id;
         $data[C('db_product_upc')] = $upc;
         M(C('DB_PRODUCT'))->save($data);
@@ -256,7 +249,7 @@ class ProductAction extends CommonAction{
         $mdata[C('DB_METADATA_ID')]=1;
         M(C('DB_METADATA'))->save($mdata);
         $this->success("UPC码已保存");
-    }
+    }*/
 
     public function allocatUpc($id){
         $product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_ID')=>$id))->find();
@@ -290,8 +283,7 @@ class ProductAction extends CommonAction{
         for($c='A';$c<=max(array_keys(C('IMPORT_PRODUCT')));$c++){
             if($firstRow[$c] != C('IMPORT_PRODUCT')[$c]){
                 return false;
-            }
-                
+            }                
         }
         return true;
     }

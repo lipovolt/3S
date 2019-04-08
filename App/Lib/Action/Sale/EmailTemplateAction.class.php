@@ -45,6 +45,8 @@ class EmailTemplateAction extends CommonAction{
 				Thanks for your purchasing. I have listed wrong quantity of the item. It is now out of stock. The new item will be restocked in one week. Can you wait? Or i should cancel the order? Apologize for the inconvenience.',
 			'包裹已送达邮局，没有A-Scan'=>'Hello,<br>
 				Your package has been given to the local post office. Tracking number is XXXXXXXXXXXXXXX. Sometime they do not do A-scan and transit all packages together to package processing center. So you can not see the tracking information immediately. But the package is in transit.',
+			'Fisrt Class Mail显示已投递，顾客说没收到'=>'Hello,<br>
+				The package may be delivered to wrong mail box or delayed. If you can see the postman or contact the postman, please ask help of the postman. They can give you better helpful information about this issue. If the postman can not help you to find the package, then tell me, i will resend the item.',
 			'亚马逊跟卖警告1'=>'Hello，<br>
 				We are the registered proprietor of the USA Trade Mark Number 4996636 for LIPOVOLT in classes 9（Registered Date： July-12 2016）.Please refrain from using our Trademark when selling or listing any of your products.<br>
 				Please remove your listing from our advert immediately ASIN: *******<br>
