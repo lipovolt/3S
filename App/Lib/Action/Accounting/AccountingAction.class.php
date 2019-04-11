@@ -1392,18 +1392,18 @@ class AccountingAction extends CommonAction{
 			$this->error('lipovolt的 '.$month.' 的amazon费用查不到！','incomeCost');
 			return false;
 		}
-		$incomeCostMap[C('DB_INCOMECOST_SLLERID')] = array('eq','rc-helicar');
+		/*$incomeCostMap[C('DB_INCOMECOST_SLLERID')] = array('eq','rc-helicar');
 		$incomeCost = $incomeCostTable->where($incomeCostMap)->find();
 		if($incomeCost == null || $incomeCost == false){
 			$this->error('rc-helicar的 '.$month.' 的收入成本查不到！','incomeCost');
 			return false;
-		}/*elseif($incomeCost[C('DB_INCOMECOST_USDINCOME')]==null ||$incomeCost[C('DB_INCOMECOST_USDINCOME')]=='' ||$incomeCost[C('DB_INCOMECOST_USDINCOME')]==0){
+		}elseif($incomeCost[C('DB_INCOMECOST_USDINCOME')]==null ||$incomeCost[C('DB_INCOMECOST_USDINCOME')]=='' ||$incomeCost[C('DB_INCOMECOST_USDINCOME')]==0){
 			$this->error('rc-helicar的 '.$month.' 的美元收入查不到！','incomeCost');
 			return false;
 		}elseif($incomeCost[C('DB_INCOMECOST_USDITEMCOST')]==null ||$incomeCost[C('DB_INCOMECOST_USDITEMCOST')]=='' ||$incomeCost[C('DB_INCOMECOST_USDITEMCOST')]==0){
 			$this->error('rc-helicar的 '.$month.' 的美元售出产品成本查不到！','incomeCost');
 			return false;
-		}*/elseif($incomeCost[C('DB_INCOMECOST_EURINCOME')]==null ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]=='' ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]==0){
+		}elseif($incomeCost[C('DB_INCOMECOST_EURINCOME')]==null ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]=='' ||$incomeCost[C('DB_INCOMECOST_EURINCOME')]==0){
 			$this->error('rc-helicar的 '.$month.' 的欧元收入查不到！','incomeCost');
 			return false;
 		}elseif($incomeCost[C('DB_INCOMECOST_EURITEMCOST')]==null ||$incomeCost[C('DB_INCOMECOST_EURITEMCOST')]=='' ||$incomeCost[C('DB_INCOMECOST_EURITEMCOST')]==0){
@@ -1415,7 +1415,7 @@ class AccountingAction extends CommonAction{
 		}elseif($incomeCost[C('DB_INCOMECOST_PAYPALFEE')]==null ||$incomeCost[C('DB_INCOMECOST_PAYPALFEE')]=='' ||$incomeCost[C('DB_INCOMECOST_PAYPALFEE')]==0){
 			$this->error('rc-helicar的 '.$month.' 的paypal费用查不到！','incomeCost');
 			return false;
-		}
+		}*/
 		/*$incomeCostMap[C('DB_INCOMECOST_SLLERID')] = array('eq','vtkg5755');
 		$incomeCost = $incomeCostTable->where($incomeCostMap)->find();
 		if($incomeCost == null || $incomeCost == false){
@@ -1435,14 +1435,14 @@ class AccountingAction extends CommonAction{
 		}elseif($incomeCost[C('DB_INCOMECOST_EURITEMCOST')]==null ||$incomeCost[C('DB_INCOMECOST_EURITEMCOST')]=='' ||$incomeCost[C('DB_INCOMECOST_EURITEMCOST')]==0){
 			$this->error('vtkg5755的 '.$month.' 的欧元售出产品成本查不到！','incomeCost');
 			return false;
-		}*/
+		}
 		elseif($incomeCost[C('DB_INCOMECOST_MARKETFEE')]==null ||$incomeCost[C('DB_INCOMECOST_MARKETFEE')]=='' ||$incomeCost[C('DB_INCOMECOST_MARKETFEE')]==0){
 			$this->error('vtkg5755的 '.$month.' 的ebay费用查不到！','incomeCost');
 			return false;
 		}elseif($incomeCost[C('DB_INCOMECOST_PAYPALFEE')]==null ||$incomeCost[C('DB_INCOMECOST_PAYPALFEE')]=='' ||$incomeCost[C('DB_INCOMECOST_PAYPALFEE')]==0){
 			$this->error('vtkg5755的 '.$month.' 的paypal费用查不到！','incomeCost');
 			return false;
-		}
+		}*/
 		return true;
 	}
 
