@@ -1392,6 +1392,7 @@ class AccountingAction extends CommonAction{
 			$this->error('lipovolt的 '.$month.' 的amazon费用查不到！','incomeCost');
 			return false;
 		}
+		//mark
 		/*$incomeCostMap[C('DB_INCOMECOST_SLLERID')] = array('eq','rc-helicar');
 		$incomeCost = $incomeCostTable->where($incomeCostMap)->find();
 		if($incomeCost == null || $incomeCost == false){
