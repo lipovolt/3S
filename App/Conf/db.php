@@ -211,8 +211,7 @@ return array(
 	`length` decimal(10,2) default 0,
 	`width`  decimal(10,2) default 0,
 	`height`  decimal(10,2) default 0
-	)ENGINE=MyISAM  DEFAULT CHARSET=utf
-	8;
+	)ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 	*/
 	'DB_USSW_INBOUND_PACKAGE' => 'ussw_inbound_package',
 	'DB_USSW_INBOUND_PACKAGE_ID' => 'id',

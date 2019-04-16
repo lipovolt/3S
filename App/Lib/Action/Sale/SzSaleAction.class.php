@@ -1627,7 +1627,7 @@ class SzSaleAction extends CommonAction{
 	}
 
     private function getSalePlanTableNames($account){
-    	if($account=='vtkg5755'){
+    	if($account=='rc-helicar'){
     		$tableNames['Germany']=C('DB_SZ_DE_SALE_PLAN');
     		$tableNames['US']=C('DB_SZ_US_SALE_PLAN');
     		$tableNames['eBayMotors']=C('DB_SZ_US_SALE_PLAN');
