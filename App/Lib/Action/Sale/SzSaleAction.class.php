@@ -201,12 +201,12 @@ class SzSaleAction extends CommonAction{
 		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
 		$salePlan = M($this->getSalePlanTableName($account,$country));
 		$sp = $salePlan->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$sku))->find();
-		if($account=="vtkg5755" && $country == 'us'){
+		if($account=="rc-helicar" && $country == 'us'){
 	    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
 	    	$data['way-to-us-fee']=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]+20:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
 			return $this->getSzUsCost($data[C('DB_PRODUCT_PRICE')],$data['way-to-us-fee'],$sale_price);
 		}
-		if($account=="vtkg5755" && $country == 'de'){
+		if($account=="rc-helicar" && $country == 'de'){
 	    	$data[C('DB_PRODUCT_PRICE')]=$product[C('DB_PRODUCT_PRICE')];
 	    	$data['way-to-de-fee']=$this->getSzDeShippingFee($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]+20:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_DE_SALE_PLAN_REGISTER')]);
 			return $this->getSzDeCost($data[C('DB_PRODUCT_PRICE')],$data['way-to-de-fee'],$sale_price);
@@ -221,12 +221,12 @@ class SzSaleAction extends CommonAction{
 
 	private function calInitialPrice($sku,$account,$country=null){
 		$product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
-		if($account=="vtkg5755" && $country == 'us'){
+		if($account=="rc-helicar" && $country == 'us'){
 			$register = M(C('DB_SZ_US_SALE_PLAN'))->where(array(C('DB_SZ_US_SALE_PLAN_SKU')=>$sku))->getField(C('DB_SZ_US_SALE_PLAN_REGISTER'));
 			$shippingFee=$this->getSzUsShippingFee($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]+20:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$register);
 			return $this->calUsInitialPrice($product[C('DB_PRODUCT_PRICE')],$shippingFee);
 		}
-		if($account=="vtkg5755" && $country == 'de'){
+		if($account=="rc-helicar" && $country == 'de'){
 			$register = M(C('DB_SZ_DE_SALE_PLAN'))->where(array(C('DB_SZ_DE_SALE_PLAN_SKU')=>$sku))->getField(C('DB_SZ_DE_SALE_PLAN_REGISTER'));
 			$shippingFee=$this->getSzDeShippingFee($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]+20:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')],$register);
 			return $this->calDeInitialPrice($product[C('DB_PRODUCT_PRICE')],$shippingFee);
@@ -1162,13 +1162,13 @@ class SzSaleAction extends CommonAction{
         	$data[$key][C('DB_PRODUCT_CNAME')]=$value[C('DB_PRODUCT_CNAME')];
         	$data[$key][C('DB_PRODUCT_PRICE')]=$value[C('DB_PRODUCT_PRICE')];
         	$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]=$sp[C('DB_SZ_US_SALE_PLAN_PRICE')];
-        	if($account=="vtkg5755" && $country=="us"){
+        	if($account=="rc-helicar" && $country=="us"){
         		$data[$key]['local_shipping_way']=$this->getSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
         		$data[$key]['local_shipping_fee']=round($this->getSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
         		$data[$key]['global_shipping_way']=$this->getSzGlobalShippingWay($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
         		$data[$key]['global_shipping_fee']=round($this->getSzGlobalShippingFee($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
         		$data[$key]['cost']=$this->getSzUsCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key]['local_shipping_fee'],$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]);
-        	}elseif($account=="vtkg5755" && $country=="de"){
+        	}elseif($account=="rc-helicar" && $country=="de"){
         		$data[$key]['local_shipping_way']=$this->getSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
         		$data[$key]['local_shipping_fee']=round($this->getSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
         		$data[$key]['global_shipping_way']=$this->getSzGlobalShippingWay($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
@@ -1208,9 +1208,9 @@ class SzSaleAction extends CommonAction{
 
 	//Return the sale plan table name according to the account
     private function getSalePlanTableName($account,$country){
-    	if($account=="vtkg5755" && $country=="us")
+    	if($account=="rc-helicar" && $country=="us")
     		return C('DB_SZ_US_SALE_PLAN');
-    	elseif($account=="vtkg5755" && $country=="de")
+    	elseif($account=="rc-helicar" && $country=="de")
     		return C('DB_SZ_DE_SALE_PLAN');
     	elseif($account=="zuck")
     		return C('DB_SZ_WISH_SALE_PLAN');
@@ -1221,9 +1221,9 @@ class SzSaleAction extends CommonAction{
 
     //Return the sale plan table view model name according to the account
     public function getSalePlanViewModelName($account,$country){
-    	if($account=="vtkg5755" && $country=="us")
+    	if($account=="rc-helicar" && $country=="us")
     		return "SzUsSalePlanView";
-    	elseif($account=="vtkg5755" && $country=="de")
+    	elseif($account=="rc-helicar" && $country=="de")
     		return "SzDeSalePlanView";
     	elseif($account=="zuck")
     		return "SzWishSalePlanView";
@@ -1248,9 +1248,9 @@ class SzSaleAction extends CommonAction{
 
     //Return the sale plan view model according to the account
     private function getMarketByAccountCountry($account,$country=null){
-    	if($account=="vtkg5755" && $country=="us")
+    	if($account=="rc-helicar" && $country=="us")
     		return "ebay.com";
-    	elseif ($account=="vtkg5755" && $country=="de") 
+    	elseif ($account=="rc-helicar" && $country=="de") 
     		return "ebay.de";
     	elseif ($account=="zuck") 
     		return "wish.com";
@@ -1496,7 +1496,7 @@ class SzSaleAction extends CommonAction{
 	                	$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
 	                	/*
 						德国站不允许刊登22欧元以上物品，所以售价拆分到运费里一部分。这类产品不能根据系统价格自动修改售价。
-	                	if($account !='vtkg5755' || ($account=='vtkg5755' &&  !$this->szFxtPriceException($data[$j][$firstRow['K']]))){
+	                	if($account !='rc-helicar' || ($account=='rc-helicar' &&  !$this->szFxtPriceException($data[$j][$firstRow['K']]))){
 	                		$data[$j][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
 	                	}*/
 	                	$data[$j][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];

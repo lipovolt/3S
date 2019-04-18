@@ -2719,6 +2719,7 @@ class GgsUsswSaleAction extends CommonAction{
     	$where[C('DB_PRODUCT_TOUS')] = array('neq', '无');
     	$products = M(C('DB_PRODUCT'))->where($where)->select();
     	$usStorageTable = M(C('DB_USSTORAGE'));
+    	$amazonUsStorageTable = M(C('DB_AMAZON_US_STORAGE'));
     	foreach ($products as $key => $p) {
     		$data[$key][C('DB_PRODUCT_SKU')] = $p[C('DB_PRODUCT_SKU')];
     		$data[$key][C('DB_PRODUCT_CNAME')] = $p[C('DB_PRODUCT_CNAME')];
@@ -2735,6 +2736,12 @@ class GgsUsswSaleAction extends CommonAction{
     		$data[$key]['15DaysSaleQuantity'] = $this->calUsswSaleQuantity('lipovolt',$p[C('DB_PRODUCT_SKU')],$startDate);
     		$startDate = date('Y-m-d H:i:s',time()-60*60*24*7);
     		$data[$key]['7DaysSaleQuantity'] = $this->calUsswSaleQuantity('lipovolt',$p[C('DB_PRODUCT_SKU')],$startDate);
+    		
+    		if($amazonUsStorageTable->where(array('sku'=>'FBA_'.$p[C('DB_PRODUCT_SKU')]))->find() ==null || $amazonUsStorageTable->where(array('sku'=>'FBA_'.$p[C('DB_PRODUCT_SKU')]))->find() ==false){
+    			$data[$key]['inFBA'] = '否';
+    		}else{
+    			$data[$key]['inFBA'] = '是';
+    		}
     	}
     	foreach($data as $val){
 			$key_arrays[]=$val['difference'];
@@ -2752,7 +2759,8 @@ class GgsUsswSaleAction extends CommonAction{
 	        array('difference','USSW-FBA成本差'),
 	        array('30DaysSaleQuantity','amazon30天自发货销量'),
 	        array('15DaysSaleQuantity','amazon15天自发货销量'),
-	        array('7DaysSaleQuantity','amazon7天自发货销量')
+	        array('7DaysSaleQuantity','amazon7天自发货销量'),
+	        array('inFBA','已入FBA')
 	        );
     	$this->exportExcel('CompareFbaUssw',$xlsCell,$data);
     }
