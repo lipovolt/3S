@@ -377,8 +377,8 @@ class ProductAction extends CommonAction{
                                 $data[C('db_product_sku')]= mb_convert_encoding($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue(),"utf-8","auto"); 
                                 $data[C('db_product_ustariff')]= $objPHPExcel->getActiveSheet()->getCell("AF".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AF".$i)->getValue();
                             }                           
-
-                            if($products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->find() != null){
+                            $tmp = $products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->find()>;
+                            if($tmp != null && ($tmp[C('db_product_pweight')]==null || $tmp[C('db_product_pweight')]==0)){
                                 $result = $products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->save($data);
                             }
                         }
