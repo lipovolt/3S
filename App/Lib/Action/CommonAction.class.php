@@ -73,6 +73,11 @@ class CommonAction extends Action{
             return true;
         }   
     }
+
+    public function getMaxKeyOfArray($arr){
+        end($arr);
+        return key($arr);
+    }
 }
 
 ?>

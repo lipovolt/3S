@@ -207,7 +207,7 @@ class OutboundAction extends CommonAction{
 
 
     private function verifyWinitOutboundColumnName($firstRow){
-        for($c='A';$c<=max(array_keys(C('IMPORT_WINIT_OUTBOUND')))-1;$c++){
+        for($c='A';$c！= $this->getMaxKeyOfArray(C('IMPORT_WINIT_OUTBOUND'));$c++){
             if(trim($firstRow[$c]) != C('IMPORT_WINIT_OUTBOUND')[$c]){
                 return false;
             }                
@@ -273,6 +273,9 @@ class OutboundAction extends CommonAction{
                     $winitOutOrder = $this->getWinitOutOrder($winitOutOrder,$tmpdata); 
                 }
                 $this->preTypeExportWinitOutOrder($winitOutOrder);
+            }
+            else{
+                $this->error('模板不正确，需要ebay英语待发货模板');
             }
         }else{
             $this->error('请给出卖家账号');
@@ -582,6 +585,9 @@ class OutboundAction extends CommonAction{
             case 'Deutsche Post Bücher-/Warensendung':
               return "OSF810544|DE Post - Untracked Merchandise Shipment (Economy 2-4 Business Days)";
               break;
+            case 'Deutsche Post Warensendung':
+              return "OSF810544|DE Post - Untracked Merchandise Shipment (Economy 2-4 Business Days)";
+              break;
             case 'Deutsche Post Brief':
               return "OSF810547|DE Post - Untracked Letter (Standard 1-2 Business Days)";
               break;
@@ -669,10 +675,10 @@ class OutboundAction extends CommonAction{
     }
 
     private function verifyEWSOColumnName($firstRow){
-        for($c='A';$c<=max(array_keys(C('IMPORT_EBAY_WAITING_SHIPPING_EN_ORDER')))-1;$c++){
+        for($c='A';$c!=$this->getMaxKeyOfArray(C('IMPORT_EBAY_WAITING_SHIPPING_EN_ORDER'));$c++){
             if(trim($firstRow[$c]) != C('IMPORT_EBAY_WAITING_SHIPPING_EN_ORDER')[$c]){
                 return false;
-            }                
+            }  
         }
         return true;
     }
