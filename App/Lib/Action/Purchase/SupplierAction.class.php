@@ -22,16 +22,23 @@ class SupplierAction extends CommonAction{
 
 	public function add(){
 		if(IS_POST){
-			$data[C('DB_SUPPLIER_COMPANY')] = I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_PERSON')] = I('post.'.C('DB_SUPPLIER_PERSON'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_WANGWANG')] = I('post.'.C('DB_SUPPLIER_WANGWANG'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_QQ')] = I('post.'.C('DB_SUPPLIER_QQ'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_WEBSITE')] = I('post.'.C('DB_SUPPLIER_WEBSITE'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_TEL')] = I('post.'.C('DB_SUPPLIER_TEL'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_ADDRESS')] = I('post.'.C('DB_SUPPLIER_ADDRESS'),'','htmlspecialchars');
-
-			M(C('DB_SUPPLIER'))->add($data);
-			$this->redirect('Purchase/Supplier/index');
+			$where[C('DB_SUPPLIER_COMPANY')] = array('in', array(I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars'),I('post.'.C('DB_SUPPLIER_WANGWANG'),'','htmlspecialchars')));
+			$where[C('DB_SUPPLIER_WANGWANG')] = array('in', array(I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars'),I('post.'.C('DB_SUPPLIER_WANGWANG'),'','htmlspecialchars')));
+			$where['_logic'] = 'or';
+			$existSup = M(C('DB_SUPPLIER'))->where($where)->find();
+			if($existSup == null){
+				$data[C('DB_SUPPLIER_COMPANY')] = I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_PERSON')] = I('post.'.C('DB_SUPPLIER_PERSON'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_WANGWANG')] = I('post.'.C('DB_SUPPLIER_WANGWANG'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_QQ')] = I('post.'.C('DB_SUPPLIER_QQ'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_WEBSITE')] = I('post.'.C('DB_SUPPLIER_WEBSITE'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_TEL')] = I('post.'.C('DB_SUPPLIER_TEL'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_ADDRESS')] = I('post.'.C('DB_SUPPLIER_ADDRESS'),'','htmlspecialchars');
+				M(C('DB_SUPPLIER'))->add($data);
+				$this->redirect('Purchase/Supplier/index');
+			}else{
+				$this->error('供货商'.I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars').' 已存在！ 供货商编号： '.$existSup[C('DB_SUPPLIER_ID')]);
+			}			
 		}
 	}
 
@@ -43,17 +50,25 @@ class SupplierAction extends CommonAction{
 
 	public function edit(){
 		if(IS_POST){
-			$data[C('DB_SUPPLIER_ID')] = I('post.'.C('DB_SUPPLIER_ID'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_COMPANY')] = I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_PERSON')] = I('post.'.C('DB_SUPPLIER_PERSON'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_WANGWANG')] = I('post.'.C('DB_SUPPLIER_WANGWANG'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_QQ')] = I('post.'.C('DB_SUPPLIER_QQ'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_WEBSITE')] = I('post.'.C('DB_SUPPLIER_WEBSITE'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_TEL')] = I('post.'.C('DB_SUPPLIER_TEL'),'','htmlspecialchars');
-			$data[C('DB_SUPPLIER_ADDRESS')] = I('post.'.C('DB_SUPPLIER_ADDRESS'),'','htmlspecialchars');
+			$where[C('DB_SUPPLIER_COMPANY')] = array('in', array(I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars'),I('post.'.C('DB_SUPPLIER_WANGWANG'),'','htmlspecialchars')));
+			$where[C('DB_SUPPLIER_WANGWANG')] = array('in', array(I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars'),I('post.'.C('DB_SUPPLIER_WANGWANG'),'','htmlspecialchars')));
+			$where['_logic'] = 'or';
+			$existSup = M(C('DB_SUPPLIER'))->where($where)->find();
+			if($existSup ==null){
+				$data[C('DB_SUPPLIER_ID')] = I('post.'.C('DB_SUPPLIER_ID'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_COMPANY')] = I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_PERSON')] = I('post.'.C('DB_SUPPLIER_PERSON'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_WANGWANG')] = I('post.'.C('DB_SUPPLIER_WANGWANG'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_QQ')] = I('post.'.C('DB_SUPPLIER_QQ'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_WEBSITE')] = I('post.'.C('DB_SUPPLIER_WEBSITE'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_TEL')] = I('post.'.C('DB_SUPPLIER_TEL'),'','htmlspecialchars');
+				$data[C('DB_SUPPLIER_ADDRESS')] = I('post.'.C('DB_SUPPLIER_ADDRESS'),'','htmlspecialchars');
 
-			M(C('DB_SUPPLIER'))->save($data);
-			$this->redirect('Purchase/Supplier/index');
+				M(C('DB_SUPPLIER'))->save($data);
+				$this->redirect('Purchase/Supplier/index');
+			}else{
+				$this->error('供货商'.I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars').' 已存在！ 供货商编号： '.$existSup[C('DB_SUPPLIER_ID')]);
+			}			
 		}
 	}
 }

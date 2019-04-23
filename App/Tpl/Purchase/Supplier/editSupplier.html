@@ -62,9 +62,10 @@
 		<div class="block-outer BaseInfo">
 			<div class="block-outer-bd">
 				<div class="inline-block block-indent">
+					<p style="color:red; text-decoration:underline;">供货商名称和旺旺是必填项。供货商名称填1688上的卖家注册名称，旺旺填旺旺上会员名。必须按照要求填写！！！</p>
 					<div class="item">
                         <div class="form-group">
-							<label for="price" class="control-label">供货商公司名</label>
+							<label for="price" class="control-label">供货商名称*</label>
 							<div class="control-wrap">
 								<input type="text"  id="{:C('DB_SUPPLIER_COMPANY')}" name="{:C('DB_SUPPLIER_COMPANY')}" value="{$supplier[0][C('DB_SUPPLIER_COMPANY')]}" />
 								<input type="hidden"  id="{:C('DB_SUPPLIER_ID')}" name="{:C('DB_SUPPLIER_ID')}" value="{$supplier[0][C('DB_SUPPLIER_ID')]}" />
@@ -79,7 +80,7 @@
 					</div>
 					<div class="item">
 						<div class="form-group">
-							<label for="Name" class="control-label">旺旺</label>
+							<label for="Name" class="control-label">旺旺*</label>
 							<div class="control-wrap">
 								<input type="text" name="{:C('DB_SUPPLIER_WANGWANG')}" id="{:C('DB_SUPPLIER_WANGWANG')}" value="{$supplier[0][C('DB_SUPPLIER_WANGWANG')]}" />
 							</div>
