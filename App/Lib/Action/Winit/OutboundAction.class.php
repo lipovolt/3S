@@ -207,7 +207,7 @@ class OutboundAction extends CommonAction{
 
 
     private function verifyWinitOutboundColumnName($firstRow){
-        for($c='A';$c！= $this->getMaxKeyOfArray(C('IMPORT_WINIT_OUTBOUND'));$c++){
+        for($c='A';$c!= $this->getMaxKeyOfArray(C('IMPORT_WINIT_OUTBOUND'));$c++){
             if(trim($firstRow[$c]) != C('IMPORT_WINIT_OUTBOUND')[$c]){
                 return false;
             }                
