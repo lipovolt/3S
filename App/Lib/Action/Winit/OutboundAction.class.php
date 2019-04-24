@@ -285,51 +285,51 @@ class OutboundAction extends CommonAction{
     private function preTypeExportWinitOutOrder($winitOutOrder){
         $exportFile = array();
         $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
-        $expCellName = array('Seller Order NO.','Warehouse','Shipping Service','Value-added service 1','Value-added service 2','Insured amount','eBaySellerID','eBayBuyerID','Buyer Fullname','Buyer Phone Number','Buyer Email','Buyer Address 1','Buyer Address 2','Buyer City','Buyer State','Buyer Postcode','Buyer Country','House No.','Duplicate order','SKU No.','Attribute','Quantity','Item Number','Transaction ID','SKU No.','Attribute','Quantity','Item Number','Transaction ID','SKU No.','Attribute','Quantity','Item Number','Transaction ID');
+        $expCellName = array('Seller Order NO.','Warehouse','Shipping Service','Value-added service 1','Value-added service 2','Insured amount','VATNo','eBaySellerID','eBayBuyerID','Buyer Fullname','Buyer Phone Number','Buyer Email','Buyer Address 1','Buyer Address 2','Buyer City','Buyer State','Buyer Postcode','Buyer Country','House No.','Duplicate order','SKU No.','Attribute','Quantity','Item Number','Transaction ID','SKU No.','Attribute','Quantity','Item Number','Transaction ID','SKU No.','Attribute','Quantity','Item Number','Transaction ID');
         foreach ($winitOutOrder as $key => $value) {
             $tmpdata['A'] = $value['Sales Record Number'];
             $tmpdata['B'] = $value['Warehouse'];
             $tmpdata['C'] = $value['Shipping Service'];
-            $tmpdata['G'] = $_POST['sellerID'];
-            $tmpdata['H'] = $value['User Id'];
-            $tmpdata['I'] = $value['Buyer Fullname'];
-            $tmpdata['J'] = $value['Buyer Phone Number']==null?0:$value['Buyer Phone Number'];
-            $tmpdata['K'] = $value['Buyer Email'];
+            $tmpdata['H'] = $_POST['sellerID'];
+            $tmpdata['I'] = $value['User Id'];
+            $tmpdata['J'] = $value['Buyer Fullname'];
+            $tmpdata['K'] = $value['Buyer Phone Number']==null?0:$value['Buyer Phone Number'];
+            $tmpdata['L'] = $value['Buyer Email'];
             if(strstr($value['Shipping Service'], 'DHL')==false){
                 if($this->isPackstationAddress($value['Buyer Address 1'],$value['Buyer Address 2'])){
-                    $tmpdata['L'] = $value['Buyer Address 1'].' '.$value['Buyer Address 2'];                
-                    $tmpdata['M'] = null;
+                    $tmpdata['M'] = $value['Buyer Address 1'].' '.$value['Buyer Address 2'];                
+                    $tmpdata['N'] = null;
                 }else{
-                    $tmpdata['L'] = $value['Buyer Address 1'];
-                    $tmpdata['M'] = $value['Buyer Address 2'];
+                    $tmpdata['M'] = $value['Buyer Address 1'];
+                    $tmpdata['N'] = $value['Buyer Address 2'];
                 }                
             }else{
                 $tmpAddress = $this->getAddressHouseNo($value['Buyer Address 1'],$value['Buyer Address 2']);
-                $tmpdata['L'] = $tmpAddress[0];
-                $tmpdata['M'] = $tmpAddress[1];
-                $tmpdata['R'] = $tmpAddress[2];
+                $tmpdata['M'] = $tmpAddress[0];
+                $tmpdata['N'] = $tmpAddress[1];
+                $tmpdata['S'] = $tmpAddress[2];
             }            
 
             if(count($this->explodeBuyerCity($value['Buyer City']))==2){
-                $tmpdata['N'] = $this->explodeBuyerCity($value['Buyer City'])[0];
-                if($tmpdata['M']==null || $tmpdata['M']==''){
-                    $tmpdata['M'] = $this->explodeBuyerCity($value['Buyer City'])[1];
+                $tmpdata['O'] = $this->explodeBuyerCity($value['Buyer City'])[0];
+                if($tmpdata['N']==null || $tmpdata['N']==''){
+                    $tmpdata['N'] = $this->explodeBuyerCity($value['Buyer City'])[1];
                 }
             }else{
-                $tmpdata['N'] = $value['Buyer City'];
+                $tmpdata['O'] = $value['Buyer City'];
             }
             
-            $tmpdata['O'] = $value['Buyer State'];
+            $tmpdata['P'] = $value['Buyer State'];
 
             if(strlen($value['Buyer Zip'])==4 && $this->is5DigitsZipCountry($value['Buyer Country'])){
-                $tmpdata['P'] =  strval(' 0'.$value['Buyer Zip']);
+                $tmpdata['Q'] =  strval(' 0'.$value['Buyer Zip']);
             }else{
-                $tmpdata['P'] = $value['Buyer Zip'];
+                $tmpdata['Q'] = $value['Buyer Zip'];
             }
             
-            $tmpdata['Q'] = $value['Buyer Country'];
-            if((count($expCellName)-19)<(count($value['items'])*5)){
-                for($index=0;$index<(count($value['items'])*5-(count($expCellName)-19))/5;$index++){
+            $tmpdata['R'] = $value['Buyer Country'];
+            if((count($expCellName)-20)<(count($value['items'])*5)){
+                for($index=0;$index<(count($value['items'])*5-(count($expCellName)-20))/5;$index++){
                     array_push($expCellName,'SKU No.');
                     array_push($expCellName,'Attribute');
                     array_push($expCellName,'Quantity');
@@ -337,7 +337,7 @@ class OutboundAction extends CommonAction{
                     array_push($expCellName,'Transaction ID');
                 }
             }
-            $index=19;
+            $index=20;
             foreach ($value['items'] as $ikey => $ivalue) {                
                 $tmpdata[$cellName[$index++]] = $ivalue['item_sku'];
                 $index++;
