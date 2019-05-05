@@ -1449,7 +1449,7 @@ class SzSaleAction extends CommonAction{
             	$firstRow['A'] = 'Action(SiteID=Germany|Country=CN|Currency=EUR|Version=941)';
             }
             if($_POST['updateType'] == 'US'){
-            	$firstRow['A'] = 'Action(SiteID=US|Country=CN|Currency=USD|Version=585|CC=ISO-8859-1)';
+            	$firstRow['A'] = 'Action(SiteID=US|Country=CN|Currency=USD|Version=585|CC=UTF-8)';
             }
 
             if($this->verifyEbayFxtcn($firstRow)){
@@ -1590,7 +1590,7 @@ class SzSaleAction extends CommonAction{
 	                }
 	            }
 	            if($_POST['updateType'] == 'US'){
-	            	$excelCellName[0] = 'Action(SiteID=US|Country=CN|Currency=USD|Version=585|CC=ISO-8859-1)';
+	            	$excelCellName[0] = 'Action(SiteID=US|Country=CN|Currency=USD|Version=585|CC=UTF-8)';
 	            }
                 $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
                 $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
