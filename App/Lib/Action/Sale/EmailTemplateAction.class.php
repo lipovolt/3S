@@ -58,6 +58,7 @@ class EmailTemplateAction extends CommonAction{
 			'未发货订单换地址，取消，重拍'=>"Hello，<br>
 				I (customer service) can't direct change the shipping address. I have cancelled the order, please make a new order with correct address. Thanks",
 			'美国退货地址'=>'Min Zhang<br>13754 mango dr unit 303, del mar, ca 92014<br>626-203-7018',
+			"发货时间或指定日期到货'=>the order before 9 o'clock will be sent on the same working day. Otherwise the order will be sent on the next working day. I regret I can't guarantee the transportation speed of USPS. I ask for your understanding.",
 			);
 		if($language=='de'){
 			$this->assign('templates', $de_templates);
