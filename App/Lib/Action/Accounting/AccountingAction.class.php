@@ -883,6 +883,13 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurShippingFee = $eurShippingFee+$amountCM['amount'];
         			}
+        		}elseif($transactionType=='Order Payment' && $paymentType=='Other' && $paymentDetail=='Gift wrap'){
+        			if($amountCM['currency']=='usd'){
+        				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
+        			}
         		}elseif($transactionType=='Order Payment' && $paymentType=='Other' && $paymentDetail=='Shipping tax'){
         			if($amountCM['currency']=='usd'){
         				$usdTaxCollection = $usdTaxCollection+$amountCM['amount'];
