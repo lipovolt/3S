@@ -1057,25 +1057,25 @@ class GgsUsswSaleAction extends CommonAction{
 		$monthlyStorageFee = ($l*$w*$h)/1000000*1.2*30;
 		$itemInOutFee = 0;
 		if($weight>0 And $weight <= 500){
-			$itemInOutFee = 0.18 + 0.05;
+			$itemInOutFee = 0.12 + 0.18 + 0.05;
 		}
 		elseif($weight>500 and $weight <= 1000){
-			$itemInOutFee = 0.25 + 0.06;
+			$itemInOutFee = 0.12 + 0.25 + 0.06;
 		}
 		elseif($weight>1000 and $weight <= 2000){
-			$itemInOutFee = 0.51 + 0.09;
+			$itemInOutFee = 0.12 + 0.51 + 0.09;
 		}
 		elseif($weight>2000 and $weight <= 10000){
-			$itemInOutFee = 0.65 + 0.18;
+			$itemInOutFee = 0.15 + 0.65 + 0.18;
 		}
 		elseif($weight>10000 and $weight <= 20000){
-			$itemInOutFee = 1.37 + 0.27;
+			$itemInOutFee = 0.2 + 1.37 + 0.27;
 		}
 		elseif($weight>20000 and $weight <= 30000){
-			$itemInOutFee = 1.82 + 0.36;
+			$itemInOutFee = 0.35 + 1.82 + 0.36;
 		}
 		elseif((1.82 + (round(($weight - 30000) / 10000) + 1) * 0.91 + 0.36 + (round((weight - 30000) / 10000) + 1) * 0.18) < (18.2 + 1.8) ){
-			$itemInOutFee = 1.82 + (round((weight - 30000) / 10000) + 1) * 0.91 + 0.36 + (round((weight - 30000) / 10000) + 1) * 0.18;
+			$itemInOutFee = 1.82 + (round((weight - 30000) / 10000) + 1) * 0.91 + 0.36 + (round((weight - 30000) / 10000) + 1) * (0.18+0.12);
 		}
 		else{
 			$itemInOutFee = 18.2 + 1.8;
