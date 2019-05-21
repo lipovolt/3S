@@ -626,7 +626,7 @@ class OutboundAction extends CommonAction{
 
                 for($i=2;$i<=$highestRow;$i++){
                     $saleNo = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
-                    $sku = $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
+                    $sku = $objPHPExcel->getActiveSheet()->getCell("BC".$i)->getValue();
                     //判断amazon订单号是否已存在
                     if($this->duplicateSaleNo($market,$sellerID,$saleNo)){
                         //ebay订单号在出库表中，添加错误信息
@@ -644,13 +644,13 @@ class OutboundAction extends CommonAction{
                         }
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_MARKET')] = 'groupon';
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_SELLER_ID')] = $sellerID;
-                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_NAME')] = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
-                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')] = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
-                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ADDRESS2')] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
-                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_CITY')] = $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
-                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_STATE')] = $objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
-                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ZIP')] = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
-                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_COUNTRY')] = $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_NAME')] = $objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')] = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ADDRESS2')] = $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_CITY')] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_STATE')] = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ZIP')] = $objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_COUNTRY')] = $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
                         $j=$j+1;
                         if($sku!=''){
                             //如果sku不为空，首先按照|拆分sku,然后按照*拆分sku和quantity.
@@ -663,11 +663,11 @@ class OutboundAction extends CommonAction{
                                 $skuQuantityDepart = explode("*",$departedSku);
                                 if(count($skuQuantityDepart)==1){
                                     $departedSkuQuantity[$indexForDepartedSkuQuantity]['sku'] = $skuQuantityDepart[0];
-                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['quantity'] = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['quantity'] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
                                     $indexForDepartedSkuQuantity = $indexForDepartedSkuQuantity+1;
                                 }else{
                                     $departedSkuQuantity[$indexForDepartedSkuQuantity]['sku'] = $skuQuantityDepart[0];
-                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['quantity'] = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()*$skuQuantityDepart[1];
+                                    $departedSkuQuantity[$indexForDepartedSkuQuantity]['quantity'] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue()*$skuQuantityDepart[1];
                                     $indexForDepartedSkuQuantity = $indexForDepartedSkuQuantity+1;
                                 }
                             }
@@ -683,7 +683,7 @@ class OutboundAction extends CommonAction{
                                     $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_POSITION')] = $positions;
                                     $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_SKU')]=$departedSkuQuantityValue['sku'];
                                     $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')]=$departedSkuQuantityValue['quantity'];
-                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("BD".$i)->getValue();
                                     $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
                                     $k=$k+1; 
                                 }
@@ -899,7 +899,7 @@ class OutboundAction extends CommonAction{
     }
 
     private function verifyImportedGrouponOrderColumnName($firstRow){
-        for($c='A';$c<='N';$c++){
+        for($c='A';$c<=max(array_keys(C('IMPORT_GROUPON_UNSHIPPED_ORDER')))-1;$c++){
             if(trim($firstRow[$c]) != C('IMPORT_GROUPON_UNSHIPPED_ORDER')[$c]){
                 return false;
             }

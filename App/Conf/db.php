@@ -250,7 +250,7 @@ return array(
 	create table if not exists `3s_ussw_outbound`(
 	`id` smallint(10) unsigned primary key not null auto_increment,
 	`market` varchar(10) default null,
-	`market_no` varchar(20) default null,
+	`market_no` varchar(30) default null,
 	`status` varchar(10) default null,
 	`shipping_company` varchar(20),
 	`shipping_way` varchar(30) default null,
@@ -299,8 +299,8 @@ return array(
 	`sku` varchar(10) default null,
 	`position` varchar(10) default null,
 	`quantity` smallint(3) default 0,
-	`market_no` varchar(20) default null,
-	`transaction_no` varchar(20) default null
+	`market_no` varchar(30) default null,
+	`transaction_no` varchar(30) default null
 	) engine=myisam default charset=utf8;
 	*/
 	'DB_USSW_OUTBOUND_ITEM' => 'ussw_outbound_item',
