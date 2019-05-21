@@ -98,15 +98,15 @@ class amazonUsStorageAction extends CommonAction{
                 $storage=M(C('DB_AMAZON_US_STORAGE'));
                 $storage->startTrans();
                 for($i=2;$i<=$highestRow;$i++){
-                    $product=$storage->where(array(C('DB_WINIT_DE_STORAGE_SKU')=>$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue()))->find();
+                    $product=$storage->where(array(C('DB_WINIT_DE_STORAGE_SKU')=>$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue()))->find();
                     if($product!==null && $product!==false){
-                        $product[C('DB_WINIT_DE_STORAGE_AINVENTORY')]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
-                        $product[C('DB_AMAZON_US_STORAGE_IINVENTORY')]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue()+$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()+$objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
+                        $product[C('DB_WINIT_DE_STORAGE_AINVENTORY')]=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
+                        $product[C('DB_AMAZON_US_STORAGE_IINVENTORY')]=$objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue()+$objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue()+$objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
                         $storage->save($product);
                     }else{
-                        $product[C('DB_WINIT_DE_STORAGE_SKU')]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
-                        $product[C('DB_WINIT_DE_STORAGE_AINVENTORY')]=$objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
-                        $product[C('DB_AMAZON_US_STORAGE_IINVENTORY')]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue()+$objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue()+$objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
+                        $product[C('DB_WINIT_DE_STORAGE_SKU')]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+                        $product[C('DB_WINIT_DE_STORAGE_AINVENTORY')]=$objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
+                        $product[C('DB_AMAZON_US_STORAGE_IINVENTORY')]=$objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue()+$objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue()+$objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
                         $storage->add($product);
                     }
                     $product=null;
@@ -122,7 +122,7 @@ class amazonUsStorageAction extends CommonAction{
     }
 
     private function verifyAmazonUsStorageColumnName($firstRow){
-        for($c='A';$c<='S';$c++){
+        for($c='A';$c<=max(array_keys(C('IMPORT_AMAZON_US_STORAGE')))-1;$c++){
             if(trim($firstRow[$c]) != C('IMPORT_AMAZON_US_STORAGE')[$c]){
                 return false;
             }
