@@ -27,6 +27,20 @@ function saveSingle(Obj){
 	form.action="{:U('Sale/GgsUsswSale/updateUsswSalePlanSingle',array('account'=>$account))}?kw="+kw+"&kwv="+kwv+"&id="+Obj+"&salePrice="+salePrice+"&status="+status;	
 	form.submit();
 }
+function deleteSingle(Obj){	
+	if(confirm("确认要删除这个销售建议么？")){
+		var kw = document.getElementById('keyword').value;
+		var kwv = document.getElementById('keywordValue').value;
+		var salePrice = document.getElementById('sale_price-'+Obj).value;
+		if(document.getElementById('status-'+Obj).checked){
+			var status = 1;
+		}else{
+			var status = 0;
+		}
+		form.action="{:U('Sale/GgsUsswSale/deleteSingelSuggest',array('account'=>$account))}?kw="+kw+"&kwv="+kwv+"&id="+Obj;	
+		form.submit();
+	}
+}
 function  cli(Obj){
 	var collid = document.getElementById("all");
 	var coll = document.getElementsByName(Obj);
@@ -75,10 +89,6 @@ function bModify(){
 			alert('请选择需要批量修改的建议！');
 		}
 	}	
-}
-function exportSaleSuggestTable(suggest){
-	form.action="{:U('Sale/GgsUsswSale/exportSaleSuggestTable')}?suggest="+suggest;
-	form.submit();
 }
 </script>
 </head>
@@ -200,6 +210,7 @@ function exportSaleSuggestTable(suggest){
 							<a href="{:U('Sale/GgsUsswSale/confirmSuggest',array('account'=>$account,'id'=>$vo['id']))}">已修改</a>
 							<a href="{:U('Sale/GgsUsswSale/ignoreSuggest',array('account'=>$account,'id'=>$vo['id']))}">忽略</a>
 							<a href="#" onclick="saveSingle({$vo[C('DB_USSW_SALE_PLAN_ID')]})">保存</a>
+							<a href="#" onclick="deleteSingle({$vo[C('DB_USSW_SALE_PLAN_ID')]})">删除</a>
 						</td>
 						</tr>	
 					</volist> 								

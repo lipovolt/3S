@@ -63,8 +63,13 @@ class GgsUsswSaleAction extends CommonAction{
 
 	private function calUsswSaleInfoHandle($account){
 		import('ORG.Util.Date');// 导入日期类
-		$Date = new Date();
-		$usswProduct = M(C('DB_USSTORAGE'))->distinct(true)->field(C('DB_USSTORAGE_SKU'))->select();
+		$Date = new Date();		
+		$ormap[C('DB_USSTORAGE_AINVENTORY')] = array('gt',0);
+		$ormap[C('DB_USSTORAGE_IINVENTORY')] = array('gt',0);
+		$ormap['_logic'] = 'or';
+		$map['_complex'] = $ormap;
+		$map[C('DB_PRODUCT_TOUS')] = array('neq','no');
+		$usswProduct = M(C('DB_USSTORAGE'))->alias('usst')->join('lipovolt_3s_'.C('DB_PRODUCT').' p'.' ON '.'usst.sku=p.sku')->where($map)->distinct(true)->field('usst.'.C('DB_USSTORAGE_SKU'))->select();
 		$salePlanTable = M($this->getSalePlanTableName($account));
 		if($salePlanTable==null){
 			$this->error("无法找到匹配的销售表！");
@@ -400,6 +405,20 @@ class GgsUsswSaleAction extends CommonAction{
 			
 			$this->calUsswSaleInfoHandleSingle($account, $id);
 		}
+		if($kwv==null){
+			$this->success('保存成功');
+		}else{
+			$this->success('修改已保存',U('usswSaleSuggest',array('account'=>$account,'kw'=>$kw,'kwv'=>$kwv)));
+		}		
+	}
+
+	public function deleteSingelSuggest($account, $kw=null,$kwv=null, $id){
+		$data=null;
+		$salePlanTable = M($this->getSalePlanTableName($account));
+		if($salePlanTable==null){
+			$this->error('无法找到匹配的销售表！');
+		}
+		$salePlanTable->delete($id);
 		if($kwv==null){
 			$this->success('保存成功');
 		}else{
@@ -2863,7 +2882,6 @@ class GgsUsswSaleAction extends CommonAction{
 
     public function exportSaleSuggestTable($account){
     	$Data = D($this->getSalePlanViewModel($account));
-        import('ORG.Util.Page');
         $suggest = $Data->order(C('DB_USSW_SALE_PLAN_SKU'))->select();
         foreach ($suggest as $key => $value) {
         	$suggest[$key]['profit'] = round(($value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')]),2);
