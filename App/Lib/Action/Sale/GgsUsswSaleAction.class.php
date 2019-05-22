@@ -2860,6 +2860,32 @@ class GgsUsswSaleAction extends CommonAction{
     	else
     		return false;    		
     }
+
+    public function exportSaleSuggestTable($account){
+    	$Data = D($this->getSalePlanViewModel($account));
+        import('ORG.Util.Page');
+        $suggest = $Data->order(C('DB_USSW_SALE_PLAN_SKU'))->select();
+        foreach ($suggest as $key => $value) {
+        	$suggest[$key]['profit'] = round(($value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')]),2);
+        	$suggest[$key]['grate'] = round(($value[C('DB_USSW_SALE_PLAN_PRICE')] - $value[C('DB_USSW_SALE_PLAN_COST')]) / $value[C('DB_USSW_SALE_PLAN_PRICE')]*100,2);
+        }
+        $xlsCell  = array(
+	        array('sku','SKU'),
+	        array('first_sale_date','first_sale_date'),
+	        array('last_modify_date','last_modify_date'),
+	        array('relisting_times','relisting_times'),
+	        array('price_note','price_note'),
+	        array('cost','cost'),
+	        array('sale_price','sale_price'),
+	        array('suggested_price','suggested_price'),
+	        array('suggest','suggest'),
+	        array('status','status'),
+	        array('cname','cname'),
+	        array('profit','profit'),
+	        array('grate','grate')
+	        );
+        $this->exportExcel($account.'SaleSuggestTable',$xlsCell,$suggest);
+    }
 }
 
 ?>
