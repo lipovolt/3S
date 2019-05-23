@@ -2904,6 +2904,20 @@ class GgsUsswSaleAction extends CommonAction{
 	        );
         $this->exportExcel($account.'SaleSuggestTable',$xlsCell,$suggest);
     }
+
+   /* private function deleteNotInSaleSuggest($account){
+    	$salePlanTableName = $this->getSalePlanTableName($account);
+		$Model = new Model();
+		$psubquery = $Model->table('lipovolt_3s_'.C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_TOUS')=>'无'))->buildSql();
+		$usstsubquery = $Model->table('lipovolt_3s_'.C('DB_USSTORAGE'))->where(array(array(C('DB_USSTORAGE_AINVENTORY')=>0),array(C('DB_USSTORAGE_IINVENTORY')=>0)))->buildSql();
+		$szstsubquery = $Model->table('lipovolt_3s_'.C('DB_SZSTORAGE'))->where(array(C('DB_SZSTORAGE_AINVENTORY')=>0))->buildSql();
+		$subrmap[C('DB_RESTOCK_WAREHOUSE')] = array('in',array('美自建仓','万邑通美西'));
+		$subrmap[C('DB_RESTOCK_STATUS')] = array('not in',array('待发货','延迟返货'));
+		$rsubquery = $Model->table('lipovolt_3s_'.C('DB_RESTOCK'))->where($subrmap)->buildSql();
+		$tet = $Model->query('select '. 'distinct(sptn.sku) from '.'lipovolt_3s_'.$salePlanTableName.' sptn,'.$psubquery.' p,'.$usstsubquery.' usst,'.$szstsubquery.' szst,'.$rsubquery.' r where p.sku=sptn.sku AND usst.sku=sptn.sku AND szst.sku=sptn.sku AND r.sku=sptn.sku');
+		dump($tet);
+		dump($Model->getLastSql());die;
+    }*/
 }
 
 ?>
