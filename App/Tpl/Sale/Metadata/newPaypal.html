@@ -1,0 +1,240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>
+	<if condition="$paypal eq null">新增PayPal
+			<else /> 编辑PayPal
+			</if>
+</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript">
+	function check(){
+		if(document.getElementById('email1_id').value == 0){
+			alert('请选择主账号');
+			return false;
+		}else{
+			if(document.getElementById('email2_id').value != 0){
+				if(document.getElementById('email1_id').value == document.getElementById('email2_id').value){
+					alert('主账号和账号2重复！');
+					return false;
+				}
+				if(document.getElementById('email3_id').value != 0){
+					if(document.getElementById('email2_id').value == document.getElementById('email3_id').value){
+						alert('账号2和账号3重复！');
+						return false;
+					}else if(document.getElementById('email1_id').value == document.getElementById('email3_id').value){
+						alert('账号1和账号3重复！');
+						return false;
+					}
+				}
+			}else{
+				if(document.getElementById('email3_id').value != 0){
+					alert('账号2未填，不能填写账号3！');
+					return false;
+				}
+			}
+		}
+
+		if(document.getElementById('bank1_id').value ==0){
+			if(document.getElementById('bank2_id').value !=0){
+				alert('银行1未填不能填银行2！');
+				return false;
+			}
+			if(document.getElementById('bank3_id').value !=0){
+				alert('银行1未填不能填银行3！');
+				return false;
+			}
+		}else{
+			if(document.getElementById('bank2_id').value !=0){
+				if(document.getElementById('bank1_id').value == document.getElementById('bank2_id').value){
+					alert('银行1和银行2重复！');
+					return false;
+				}
+				if(document.getElementById('bank3_id').value !=0){
+					if(document.getElementById('bank1_id').value == document.getElementById('bank3_id').value){
+						alert('银行1和银行3重复！');
+						return false;
+					}
+					if(document.getElementById('bank2_id').value == document.getElementById('bank3_id').value){
+						alert('银行2和银行3重复！');
+						return false;
+					}
+				}
+			}else{
+				if(document.getElementById('bank3_id').value !=0){
+					alert('银行2未填不能填银行3！');
+					return false;
+				}
+			}
+		}
+		if(document.getElementById('password').value == ''){
+			alert('密码未填写');
+			return false;
+		}
+		return true;
+	}
+</script>
+</head>
+<body>
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>基本信息</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/adminMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<if condition="$paypal eq null"><form method="POST" id="edit_productInfo" action="{:U('Sale/Metadata/addPaypal')}">
+			<else /><form method="POST" id="edit_productInfo" action="{:U('Sale/Metadata/updatePaypal')}">
+		</if>
+		<div class="inline-block block-indent">
+			<div class="form-group">
+				<label for="creater" class="control-label">主账户：</label>
+				<div class="control-wrap">
+					<select name="email1_id"  id="email1_id">
+						<option value="0">请选择</option>
+						<volist name="email" id="vo">
+							<if condition="($paypal[C('DB_PAYPAL_ID')] eq $vo[C('DB_SELLER_EMAIL_PID')]) and ($vo[C('DB_SELLER_EMAIL_POFFSET')] eq 2)"> <option value="{$vo[C('DB_SELLER_EMAIL_ID')]}" selected="">{$vo[C('DB_SELLER_EMAIL_EMAIL')]}</option>
+							<else /> <option value="{$vo[C('DB_SELLER_EMAIL_ID')]}">{$vo[C('DB_SELLER_EMAIL_EMAIL')]}</option>
+							</if>											
+						</volist> 	
+					</select>
+					<input type="hidden" name="{:C('DB_PAYPAL_ID')}" value="{$paypal[C('DB_PAYPAL_ID')]}" id="{:C('DB_PAYPAL_ID')}"/>							 	
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">账户2：</label>
+				<div class="control-wrap">
+					<select name="email2_id"  id="email2_id">
+						<option value="0">请选择</option>
+						<volist name="email" id="vo">
+							<if condition="($paypal[C('DB_PAYPAL_ID')] eq $vo[C('DB_SELLER_EMAIL_PID')]) and ($vo[C('DB_SELLER_EMAIL_POFFSET')] eq 1)"> <option value="{$vo[C('DB_SELLER_EMAIL_ID')]}" selected="">{$vo[C('DB_SELLER_EMAIL_EMAIL')]}</option>
+							<else /> <option value="{$vo[C('DB_SELLER_EMAIL_ID')]}">{$vo[C('DB_SELLER_EMAIL_EMAIL')]}</option>
+							</if>											
+						</volist> 	
+					</select>							 	
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">账户3：</label>
+				<div class="control-wrap">
+					<select name="email3_id"  id="email3_id">
+						<option value="0">请选择</option>
+						<volist name="email" id="vo">
+							<if condition="($paypal[C('DB_PAYPAL_ID')] eq $vo[C('DB_SELLER_EMAIL_PID')]) and ($vo[C('DB_SELLER_EMAIL_POFFSET')] eq 1)"> <option value="{$vo[C('DB_SELLER_EMAIL_ID')]}" selected="">{$vo[C('DB_SELLER_EMAIL_EMAIL')]}</option>
+							<else /> <option value="{$vo[C('DB_SELLER_EMAIL_ID')]}">{$vo[C('DB_SELLER_EMAIL_EMAIL')]}</option>
+							</if>											
+						</volist> 	
+					</select>							 	
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">关联银行1：</label>
+				<div class="control-wrap">
+					<select name="bank1_id"  id="bank1_id">
+						<option value="0">请选择</option>
+						<volist name="bank" id="vo">
+							<if condition="($paypal neq null) and ($vo[C('DB_BANK_PID')] neq 0) and ($paypal[C('DB_PAYPAL_ID')] eq $vo[C('DB_BANK_PID')])"> <option value="{$vo[C('DB_BANK_ID')]}" selected="">{$vo[C('DB_BANK_HOLDER_NAME')]} {$vo[C('DB_BANK_ACCOUNT')]}</option>
+							<else /> <option value="{$vo[C('DB_BANK_ID')]}">{$vo[C('DB_BANK_HOLDER_NAME')]} {$vo[C('DB_BANK_ACCOUNT')]}</option>
+							</if>											
+						</volist> 	
+					</select>							 	
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">关联银行3：</label>
+				<div class="control-wrap">
+					<select name="bank2_id"  id="bank2_id">
+						<option value="0">请选择</option>
+						<volist name="bank" id="vo">
+							<if condition="($paypal neq null) and ($vo[C('DB_BANK_PID')] neq 0) and ($paypal[C('DB_PAYPAL_ID')] eq $vo[C('DB_BANK_PID')])"> <option value="{$vo[C('DB_BANK_ID')]}" selected="">{$vo[C('DB_BANK_HOLDER_NAME')]} {$vo[C('DB_BANK_ACCOUNT')]}</option>
+							<else /> <option value="{$vo[C('DB_BANK_ID')]}">{$vo[C('DB_BANK_HOLDER_NAME')]} {$vo[C('DB_BANK_ACCOUNT')]}</option>
+							</if>											
+						</volist> 	
+					</select>							 	
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">关联银行3：</label>
+				<div class="control-wrap">
+					<select name="bank3_id"  id="bank3_id">
+						<option value="0">请选择</option>
+						<volist name="bank" id="vo">
+							<if condition="($paypal neq null) and ($vo[C('DB_BANK_PID')] neq 0) and ($paypal[C('DB_PAYPAL_ID')] eq $vo[C('DB_BANK_PID')])"> <option value="{$vo[C('DB_BANK_ID')]}" selected="">{$vo[C('DB_BANK_HOLDER_NAME')]} {$vo[C('DB_BANK_ACCOUNT')]}</option>
+							<else /> <option value="{$vo[C('DB_BANK_ID')]}">{$vo[C('DB_BANK_HOLDER_NAME')]} {$vo[C('DB_BANK_ACCOUNT')]}</option>
+							</if>											
+						</volist> 	
+					</select>							 	
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">密码：</label>
+				<input style="width:260px;" name="{:C('DB_PAYPAL_PASSWORD')}" value="{$paypal[C('DB_PAYPAL_PASSWORD')]}" id="{:C('DB_PAYPAL_PASSWORD')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">状态：</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_PAYPAL_STATUS')}"  id="{:C('DB_PAYPAL_STATUS')}">
+						<if condition="($paypal[C('DB_PAYPAL_STATUS')] eq 1)"> 
+							<option value="1" selected>有效</option>
+							<option value="0" >无效</option>	
+						<else /> 
+							<option value="1">有效</option>
+							<option value="0" selected>无效</option>	
+						</if>													
+					</select>
+				</div>	
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">关联销售账号：</label>
+				<input style="width:260px;" name="seller" value="{$paypal['seller']}" id="seller" readonly="" />
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">Paypal 唯一标识：</label>
+				<input style="width:260px;" name="{:C('DB_PAYPAL_PID')}" value="{$paypal[C('DB_PAYPAL_PID')]}" id="{:C('DB_PAYPAL_PID')}" readonly="" />
+			</div>
+			<div class="item">
+				<div class="form-group">
+					<label for="task" class="control-label">备注：</label>
+					<div class="control-wrap">
+						<textarea  type="text"  id="{:C('DB_PAYPAL_REMARK')}" name="{:C('DB_PAYPAL_REMARK')}">{$paypal[C('DB_PAYPAL_REMARK')]}</textarea>
+					</div>
+				</div>
+			</div>				
+		</div>
+		<div class="item tc">
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">取消</a>
+			<button class="btn btn-blue btn-s" onclick="return check()"><if condition="$paypal eq null">新增<else />保存</if></button>
+		</div>
+	</form> 
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

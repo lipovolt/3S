@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>电子邮箱信息</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>基本信息</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/adminMenu.html" />	
+			</div>
+		</div>
+		<div class="content">
+	<div id="ProductInfo" class="main">
+		<div>
+			<div class="tab-content">	
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th width="66">索引</th>
+						<th><div class="tl">邮箱</div></th>
+						<th><div class="tl">密码</div></th>
+						<th><div class="tl">电话</div></th>
+						<th><div class="tl">关联paypal</div></th>
+						<th><div class="tl">是否paypal主账号</div></th>
+						<th><div class="tl">有效</div></th>
+						<th><div class="tl">备注</div></th>
+						<th><div class="tl">操作</div></th>
+					</tr>
+					<volist name="email" id="vo">
+						<tr>
+							<td><div class="tl">{$vo[C('DB_SELLER_EMAIL_ID')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_EMAIL_EMAIL')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_EMAIL_PASSWORD')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_EMAIL_TEL')]}</div></td>
+							<td><div class="tl">
+								<if condition="($vo[C('DB_SELLER_EMAIL_PID')] eq 0)"> 未关联
+									<else />已关联{$vo[C('DB_SELLER_EMAIL_PID')]}
+								</if>
+							</div></td>
+							<td><div class="tl">
+								<if condition="($vo[C('DB_SELLER_EMAIL_POFFSET')] eq 0) and ($vo[C('DB_SELLER_EMAIL_POFFSET')] eq 0)"> 未关联
+									<elseif condition="($vo[C('DB_SELLER_EMAIL_PID')] eq 1) and ($vo[C('DB_SELLER_EMAIL_POFFSET')] eq 1)"/>否
+									<else />是主账号
+								</if>
+							</div></td>
+							<td><div class="tl">
+								<if condition="($vo[C('DB_SELLER_EMAIL_STATUS')] eq 0)"> 无效
+									<else />有效
+								</if>
+							</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_EMAIL_REMARK')]}</div></td>
+							<td>
+							<a href="{:U('Sale/Metadata/newEmail',array('id'=>$vo['id']))}">编辑</a>
+						</td>
+						</tr>	
+					</volist> 								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+
+
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

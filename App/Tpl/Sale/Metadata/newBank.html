@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>
+	<if condition="$vo eq null">新增银行
+			<else /> 编辑银行
+			</if>
+</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript">
+	function check(){
+		if(document.getElementById('holder_name').value == ''){
+			alert('账号持有人未填写');
+			return false;
+		}
+		if(document.getElementById('account').value == ''){
+			alert('账号未填写');
+			return false;
+		}
+		if(document.getElementById('holder_tel').value == ''){
+			alert('电话未填写');
+			return false;
+		}
+		if(document.getElementById('bank_name').value == ''){
+			alert('开户行名称未填写');
+			return false;
+		}
+		return true;
+	}
+	window.onload=function(){
+	    holder_tel.onblur=function(){
+	    	if(document.getElementById('holder_tel').value!=''){
+	    		if(document.getElementById('holder_tel').value.length==11){
+					if(document.getElementById('holder_tel').value.substring(0,1)!=1){
+						alert('请输入正确的中国手机号');
+						document.getElementById('holder_tel').value='';
+					}
+					
+				}else{
+					if(document.getElementById('holder_tel').value.indexOf('-')==-1){
+						alert('中国手机号不带国家和区域代码。中国座机号格式按照“xxx-xxxxxxxx”填写。美国电话号码格式“xxx-xxx-xxxx”');
+						document.getElementById('holder_tel').value='';
+					}else{
+						var minArray = document.getElementById('holder_tel').value.split('-');
+						if(minArray.length==2){
+							if(minArray[0].length!=3 || minArray[0].length!=4 || minArray[1].length!=7 || minArray[1].length!=8){
+								alert('中国座机号格式按照“xxxx-xxxxxxxx”填写。');
+								document.getElementById('holder_tel').value='';
+							}
+						}
+						if(minArray.length==3){
+							if(minArray[0].length!=3 || minArray[1].length!=3 || minArray[2].length!=4){
+								alert('美国电话号码格式“xxx-xxx-xxxx”');
+								document.getElementById('holder_tel').value='';
+							}
+						}
+					}
+				}
+	    	}
+	    }
+	}
+
+</script>
+</head>
+<body>
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>基本信息</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/adminMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<if condition="$vo eq null"><form method="POST" id="edit_productInfo" action="{:U('Sale/Metadata/addBank')}">
+			<else /><form method="POST" id="edit_productInfo" action="{:U('Sale/Metadata/updateBank')}">
+		</if>
+		<div class="inline-block block-indent">
+			<div class="form-group">
+				<label for="creater" class="control-label">账户持有人：</label>
+				<if condition="$vo eq null"> <input style="width:260px;" name="{:C('DB_BANK_HOLDER_NAME')}" value="{$vo[C('DB_BANK_HOLDER_NAME')]}" id="{:C('DB_BANK_HOLDER_NAME')}"/>
+				<else /> <input style="width:260px;" name="{:C('DB_BANK_HOLDER_NAME')}" value="{$vo[C('DB_BANK_HOLDER_NAME')]}" id="{:C('DB_BANK_HOLDER_NAME')}" readonly="" />
+				</if>
+				<input type="hidden" name="{:C('DB_BANK_ID')}" value="{$vo[C('DB_BANK_ID')]}" id="{:C('DB_BANK_ID')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">银行电话：</label>
+				<input style="width:260px;" name="{:C('DB_BANK_HOLDER_TEL')}" value="{$vo[C('DB_BANK_HOLDER_TEL')]}" id="{:C('DB_BANK_HOLDER_TEL')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">账号：</label>
+				<input style="width:260px;" name="{:C('DB_BANK_ACCOUNT')}" value="{$vo[C('DB_BANK_ACCOUNT')]}" id="{:C('DB_BANK_ACCOUNT')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">开户行：</label>
+				<input style="width:260px;" name="{:C('DB_BANK_BNAME')}" value="{$vo[C('DB_BANK_BNAME')]}" id="{:C('DB_BANK_BNAME')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">开户行地址：</label>
+				<input style="width:260px;" name="{:C('DB_BANK_BADDRESS')}" value="{$vo[C('DB_BANK_BADDRESS')]}" id="{:C('DB_BANK_BADDRESS')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">开户行国家：</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_BANK_BCOUNTRY')}"  id="{:C('DB_BANK_BCOUNTRY')}">
+						<option value="cn" selected>中国</option>
+						<option value="us" >美国</option>							
+					</select>
+				</div>	
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">Swift：</label>
+				<input style="width:260px;" name="{:C('DB_BANK_SWIFT')}" value="{$vo[C('DB_BANK_SWIFT')]}" id="{:C('DB_BANK_SWIFT')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">网银账号：</label>
+				<input style="width:260px;" name="{:C('DB_BANK_OBA')}" value="{$vo[C('DB_BANK_OBA')]}" id="{:C('DB_BANK_OBA')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">网银密码：</label>
+				<input style="width:260px;" name="{:C('DB_BANK_OBPW')}" value="{$vo[C('DB_BANK_OBPW')]}" id="{:C('DB_BANK_OBPW')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">提现密码：</label>
+				<input style="width:260px;" name="{:C('DB_BANK_WITHDRAWAL')}" value="{$vo[C('DB_BANK_WITHDRAWAL')]}" id="{:C('DB_BANK_WITHDRAWAL')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">状态：</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_BANK_STATUS')}"  id="{:C('DB_BANK_STATUS')}">
+						<if condition="($vo[C('DB_BANK_STATUS')] eq 1)"> 
+							<option value="1" selected>有效</option>
+							<option value="0" >无效</option>	
+						<else /> 
+							<option value="1">有效</option>
+							<option value="0" selected>无效</option>	
+						</if>						
+					</select>
+				</div>	
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">关联paypal ID：</label>
+				<label for="creater" class="control-label">{$vo[C('DB_BANK_PID')]}</label>	
+			</div>
+			<div class="item">
+				<div class="form-group">
+					<label for="task" class="control-label">备注：</label>
+					<div class="control-wrap">
+						<textarea  type="text"  id="{:C('DB_BANK_REMARK')}" name="{:C('DB_BANK_REMARK')}">{$vo[C('DB_BANK_REMARK')]}</textarea>
+					</div>
+				</div>
+			</div>				
+		</div>
+		<div class="item tc">
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">取消</a>
+			<button class="btn btn-blue btn-s" onclick="return check()"><if condition="$vo eq null">新增<else />保存</if></button>
+		</div>
+	</form> 
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

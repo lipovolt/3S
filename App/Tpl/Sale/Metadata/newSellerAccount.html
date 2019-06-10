@@ -1,0 +1,311 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>新增销售账号</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+<script type="text/javascript">
+	function save(){
+		if(check()){
+			form.action="{:U('Sale/Metadata/addSellerAccount')}";
+			form.submit();
+		}
+	}
+	function refresh(){
+		form.action="{:U('Sale/Metadata/newSellerAccount')}";
+		form.submit();			
+	}	
+	function check(){
+		if(document.getElementById('platform').value == ''){
+			alert('平台未填写');
+			return false;
+		}
+		if(document.getElementById('account').value == ''){
+			alert('账号未填写');
+			return false;
+		}
+		if(document.getElementById('password').value == ''){
+			alert('密码未填写');
+			return false;
+		}
+		if(document.getElementById('tel').value == ''){
+			alert('电话未填写');
+			return false;
+		}
+		if(document.getElementById('holder_name').value == ''){
+			alert('持有人未填写');
+			return false;
+		}
+		if(document.getElementById('email_id').value == 0){
+			alert('邮箱未填写');
+			return false;
+		}
+		if(document.getElementById('address').value == ''){
+			alert('地址未填写');
+			return false;
+		}
+		return true;
+	}
+
+	window.onload=function(){
+	    tel.onblur=function(){
+	    	if(document.getElementById('tel').value!=''){
+	    		if(document.getElementById('tel').value.length==11){
+					if(document.getElementById('tel').value.substring(0,1)!=1){
+						alert('请输入正确的中国手机号');
+						document.getElementById('tel').value='';
+					}
+					
+				}else{
+					if(document.getElementById('tel').value.indexOf('-')==-1){
+						alert('中国手机号不带国家和区域代码。中国座机号格式按照“xxx-xxxxxxxx”填写。美国电话号码格式“xxx-xxx-xxxx”');
+						document.getElementById('tel').value='';
+					}else{
+						var minArray = document.getElementById('tel').value.split('-');
+						if(minArray.length==2){
+							if(minArray[0].length!=3 || minArray[0].length!=4 || minArray[1].length!=7 || minArray[1].length!=8){
+								alert('中国座机号格式按照“xxxx-xxxxxxxx”填写。');
+								document.getElementById('tel').value='';
+							}
+						}
+						if(minArray.length==3){
+							if(minArray[0].length!=3 || minArray[1].length!=3 || minArray[2].length!=4){
+								alert('美国电话号码格式“xxx-xxx-xxxx”');
+								document.getElementById('tel').value='';
+							}
+						}
+					}
+				}
+	    	}
+	    }
+	}
+
+</script>
+</head>
+<body>
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>基本信息</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/adminMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+	<div id="ProductInfo" class="main">
+		<form method="POST" id="form" name="form" action="#">
+		<div class="inline-block block-indent">
+			<div>
+				<div class="form-group">
+					<label for="creater" class="control-label">主账号：</label>
+					<div class="control-wrap">
+						<select name="{:C('DB_SELLER_ACCOUNT_MACCOUNT')}"  id="{:C('DB_SELLER_ACCOUNT_MACCOUNT')}" onblur="refresh()">
+							<option value="0">无主账户</option>
+							<volist name="available_main_account" id="vo">
+								<if condition="($seller_account[C('DB_SELLER_ACCOUNT_MACCOUNT')] eq $vo[C('DB_SELLER_ACCOUNT_ID')])"> <option value="{$vo[C('DB_SELLER_ACCOUNT_ID')]}" selected="">{$vo[C('DB_SELLER_ACCOUNT_PLATFORM')]} {$vo[C('DB_SELLER_ACCOUNT_ACCOUNT')]}</option>
+								<else /> <option value="{$vo[C('DB_SELLER_ACCOUNT_ID')]}">{$vo[C('DB_SELLER_ACCOUNT_PLATFORM')]} {$vo[C('DB_SELLER_ACCOUNT_ACCOUNT')]}</option>
+								</if>											
+							</volist> 	
+						</select>							 	
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">平台：</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_SELLER_ACCOUNT_PLATFORM')}"  id="{:C('DB_SELLER_ACCOUNT_PLATFORM')}">
+						<option value="">请选择</option>
+						<volist name="platform" id="vo">
+							<if condition="($seller_account[C('DB_SELLER_ACCOUNT_PLATFORM')] eq $vo[C('DB_SELLER_ACCOUNT_PLATFORM')])"> <option value="{$vo[C('DB_SELLER_ACCOUNT_PLATFORM')]}" selected="">{$vo[C('DB_SELLER_ACCOUNT_PLATFORM')]}</option>
+							<else /> <option value="{$vo[C('DB_SELLER_ACCOUNT_PLATFORM')]}">{$vo[C('DB_SELLER_ACCOUNT_PLATFORM')]}</option>
+							</if>											
+						</volist> 	
+					</select>	
+					<input type="hidden" name="{:C('DB_SELLER_ACCOUNT_ID')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_ID')]}" id="{:C('DB_SELLER_ACCOUNT_ID')}"/>							 	
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">平台网址：</label>
+				<div class="control-wrap">
+					<if condition="($seller_account eq null)">平台网址自动填写
+						<else />
+						<volist name="platform" id="vo">
+							<if condition="($seller_account[C('DB_SELLER_ACCOUNT_PLATFORM')] eq $vo[C('DB_SELLER_ACCOUNT_PLATFORM')])"> {$vo['url']}
+								</if>																
+						</volist> 
+					</if>								 	
+				</div>
+			</div>
+			<div>
+				<div class="form-group">
+					<label for="creater" class="control-label">账号：</label>
+					<input name="{:C('DB_SELLER_ACCOUNT_ACCOUNT')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_ACCOUNT')]}" id="{:C('DB_SELLER_ACCOUNT_ACCOUNT')}"/>
+				</div>
+				<div class="form-group">
+					<label for="creater" class="control-label">密码：</label>
+					<input name="{:C('DB_SELLER_ACCOUNT_PASSWORD')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_PASSWORD')]}" id="{:C('DB_SELLER_ACCOUNT_PASSWORD')}"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">持有人名字：</label>
+				<input name="{:C('DB_SELLER_ACCOUNT_HOLDER_NAME')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_HOLDER_NAME')]}" id="{:C('DB_SELLER_ACCOUNT_HOLDER_NAME')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">电子邮箱：</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_SELLER_ACCOUNT_EMAIL_ID')}"  id="{:C('DB_SELLER_ACCOUNT_EMAIL_ID')}">
+						<option value="0">请选择</option>
+						<volist name="email" id="vo">
+							<if condition="($seller_account[C('DB_SELLER_ACCOUNT_EMAIL_ID')] eq $vo[C('DB_SELLER_EMAIL_ID')])"> <option value="{$vo[C('DB_SELLER_EMAIL_ID')]}" selected="">{$vo[C('DB_SELLER_EMAIL_EMAIL')]}</option>
+							<else /> <option value="{$vo[C('DB_SELLER_EMAIL_ID')]}">{$vo[C('DB_SELLER_EMAIL_EMAIL')]}</option>
+							</if>											
+						</volist> 	
+					</select>							 	
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">地址：</label>
+				<input name="{:C('DB_SELLER_ACCOUNT_ADDRESS')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_ADDRESS')]}" id="{:C('DB_SELLER_ACCOUNT_ADDRESS')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">电话：</label>
+				<input name="{:C('DB_SELLER_ACCOUNT_TEL')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_TEL')]}" id="{:C('DB_SELLER_ACCOUNT_TEL')}"/>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">关联银行：</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_SELLER_ACCOUNT_BANK_ID')}"  id="{:C('DB_SELLER_ACCOUNT_BANK_ID')}">
+						<option value="0">请选择</option>
+						<volist name="bank" id="vo">
+							<if condition="($seller_account[C('DB_SELLER_ACCOUNT_BANK_ID')] eq $vo[C('DB_BANK_ID')])"> <option value="{$vo[C('DB_BANK_ID')]}" selected="">{$vo[C('DB_BANK_HOLDER_NAME')]} {$vo[C('DB_BANK_ACCOUNT')]}</option>
+							<else /> <option value="{$vo[C('DB_BANK_ID')]}">{$vo[C('DB_BANK_HOLDER_NAME')]} {$vo[C('DB_BANK_ACCOUNT')]}</option>
+							</if>											
+						</volist> 	
+					</select>							 	
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">Paypal ID：</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_PAYPAL_SELLER_ACCOUNT_PID')}"  id="{:C('DB_PAYPAL_SELLER_ACCOUNT_PID')}">
+						<option value="0">请选择</option>
+						<volist name="paypal" id="vop">
+							<if condition="($seller_account[C('DB_SELLER_ACCOUNT_PID')] eq $vop[C('DB_PAYPAL_ID')])"> <option value="{$vop[C('DB_PAYPAL_ID')]}" selected="">{$vop[C('DB_PAYPAL_ID')]} {$vop['email']} 
+								<volist name="bank" id="vob">
+									<if condition="($vop[C('DB_PAYPAL_BANK1_ID')] eq $vob[C('DB_BANK_ID')])">{$vob[C('DB_BANK_HOLDER_NAME')]}
+									</if>											
+								</volist> 
+							</option>
+							<else /> <option value="{$vop[C('DB_PAYPAL_ID')]}">{$vop[C('DB_PAYPAL_ID')]} {$vop['email']} 
+								<volist name="bank" id="vob">
+									<if condition="($vop[C('DB_PAYPAL_BANK1_ID')] eq $vob[C('DB_BANK_ID')])">{$vob[C('DB_BANK_HOLDER_NAME')]}
+									</if>											
+								</volist> 
+							</option>
+							</if>											
+						</volist> 	
+					</select>							 	
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="creater" class="control-label">状态：</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_SELLER_ACCOUNT_STATUS')}"  id="{:C('DB_SELLER_ACCOUNT_STATUS')}" style="width:80px;" >
+						<if condition="($seller_account[C('DB_SELLER_ACCOUNT_STATUS')] eq 1)"> 
+							<option value="1" selected>有效</option>
+							<option value="0" >无效</option>	
+						<else /> 
+							<option value="1">有效</option>
+							<option value="0" selected>无效</option>	
+						</if>													
+					</select>
+				</div>	
+				<div class="form-group">
+					<label for="creater" class="control-label">IP：</label>
+					<input style="width:160px;" name="{:C('DB_SELLER_ACCOUNT_IP')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_IP')]}" id="{:C('DB_SELLER_ACCOUNT_IP')}"/>
+				</div>
+				<label for="creater" class="control-label">Paypal是否要与销售账号为同一持有人：</label>
+				<div class="control-wrap">
+					<select name="{:C('DB_SELLER_ACCOUNT_SAME_PHOLDER')}"  id="{:C('DB_SELLER_ACCOUNT_SAME_PHOLDER')}" style="width:60px;" >
+						<if condition="($seller_account[C('DB_SELLER_ACCOUNT_SAME_PHOLDER')] eq 1)"> 
+							<option value="1" selected>是</option>
+							<option value="0" >否</option>	
+						<else /> 
+							<option value="1">是</option>
+							<option value="0" selected>否</option>	
+						</if>													
+					</select>
+				</div>
+			</div>
+			<div>
+				<div class="form-group">
+					<label for="creater" class="control-label">密保1：</label>
+					<input style="width:260px;" name="{:C('DB_SELLER_ACCOUNT_QUESTION1')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_QUESTION1')]}" id="{:C('DB_SELLER_ACCOUNT_QUESTION1')}"/>
+				</div>
+				<div class="form-group">
+					<label for="creater" class="control-label">答案1：</label>
+					<input style="width:260px;" name="{:C('DB_SELLER_ACCOUNT_ANSWER1')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_ANSWER1')]}" id="{:C('DB_SELLER_ACCOUNT_ANSWER1')}"/>
+				</div>
+			</div>
+			<div>
+				<div class="form-group">
+					<label for="creater" class="control-label">密保2：</label>
+					<input style="width:260px;" name="{:C('DB_SELLER_ACCOUNT_QUESTION2')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_QUESTION2')]}" id="{:C('DB_SELLER_ACCOUNT_QUESTION2')}"/>
+				</div>
+				<div class="form-group">
+					<label for="creater" class="control-label">答案2：</label>
+					<input style="width:260px;" name="{:C('DB_SELLER_ACCOUNT_ANSWER2')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_ANSWER2')]}" id="{:C('DB_SELLER_ACCOUNT_ANSWER2')}"/>
+				</div>
+			</div>
+			<div>
+				<div class="form-group">
+					<label for="creater" class="control-label">密保3：</label>
+					<input style="width:260px;" name="{:C('DB_SELLER_ACCOUNT_QUESTION3')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_QUESTION3')]}" id="{:C('DB_SELLER_ACCOUNT_QUESTION3')}"/>
+				</div>
+				<div class="form-group">
+					<label for="creater" class="control-label">答案3：</label>
+					<input style="width:260px;" name="{:C('DB_SELLER_ACCOUNT_ANSWER3')}" value="{$seller_account[C('DB_SELLER_ACCOUNT_ANSWER3')]}" id="{:C('DB_SELLER_ACCOUNT_ANSWER3')}"/>
+				</div>
+			</div>
+			<div class="item">
+				<div class="form-group">
+					<label for="task" class="control-label">备注：</label>
+					<div class="control-wrap">
+						<textarea  type="text"  id="{:C('DB_SELLER_ACCOUNT_REMARK')}" name="{:C('DB_SELLER_ACCOUNT_REMARK')}">{$seller_account[C('DB_SELLER_ACCOUNT_REMARK')]}</textarea>
+					</div>
+				</div>
+			</div>				
+		</div>
+		<div class="item tc">
+			<a class="btn btn-s btn-grey" href="javascript:history.back();">取消</a>
+			<button class="btn btn-blue btn-s" onclick="save();return false;">新增</button>
+		</div>
+	</form> 
+	</div>
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

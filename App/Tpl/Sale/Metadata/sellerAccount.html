@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>销售账号信息</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>基本信息</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/adminMenu.html" />	
+			</div>
+		</div>
+		<div class="content">
+	<div id="ProductInfo" class="main">
+		<div>
+			<div class="tab-content">	
+				<table id="tablelist" class="tablelist">
+					<tr>
+						<th width="66">索引</th>
+						<th><div class="tl">平台</div></th>
+						<th><div class="tl">账号</div></th>
+						<th><div class="tl">密码</div></th>
+						<th><div class="tl">状态</div></th>
+						<th><div class="tl">关联标签</div></th>
+						<th><div class="tl">密保1</div></th>
+						<th><div class="tl">答案1</div></th>
+						<th><div class="tl">密保2</div></th>
+						<th><div class="tl">答案2</div></th>
+						<th><div class="tl">密保3</div></th>
+						<th><div class="tl">答案3</div></th>
+						<th><div class="tl">备注</div></th>
+						<th><div class="tl">操作</div></th>
+					</tr>
+					<volist name="seller_account" id="vo">
+						<tr>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_ID')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_PLATFORM')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_ACCOUNT')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_PASSWORD')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_STATUS')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_RELATED_MARK')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_QUESTION1')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_ANSWER1')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_QUESTION2')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_ANSWER2')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_QUESTION3')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_ANSWER3')]}</div></td>
+							<td><div class="tl">{$vo[C('DB_SELLER_ACCOUNT_REMARK')]}</div></td>
+							<td>
+								<a href="{:U('Sale/Metadata/editSellerAccount',array('id'=>$vo['id']))}">编辑</a>
+							</td>
+						</tr>	
+					</volist> 								
+				</table>
+				<div class="result page" align="center">{$page}</div>
+			</div>
+		</div>
+	</div>
+
+
+	</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

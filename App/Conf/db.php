@@ -1754,6 +1754,175 @@ return array(
 	'DB_BLOCK_BUYER_BDATE' => 'block_date',
 
 	//block_buyer_constant
-	'DB_BLOCK_BUYER_PLATFORM_CONSTANT' =>array('amazon.com','ebay.com','ebay.de',),
+	'DB_BLOCK_BUYER_PLATFORM_CONSTANT' =>array('amazon.com','amazon.de','ebay.com','ebay.de','groupon.com'),
+
+
+	//bank
+	/*
+	create table if not exists `3s_bank`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`paypal_id` smallint(6) default 0,
+	`holder_name` varchar(50) not null,	
+	`holder_tel`  varchar(50) not null,
+	`account` varchar(50) not null,
+	`bank_name`  varchar(50) not null,
+	`bank_address`  varchar(250) default null,
+	`bank_country`  varchar(50) not null,
+	`bank_swift`  varchar(50) default null,
+	`online_banking_account`  varchar(50) default null,
+	`online_banking_pw`  varchar(50) default null,
+	`withdrawal_pw`  varchar(50) default null,
+	`status`  tinyint default 0,
+	`remark` varchar(250) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_BANK' => 'bank', 
+	'DB_BANK_ID' => 'id',
+	'DB_BANK_PID' => 'paypal_id',
+	'DB_BANK_HOLDER_NAME' => 'holder_name', 
+	'DB_BANK_HOLDER_TEL' => 'holder_tel',
+	'DB_BANK_ACCOUNT' => 'account',
+	'DB_BANK_BNAME' => 'bank_name',
+	'DB_BANK_BADDRESS' => 'bank_address',
+	'DB_BANK_BCOUNTRY' => 'bank_country',
+	'DB_BANK_SWIFT' => 'swift',
+	'DB_BANK_OBA' => 'online_banking_account',
+	'DB_BANK_OBPW' => 'online_banking_pw',
+	'DB_BANK_WITHDRAWAL' => 'withdrawal_pw',
+	'DB_BANK_STATUS' => 'status',
+	'DB_BANK_REMARK' => 'remark',
+
+	//Paypal
+	/*
+	create table if not exists `3s_paypal`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`pid` varchar(50) default null,
+	`password` varchar(50) not null,
+	`status` tinyint default 0,
+	`remark` varchar(250) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_PAYPAL' => 'paypal', 
+	'DB_PAYPAL_ID' => 'id',
+	'DB_PAYPAL_PID' => 'pid',
+	'DB_PAYPAL_PASSWORD' => 'password',
+	'DB_PAYPAL_STATUS' => 'status',
+	'DB_PAYPAL_REMARK' => 'remark',
+
+	//seller_account
+	/*
+	create table if not exists `3s_seller_account`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`platform` varchar(50) not null,
+	`main_account` smallint(6) default 0,
+	`account` varchar(50) not null,
+	`password`  varchar(50) not null,
+	`holder_name`  varchar(50) not null,
+	`email_id`  smallint(6) default null,
+	`bank_id`  smallint(6) default null,
+	`same_pholder`  tinyint default 0,
+	`address`  varchar(50) not null,
+	`tel`  varchar(50) not null,
+	`status`  tinyint default 0,
+	`question1` varchar(50) default null,
+	`answer1` varchar(50) default null,
+	`question2` varchar(50) default null,
+	`answer2` varchar(50) default null,
+	`question3` varchar(50) default null,
+	`answer3` varchar(50) default null,
+	`remark` varchar(250) default null,
+	`ip` varchar(20) default null,
+	`used_account` varchar(250) default null,
+	`used_holder_name`  varchar(250) default null,
+	`used_email_id`  varchar(250) default null,
+	`used_address`  varchar(500) default null,
+	`used_tel`  varchar(250) default null,
+	`used_bank_id`  varchar(250) default null,
+	`used_paypal_id`  varchar(250) default null,
+	`used_paypal_mail_id`  varchar(250) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_SELLER_ACCOUNT' => 'seller_account', 
+	'DB_SELLER_ACCOUNT_ID' => 'id',
+	'DB_SELLER_ACCOUNT_PLATFORM' => 'platform',
+	'DB_SELLER_ACCOUNT_MACCOUNT' => 'main_account',
+	'DB_SELLER_ACCOUNT_ACCOUNT' => 'account',
+	'DB_SELLER_ACCOUNT_PASSWORD' => 'password',
+	'DB_SELLER_ACCOUNT_HOLDER_NAME' => 'holder_name',
+	'DB_SELLER_ACCOUNT_EMAIL_ID' => 'email_id',
+	'DB_SELLER_ACCOUNT_BANK_ID' => 'bank_id',
+	'DB_SELLER_ACCOUNT_SAME_PHOLDER' => 'same_pholder',
+	'DB_SELLER_ACCOUNT_ADDRESS' => 'address', 
+	'DB_SELLER_ACCOUNT_TEL' => 'tel',
+	'DB_SELLER_ACCOUNT_STATUS' => 'status',
+	'DB_SELLER_ACCOUNT_QUESTION1' => 'question1',
+	'DB_SELLER_ACCOUNT_ANSWER1' => 'answer1',
+	'DB_SELLER_ACCOUNT_QUESTION2' => 'question2',
+	'DB_SELLER_ACCOUNT_ANSWER2' => 'answer2',
+	'DB_SELLER_ACCOUNT_QUESTION3' => 'question3',
+	'DB_SELLER_ACCOUNT_ANSWER3' => 'answer3',
+	'DB_SELLER_ACCOUNT_REMARK' => 'remark',
+	'DB_SELLER_ACCOUNT_IP' => 'ip',
+	'DB_SELLER_ACCOUNT_USED_ACCOUNT' => 'used_account',
+	'DB_SELLER_ACCOUNT_USED_HNAME' => 'used_holder_name',
+	'DB_SELLER_ACCOUNT_USED_EMAIL' => 'used_email',
+	'DB_SELLER_ACCOUNT_USED_TEL' => 'used_tel',
+	'DB_SELLER_ACCOUNT_USED_ADDRESS' => 'used_address',
+	'DB_SELLER_ACCOUNT_USED_BID' => 'used_bank_id',
+	'DB_SELLER_ACCOUNT_USED_PID' => 'used_paypal_id',
+	'DB_SELLER_ACCOUNT_USED_PMAIL_ID' => 'used_paypal_mail_id',
+	'DB_SELLER_ACCOUNT_USED_CCARD' => 'used_credit_card',
+
+	//related_mark_constant
+	'DB_SELLER_ACCOUNT_RELATED_MARK_CONSTANT' =>array('liu_wei','sst_enterprise','wu_guanchen','yu_haolan'),
+
+	//paypal_seller_account
+	/*
+	create table if not exists `3s_paypal_seller_account`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`paypal_id` smallint(6) not null,
+	`seller_account_id` smallint(6) not null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_PAYPAL_SELLER_ACCOUNT' => 'paypal_seller_account', 
+	'DB_PAYPAL_SELLER_ACCOUNT_ID' => 'id',
+	'DB_PAYPAL_SELLER_ACCOUNT_PID' => 'paypal_id',
+	'DB_PAYPAL_SELLER_ACCOUNT_SAID' => 'seller_account_id',
+
+
+	//seller_email
+	/*
+	create table if not exists `3s_seller_email`(
+	`id` smallint(6) unsigned primary key not null auto_increment,
+	`email` varchar(50) not null,
+	`password` varchar(50) not null,
+	`tel` varchar(50) default null,
+	`paypal_id` smallint(6) default 0,
+	`paypal_offset` int(1) default 0,
+	`question1` varchar(50) default null,
+	`answer1` varchar(50) default null,
+	`question2` varchar(50) default null,
+	`answer2` varchar(50) default null,
+	`question3` varchar(50) default null,
+	`answer3` varchar(50) default null,
+	`status` tinyint default 0,
+	`remark` varchar(250) default null
+	) engine=myisam default charset=utf8;
+	*/
+	'DB_SELLER_EMAIL' => 'seller_email', 
+	'DB_SELLER_EMAIL_ID' => 'id',
+	'DB_SELLER_EMAIL_EMAIL' => 'email',
+	'DB_SELLER_EMAIL_PASSWORD' => 'password', 
+	'DB_SELLER_EMAIL_TEL' => 'tel',
+	'DB_SELLER_EMAIL_PID' => 'paypal_id',
+	'DB_SELLER_EMAIL_POFFSET' => 'paypal_offset',//2 main paypal account, 1 no main paypal account, 0 no paypal account
+	'DB_SELLER_EMAIL_QUESTION1' => 'question1',
+	'DB_SELLER_EMAIL_ANSWER1' => 'answer1',
+	'DB_SELLER_EMAIL_QUESTION2' => 'question2',
+	'DB_SELLER_EMAIL_ANSWER2' => 'answer2',
+	'DB_SELLER_EMAIL_QUESTION3' => 'question3',
+	'DB_SELLER_EMAIL_ANSWER3' => 'answer3',
+	'DB_SELLER_EMAIL_STATUS' => 'status',
+	'DB_SELLER_EMAIL_REMARK' => 'remark',
 	);
 ?>
