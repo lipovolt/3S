@@ -121,9 +121,10 @@ class MetadataAction extends CommonAction{
 	}
 
 	public function addEmail(){
-		$findEmail = M(C('DB_SELLER_EMAIL'))->where(array(C('DB_SELLER_EMAIL_EMAIL')=>$_POST['email']))->find();
+		$findEmail = M(C('DB_SELLER_EMAIL'))->where(array(C('DB_SELLER_EMAIL_EMAIL')=>$_POST[C('DB_SELLER_EMAIL_EMAIL')]))->find();
+
 		if($findEmail!==false && $findEmail!==null){
-			$this->error($_POST['email'].'已经在邮件列表里！');
+			$this->error($_POST[C('DB_SELLER_EMAIL_EMAIL')].'已经在邮件列表里！');
 		}else{
 			$return = M(C('DB_SELLER_EMAIL'))->add($_POST);
 			$this->redirect('email');
@@ -236,9 +237,10 @@ class MetadataAction extends CommonAction{
 
 			$newBankIds = array($_POST['bank1_id'],$_POST['bank2_id'],$_POST['bank3_id']);
 			$bank = M(C('DB_BANK'))->where(array(C('DB_BANK_PID')=>$_POST[C('DB_PAYPAL_ID')]))->select();
+			
 			foreach ($bank as $bkey => $bvalue) {
-				if(!in_array($bvalue, $newBankIds)){
-					$this->paypalStoppedBank($bvalue);
+				if(!in_array($bvalue[C('DB_BANK_ID')], $newBankIds)){
+					$this->paypalStoppedBank($bvalue[C('DB_BANK_ID')]);
 				}
 			}
 			foreach ($newBankIds as $nbvkey => $nbvalue) {
@@ -759,7 +761,7 @@ class MetadataAction extends CommonAction{
 		}elseif(M(C('DB_BANK'))->where(array(C('DB_BANK_PID')=>$seller[C('DB_PAYPAL_SELLER_ACCOUNT_PID')]))->getField(C('DB_BANK_HOLDER_NAME'))!=$seller[C('DB_SELLER_ACCOUNT_HOLDER_NAME')] && $seller[C('DB_SELLER_ACCOUNT_SAME_PHOLDER')]==1){
 			$this->error('关联的paypal银行账号持有人与销售账号持有人不一致！');
 			return false;
-		}elseif(!$this->haveAccountPaypalBankSameHolder($seller[C('DB_SELLER_ACCOUNT_BANK_ID')],$seller[C('DB_PAYPAL_SELLER_ACCOUNT_PID')],$seller[C('DB_SELLER_ACCOUNT_HOLDER_NAME')])){
+		}elseif(!$this->haveAccountPaypalBankSameHolder($seller[C('DB_SELLER_ACCOUNT_BANK_ID')],$seller[C('DB_PAYPAL_SELLER_ACCOUNT_PID')],$seller[C('DB_SELLER_ACCOUNT_HOLDER_NAME')]) && $seller[C('DB_SELLER_ACCOUNT_SAME_PHOLDER')]==1){
 			$this->error('paypal和银行持有人不一致！');
 			return false;
 		}else{
@@ -794,7 +796,7 @@ class MetadataAction extends CommonAction{
 		$map2[C('DB_SELLER_ACCOUNT_PLATFORM')]=array('like','%'.explode('.', $platform)[0].'%');
 		$map2[C('DB_SELLER_ACCOUNT_USED_BID')]=array('like','%'.$bank_id.'%');
 		$map['_complex'] = array($map1, $map2, '_logic' => 'or');
-		if(M(C('DB_SELLER_ACCOUNT'))->where($map)->find() == null){
+		if($bank_id==0 || M(C('DB_SELLER_ACCOUNT'))->where($map)->find() == null){
 			return false;
 		}else{
 			return true;
@@ -885,6 +887,7 @@ class MetadataAction extends CommonAction{
 			}
 			$sa[C('DB_SELLER_ACCOUNT_STATUS')] = $_POST[C('DB_SELLER_ACCOUNT_STATUS')];
 			$sa[C('DB_SELLER_ACCOUNT_SAME_PHOLDER')] = $_POST[C('DB_SELLER_ACCOUNT_SAME_PHOLDER')];
+			//$sa[C('DB_SELLER_ACCOUNT_TEL')] = $_POST[C('DB_SELLER_ACCOUNT_TEL')];
 			M(C('DB_SELLER_ACCOUNT'))->save($sa);
 			$this->redirect('sellerAccount');
 		}
@@ -901,7 +904,7 @@ class MetadataAction extends CommonAction{
 		if($old[C('DB_SELLER_ACCOUNT_BANK_ID')]!=$new[C('DB_SELLER_ACCOUNT_BANK_ID')] && $this->isUsedSellerBank($new[C('DB_SELLER_ACCOUNT_BANK_ID')])){
 			return '银行已被别的账号关联';
 		}
-		if(M(C('DB_BANK'))->where(array(C('DB_BANK_ID')=>$new[C('DB_SELLER_ACCOUNT_BANK_ID')]))->getField(C('DB_BANK_HOLDER_NAME'))!=$new[C('DB_SELLER_ACCOUNT_HOLDER_NAME')]){
+		if($new[C('DB_SELLER_ACCOUNT_BANK_ID')]>0 && M(C('DB_BANK'))->where(array(C('DB_BANK_ID')=>$new[C('DB_SELLER_ACCOUNT_BANK_ID')]))->getField(C('DB_BANK_HOLDER_NAME'))!=$new[C('DB_SELLER_ACCOUNT_HOLDER_NAME')]){
 			return '关联银行与销售账号持有人不一致！';
 		}
 		if($old[C('DB_SELLER_ACCOUNT_EMAIL_ID')]!=$new[C('DB_SELLER_ACCOUNT_EMAIL_ID')]){
