@@ -806,7 +806,7 @@ class GgsUsswSaleAction extends CommonAction{
     	$data['ussw-fee']=$this->calUsswSIOFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$data['way-to-us-fee']=$product[C('DB_PRODUCT_TOUS')]=="空运"?$this->getUsswAirFirstTransportFee($product[C('DB_PRODUCT_WEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]):$this->getUsswSeaFirstTransportFee($product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')]);
     	$data['local-shipping-fee1']=$this->getFBAShippingWayFee($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_LENGTH')],$product[C('DB_PRODUCT_WIDTH')],$product[C('DB_PRODUCT_HEIGHT')])[1];
-    	$data['transportToFbaFee'] = 0.5*$product[C('DB_PRODUCT_PWEIGHT')]/1000;
+    	$data['transportToFbaFee'] = 0.8*$product[C('DB_PRODUCT_PWEIGHT')]/1000;
 		
 		$salePlan = $salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
 		if($sale_price!=null){
@@ -1616,20 +1616,20 @@ class GgsUsswSaleAction extends CommonAction{
 	private function getFBAShippingWayFee($weight,$l,$w,$h){
 		if($this->isSmallStandardSize($weight,$l,$w,$h)){
 			return array('Small Standard', 2.48);
-		}elseif($this->isLargeStandardSize($weight,$l,$w,$h) && $weigh*0.0022046<1){
+		}elseif($this->isLargeStandardSize($weight,$l,$w,$h) && ($weight*0.0022046)<1){
 			return array('Large Standard', 3.28);
-		}elseif ($this->isLargeStandardSize($weight,$l,$w,$h) && $weigh*0.0022046<2) {
+		}elseif ($this->isLargeStandardSize($weight,$l,$w,$h) && ($weight*0.0022046)<2) {
 			return array('Large Standard',4.76);
 		}elseif($this->isLargeStandardSize($weight,$l,$w,$h)){
-			return array('Large Standard', 5.26+ceil($weigh*0.0022046-2)*0.38);
+			return array('Large Standard', 5.26+ceil($weight*0.0022046-2)*0.38);
 		}elseif ($this->isSmallOverSize($weight,$l,$w,$h)) {
-			return array('Small Oversize', 8.26+ceil($weigh*0.0022046-2)*0.38);
+			return array('Small Oversize', 8.26+ceil($weight*0.0022046-2)*0.38);
 		}elseif ($this->isMediumOverSize($weight,$l,$w,$h)) {
-			return array('Medium Oversize', 9.79+ceil($weigh*0.0022046-2)*0.38);
+			return array('Medium Oversize', 9.79+ceil($weight*0.0022046-2)*0.38);
 		}elseif ($this->isLargeOverSize($weight,$l,$w,$h)) {
-			return array('Large Oversize', 75.58+ceil($weigh*0.0022046-2)*0.79);
+			return array('Large Oversize', 75.58+ceil($weight*0.0022046-2)*0.79);
 		}elseif ($this->isSpecialOverSize($weight,$l,$w,$h)) {
-			return array('Special Oversize', 137.32+ceil($weigh*0.0022046-2)*0.91);
+			return array('Special Oversize', 137.32+ceil($weight*0.0022046-2)*0.91);
 		}else{
 			return array('No way', 65536);
 		}
