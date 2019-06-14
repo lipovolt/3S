@@ -1486,7 +1486,7 @@ class SzSaleAction extends CommonAction{
 
 	                	
 	            		if($product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!=null && ($product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无' || $product->where(array(C('DB_PRODUCT_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_PRODUCT_TOUS'))!='无')){
-	            			$data[$j][$firstRow['H']]=20;
+	            			$data[$j][$firstRow['H']]=10;
 	            			
 							/*//按照实际库存更新在线listing数量。
 	            			$data[$j][$firstRow['H']]=$storageTable->where(array(C('DB_SZSTORAGE_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_SZSTORAGE_AINVENTORY'))>0?$storageTable->where(array(C('DB_SZSTORAGE_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_SZSTORAGE_AINVENTORY')):0;*/
