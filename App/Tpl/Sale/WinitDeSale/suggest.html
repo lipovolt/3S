@@ -149,6 +149,7 @@ function bModify(){
 				<input class="btn btn-s btn-blue" type="button" onclick="bIgnore()" value="批量忽略（选择的建议）" style="width:200px;"/>
 				<input class="btn btn-s btn-blue" type="button" onclick="bModify()" value="批量已修改（选择的建议）" style="width:200px;"/>
 				<a class="btn btn-s btn-blue" type="button" href="{:U('Sale/WinitDeSale/updateSalePrice',array('market'=>$market,'account'=>$account))}">批量更新售价</a>
+				<a class="btn btn-s btn-blue" type="button" href="{:U('Sale/WinitDeSale/exportSaleSuggestTable',array('account'=>$account))}">导出表格</a>
 				<table id="tablelist" class="tablelist">
 					<tr>
 						<th><div class="tl">
