@@ -157,7 +157,9 @@ class WinitDeSaleAction extends CommonAction{
     		
     		$sFee=$this->getWinitLocalShippingFee($value[C('DB_YZHAN_816_PL_SALE_PLAN_COST')],$p[C('DB_PRODUCT_PWEIGHT')]==0?$p[C('DB_PRODUCT_WEIGHT')]:$p[C('DB_PRODUCT_PWEIGHT')],$p[C('DB_PRODUCT_PLENGTH')],$p[C('DB_PRODUCT_PWIDTH')],$p[C('DB_PRODUCT_PHEIGHT')]);
     		$sPrice = $this->getWinitEbayISP($pPrice,$tariff,$wFee,$tFee,$sFee)*1.05;
-			$salePlan->where(array(C('DB_YZHAN_816_PL_SALE_PLAN_ID')=>$value[C('DB_YZHAN_816_PL_SALE_PLAN_ID')]))->setField(C('DB_YZHAN_816_PL_SALE_PLAN_PRICE'),$sPrice);
+    		if($value[C('DB_YZHAN_816_PL_SALE_PLAN_PRICE')]<$sPrice){
+    			$salePlan->where(array(C('DB_YZHAN_816_PL_SALE_PLAN_ID')=>$value[C('DB_YZHAN_816_PL_SALE_PLAN_ID')]))->setField(C('DB_YZHAN_816_PL_SALE_PLAN_PRICE'),$sPrice);
+    		}			
 		}
 		$salePlan->commit();
 	}
