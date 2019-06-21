@@ -102,6 +102,9 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	public function suggest($account,$kw=null,$kwv=null){
+		/*if($account=='yzhan-816'){
+			$this->setNewSalePrice($account);
+		}*/
 		if($_POST['keyword']=="" && $kwv==null){
             $Data = D($this->getSalePlanViewModel($account));
             import('ORG.Util.Page');
@@ -138,6 +141,25 @@ class WinitDeSaleAction extends CommonAction{
         $this->assign('market',$this->getMarketByAccount($account));
         $this->assign('account',$account);
         $this->display();
+	}
+
+	private function setNewSalePrice($account){
+		$salePlan = M($this->getSalePlanTableName($account));
+		$product = M(C('DB_PRODUCT'));
+		$salePlan->startTrans();
+		$suggest = $salePlan->select();
+		foreach ($suggest as $key => $value) {
+			$p = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_YZHAN_816_PL_SALE_PLAN_SKU')]))->find();
+			$pPrice = $p[C('DB_PRODUCT_PRICE')];
+			$tariff = $p[C('DB_PRODUCT_DETARIFF')]/100;
+			$wFee=$this->calWinitSIOFee($p[C('DB_PRODUCT_PWEIGHT')],$p[C('DB_PRODUCT_PLENGTH')],$p[C('DB_PRODUCT_PWIDTH')],$p[C('DB_PRODUCT_PHEIGHT')]);
+    		$tFee=$p[C('DB_PRODUCT_TODE')]=="空运"?$this->getWinitAirFirstTransportFee($p[C('DB_PRODUCT_PWEIGHT')],$p[C('DB_PRODUCT_PLENGTH')],$p[C('DB_PRODUCT_PWIDTH')],$p[C('DB_PRODUCT_PHEIGHT')]):$this->getWinitSeaFirstTransportFee($p[C('DB_PRODUCT_PLENGTH')],$p[C('DB_PRODUCT_PWIDTH')],$p[C('DB_PRODUCT_PHEIGHT')]);
+    		
+    		$sFee=$this->getWinitLocalShippingFee($value[C('DB_YZHAN_816_PL_SALE_PLAN_COST')],$p[C('DB_PRODUCT_PWEIGHT')]==0?$p[C('DB_PRODUCT_WEIGHT')]:$p[C('DB_PRODUCT_PWEIGHT')],$p[C('DB_PRODUCT_PLENGTH')],$p[C('DB_PRODUCT_PWIDTH')],$p[C('DB_PRODUCT_PHEIGHT')]);
+    		$sPrice = $this->getWinitEbayISP($pPrice,$tariff,$wFee,$tFee,$sFee)*1.05;
+			$salePlan->where(array(C('DB_YZHAN_816_PL_SALE_PLAN_ID')=>$value[C('DB_YZHAN_816_PL_SALE_PLAN_ID')]))->setField(C('DB_YZHAN_816_PL_SALE_PLAN_PRICE'),$sPrice);
+		}
+		$salePlan->commit();
 	}
 
 	public function updateSalePlan($account, $kw=null,$kwv=null){
@@ -525,8 +547,9 @@ class WinitDeSaleAction extends CommonAction{
 	//calculate ebay initial sale price according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee)
 	private function getWinitEbayISP($pPrice,$tariff,$wFee,$tFee,$sFee){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_USDTORMB'));
+		$de_mwst = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_DEMWST'));
 		$cost = ($pPrice+0.5)/$exchange+($pPrice/$exchange)*$tariff+$wFee+$tFee+$sFee;
-		$salePrice = abs(round((($cost+0.35)/(1-0.144-$this->getCostClass($cost)/100)),2));
+		$salePrice = abs(round((($cost*(1+$de_mwst/100)+0.35)/(1-0.144-$this->getCostClass($cost*(1+$de_mwst/100))/100)),2));
 
 		return $salePrice;
 	}
@@ -939,7 +962,8 @@ class WinitDeSaleAction extends CommonAction{
 
 	private function getWinitDeCost($pPrice,$tariff,$wFee,$tFee,$sFee,$sPrice){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
-		$c = ($pPrice+0.5)/$exchange+($pPrice/$exchange)*$tariff+$wFee+$tFee+$sFee+$sPrice*0.164+0.35;
+		$de_mwst = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_DEMWST'));
+		$c = ($pPrice+0.5)/$exchange+($pPrice/$exchange)*$tariff+$wFee+$tFee+$sFee+$sPrice*0.164+0.35+$sPrice*$de_mwst/100;
 		return $c;
 	}
 
