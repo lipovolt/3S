@@ -244,15 +244,15 @@ class OutboundAction extends CommonAction{
 
             //excel first column name verify
             for($c='A';$c!=$highestColumn;$c++){
-                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'2')->getValue(); 
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue(); 
             }
 
             $winitOutOrder=array();
             if($this->verifyEWSOColumnName($firstRow)){
-                for ($i=4; $i < $highestRow-2; $i++) {
+                for ($i=2; $i <= $highestRow; $i++) {
                     $tmpdata=null;
                     $tmpdata['Sales Record Number'] = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
-                    $tmpdata['Shipping Service'] = $objPHPExcel->getActiveSheet()->getCell("AJ".$i)->getValue();
+                    $tmpdata['Shipping Service'] = $objPHPExcel->getActiveSheet()->getCell("AC".$i)->getValue();
                     $tmpdata['User Id'] = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
                     $tmpdata['Buyer Fullname'] = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
                     $tmpdata['Buyer Phone Number'] = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
@@ -263,13 +263,13 @@ class OutboundAction extends CommonAction{
                     $tmpdata['Buyer State'] = $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
                     $tmpdata['Buyer Zip'] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
                     $tmpdata['Buyer Country'] = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
-                    $tmpdata['Custom Label'] = $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
-                    $tmpdata['Quantity'] = $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
-                    $tmpdata['Item Number'] = $objPHPExcel->getActiveSheet()->getCell("L".$i)->getValue();
-                    $tmpdata['Transaction ID'] = $objPHPExcel->getActiveSheet()->getCell("AL".$i)->getValue();
-                    $tmpdata['Sale Price'] = $objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
-                    $tmpdata['Shipping and Handling'] = $objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
-                    $tmpdata['Total Price'] = $objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
+                    $tmpdata['Custom Label'] = $objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
+                    $tmpdata['Quantity'] = $objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
+                    $tmpdata['Item Number'] = $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
+                    $tmpdata['Transaction ID'] = $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
+                    $tmpdata['Sale Price'] = $objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
+                    $tmpdata['Shipping and Handling'] = $objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue();
+                    $tmpdata['Total Price'] = $objPHPExcel->getActiveSheet()->getCell("V".$i)->getValue();
                     $winitOutOrder = $this->getWinitOutOrder($winitOutOrder,$tmpdata); 
                 }
                 $this->preTypeExportWinitOutOrder($winitOutOrder);
@@ -500,7 +500,7 @@ class OutboundAction extends CommonAction{
                     $winitOutOrder[$this->existedAddress($winitOutOrder,$newRow)]['Sales Record Number'] = $newRow['Sales Record Number'];
                     return $winitOutOrder;
                 }
-            }elseif($newRow['Sales Record Number']!=null && $newRow['Sales Record Number']!='' && $newRow['User Id']!=null && $newRow['User Id']!='' && ($newRow['Buyer Fullname']==null || $newRow['Buyer Fullname']=='') && $newRow['Custom Label']!=null && $newRow['Custom Label']!=''){
+            }elseif($newRow['Sales Record Number']!=null && $newRow['Sales Record Number']!='' && ($newRow['User Id']==null || $newRow['User Id']=='') && ($newRow['Buyer Fullname']==null || $newRow['Buyer Fullname']=='') && $newRow['Custom Label']!=null && $newRow['Custom Label']!=''){
                 //Combi order item row
                 $itemArray = $this->getWinitOutItemArray($newRow);
                 foreach ($itemArray as $iakey => $iavalue) {
@@ -657,7 +657,7 @@ class OutboundAction extends CommonAction{
     private function getParentOrder($orderArray, $order){
         if($orderArray!=null){
             foreach ($orderArray as $key => $value) {
-                if($value['User Id']==$order['User Id'] && $value['Sales Record Number']==$order['Sales Record Number']){
+                if($value['Sales Record Number']==$order['Sales Record Number']){
                     return $key;
                 }
             }
@@ -675,8 +675,8 @@ class OutboundAction extends CommonAction{
     }
 
     private function verifyEWSOColumnName($firstRow){
-        for($c='A';$c!=$this->getMaxKeyOfArray(C('IMPORT_EBAY_WAITING_SHIPPING_EN_ORDER'));$c++){
-            if(trim($firstRow[$c]) != C('IMPORT_EBAY_WAITING_SHIPPING_EN_ORDER')[$c]){
+        for($c='A';$c!=$this->getMaxKeyOfArray(C('IMPORT_EBAY_EN_ORDER'));$c++){
+            if(trim($firstRow[$c]) != C('IMPORT_EBAY_EN_ORDER')[$c]){
                 return false;
             }  
         }
