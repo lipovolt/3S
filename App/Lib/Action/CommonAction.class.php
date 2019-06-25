@@ -78,6 +78,40 @@ class CommonAction extends Action{
         end($arr);
         return key($arr);
     }
+
+
+    public function exportAmazonFileExchangeExcel($expTitle,$expCellName,$expTableData){
+        $fileName = $expTitle.date('_Ymd');
+        $cellNum = count($expCellName);
+        $dataNum = count($expTableData);
+        vendor("PHPExcel.PHPExcel");
+
+        $objPHPExcel = new PHPExcel();
+        $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
+
+        for($i=0;$i<$cellNum;$i++){
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue($cellName[$i].'1', $expCellName[$i]); 
+        } 
+
+        for($i=0;$i<$dataNum;$i++){
+            for($j=0;$j<$cellNum;$j++){
+                if($i>=0 && $expTableData[$i][$expCellName[2]] !=null && $expTableData[$i][$expCellName[1]]!=$expTableData[$i][$expCellName[2]]){
+                    $objPHPExcel->getActiveSheet()->getStyle( 'B'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+                    $objPHPExcel->getActiveSheet()->getStyle( 'B'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+                    $objPHPExcel->getActiveSheet()->getStyle( 'C'.($i+2))->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID);
+                    $objPHPExcel->getActiveSheet()->getStyle( 'C'.($i+2))->getFill()->getStartColor()->setARGB('FF808080');
+                }
+                $objPHPExcel->getActiveSheet(0)->setCellValue($cellName[$j].($i+2), $expTableData[$i][$expCellName[$j]]);
+            }             
+        }  
+
+        header('pragma:public');
+        header('Content-type:application/vnd.ms-excel;charset=utf-8;name="'.$xlsTitle.'.xls"');
+        header("Content-Disposition:attachment;filename=$fileName.xls");
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');  
+        $objWriter->save('php://output');
+        exit;   
+    }
 }
 
 ?>
