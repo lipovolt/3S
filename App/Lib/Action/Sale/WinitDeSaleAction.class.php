@@ -577,11 +577,12 @@ class WinitDeSaleAction extends CommonAction{
 	//calculate amazon initial sale price according to the $pPrice(purchase price),$tariff(de tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to de) $sFee(de domectic shipping fee)
 	private function getWinitAmazonISP($pPrice,$tariff,$wFee,$tFee,$sFee,$profitPercent=null){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
+		$de_mwst = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_DEMWST'));
 		$cost = ($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee;
 		if($profitPercent==null){
-			return abs(round($cost/(1-0.15-$this->getCostClass($cost)/100),2));
+			return abs(round($cost/(1-0.15-$this->getCostClass($cost*(1+$de_mwst/100))/100),2));
 		}else{
-			return abs(round($cost/(1-0.15-$profitPercent/100),2));
+			return abs(round($cost/(1-0.15-$profitPercent*(1+$de_mwst/100)/100),2));
 		}
 	}
 
@@ -1007,8 +1008,9 @@ class WinitDeSaleAction extends CommonAction{
 	//calculate amazon cost according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee) $sPrice(sale price)
 	private function getWinitDeAmazonCost($pPrice,$tariff,$wFee,$tFee,$sFee,$sPrice){
 		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
+		$de_mwst = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_DEMWST'));
 		$aFee = $sPrice*0.15<1?1:$sPrice*0.15;
-		return round((($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee+$aFee),2);
+		return round((($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee+$aFee+$sPrice*$de_mwst/100),2);
 	}
 
 	public function updateSalePrice($market,$account){
