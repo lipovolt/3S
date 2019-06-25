@@ -72,8 +72,18 @@
 															<p>功能说明： 本功能通过3s系统导出amazon格式的更新文件，上传到amazon系统的方式，批量更新amazon在线listing的数量和价格。</p>
 															<p>操作步骤：<br> 1.统计各平台待发货的sku和数量放到上传文件的第一个表单里。列名是 With Sell Sku 和 Price。 给出BBP利润率区间<br>2. 导入文件<br>3. 导出的文件需要对price(售价)进行手动处理。参考SuggestPrice(建议价格)和Suggest（销售建议），如果需要按照建议售价销售就把建议售价复制到售价处。但是新的售价要在最低和最高价格区间内，否者也要调整最低和最高售价。可售数量已经更新为仓库可用库存数，无需手动修改。处理之后删除SuggestPrice(建议价格)和Suggest（销售建议）两列。<br>4. 将编辑好的文件保存成文本文件（制表符分割）<br>5. 上传文本文件（制表符分割）格式的文件到amazon. amazon后台->Inventory->Add Products via Upload->Upload inventory files 选择 Price & Quantity File 并选择要上传的文件->点击 Upload now<br>6. 等待amazon更新价格和数量。<br>7. 需要下载amazon处理结果文件，把里面有错误未能更新的内容手动更新，把错误改正。</p>
 															<div class="form-group">
-													            <input type="file" name="fileExchange"/>
-												             	<input class="btn btn-blue btn-s" type="submit" value="导入"/>
+																<div class="form-group">
+														            <input type="file" name="fileExchange"/>
+													            </div>
+												            	<div class="form-group">
+												            		<label for="bbpPercent" class="control-label">BBP利润率（默认10%-100%，可自行调整）</label>
+												            		<input type="text"  id="minbbpPercent" name="minbbpPercent" value="10"/>
+												            		<label for="bbpPercent" class="control-label">%</label>
+												            		<label for="bbpPercent" class="control-label">-</label>
+												            		<input type="text"  id="maxbbpPercent" name="maxbbpPercent" value="100"/>
+												            		<label for="bbpPercent" class="control-label">%</label>
+												            		<input class="btn btn-blue btn-s" type="submit" value="导入"/>
+												            	</div>
 												            </div>
 														<else /> 无法识别平台，清联系管理员处理。
 														</if>

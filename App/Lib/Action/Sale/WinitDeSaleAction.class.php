@@ -35,7 +35,13 @@ class WinitDeSaleAction extends CommonAction{
         	$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]=$salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_RC_DE_SALE_PLAN_PRICE'));
         	$data[$key]['local-shipping-way']=$this->getWinitLocalShippingWay($data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')],$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
         	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')],$value['pweight'],$value['plength'],$value['pwidth'],$value['pheight']);
-        	$data[$key]['cost']=round($this->getWinitDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]),2);
+        	if($this->getMarketByAccount($account)=='ebay'){
+        		$data[$key]['cost']=round($this->getWinitDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]),2);
+        	}elseif($this->getMarketByAccount($account)=='amazon'){
+        		$data[$key]['cost']=round($this->getWinitDeAmazonCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]),2);
+        	}else{
+        		$this->error('无法找到与 '.$account.' 匹配的平台！不能显示销售表！');
+        	}
         	$data[$key]['gprofit']=$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]*100,2).'%';
         	$data[$key]['pweight']=$value[C('DB_PRODUCT_PWEIGHT')];
@@ -76,7 +82,14 @@ class WinitDeSaleAction extends CommonAction{
         	$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]=$salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_RC_DE_SALE_PLAN_PRICE'));
         	$data[$key]['local-shipping-way']=$this->getWinitLocalShippingWay($data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')],$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')]);
         	$data[$key]['local-shipping-fee']=$this->getWinitLocalShippingFee($data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')],$value['pweight'],$value['plength'],$value['pwidth'],$value['pheight']);
-        	$data[$key]['cost']=round($this->getWinitDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]),2);
+        	if($this->getMarketByAccount($account)=='ebay'){
+        		$data[$key]['cost']=round($this->getWinitDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]),2);	
+        	}elseif($this->getMarketByAccount($account)=='amazon'){
+        		$data[$key]['cost']=round($this->getWinitDeAmazonCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key][C('DB_PRODUCT_DETARIFF')],$data[$key]['winit-fee'],$data[$key]['way-to-de-fee'],$data[$key]['local-shipping-fee'],$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]),2);
+        	}else{
+        		$this->error('无法找到与 '.$account.' 匹配的平台！不能显示销售表！');
+        	}
+        	
         	$data[$key]['gprofit']=$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_RC_DE_SALE_PLAN_PRICE')]*100,2).'%';
         	$data[$key]['pweight']=$value[C('DB_PRODUCT_PWEIGHT')];
@@ -233,14 +246,34 @@ class WinitDeSaleAction extends CommonAction{
 		$salePlan = $salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_SKU')=>$sku))->find();
 		if($sale_price!=null){
 			$data['local-shipping-fee']=$this->getWinitLocalShippingFee($sale_price,$product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]);
-			return $this->getWinitDeCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee'],$sale_price);
+			if($this->getMarketByAccount($account)=='ebay'){
+				return $this->getWinitDeCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee'],$sale_price);
+			}elseif($this->getMarketByAccount($account)=='amazon'){
+				return $this->getWinitDeAmazonCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee'],$sale_price);
+			}else{
+				$this->error('无法找到与 '.$account.' 匹配的平台！不能计算销售建议表成本！');
+			}			
 		}elseif($salePlan[C('DB_RC_DE_SALE_PLAN_PRICE')]!=0 && $salePlan[C('DB_RC_DE_SALE_PLAN_PRICE')]!=null && $salePlan[C('DB_RC_DE_SALE_PLAN_PRICE')]!=''){
 			$data['local-shipping-fee']=$this->getWinitLocalShippingFee($salePlan[C('DB_RC_DE_SALE_PLAN_PRICE')],$product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]);
-			return $this->getWinitDeCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee'],$salePlan[C('DB_RC_DE_SALE_PLAN_PRICE')]);
+			if($this->getMarketByAccount($account)=='ebay'){
+				return $this->getWinitDeCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee'],$salePlan[C('DB_RC_DE_SALE_PLAN_PRICE')]);
+			}elseif($this->getMarketByAccount($account)=='amazon'){
+				return $this->getWinitDeAmazonCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee'],$salePlan[C('DB_RC_DE_SALE_PLAN_PRICE')]);
+			}else{
+				$this->error('无法找到与 '.$account.' 匹配的平台！不能计算销售建议表成本！');
+			}
 		}else{
-			$tmpSalePrice = $this->getWinitEbayISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee']);
-			$data['local-shipping-fee']=$this->getWinitLocalShippingFee($tmpSalePrice,$product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]);
-			return $this->getWinitDeCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee'],$salePlan[C('DB_RC_DE_SALE_PLAN_PRICE')]);		
+			if($this->getMarketByAccount($account)=='ebay'){
+				$tmpSalePrice = $this->getWinitEbayISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee']);
+				$data['local-shipping-fee']=$this->getWinitLocalShippingFee($tmpSalePrice,$product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]);
+				return $this->getWinitDeCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee'],$salePlan[C('DB_RC_DE_SALE_PLAN_PRICE')]);
+			}elseif($this->getMarketByAccount($account)=='amazon'){
+				$tmpSalePrice = $this->getWinitAmazonISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee']);
+				$data['local-shipping-fee']=$this->getWinitLocalShippingFee($tmpSalePrice,$product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]);
+				return $this->getWinitDeAmazonCost($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee'],$salePlan[C('DB_RC_DE_SALE_PLAN_PRICE')]);
+			}else{
+				$this->error('无法找到与 '.$account.' 匹配的平台！不能计算销售建议表成本！');
+			}				
 		}
 	}
 
@@ -377,8 +410,13 @@ class WinitDeSaleAction extends CommonAction{
     	$data['winit-fee']=$this->calWinitSIOFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]);
     	$data['way-to-de-fee']=$product[C('DB_PRODUCT_TODE')]=="空运"?$this->getWinitAirFirstTransportFee($product[C('DB_PRODUCT_PWEIGHT')],$product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]):$this->getWinitSeaFirstTransportFee($product[C('DB_PRODUCT_PLENGTH')],$product[C('DB_PRODUCT_PWIDTH')],$product[C('DB_PRODUCT_PHEIGHT')]);
     	$data['local-shipping-fee']=$this->getWinitLocalShippingFee($product[C('DB_PRODUCT_PWEIGHT')]==0?$product[C('DB_PRODUCT_WEIGHT')]:$product[C('DB_PRODUCT_PWEIGHT')],$product['plength'],$product['pwidth'],$product['pheight']);
-
-    	return $this->getWinitEbayISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee']);
+    	if($this->getMarketByAccount($account)=='ebay'){
+			return $this->getWinitEbayISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee']);
+		}elseif($this->getMarketByAccount($account)=='amazon'){
+			return $this->getWinitAmazonISP($data[C('DB_PRODUCT_PRICE')],$data[C('DB_PRODUCT_DETARIFF')],$data['winit-fee'],$data['way-to-de-fee'],$data['local-shipping-fee']);
+		}else{
+			$this->error('无法找到与 '.$account.' 匹配的平台！不能计算初始售价！');
+		}
 	}
 
 	private function updateUsp($account,$usp){
@@ -964,6 +1002,13 @@ class WinitDeSaleAction extends CommonAction{
 		$de_mwst = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_DEMWST'));
 		$c = ($pPrice+0.5)/$exchange+($pPrice/$exchange)*$tariff+$wFee+$tFee+$sFee+$sPrice*0.164+0.35+$sPrice*$de_mwst/100;
 		return $c;
+	}
+
+	//calculate amazon cost according to the $pPrice(purchase price),$tariff(us tariff),$wFee(warehouse storage input output fee) $tFee(transport fee from china to usa) $sFee(usa domectic shipping fee) $sPrice(sale price)
+	private function getWinitDeAmazonCost($pPrice,$tariff,$wFee,$tFee,$sFee,$sPrice){
+		$exchange = M(C('DB_METADATA'))->where(C('DB_METADATA_ID'))->getField(C('DB_METADATA_EURTORMB'));
+		$aFee = $sPrice*0.15<1?1:$sPrice*0.15;
+		return round((($pPrice+0.5)/$exchange+($pPrice*1.2/$exchange)*$tariff+$wFee+$tFee+$sFee+$aFee),2);
 	}
 
 	public function updateSalePrice($market,$account){
