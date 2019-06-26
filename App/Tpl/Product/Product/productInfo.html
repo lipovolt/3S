@@ -74,7 +74,6 @@
 						<th><div>德国头程</div></th>
 						<th><div>美国头程</div></th>
 						<th width="60">产品经理</th>
-						<th>UPC</th>
 						<th width="230">操作</th>
 					</tr>
 					<volist name="products" id="vo">
@@ -90,7 +89,6 @@
 						<td><div class="tl">{$vo[C('DB_PRODUCT_TODE')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_PRODUCT_TOUS')]}</div></td>
 						<td><div class="tl">{$vo[C('DB_PRODUCT_MANAGER')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_PRODUCT_UPC')]}</div></td>
 						<td>
 							<a href="{:U('Product/Product/productEdit',array('sku'=>$vo['sku']))}">编辑</a>
 							<!-- <a href="{:U('Product/Product/barcode',array('sku'=>$vo['sku']))}">条码</a> -->

@@ -2892,29 +2892,14 @@ class GgsUsswSaleAction extends CommonAction{
     }*/
 
     public function allocatUpc($account,$id){
-        /*$sale = M($this->getSalePlanTableName($account))->where(array('id'=>$id))->find();
+        $sale = M($this->getSalePlanTableName($account))->where(array('id'=>$id))->find();
         if(!$this->isFBASku($sale['sku'])){
         	$sale['upc'] = $this->generateUPC();
 	        M($this->getSalePlanTableName($account))->save($sale);
 	        $this->success("UPC码已保存");
         }else{
         	$this->success("FBA商品不生成自己的UPC,使用自发货UPC");
-        }*/
-        $this->moveUPC();
-    }
-
-    private function moveUPC(){
-    	$product = M(C('DB_PRODUCT'));
-    	$usswSaleTable = M(C('DB_USSW_SALE_PLAN2'));
-    	$usswSaleTable->startTrans();
-    	$usswSale = $usswSaleTable->select();
-    	foreach ($usswSale as $key => $value) {
-    		if(!$this->isFBASku($value('sku'))){
-    			$value['upc'] = $product->where(array(C('DB_PRODUCT_SKU')=>$value['sku']))->getField('upc');
-    			$usswSaleTable->save($value);
-    		}
-    	}
-    	$usswSaleTable->commit();
+        }
     }
 }
 
