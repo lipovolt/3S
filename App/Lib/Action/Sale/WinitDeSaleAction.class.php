@@ -48,7 +48,8 @@ class WinitDeSaleAction extends CommonAction{
         	$data[$key]['plength']=$value[C('DB_PRODUCT_PLENGTH')];
         	$data[$key]['pwidth']=$value[C('DB_PRODUCT_PWIDTH')];
         	$data[$key]['pheight']=$value[C('DB_PRODUCT_PHEIGHT')];
-        	
+        	$data[$key]['sale_status']=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_SALE_STATUS'));
+        	$data[$key]['upc']=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_UPC'));
         }
         $this->assign('market',$this->getMarketByAccount($account));
         $this->assign('account',$account);
@@ -96,6 +97,8 @@ class WinitDeSaleAction extends CommonAction{
         	$data[$key]['plength']=$value[C('DB_PRODUCT_PLENGTH')];
         	$data[$key]['pwidth']=$value[C('DB_PRODUCT_PWIDTH')];
         	$data[$key]['pheight']=$value[C('DB_PRODUCT_PHEIGHT')];
+        	$data[$key]['sale_status']=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_SALE_STATUS'));
+        	$data[$key]['upc']=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_UPC'));
         }
         $this->assign('keyword',I('post.keyword','','htmlspecialchars'));
         $this->assign('keywordValue',I('post.keywordValue','','htmlspecialchars'));
@@ -209,7 +212,7 @@ class WinitDeSaleAction extends CommonAction{
 		}		
 	}
 
-	public function updateSalePlanSingle($account, $kw=null,$kwv=null, $id, $salePrice, $status){
+	public function updateSalePlanSingle($account, $kw=null,$kwv=null, $id, $salePrice, $status,$sale_status){
 		$data=null;
 		$salePlanTable = M($this->getSalePlanTableName($account));
 		if($salePlanTable==null){
@@ -217,7 +220,8 @@ class WinitDeSaleAction extends CommonAction{
 		}
 		$data[C('DB_RC_DE_SALE_PLAN_ID')]=$id; 
 		$data[C('DB_RC_DE_SALE_PLAN_PRICE')]=$salePrice; 
-		$data[C('DB_RC_DE_SALE_PLAN_STATUS')]=$status; 
+		$data[C('DB_RC_DE_SALE_PLAN_STATUS')]=$status;
+		$data[C('DB_RC_DE_SALE_PLAN_SALE_STATUS')]=$sale_status; 
 		$salePlanTable->startTrans();
 		$salePlanTable->save($data);
 		$salePlanTable->commit();
@@ -1705,6 +1709,13 @@ class WinitDeSaleAction extends CommonAction{
                 return false;
         }
         return true;
+    }
+
+    public function allocatUpc($account,$id){
+        $sale = M($this->getSalePlanTableName($account))->where(array('id'=>$id))->find();
+        $sale['upc'] = $this->generateUPC();
+        M($this->getSalePlanTableName($account))->save($sale);
+        $this->success("UPC码已保存");
     }
 }
 

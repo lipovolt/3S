@@ -742,7 +742,8 @@ return array(
 	`sale_price` decimal(5,2) default null,
 	`suggested_price` decimal(5,2) default null,
 	`suggest` varchar(20) default null,
-	`status` tinyint(1) default 1
+	`status` tinyint(1) default 1,
+	`sale_status` tinyint(1) default 0
 	) engine=myisam default charset=utf8;	
 	*/
 	'DB_USSW_SALE_PLAN' => 'ussw_sale_plan',
@@ -757,6 +758,7 @@ return array(
 	'DB_USSW_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
 	'DB_USSW_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
 	'DB_USSW_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+	'DB_USSW_SALE_PLAN_SALE_STATUS' => 'sale_status', //0=free sale 1=Banned sale
 
 
 	//ussw_sale_plan2 for amazon lipovolt
@@ -772,7 +774,9 @@ return array(
 	`sale_price` decimal(5,2) default null,
 	`suggested_price` decimal(5,2) default null,
 	`suggest` varchar(20) default null,
-	`status` tinyint(1) default 1
+	`status` tinyint(1) default 1,
+	`sale_status` tinyint(1) default 0,
+	`upc` bigint default null
 	) engine=myisam default charset=utf8;	
 	*/
 	'DB_USSW_SALE_PLAN2' => 'ussw_sale_plan2',
@@ -787,6 +791,8 @@ return array(
 	'DB_USSW_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
 	'DB_USSW_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
 	'DB_USSW_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+	'DB_USSW_SALE_PLAN_SALE_STATUS' => 'sale_status', //0=free sale 1=Banned sale
+	'DB_USSW_SALE_PLAN_UPC' => 'upc',
 
 
 
@@ -803,7 +809,8 @@ return array(
 	`sale_price` decimal(5,2) default null,
 	`suggested_price` decimal(5,2) default null,
 	`suggest` varchar(20) default null,
-	`status` tinyint(1) default 1
+	`status` tinyint(1) default 1,
+	`sale_status` tinyint(1) default 0
 	) engine=myisam default charset=utf8;	
 	*/
 	'DB_USSW_SALE_PLAN3' => 'ussw_sale_plan3',
@@ -818,6 +825,7 @@ return array(
 	'DB_USSW_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
 	'DB_USSW_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
 	'DB_USSW_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+	'DB_USSW_SALE_PLAN_SALE_STATUS' => 'sale_status', //0=free sale 1=Banned sale
 
 
 
@@ -834,7 +842,8 @@ return array(
 	`sale_price` decimal(5,2) default null,
 	`suggested_price` decimal(5,2) default null,
 	`suggest` varchar(20) default null,
-	`status` tinyint(1) default 1
+	`status` tinyint(1) default 1,
+	`sale_status` tinyint(1) default 0
 	) engine=myisam default charset=utf8;	
 	*/
 	'DB_USSW_SALE_PLAN4' => 'ussw_sale_plan4',
@@ -849,6 +858,7 @@ return array(
 	'DB_USSW_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
 	'DB_USSW_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
 	'DB_USSW_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+	'DB_USSW_SALE_PLAN_SALE_STATUS' => 'sale_status', //0=free sale 1=Banned sale
 
 
 
@@ -935,7 +945,8 @@ return array(
 	`suggested_price` decimal(5,2) default null,
 	`suggest` varchar(20) default null,
 	`status` tinyint(1) default 1,
-	`register` tinyint(1) default 1
+	`register` tinyint(1) default 1,
+	`sale_status` tinyint(1) default 0
 	) engine=myisam default charset=utf8;	
 	*/
 	'DB_SZ_US_SALE_PLAN' => 'sz_us_sale_plan',
@@ -951,6 +962,8 @@ return array(
 	'DB_SZ_US_SALE_PLAN_SUGGEST' => 'suggest', //clear,us_relisting,us_price_up, ,us_price_down,de_relisting,de_price_up, ,de_price_down,complete_product_info,complete_sale_info,null
 	'DB_SZ_US_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
 	'DB_SZ_US_SALE_PLAN_REGISTER' => 'register', //register shipping. 1=yes,0=no
+	'DB_SZ_US_SALE_PLAN_SALE_STATUS' => 'sale_status', //0=free sale 1= banned sale
+
 
 
 	//sz_sale_plan
@@ -967,7 +980,8 @@ return array(
 	`suggested_price` decimal(5,2) default null,
 	`suggest` varchar(20) default null,
 	`status` tinyint(1) default 1,
-	`register` tinyint(1) default 1
+	`register` tinyint(1) default 1,
+	`sale_status` tinyint(1) default 0
 	) engine=myisam default charset=utf8;	
 	*/
 	'DB_SZ_DE_SALE_PLAN' => 'sz_de_sale_plan',
@@ -983,6 +997,7 @@ return array(
 	'DB_SZ_DE_SALE_PLAN_SUGGEST' => 'suggest', //clear,us_relisting,us_price_up, ,us_price_down,de_relisting,de_price_up, ,de_price_down,complete_product_info,complete_sale_info,null
 	'DB_SZ_DE_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
 	'DB_SZ_DE_SALE_PLAN_REGISTER' => 'register', //register shipping. 1=yes,0=no
+	'DB_SZ_DE_SALE_PLAN_SALE_STATUS' => 'sale_status', //0=free sale 1= banned sale
 
 
 
@@ -1415,7 +1430,8 @@ return array(
 	`sale_price` decimal(5,2) default null,
 	`suggested_price` decimal(5,2) default null,
 	`suggest` varchar(20) default null,
-	`status` tinyint(1) default 1
+	`status` tinyint(1) default 1,
+    `sale_status` tinyint(1) default 0
 	) engine=myisam default charset=utf8;	
 	*/
 	'DB_RC_DE_SALE_PLAN' => 'rc_de_sale_plan',
@@ -1430,6 +1446,7 @@ return array(
 	'DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
 	'DB_RC_DE_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
 	'DB_RC_DE_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+	'DB_RC_DE_SALE_PLAN_SALE_STATUS' => 'sale_status', //0=free sale 1= banned sale
 
 
 	//yzhan_816_pl_sale_plan for rc-helicar ebay.de items
@@ -1445,7 +1462,8 @@ return array(
 	`sale_price` decimal(5,2) default null,
 	`suggested_price` decimal(5,2) default null,
 	`suggest` varchar(20) default null,
-	`status` tinyint(1) default 1
+	`status` tinyint(1) default 1,
+    `sale_status` tinyint(1) default 0
 	) engine=myisam default charset=utf8;	
 	*/
 	'DB_YZHAN_816_PL_SALE_PLAN' => 'yzhan_816_pl_sale_plan',
@@ -1460,6 +1478,7 @@ return array(
 	'DB_YZHAN_816_PL_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
 	'DB_YZHAN_816_PL_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
 	'DB_YZHAN_816_PL_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+	'DB_YZHAN_816_PL_SALE_PLAN_SALE_STATUS' => 'sale_status', //0=free sale 1= banned sale
 
 	//winit de amazon sale plan
 	/*
@@ -1474,7 +1493,9 @@ return array(
 	`sale_price` decimal(5,2) default null,
 	`suggested_price` decimal(5,2) default null,
 	`suggest` varchar(20) default null,
-	`status` tinyint(1) default 1
+	`status` tinyint(1) default 1,
+    `sale_status` tinyint(1) default 0,
+    `upc` bigint default null
 	) engine=myisam default charset=utf8;	
 	*/
 	'DB_WINIT_DE_AMAZON_SALE_PLAN' => 'winit_de_amazon_sale_plan',
@@ -1489,6 +1510,8 @@ return array(
 	'DB_WINIT_DE_AMAZON_SALE_PLAN_SUGGESTED_PRICE' => 'suggested_price',
 	'DB_WINIT_DE_AMAZON_SALE_PLAN_SUGGEST' => 'suggest', //clear,relisting,price_up, ,price_down,complete_product_info,complete_sale_info,null
 	'DB_WINIT_DE_AMAZON_SALE_PLAN_STATUS' => 'status', //open or close the automatic suggest. 1=open,0=close
+	'DB_WINIT_DE_AMAZON_SALE_PLAN_SALE_STATUS' => 'sale_status', //0=free sale 1= banned sale
+	'DB_WINIT_DE_AMAZON_SALE_PLAN_UPC' => 'upc', 
 
 	//Income cost table
 	/*

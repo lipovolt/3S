@@ -241,44 +241,6 @@ class ProductAction extends CommonAction{
         }                
     }
 
-    /*public function saveUPC($upc,$id){
-        $data[C('db_product_id')] = $id;
-        $data[C('db_product_upc')] = $upc;
-        M(C('DB_PRODUCT'))->save($data);
-        $mdata[C('DB_METADATA_USED_UPC')]=$upc;
-        $mdata[C('DB_METADATA_ID')]=1;
-        M(C('DB_METADATA'))->save($mdata);
-        $this->success("UPC码已保存");
-    }*/
-
-    public function allocatUpc($id){
-        $product = M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_ID')=>$id))->find();
-        $product[C('DB_PRODUCT_UPC')] = $this->generateUPC();
-        M(C('DB_PRODUCT'))->save($product);
-        $this->success("UPC码已保存");
-    }
-
-    private function generateUPC(){
-        $usedUpc = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USED_UPC'));
-        $num=str_split($usedUpc);
-        if((int)$num[10]==9){
-            $oddSum = (int)$num[0]+(int)$num[2]+(int)$num[4]+(int)$num[6]+(int)$num[8];
-            $evenSum = (int)$num[1]+(int)$num[3]+(int)$num[5]+(int)$num[7]+(int)$num[9]+1;
-        }else{
-            $oddSum = (int)$num[0]+(int)$num[2]+(int)$num[4]+(int)$num[6]+(int)$num[8]+(int)$num[10]+1;
-            $evenSum = (int)$num[1]+(int)$num[3]+(int)$num[5]+(int)$num[7]+(int)$num[9];
-        }        
-        $sum = $oddSum*3+$evenSum;
-        $verifyNumber = (10-round($sum%10))==10?0:(10-round($sum%10));
-        if($verifyNumber==0){;
-            $upc = (substr($usedUpc, 0,11)+1)*10;
-        }else{
-            $upc = (substr($usedUpc, 0,11)+1)*10+$verifyNumber;
-        }
-        M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->setField(C('DB_METADATA_USED_UPC'),$upc);
-        return $upc;
-    }
-
     private function verifyImportedProductTemplateColumnName($firstRow){
         for($c='A';$c<=max(array_keys(C('IMPORT_PRODUCT')));$c++){
             if($firstRow[$c] != C('IMPORT_PRODUCT')[$c]){

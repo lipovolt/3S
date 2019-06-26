@@ -93,14 +93,7 @@
 						<td><div class="tl">{$vo[C('DB_PRODUCT_UPC')]}</div></td>
 						<td>
 							<a href="{:U('Product/Product/productEdit',array('sku'=>$vo['sku']))}">编辑</a>
-							<a href="{:U('Product/Product/barcode',array('sku'=>$vo['sku']))}">条码</a>
-							<a href="{:U('Product/Product/allocatUpc',array('id'=>$vo['id']))}"  onclick="
-									if(confirm('确定要生成新的UPC码?')){
-										return true;
-									}else{
-										return false;
-									}
-									">分配UPC</a>
+							<!-- <a href="{:U('Product/Product/barcode',array('sku'=>$vo['sku']))}">条码</a> -->
 						</td>
 						</tr>	
 					</volist> 								

@@ -387,7 +387,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 
-	public function updateUsswSalePlanSingle($account, $kw=null,$kwv=null, $id, $salePrice, $status){
+	public function updateUsswSalePlanSingle($account, $kw=null,$kwv=null, $id, $salePrice, $status,$sale_status){
 		$data=null;
 		$salePlanTable = M($this->getSalePlanTableName($account));
 		if($salePlanTable==null){
@@ -395,7 +395,8 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 		$data[C('DB_USSW_SALE_PLAN_ID')]=$id; 
 		$data[C('DB_USSW_SALE_PLAN_PRICE')]=$salePrice; 
-		$data[C('DB_USSW_SALE_PLAN_STATUS')]=$status; 
+		$data[C('DB_USSW_SALE_PLAN_STATUS')]=$status;
+		$data[C('DB_USSW_SALE_PLAN_SALE_STATUS')]=$sale_status; 
 		$salePlanTable->startTrans();
 		$salePlanTable->save($data);
 		$salePlanTable->commit();
@@ -962,6 +963,8 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')]*0.3937008,2);
         	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')]*0.3937008,2);
         	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')]*0.3937008,2);
+        	$data[$key]['sale_status']=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_SALE_STATUS'));
+        	$data[$key]['upc']=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_UPC'));
         }
         $this->assign('market',$this->getMarketByAccount($account));
         $this->assign('account',$account);
@@ -1012,6 +1015,8 @@ class GgsUsswSaleAction extends CommonAction{
         	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')]*0.3937008,2);
         	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')]*0.3937008,2);
         	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')]*0.3937008,2);
+        	$data[$key]['sale_status']=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_SALE_STATUS'));
+        	$data[$key]['upc']=$salePlanTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_PRODUCT_SKU')]))->getField(C('DB_USSW_SALE_PLAN_UPC'));
         }
         $this->assign('market',$this->getMarketByAccount($account));
         $this->assign('account',$account);
@@ -2885,6 +2890,32 @@ class GgsUsswSaleAction extends CommonAction{
 		dump($tet);
 		dump($Model->getLastSql());die;
     }*/
+
+    public function allocatUpc($account,$id){
+        /*$sale = M($this->getSalePlanTableName($account))->where(array('id'=>$id))->find();
+        if(!$this->isFBASku($sale['sku'])){
+        	$sale['upc'] = $this->generateUPC();
+	        M($this->getSalePlanTableName($account))->save($sale);
+	        $this->success("UPC码已保存");
+        }else{
+        	$this->success("FBA商品不生成自己的UPC,使用自发货UPC");
+        }*/
+        $this->moveUPC();
+    }
+
+    private function moveUPC(){
+    	$product = M(C('DB_PRODUCT'));
+    	$usswSaleTable = M(C('DB_USSW_SALE_PLAN2'));
+    	$usswSaleTable->startTrans();
+    	$usswSale = $usswSaleTable->select();
+    	foreach ($usswSale as $key => $value) {
+    		if(!$this->isFBASku($value('sku'))){
+    			$value['upc'] = $product->where(array(C('DB_PRODUCT_SKU')=>$value['sku']))->getField('upc');
+    			$usswSaleTable->save($value);
+    		}
+    	}
+    	$usswSaleTable->commit();
+    }
 }
 
 ?>

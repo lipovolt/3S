@@ -25,7 +25,12 @@ function saveSingle(Obj){
 	}else{
 		var status = 0;
 	}
-	form.action="{:U('Sale/WinitDeSale/updateSalePlanSingle',array('account'=>$account))}?kw="+kw+"&kwv="+kwv+"&id="+Obj+"&salePrice="+salePrice+"&status="+status;
+	if(document.getElementById('sale_status-'+Obj).checked){
+		var sale_status = 1;	
+	}else{
+		var sale_status = 0;
+	}
+	form.action="{:U('Sale/WinitDeSale/updateSalePlanSingle',array('account'=>$account))}?kw="+kw+"&kwv="+kwv+"&id="+Obj+"&salePrice="+salePrice+"&status="+status+"&sale_status="+sale_status;
 	form.submit();
 }
 function  cli(Obj){
@@ -168,6 +173,8 @@ function bModify(){
 						<th><div class="tl">建议售价$</div></th>
 						<th><div class="tl">销售建议</div></th>
 						<th><div class="tl">开启关闭<br>自动建议</div></th>
+						<th><div class="tl">禁售</div></th>
+						<if condition="($market eq amazon)"> <th><div class="tl">UPC</div></th></if>
 						<th><div class="tl">操作</div></th>
 					</tr>
 					<volist name="suggest" id="vo">
@@ -193,10 +200,22 @@ function bModify(){
 						<if condition="($vo[C('DB_USSW_SALE_PLAN_STATUS')] eq 1)"> <td><div class="tl"><input id="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" type='checkbox' checked /></div></td>
 						<else /> <td><div class="tl"><input id="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" type='checkbox' /></div></td>
 						</if>
+						<if condition="($vo[C('DB_USSW_SALE_PLAN_SALE_STATUS')] eq 1)"> <td><div class="tl"><input id="sale_status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="sale_status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" type='checkbox' checked /></div></td>
+						<else /> <td><div class="tl"><input id="sale_status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="sale_status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" type='checkbox' /></div></td>
+						</if>
+						<if condition="($market eq amazon)"><td><div class="tl">{$vo[C('DB_WINIT_DE_AMAZON_SALE_PLAN_UPC')]}</div></td></if>
 						<td>
 							<a href="{:U('Sale/WinitDeSale/confirmSuggest',array('account'=>$account,'id'=>$vo['id']))}">已修改</a>
 							<a href="{:U('Sale/WinitDeSale/ignoreSuggest',array('account'=>$account,'id'=>$vo['id']))}">忽略</a>
 							<a href="#" onclick="saveSingle({$vo[C('DB_USSW_SALE_PLAN_ID')]})">保存</a>
+							<if condition="($market eq amazon)"><a href="{:U('Sale/WinitDeSale/allocatUpc',array('account'=>$account,'id'=>$vo['id']))}"  onclick="
+									if(confirm('确定要生成新的UPC码?')){
+										return true;
+									}else{
+										return false;
+									}
+									">分配UPC</a></if>
+							
 						</td>
 						</tr>	
 					</volist> 								

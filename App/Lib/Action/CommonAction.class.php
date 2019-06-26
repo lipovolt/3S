@@ -112,6 +112,27 @@ class CommonAction extends Action{
         $objWriter->save('php://output');
         exit;   
     }
+
+    public function generateUPC(){
+        $usedUpc = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USED_UPC'));
+        $num=str_split($usedUpc);
+        if((int)$num[10]==9){
+            $oddSum = (int)$num[0]+(int)$num[2]+(int)$num[4]+(int)$num[6]+(int)$num[8];
+            $evenSum = (int)$num[1]+(int)$num[3]+(int)$num[5]+(int)$num[7]+(int)$num[9]+1;
+        }else{
+            $oddSum = (int)$num[0]+(int)$num[2]+(int)$num[4]+(int)$num[6]+(int)$num[8]+(int)$num[10]+1;
+            $evenSum = (int)$num[1]+(int)$num[3]+(int)$num[5]+(int)$num[7]+(int)$num[9];
+        }        
+        $sum = $oddSum*3+$evenSum;
+        $verifyNumber = (10-round($sum%10))==10?0:(10-round($sum%10));
+        if($verifyNumber==0){;
+            $upc = (substr($usedUpc, 0,11)+1)*10;
+        }else{
+            $upc = (substr($usedUpc, 0,11)+1)*10+$verifyNumber;
+        }
+        M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->setField(C('DB_METADATA_USED_UPC'),$upc);
+        return $upc;
+    }
 }
 
 ?>

@@ -163,7 +163,8 @@
 						<th>宽in.</th>
 
 						<th><div class="tl">高in.</div></th>
-
+						<th><div class="tl">禁售</div></th>
+						<if condition="($market eq amazon)"><th><div class="tl">UPC</div></th></if>
 					</tr>
 
 					<volist name="data" id="vo">
@@ -211,7 +212,10 @@
 						<td><div class="tl">{$vo.width}</div></td>
 
 						<td><div class="tl">{$vo.height}</div></td>
-
+						<if condition="($vo[C('DB_USSW_SALE_PLAN_SALE_STATUS')] eq 1)"> <td><div class="tl">禁售</div>	</td>
+							<else /> <td><div class="tl"></div>	</td>
+						</if>
+						<if condition="($market eq amazon)"><td><div class="tl">{$vo.upc}</div></td></if>
 						</tr>	
 
 					</volist> 								
