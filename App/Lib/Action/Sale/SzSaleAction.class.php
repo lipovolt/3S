@@ -263,7 +263,7 @@ class SzSaleAction extends CommonAction{
 	public function confirmSuggest($id,$account,$country=null){
 		$table=M($this->getSalePlanTableName($account,$country));
 		$data = $table->where(array(C('DB_SZ_US_SALE_PLAN_ID')=>$id))->find();
-		if($data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] !=null){
+		if($data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] !=null && $data[C('DB_SZ_US_SALE_PLAN_SUGGEST')]!=C('USSW_SALE_PLAN_CLEAR')){
 			$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 			if($data[C('DB_SZ_US_SALE_PLAN_SUGGEST')]=='relisting'){
 				$data[C('DB_SZ_US_SALE_PLAN_RELISTING_TIMES')] = intval($data[C('DB_SZ_US_SALE_PLAN_RELISTING_TIMES')])+1;
@@ -304,11 +304,16 @@ class SzSaleAction extends CommonAction{
 	public function ignoreSuggest($id,$account,$country=null){
 		$table=M($this->getSalePlanTableName($account,$country));
 		$data = $table->where(array(C('DB_SZ_US_SALE_PLAN_ID')=>$id))->find();
-		$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
-		$data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
-		$data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = null;
-		$table->save($data);
-		$this->success('修改成功');
+		if($data[C('DB_SZ_US_SALE_PLAN_SUGGEST')]!=C('USSW_SALE_PLAN_CLEAR')){
+			$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+			$data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
+			$data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = null;
+			$table->save($data);
+			$this->success('修改成功');
+		}else{
+			$this->error('清货建议不能忽略');
+		}
+		
 	}
 
 	public function updateSalePlan($account,$country=null,$kw=null,$kwv=null){
@@ -1105,11 +1110,13 @@ class SzSaleAction extends CommonAction{
 		$table=M($this->getSalePlanTableName($account,$country));
 		$table->startTrans();
 		foreach ($_POST['cb'] as $key => $value) {
-			$data[C('DB_SZ_US_SALE_PLAN_ID')] = $value;
-			$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
-			$data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
-			$data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = null;
-			$table->save($data);
+			if($table->where(array(C('DB_USSW_SALE_PLAN_ID')=>$value))->getField(C('DB_USSW_SALE_PLAN_SUGGEST'))!=C('USSW_SALE_PLAN_CLEAR')){
+				$data[C('DB_SZ_US_SALE_PLAN_ID')] = $value;
+				$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+				$data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')] = null;
+				$data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] = null;
+				$table->save($data);
+			}
 		}
 		$table->commit();
 		$this->success('修改成功',U('suggest',array('account'=>$account, 'country'=>$country, 'kw'=>$kw,'kwv'=>$kwv)));
@@ -1120,7 +1127,7 @@ class SzSaleAction extends CommonAction{
 		$table->startTrans();
 		foreach ($_POST['cb'] as $key => $value) {
 			$data = $table->where(array(C('DB_SZ_US_SALE_PLAN_ID')=>$value))->find();
-			if($data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] !=null){
+			if($data[C('DB_SZ_US_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_SZ_US_SALE_PLAN_SUGGEST')] !=null && $data[C('DB_SZ_US_SALE_PLAN_SUGGEST')]!=C('USSW_SALE_PLAN_CLEAR')){
 				$data[C('DB_SZ_US_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 				if($data[C('DB_SZ_US_SALE_PLAN_ID_SUGGEST')]=='relisting'){
 					$data[C('DB_SZ_US_SALE_PLAN_RELISTING_TIMES')] = intval($data[C('DB_SZ_US_SALE_PLAN_RELISTING_TIMES')])+1;

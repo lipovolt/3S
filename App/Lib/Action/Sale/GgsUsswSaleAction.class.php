@@ -348,9 +348,8 @@ class GgsUsswSaleAction extends CommonAction{
 			$salePlanTable->save($data);
 			$this->success('保存成功');
 		}else{
-			$this->success('清货建议不能忽略');
-		}
-		
+			$this->error('清货建议不能忽略');
+		}		
 	}
 
 	public function updateUsswSalePlan($account, $kw=null,$kwv=null){

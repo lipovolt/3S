@@ -544,11 +544,13 @@ class WinitPlSaleAction extends CommonAction{
 		}
 		$salePlanTable->startTrans();
 		foreach ($_POST['cb'] as $key => $value) {
-			$data[C('DB_RC_DE_SALE_PLAN_ID')] = $value;
-			$data[C('DB_RC_DE_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
-			$data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = null;
-			$data[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = null;
-			$salePlanTable->save($data);
+			if($salePlanTable->where(array(C('DB_USSW_SALE_PLAN_ID')=>$value))->getField(C('DB_USSW_SALE_PLAN_SUGGEST'))!=C('USSW_SALE_PLAN_CLEAR')){
+				$data[C('DB_RC_DE_SALE_PLAN_ID')] = $value;
+				$data[C('DB_RC_DE_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+				$data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = null;
+				$data[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = null;
+				$salePlanTable->save($data);
+			}
 		}
 		$salePlanTable->commit();
 		$this->success('保存成功');
@@ -562,7 +564,7 @@ class WinitPlSaleAction extends CommonAction{
 		$salePlanTable->startTrans();
 		foreach ($_POST['cb'] as $key => $value) {
 			$data = $salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_ID')=>$value))->find();
-			if($data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_RC_DE_SALE_PLAN_SUGGEST')]!=null){
+			if($data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_RC_DE_SALE_PLAN_SUGGEST')]!=null && $data[C('DB_RC_DE_SALE_PLAN_SUGGEST')]!=C('USSW_SALE_PLAN_CLEAR')){
 				$data[C('DB_RC_DE_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 				if($data[C('DB_RC_DE_SALE_PLAN_SUGGEST')]=='relisting'){
 					$data[C('DB_RC_DE_SALE_PLAN_RELISTING_TIMES')] = intval($data[C('DB_RC_DE_SALE_PLAN_RELISTING_TIMES')])+1;
@@ -590,7 +592,7 @@ class WinitPlSaleAction extends CommonAction{
 			$this->error('无法找到匹配的销售表！');
 		}
 		$data = $salePlanTable->where(array(C('DB_RC_DE_SALE_PLAN_ID')=>$id))->find();
-		if($data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_RC_DE_SALE_PLAN_SUGGEST')]!=null){
+		if($data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')]!=null && $data[C('DB_RC_DE_SALE_PLAN_SUGGEST')]!=null && $data[C('DB_RC_DE_SALE_PLAN_SUGGEST')]!=C('USSW_SALE_PLAN_CLEAR')){
 			$data[C('DB_RC_DE_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
 			if($data[C('DB_RC_DE_SALE_PLAN_SUGGEST')]=='relisting'){
 				$data[C('DB_RC_DE_SALE_PLAN_RELISTING_TIMES')] = intval($data[C('DB_RC_DE_SALE_PLAN_RELISTING_TIMES')])+1;
@@ -633,12 +635,16 @@ class WinitPlSaleAction extends CommonAction{
 		if($salePlanTable==null){
 			$this->error('无法找到匹配的销售表！');
 		}
-		$data[C('DB_RC_DE_SALE_PLAN_ID')] = $id;
-		$data[C('DB_RC_DE_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
-		$data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = null;
-		$data[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = null;
-		$salePlanTable->save($data);
-		$this->success('保存成功');
+		if($salePlanTable->where(array(C('DB_USSW_SALE_PLAN_ID')=>$id))->getField(C('DB_USSW_SALE_PLAN_SUGGEST')) != C('USSW_SALE_PLAN_CLEAR')){
+			$data[C('DB_RC_DE_SALE_PLAN_ID')] = $id;
+			$data[C('DB_RC_DE_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
+			$data[C('DB_RC_DE_SALE_PLAN_SUGGESTED_PRICE')] = null;
+			$data[C('DB_RC_DE_SALE_PLAN_SUGGEST')] = null;
+			$salePlanTable->save($data);
+			$this->success('保存成功');
+		}else{
+            $this->error('清货建议不能忽略');
+        }
 	}
 
 	private function getCostClass($cost){
