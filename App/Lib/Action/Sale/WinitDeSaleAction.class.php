@@ -1398,7 +1398,11 @@ class WinitDeSaleAction extends CommonAction{
 		    		}
 		    		
 		    		$data[$key]["suggested-price"]=$value[C("DB_USSW_SALE_PLAN_SUGGESTED_PRICE")];
-		    		$data[$key]["suggest"]=$value[C("DB_USSW_SALE_PLAN_SUGGEST")];		
+		    		$data[$key]["suggest"]=$value[C("DB_USSW_SALE_PLAN_SUGGEST")];
+                    //change standard price formate xx.xx to german price format xx,xx
+                    $data[$key]["price"]=str_replace(".",",",round($data[$key]["price"],2));
+                    $data[$key]["minimum-seller-allowed-price"]=str_replace(".",",",round($data[$key]["minimum-seller-allowed-price"]),2);
+                    $data[$key]["maximum-seller-allowed-price"]=str_replace(".",",",round($data[$key]["maximum-seller-allowed-price"],2));	
 		    	}
 
 		    	$lengthOfData = count($data);
