@@ -217,7 +217,7 @@ function bModify(){
 						<else /> <td><div class="tl"><input id="sale_status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" name="sale_status-{$vo[C('DB_USSW_SALE_PLAN_ID')]}" type='checkbox' /></div></td>
 						</if>
 						<if condition="($market eq amazon)"><td><div class="tl">{$vo[C('DB_WINIT_DE_AMAZON_SALE_PLAN_UPC')]}</div></td></if>
-						<td>
+						<td>							
 							<a href="{:U('Sale/GgsUsswSale/confirmSuggest',array('account'=>$account,'id'=>$vo['id']))}">已修改</a>
 							<a href="{:U('Sale/GgsUsswSale/ignoreSuggest',array('account'=>$account,'id'=>$vo['id']))}">忽略</a>
 							<a href="#" onclick="saveSingle({$vo[C('DB_USSW_SALE_PLAN_ID')]})">保存</a>

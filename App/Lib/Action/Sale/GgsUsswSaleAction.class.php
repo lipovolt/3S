@@ -635,7 +635,7 @@ class GgsUsswSaleAction extends CommonAction{
 			return $metadata[C('DB_USSW_SALE_PLAN_METADATA_SPR5')];
 	}
 
-	private function calUsswSaleQuantity($account, $sku, $startDate, $endDate=null){
+	public function calUsswSaleQuantity($account, $sku, $startDate, $endDate=null){
 		if($endDate==null){
 			$endDate = date('Y-m-d H:i:s',time());
 		}
@@ -653,7 +653,7 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 	}
 
-	private function calUsFBASaleQuantity($account, $sku, $startDate, $endDate=null){
+	public function calUsFBASaleQuantity($account, $sku, $startDate, $endDate=null){
 		if($endDate==null){
 			$endDate = date('Y-m-d H:i:s',time());
 		}
@@ -2332,93 +2332,6 @@ class GgsUsswSaleAction extends CommonAction{
         return $splitSku;
     }
 
-    //Return the storage table name according to the account
-    private function getStorageTableName($account){
-    	switch ($account) {
-    		case 'greatgoodshop':
-    			return C('DB_USSTORAGE');
-    			break;
-    		case 'vtkg5755':
-    			return C('DB_SZSTORAGE');
-    			break;
-    		case 'lipovolt':
-    			return C('DB_USSTORAGE');
-    			break;
-    		case 'g-lipovolt':
-    			return C('DB_USSTORAGE');
-    			break;
-    		case 'blackfive':
-    			return C('DB_USSTORAGE');
-    			break;
-    		default:
-    			return null;
-    			break;
-    	}
-    }
-
-    //Return the sale plan table name according to the account
-    private function getSalePlanTableName($account){
-    	switch ($account) {
-    		case 'greatgoodshop':
-    			return C('DB_USSW_SALE_PLAN');
-    			break;
-    		case 'lipovolt':
-    			return C('DB_USSW_SALE_PLAN2');
-    			break;
-    		case 'g-lipovolt':
-    			return C('DB_USSW_SALE_PLAN3');
-    			break;
-    		case 'blackfive':
-    			return C('DB_USSW_SALE_PLAN4');
-    			break;
-    		default:
-    			return null;
-    			break;
-    	}
-    }
-
-    //Return the sale plan view model according to the account
-    public function getSalePlanViewModel($account){
-    	switch ($account) {
-    		case 'greatgoodshop':
-    			return 'UsswSalePlanView';
-    			break;
-    		case 'lipovolt':
-    			return 'UsswSalePlan2View';
-    			break;
-			case 'g-lipovolt':
-				return 'UsswSalePlan3View';
-				break;
-			case 'blackfive':
-				return 'UsswSalePlan4View';
-				break;
-    		default:
-    			return null;
-    			break;
-    	}
-    }
-
-    //Return the sale plan view model according to the account
-    private function getMarketByAccount($account){
-    	switch ($account) {
-    		case 'greatgoodshop':
-    			return 'ebay';
-    			break;
-    		case 'lipovolt':
-    			return 'amazon';
-    			break;
-    		case 'g-lipovolt':
-    			return 'groupon';
-    			break;
-    		case 'blackfive':
-    			return 'ebay';
-    			break;
-    		default:
-    			return null;
-    			break;
-    	}
-    }
-
     private function exportEbayFileExchangeExcel($expTitle,$expCellName,$expTableData){
         $fileName = $expTitle.date('_Ymd');
         $cellNum = count($expCellName);
@@ -2905,6 +2818,100 @@ class GgsUsswSaleAction extends CommonAction{
 	        $this->success("UPC码已保存");
         }else{
         	$this->success("FBA商品不生成自己的UPC,使用自发货UPC");
+        }
+    }
+
+
+    //Return the sale plan table name according to the account
+    public function getSalePlanTableName($account){
+        switch ($account) {
+            case 'greatgoodshop':
+                return C('DB_USSW_SALE_PLAN');
+                break;
+            case 'lipovolt':
+                return C('DB_USSW_SALE_PLAN2');
+                break;
+            case 'g-lipovolt':
+                return C('DB_USSW_SALE_PLAN3');
+                break;
+            case 'blackfive':
+                return C('DB_USSW_SALE_PLAN4');
+                break;
+            default:
+                return null;
+                break;
+        }
+    }
+
+
+    //Return the sale plan view model according to the account
+    public function getMarketByAccount($account){
+        switch ($account) {
+            case 'greatgoodshop':
+                return 'ebay';
+                break;
+            case 'lipovolt':
+                return 'amazon';
+                break;
+            case 'g-lipovolt':
+                return 'groupon';
+                break;
+            case 'blackfive':
+                return 'ebay';
+                break;
+            default:
+                return null;
+                break;
+        }
+    }
+
+
+    //Return the storage table name according to the account
+    public function getStorageTableName($account){
+        switch ($account) {
+            case 'greatgoodshop':
+                return C('DB_USSTORAGE');
+                break;
+            case 'vtkg5755':
+                return C('DB_SZSTORAGE');
+                break;
+            case 'lipovolt':
+                return C('DB_USSTORAGE');
+                break;
+            case 'g-lipovolt':
+                return C('DB_USSTORAGE');
+                break;
+            case 'blackfive':
+                return C('DB_USSTORAGE');
+                break;
+            default:
+                return null;
+                break;
+        }
+    }
+
+
+    //Return the sale plan view model according to the account
+    public function getSalePlanViewModel($account){
+        switch ($account) {
+            case 'greatgoodshop':
+                return 'UsswSalePlanView';
+                break;
+            case 'lipovolt':
+                return 'UsswSalePlan2View';
+                break;
+            case 'g-lipovolt':
+                return 'UsswSalePlan3View';
+                break;
+            case 'blackfive':
+                return 'UsswSalePlan4View';
+                break;
+            case 'blackfive':
+                return 'UsswSalePlan4View';
+                break;
+            default:
+                return null;
+                break;
         }
     }
 }

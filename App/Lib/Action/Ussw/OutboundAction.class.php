@@ -1,6 +1,6 @@
 <?php
 
-class OutboundAction extends CommonAction{
+class OutboundAction extends CommonOutboundAction{
 
 	public function index(){
         if($_POST['keyword']==""){
@@ -263,6 +263,7 @@ class OutboundAction extends CommonAction{
                     }
                     //更新ussw_outbound和ussw_outbound_item
                     $this->addUsswOutboundOrder($filteredOutboundOrder,$outboundOrderItems,$sellerID);
+                    $this->outboundItemsPriceUp($sellerID,$outboundOrderItems);
                     $this->exportPackingList($filteredOutboundOrder);
                 }
             }else{
@@ -373,6 +374,7 @@ class OutboundAction extends CommonAction{
                     $this->display('importOutboundOrderError');
                 }else{
                     $this->addAmazonUsFBAOrder($outboundOrder,$outboundOrderItems,$sellerID);
+                    $this->outboundItemsPriceUp($sellerID,$outboundOrderItems);
                     $this->success("导入成功");
                 }
             }else{
@@ -580,6 +582,7 @@ class OutboundAction extends CommonAction{
                     }
                     //更新ussw_outbound和ussw_outbound_item
                     $this->addUsswOutboundOrder($filteredOutboundOrder,$outboundOrderItems,$sellerID);
+                    $this->outboundItemsPriceUp($sellerID,$outboundOrderItems);
                     $this->exportPackingList($filteredOutboundOrder);
                 }
             }else{
@@ -740,6 +743,7 @@ class OutboundAction extends CommonAction{
                     }
                     //更新ussw_outbound和ussw_outbound_item
                     $this->addUsswOutboundOrder($filteredOutboundOrder,$outboundOrderItems,$sellerID);
+                    $this->outboundItemsPriceUp($sellerID,$outboundOrderItems);
                     $this->exportPackingList($filteredOutboundOrder);
                 }
             }else{

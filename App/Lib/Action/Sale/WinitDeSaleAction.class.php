@@ -1174,8 +1174,8 @@ class WinitDeSaleAction extends CommonAction{
             for($c='A';$c<=$highestColumn;$c++){
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
-            $firstRow['A'] = '*Action(SiteID=Germany|Country=PL|Currency=EUR|Version=941)';
-            //$firstRow['A'] = '*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
+            //$firstRow['A'] = '*Action(SiteID=Germany|Country=PL|Currency=EUR|Version=941)';
+            $firstRow['A'] = '*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
 
             if($this->verifyEbayFxtcn($firstRow)){
             	$storageTable=M($this->getStorageTableName($account));
@@ -1299,8 +1299,8 @@ class WinitDeSaleAction extends CommonAction{
                 		$j++;
                 	}
                 }
-                $excelCellName[0]='*Action(SiteID=Germany|Country=PL|Currency=EUR|Version=941)';
-                //$excelCellName[0]='*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
+                //$excelCellName[0]='*Action(SiteID=Germany|Country=PL|Currency=EUR|Version=941)';
+                $excelCellName[0]='*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
                 $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
                 $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
                 $excelCellName[3]=$objPHPExcel->getActiveSheet()->getCell("D1")->getValue();
@@ -1313,7 +1313,7 @@ class WinitDeSaleAction extends CommonAction{
                 $excelCellName[10]=$objPHPExcel->getActiveSheet()->getCell("I1")->getValue();
                 $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("J1")->getValue();
                 $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("K1")->getValue();
-                $this->exportEbayFileExchangeExcel('RcFileExchange',$excelCellName,$data); 
+                $this->exportEbayFileExchangeExcel($account,$excelCellName,$data); 
             }else{
                 $this->error("模板错误，请检查模板！");
             }   
@@ -1407,7 +1407,7 @@ class WinitDeSaleAction extends CommonAction{
 		    		$data[$key]["suggest"]=$value[C("DB_USSW_SALE_PLAN_SUGGEST")];
                     //change standard price formate xx.xx to german price format xx,xx
                     $data[$key]["price"]=str_replace(".",",",round($data[$key]["price"],2));
-                    $data[$key]["minimum-seller-allowed-price"]=str_replace(".",",",round($data[$key]["minimum-seller-allowed-price"]),2);
+                    $data[$key]["minimum-seller-allowed-price"]=str_replace(".",",",round($data[$key]["minimum-seller-allowed-price"],2));
                     $data[$key]["maximum-seller-allowed-price"]=str_replace(".",",",round($data[$key]["maximum-seller-allowed-price"],2));	
 		    	}
 

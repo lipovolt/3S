@@ -1,6 +1,6 @@
 <?php
 
-class OutboundAction extends CommonAction{
+class OutboundAction extends CommonOutboundAction{
 
     public function index(){
         if($_POST['keyword']==""){
@@ -224,7 +224,8 @@ class OutboundAction extends CommonAction{
                     $mergeOrder = $this->mergeOrder($outboundOrder,$outboundOrderItems);
                     $this->addOutboundOrder($mergeOrder[0]);                    
                     //更新订单产品数组到szsw_outbound_item 和 szstorage
-                    $this->addOutboundItem($mergeOrder[1],$_POST['sellerID']);                    
+                    $this->addOutboundItem($mergeOrder[1],$_POST['sellerID']);  
+                    $this->outboundItemsPriceUp($_POST['sellerID'],$outboundOrderItems);                  
                     $this->success('导入成功！');
                 }
             }else{

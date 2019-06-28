@@ -1,6 +1,6 @@
 <?php
 
-class OutboundAction extends CommonAction{
+class OutboundAction extends CommonOutboundAction{
 
     public function index(){
         if($_POST['keyword']==""){
@@ -111,7 +111,8 @@ class OutboundAction extends CommonAction{
                             $wooi[C('DB_WINIT_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell($j.$i)->getValue();
                             $winitOutboundOrderItem->add($wooi);
                             
-
+                            //根据每日出库记录调整售价
+                            $this->outboundItemPriceUp(I('post.sellerID'),$wooi[C('DB_WINIT_OUTBOUND_ITEM_SKU')]);
                             //统计销售绩效考核的sku
                             $kpiMap[C('DB_KPI_SALE_SKU')] = array('eq', $wooi[C('DB_WINIT_OUTBOUND_ITEM_SKU')]);
                             if($woo[C('DB_WINIT_OUTBOUND_SHIPPING_COMPANY')]=='DE Warehouse'){
