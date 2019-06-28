@@ -518,8 +518,8 @@ class GgsUsswSaleAction extends CommonAction{
 		}
 		if($ainventory>0 && $diff/$lspsq<-($grfr/100)){
 			$sugg=null;
-			if($price-$price*($pcr/100)<$cost*1.1){
-				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost*1.1;
+			if($price-$price*($pcr/100)<$cost){
+				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
 			}else{
 				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $price-$price*($pcr/100);
 			}			
