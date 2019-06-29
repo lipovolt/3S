@@ -248,7 +248,7 @@ return array(
 	//ussw_outbound
 	/*创建美国仓出库表
 	create table if not exists `3s_ussw_outbound`(
-	`id` smallint(10) unsigned primary key not null auto_increment,
+	`id` int(10) unsigned primary key not null auto_increment,
 	`market` varchar(10) default null,
 	`market_no` varchar(30) default null,
 	`status` varchar(10) default null,
@@ -294,7 +294,7 @@ return array(
 	/*
 	创建美国出库单产品明细表
 	create table if not exists `3s_ussw_outbound_item`(
-	`id` smallint(10) unsigned primary key not null auto_increment,
+	`id` int(10) unsigned primary key not null auto_increment,
 	`outbound_id` smallint(10),
 	`sku` varchar(10) default null,
 	`position` varchar(10) default null,
@@ -315,7 +315,7 @@ return array(
 	//usstorage
 	/*
 	CREATE TABLE IF NOT EXISTS `3s_usstorage` (
-	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
+	  `id` smallint(10) unsigned primary key NOT NULL auto_increment,
 	  `position` varchar(10) NOT NULL,
 	  `sku` varchar(10) NOT NULL,
 	  `cname` varchar(255) DEFAULT NULL,
@@ -348,7 +348,7 @@ return array(
 	//amazon_us_storage
 	/*
 	CREATE TABLE IF NOT EXISTS `3s_amazon_us_storage` (
-	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
+	  `id` smallint(10) unsigned primary key NOT NULL auto_increment,
 	  `sku` varchar(15) NOT NULL,
 	  `cinventory` smallint(6) DEFAULT 0,
 	  `ainventory` smallint(6) DEFAULT 0,
@@ -371,7 +371,7 @@ return array(
 	//amazon_us_fba_outbound
 	/*创建amazon us fba仓出库表
 	create table if not exists `3s_amazon_us_fba_outbound`(
-	`id` smallint(10) unsigned primary key not null auto_increment,
+	`id` int(10) unsigned primary key not null auto_increment,
 	`market` varchar(10) default null,
 	`market_no` varchar(20) default null,
 	`status` varchar(10) default null,
@@ -417,7 +417,7 @@ return array(
 	/*
 	创建美国出库单产品明细表
 	create table if not exists `3s_amazon_us_fba_outbound_item`(
-	`id` smallint(10) unsigned primary key not null auto_increment,
+	`id` int(10) unsigned primary key not null auto_increment,
 	`outbound_id` smallint(10),
 	`sku` varchar(15) default null,
 	`position` varchar(10) default null,
@@ -440,7 +440,7 @@ return array(
 	//restock
 	/*创建补货表
 	CREATE TABLE IF NOT EXISTS `3s_restock` (
-	  `id` smallint(10) unsigned primary key auto_increment,
+	  `id` int(10) unsigned primary key auto_increment,
 	  `create_date` datetime default NULL,
 	  `shipping_date` datetime default NULL,
 	  `manager` varchar(20) default null,
@@ -516,7 +516,7 @@ return array(
 	//purchase
 	/*创建采购表
 	create table if not exists `3s_purchase`(
-	`id` smallint(10) unsigned primary key not null auto_increment,
+	`id` int(10) unsigned primary key not null auto_increment,
 	`manager` varchar(20) default null,
 	`create_date` datetime,
 	`purchase_date` datetime,
@@ -546,8 +546,8 @@ return array(
 	//purchase_item
 	/*创建补货产品表
 	create table if not exists `3s_purchase_item`(
-	`purchase_item_id` smallint(10) unsigned primary key not null auto_increment,
-	`purchase_id` smallint(10) default null,
+	`purchase_item_id` int(10) unsigned primary key not null auto_increment,
+	`purchase_id` int(10) unsigned default null,
 	`sku` varchar(10) default null,
 	`price` decimal(6,2) default 0,
 	`purchase_quantity` smallint(6) default 0,
@@ -570,7 +570,7 @@ return array(
 	//supplier
 	/*创建补货产品表
 	create table if not exists `3s_supplier`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`company` varchar(50) default null,
 	`person` varchar(50) default null,
 	`wangwang` varchar(20) default null,
@@ -594,7 +594,7 @@ return array(
 	//szstorage
 	/*
 	CREATE TABLE IF NOT EXISTS `3s_szstorage` (
-	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
+	  `id` smallint(10) unsigned primary key NOT NULL auto_increment,
 	  `position` varchar(10) NOT NULL,
 	  `sku` varchar(10) NOT NULL,
 	  `cinventory` smallint(6) DEFAULT 0,
@@ -616,7 +616,7 @@ return array(
 	//sz_outbound
 	/*创建深圳仓出库表
 	create table if not exists `3s_sz_outbound`(
-	`id` smallint(10) unsigned primary key not null auto_increment,
+	`id` int(10) unsigned primary key not null auto_increment,
 	`market` varchar(20) default null,
 	`market_no` varchar(20) default null,
 	`status` varchar(10) default null,
@@ -663,8 +663,8 @@ return array(
 	/*
 	创建美国出库单产品明细表
 	create table if not exists `3s_sz_outbound_item`(
-	`id` smallint(10) unsigned primary key not null auto_increment,
-	`outbound_id` smallint(10) not null,
+	`id` int(10) unsigned primary key not null auto_increment,
+	`outbound_id` int(10) unsigned not null,
 	`sku` varchar(10) default null,
 	`position` varchar(10) default null,
 	`quantity` smallint(3) default 0,
@@ -732,7 +732,7 @@ return array(
 	//ussw_sale_plan for ebay greatgoodshop
 	/*
 	create table if not exists `3s_ussw_sale_plan`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`sku` varchar(10) not null,
 	`first_sale_date` timestamp default NOW(),
 	`last_modify_date` datetime default null,
@@ -764,7 +764,7 @@ return array(
 	//ussw_sale_plan2 for amazon lipovolt
 	/*
 	create table if not exists `3s_ussw_sale_plan2`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`sku` varchar(15) not null,
 	`first_sale_date` timestamp default NOW(),
 	`last_modify_date` datetime default null,
@@ -799,7 +799,7 @@ return array(
 	//ussw_sale_plan3 for groupon lipovolt
 	/*
 	create table if not exists `3s_ussw_sale_plan3`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`sku` varchar(10) not null,
 	`first_sale_date` timestamp default NOW(),
 	`last_modify_date` datetime default null,
@@ -832,7 +832,7 @@ return array(
 	//ussw_sale_plan4 for ebay blackfive
 	/*
 	create table if not exists `3s_ussw_sale_plan4`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`sku` varchar(10) not null,
 	`first_sale_date` timestamp default NOW(),
 	`last_modify_date` datetime default null,
@@ -934,7 +934,7 @@ return array(
 	//sz_sale_plan
 	/*
 	create table if not exists `3s_sz_us_sale_plan`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`sku` varchar(10) not null,
 	`first_sale_date` timestamp default NOW(),
 	`last_modify_date` datetime default null,
@@ -969,7 +969,7 @@ return array(
 	//sz_sale_plan
 	/*
 	create table if not exists `3s_sz_de_sale_plan`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`sku` varchar(10) not null,
 	`first_sale_date` timestamp default NOW(),
 	`last_modify_date` datetime default null,
@@ -1073,7 +1073,7 @@ return array(
 	//sz_wish_sale_plan
 	/*
 	create table if not exists `3s_sz_wish_sale_plan`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`sku` varchar(10) not null,
 	`first_sale_date` timestamp default NOW(),
 	`last_modify_date` datetime default null,
@@ -1263,7 +1263,7 @@ return array(
 	Todo
 	任务表
 	CREATE TABLE IF NOT EXISTS `3s_todo` (
-	  `id` smallint(6) unsigned primary key not null auto_increment,
+	  `id` int(10) unsigned primary key not null auto_increment,
 	  `ctime` timestamp default NOW(),
 	  `dtime` timestamp default null,
 	  `creater` varchar(20) NOT NULL,
@@ -1287,7 +1287,7 @@ return array(
 	//winit_outbound
 	/*创建万邑通出库表
 	create table if not exists `3s_winit_outbound`(
-	`id` smallint(10) unsigned primary key not null auto_increment,
+	`id` int(10) unsigned primary key not null auto_increment,
 	`market` varchar(10) default null,
 	`market_no` varchar(20) default null,
 	`status` varchar(10) default null,
@@ -1333,8 +1333,8 @@ return array(
 	/*
 	创建万邑通出库单产品明细表
 	create table if not exists `3s_winit_outbound_item`(
-	`id` smallint(10) unsigned primary key not null auto_increment,
-	`outbound_id` smallint(10),
+	`id` int(10) unsigned primary key not null auto_increment,
+	`outbound_id` int(10) unsigned,
 	`sku` varchar(10) default null,
 	`position` varchar(10) default null,
 	`quantity` smallint(3) default 0,
@@ -1354,7 +1354,7 @@ return array(
 	//winit_de_storage
 	/*
 	CREATE TABLE IF NOT EXISTS `3s_winit_de_storage` (
-	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
+	  `id` smallint(10) unsigned primary key NOT NULL auto_increment,
 	  `position` varchar(10) NOT NULL,
 	  `sku` varchar(15) NOT NULL,
 	  `cname` varchar(255) DEFAULT NULL,
@@ -1387,7 +1387,7 @@ return array(
 	//winit_us_storage
 	/*
 	CREATE TABLE IF NOT EXISTS `3s_winit_us_storage` (
-	  `id` smallint(6) unsigned primary key NOT NULL auto_increment,
+	  `id` smallint(10) unsigned primary key NOT NULL auto_increment,
 	  `position` varchar(10) NOT NULL,
 	  `sku` varchar(15) NOT NULL,
 	  `cname` varchar(255) DEFAULT NULL,
@@ -1420,7 +1420,7 @@ return array(
 	//rc_de_sale_plan for rc-helicar ebay.de items
 	/*
 	create table if not exists `3s_rc_de_sale_plan`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`sku` varchar(10) not null,
 	`first_sale_date` timestamp default NOW(),
 	`last_modify_date` datetime default null,
@@ -1452,7 +1452,7 @@ return array(
 	//yzhan_816_pl_sale_plan for rc-helicar ebay.de items
 	/*
 	create table if not exists `3s_yzhan_816_pl_sale_plan`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`sku` varchar(10) not null,
 	`first_sale_date` timestamp default NOW(),
 	`last_modify_date` datetime default null,
@@ -1483,7 +1483,7 @@ return array(
 	//winit de amazon sale plan
 	/*
 	create table if not exists `3s_winit_de_amazon_sale_plan`(
-	`id` smallint(6) unsigned primary key not null auto_increment,
+	`id` smallint(10) unsigned primary key not null auto_increment,
 	`sku` varchar(10) not null,
 	`first_sale_date` timestamp default NOW(),
 	`last_modify_date` datetime default null,

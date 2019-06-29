@@ -590,7 +590,7 @@ class WinitDeSaleAction extends CommonAction{
 		}
 	}
 
-	private function calWinitDeSaleQuantity($account, $sku, $startDate, $endDate=null){
+	public function calWinitDeSaleQuantity($account, $sku, $startDate, $endDate=null){
 		if($endDate==null)
 			$endDate = date('Y-m-d H:i:s',time());
 		$WinitDeOutboundItem = D("WinitOutboundView");
