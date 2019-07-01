@@ -47,7 +47,7 @@ class CommonOutboundAction extends CommonAction{
                 1.  利润率低于百分之10  涨价到利润率为10%左右
                 2.  利润率10-15之间
                     a.  中国发货竞争激烈的产品，不调价 售价低于8美元，重量低于200g视为竞争激烈产品
-                    b.  空运试算，发的是海运的重货不调价 检查上次发货的运输方式
+                    b.  空运试算，发的是海运的重货不调价 检查上次发货的运输方式， 两个月内有海运的货，不涨价。
                     c.  高价值产品调价 大于13美元的货视为高价值产品
                     d.  库存量大的产品不调价。
 
@@ -59,7 +59,7 @@ class CommonOutboundAction extends CommonAction{
 
             */
             if($profitRate<0.1){
-                $sr[C('DB_USSW_SALE_PLAN_PRICE')] = $sr[C('DB_USSW_SALE_PLAN_COST')]/(1-0.11);
+                $sr[C('DB_USSW_SALE_PLAN_PRICE')] = $sr[C('DB_USSW_SALE_PLAN_COST')]*(1+$pcr/100);
                 $sr[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
                 $stable->save($sr);
             }elseif($country=='de' && $profitRate<0.18){

@@ -1815,7 +1815,9 @@ class GgsUsswSaleAction extends CommonAction{
                 			}else{
                 				$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
                 			}
-                			$data[$i-2][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
+                			if($data[$i-2][$firstRow['E']]=='USD' || $data[$i-2][$firstRow['E']]==null){
+                				$data[$i-2][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
+                			}               			
                 		}else{
                 			//Single sku and multiple sale quantity
                 			$data[$i-2]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
