@@ -1411,14 +1411,18 @@ class SzSaleAction extends CommonAction{
 
 	public function fileExchangeHandle($market,$account){
 		if($market=='ebay' || $market=='ebay.de' || $market=='ebay.com'){
-			$this->ebayFileExchangeHandle($account);
+			if($_POST['updateType']=='US'){
+				$this->ebaySzStorageFileExchangeHandle($account);
+			}elseif($_POST['updateType']=='USSW'){
+				$this->ebayUsswFileExchangeHandle($account);
+			}
 		}else{
 			$this->error('没有 '.$market.' 平台');
 		}
 
 	}
 
-	private function ebayFileExchangeHandle($account){
+	private function ebaySzStorageFileExchangeHandle($account){
 		if (!empty($_FILES)) {
 			import('ORG.Net.UploadFile');
 			$config=array(
@@ -1452,12 +1456,7 @@ class SzSaleAction extends CommonAction{
             for($c='A';$c<=$highestColumn;$c++){
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
             }
-            if($_POST['updateType']=='Germany'){
-            	$firstRow['A'] = 'Action(SiteID=Germany|Country=CN|Currency=EUR|Version=941)';
-            }
-            if($_POST['updateType'] == 'US'){
-            	$firstRow['A'] = 'Action(SiteID=US|Country=CN|Currency=USD|Version=585|CC=UTF-8)';
-            }
+            $firstRow['A'] = 'Action(SiteID=US|Country=CN|Currency=USD|Version=585|CC=UTF-8)';
 
             if($this->verifyEbayFxtcn($firstRow)){
             	$storageTable=M(C('DB_SZSTORAGE'));
@@ -1497,7 +1496,7 @@ class SzSaleAction extends CommonAction{
 	            			
 							/*//按照实际库存更新在线listing数量。
 	            			$data[$j][$firstRow['H']]=$storageTable->where(array(C('DB_SZSTORAGE_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_SZSTORAGE_AINVENTORY'))>0?$storageTable->where(array(C('DB_SZSTORAGE_SKU')=>$data[$j][$firstRow['K']]))->getField(C('DB_SZSTORAGE_AINVENTORY')):0;*/
-	            		}	
+	            		}
 	            		$salePlan=$salePlanTables[$countryOfItem]->where(array('sku'=>$data[$j][$firstRow['K']]))->find();
 	            		$data[$j]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
 	                	$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
@@ -1618,6 +1617,122 @@ class SzSaleAction extends CommonAction{
         }else{
             $this->error("请选择上传的文件");
         }
+	}
+
+	private function ebayUsswFileExchangeHandle($account){
+		if (!empty($_FILES)) {
+			import('ORG.Net.UploadFile');
+			$config=array(
+			 'allowExts'=>array('xls'),
+			 'savePath'=>'./Public/upload/fileExchange/',
+			 'saveRule'=>'ebayFileExchange'.'_'.time(),
+			);
+			$upload = new UploadFile($config);
+			if (!$upload->upload()) {
+				$this->error($upload->getErrorMsg());
+			}else {
+				$info = $upload->getUploadFileInfo();                 
+			}
+			vendor("PHPExcel.PHPExcel");
+			$file_name=$info[0]['savepath'].$info[0]['savename'];
+
+			$objReader = PHPExcel_IOFactory::createReader('Excel5');
+			$objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+			$sheetnames = $objPHPExcel->getSheetNames();
+
+			//creat excel writer
+			$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+			
+
+			$objPHPExcel->setActiveSheetIndex(0);
+			$sheet = $objPHPExcel->getSheet(0);
+			$highestRow = $sheet->getHighestRow(); // 取得总行数
+			$highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+			//excel first column name verify
+            for($c='A';$c<=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue();
+            }
+            $firstRow['A'] = 'Action(SiteID=US|Country=US|Currency=USD|Version=585|CC=UTF-8)';
+
+            if($this->verifyEbayFxtcn($firstRow)){
+            	$storageTable=M(C('DB_US_INVENTORY'));
+            	$product=M(C('DB_PRODUCT'));
+            	$salePlanTable=M(C('DB_USSW_SALE_PLAN'));
+            	$j=0;
+                for($i=2;$i<=$highestRow;$i++){
+                	$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+            		if($countryOfItem==null || $countryOfItem==''){
+            			for ($r=$i-1; $r>1; $r--) { 
+            				$countryOfItem = $objPHPExcel->getActiveSheet()->getCell("D".$r)->getValue();
+            				if($countryOfItem!=null && $countryOfItem!=''){
+            					break;
+            				}
+            			}
+            		}
+            		$listing4OtherWarehouse = explode('_', $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
+                	if(($countryOfItem=='US' || ($countryOfItem=='eBayMotors' && $_POST['updateType']=='USSW'))&& $listing4OtherWarehouse[0]=='ussw'){
+
+                		$data[$j][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
+	        			$data[$j][$firstRow['B']]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+	        			$data[$j][$firstRow['C']]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+	        			$data[$j][$firstRow['D']]=$objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+	        			$data[$j][$firstRow['E']]=$objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
+	        			$data[$j][$firstRow['F']]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+	        			$data[$j][$firstRow['G']]=$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue();
+	                	$data[$j][$firstRow['H']]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
+	                	$data[$j][$firstRow['I']]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+	        			$data[$j][$firstRow['J']]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+	        			$data[$j][$firstRow['K']]=$this->toTextSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
+
+	                	
+	            		$data[$j][$firstRow['H']]=$storageTable->where(array(C('DB_SZSTORAGE_SKU')=>$listing4OtherWarehouse[1]))->getField(C('DB_SZSTORAGE_AINVENTORY'));
+	            		$salePlan=$salePlanTable->where(array('sku'=>$listing4OtherWarehouse[1]))->find();
+	            		$data[$j]['SuggestPrice']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')];
+	                	$data[$j]['Suggest']=$salePlan[C('DB_USSW_SALE_PLAN_SUGGEST')];
+	                	$data[$j][$firstRow['F']]=$salePlan[C('DB_USSW_SALE_PLAN_PRICE')];
+	                	$j++;
+                	}               	                
+                }
+                               
+                $storages=$storageTable->where($map)->select();
+                foreach ($storages as $key => $value) {                	
+                	if(!$this->in_listedItem($value[C('DB_WINIT_DE_STORAGE_SKU')],$data)){
+                		$data[$j][$firstRow['D']]=$_POST['updateType'];
+                		$data[$j][$firstRow['K']]=$value[C('DB_WINIT_DE_STORAGE_SKU')];
+                		$data[$j]['Suggest']="未刊登商品";
+                		$j++;
+                	}	
+                }
+
+	            $excelCellName[0] = 'Action(SiteID=US|Country=US|Currency=USD|Version=585|CC=UTF-8)';
+                $excelCellName[1]=$objPHPExcel->getActiveSheet()->getCell("B1")->getValue();
+                $excelCellName[2]=$objPHPExcel->getActiveSheet()->getCell("C1")->getValue();
+                $excelCellName[3]=$objPHPExcel->getActiveSheet()->getCell("D1")->getValue();
+                $excelCellName[4]=$objPHPExcel->getActiveSheet()->getCell("E1")->getValue();
+                $excelCellName[5]=$objPHPExcel->getActiveSheet()->getCell("F1")->getValue();
+                $excelCellName[6]='SuggestPrice';
+                $excelCellName[7]='Suggest';
+                $excelCellName[8]=$objPHPExcel->getActiveSheet()->getCell("G1")->getValue();
+                $excelCellName[9]=$objPHPExcel->getActiveSheet()->getCell("H1")->getValue();
+                $excelCellName[10]=$objPHPExcel->getActiveSheet()->getCell("I1")->getValue();
+                $excelCellName[11]=$objPHPExcel->getActiveSheet()->getCell("J1")->getValue();
+                $excelCellName[12]=$objPHPExcel->getActiveSheet()->getCell("K1")->getValue();
+                $this->exportEbayFileExchangeExcel($account.$_POST['updateType'].'_FileExchange',$excelCellName,$data); 
+            }else{
+                $this->error("模板错误，请检查模板！");
+            }   
+        }else{
+            $this->error("请选择上传的文件");
+        }
+	}
+
+	private function isUsswListing($sku){
+		if(stristr($sku,'ussw')!=false){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	private function szFxtPriceException($sku){
