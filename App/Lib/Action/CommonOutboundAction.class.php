@@ -10,7 +10,7 @@ class CommonOutboundAction extends CommonAction{
     public function outboundItemPriceUp($account,$sku){
         $stable = M($this->getSalePlanTableName($account));        
         $sr=$stable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
-        if(strtotime($sr[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')])<(time()-60*60*20)){
+        if(strtotime($sr[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')])<(time()-60*60*3)){
             $metaMap[C('DB_USSW_SALE_PLAN_METADATA_ID')] = array('eq',1);
             $pcr = M(C('DB_USSW_SALE_PLAN_METADATA'))->where($metaMap)->getField(C('DB_USSW_SALE_PLAN_METADATA_PCR'));
             $country = $this->getItemLocationCountry($account);
@@ -86,6 +86,7 @@ class CommonOutboundAction extends CommonAction{
                     $saleQuantity = $ggsAction->calUsswSaleQuantity($account,$sku,date('Y-m-d H:i:s',time()-60*60*24*5),date('Y-m-d H:i:s',time()));
                 }
                 if($aiquantity>0 && $aiquantity<12*$saleQuantity){
+
                     if($sr[C('DB_USSW_SALE_PLAN_PRICE')]>13){
                         $sr[C('DB_USSW_SALE_PLAN_PRICE')] = $sr[C('DB_USSW_SALE_PLAN_PRICE')]+$sr[C('DB_USSW_SALE_PLAN_PRICE')]*$pcr/100;
                         $sr[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
