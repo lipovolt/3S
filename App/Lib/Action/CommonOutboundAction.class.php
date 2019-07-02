@@ -91,7 +91,7 @@ class CommonOutboundAction extends CommonAction{
                         $sr[C('DB_USSW_SALE_PLAN_PRICE')] = $sr[C('DB_USSW_SALE_PLAN_PRICE')]+$sr[C('DB_USSW_SALE_PLAN_PRICE')]*$pcr/100;
                         $sr[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
                         $stable->save($sr);
-                    }elseif($sr[C('DB_USSW_SALE_PLAN_PRICE')]>8 && $pToCountry=='空运' && $pweight>200 && $seaToCountryIn2Month==null){
+                    }elseif(($sr[C('DB_USSW_SALE_PLAN_PRICE')]>8 || $pweight>200) && (($pToCountry=='空运' && $seaToCountryIn2Month==null)|| $pToCountry=='海运')){
                         $sr[C('DB_USSW_SALE_PLAN_PRICE')] = $sr[C('DB_USSW_SALE_PLAN_PRICE')]+$sr[C('DB_USSW_SALE_PLAN_PRICE')]*$pcr/100;
                         $sr[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
                         $stable->save($sr);
