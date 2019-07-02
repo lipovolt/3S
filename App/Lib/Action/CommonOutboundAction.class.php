@@ -59,7 +59,7 @@ class CommonOutboundAction extends CommonAction{
 
             */
             if($profitRate<0.1){
-                $sr[C('DB_USSW_SALE_PLAN_PRICE')] = $sr[C('DB_USSW_SALE_PLAN_COST')]*(1+$pcr/100);
+                $sr[C('DB_USSW_SALE_PLAN_PRICE')] = $sr[C('DB_USSW_SALE_PLAN_PRICE')]*(1+$pcr/100);
                 $sr[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
                 $stable->save($sr);
             }elseif($country=='de' && $profitRate<0.18){
