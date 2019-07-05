@@ -892,6 +892,7 @@ class MetadataAction extends CommonAction{
 			$sa[C('DB_SELLER_ACCOUNT_ANSWER2')] = $_POST[C('DB_SELLER_ACCOUNT_ANSWER2')];
 			$sa[C('DB_SELLER_ACCOUNT_QUESTION3')] = $_POST[C('DB_SELLER_ACCOUNT_QUESTION3')];
 			$sa[C('DB_SELLER_ACCOUNT_ANSWER3')] = $_POST[C('DB_SELLER_ACCOUNT_ANSWER3')];
+			$sa[C('DB_SELLER_ACCOUNT_REMARK')] = $_POST[C('DB_SELLER_ACCOUNT_REMARK')];
 			M(C('DB_SELLER_ACCOUNT'))->save($sa);
 			$this->redirect('sellerAccount');
 		}

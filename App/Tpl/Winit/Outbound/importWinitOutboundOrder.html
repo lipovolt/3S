@@ -86,7 +86,7 @@
 													     if(id=="ebay"){
 													         $.get('20160911.php',null,function(data){
 													             $("select2").empty();
-													             $("select2").append("<label>账号</label><select name='sellerID' id='sellerID'><option>rc-helicar</option><option>yzhan-816</option>");
+													             $("select2").append("<label>账号</label><select name='sellerID' id='sellerID'><option>yzhan-816</option>");
 													         })
 													     }
 													     if(id==""){
@@ -98,8 +98,8 @@
 
 													})
 													</script>
-													<label for="sellerID" class="control-label">订单日期:</label>
-													<input type="text" name="order_date" id="order_date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'});" value="如使用当前日期可不填" size="27" class="date" readonly>
+													<!-- <label for="sellerID" class="control-label">订单日期:</label>
+													<input type="text" name="order_date" id="order_date" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm'});" value="不填，默认使用导入的文件的订单付款日期" size="27" class="date" readonly> -->
 													</div>
 													<div>
 											            <input type="file" name="import" value=""/>

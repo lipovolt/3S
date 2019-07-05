@@ -487,7 +487,13 @@ return array(
 	  `ussw_auto_move` tinyint(1) default 0,
 	  `winitde_auto_move` tinyint(1) default 0,
 	  `exclude_large_quantity` smallint(6) default 0,
-	  `no_order_days` smallint(6) default 0
+	  `no_order_days` smallint(6) default 0,
+	  `ussw_estimated_days_sea_shipping` smallint(6) default 0,
+	  `ussw_air_first_count_limit` smallint(6) default 0,
+	  `ussw_air_first_days_limit` smallint(6) default 0,
+	  `winitde_estimated_days_sea_shipping` smallint(6) default 0,
+	  `winitde_air_first_count_limit` smallint(6) default 0,
+	  `winitde_air_first_days_limit` smallint(6) default 0,
 	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 	*/
 	'DB_RESTOCK_PARA' => 'restock_parameters',
@@ -512,6 +518,12 @@ return array(
 	'DB_RESTOCK_PARA_WINITDE_AUTO_MOVE' => 'winitde_auto_move',
 	'DB_RESTOCK_PARA_ELQ' => 'exclude_large_quantity',
 	'DB_RESTOCK_PARA_NOD' => 'no_order_days',
+	'DB_RESTOCK_PARA_USSW_EDSS' => 'ussw_estimated_days_sea_shipping',
+	'DB_RESTOCK_PARA_USSW_AFCL' => 'ussw_air_first_count_limit',
+	'DB_RESTOCK_PARA_USSW_AFDL' => 'ussw_air_first_days_limit',
+	'DB_RESTOCK_PARA_WINITDE_EDSS' => 'winitde_estimated_days_sea_shipping',
+	'DB_RESTOCK_PARA_WINITDE_AFCL' => 'winitde_air_first_count_limit',
+	'DB_RESTOCK_PARA_WINITDE_AFDL' => 'winitde_air_first_days_limit',
 
 	//purchase
 	/*创建采购表
