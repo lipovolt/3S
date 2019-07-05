@@ -627,12 +627,12 @@ class RestockAction extends CommonAction{
 							if(intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq)<$value[C('DB_RESTOCK_QUANTITY')]){
 								$airQuantity = intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq);
 								$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
-								$seavolume = $seaVolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
+								$seavolume = $seavolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
 							}else{
 								$airQuantity = $value[C('DB_RESTOCK_QUANTITY')];
 							}							
 							$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$airQuantity;
-							$airvolume = $airVolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
+							$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
 							$value['change_to_air_quantity'] = $airQuantity;
 							array_push($changeToAirShipping, $value);
 						}elseif($seaEstimatedArriveDays<0){
@@ -644,7 +644,7 @@ class RestockAction extends CommonAction{
 				}elseif($purchaseCount<=$restockPara[C('DB_RESTOCK_PARA_USSW_AFCL')] && $daysFirstSale<=$restockPara[C('DB_RESTOCK_PARA_USSW_AFDL')] && $p[C('DB_PRODUCT_TOUS')]=='空运'){
 					if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 						$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$value[C('DB_RESTOCK_QUANTITY')];
-						$airvolume = $airVolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$value[C('DB_RESTOCK_QUANTITY')];
+						$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$value[C('DB_RESTOCK_QUANTITY')];
 						$value['change_to_air_quantity'] = $value[C('DB_RESTOCK_QUANTITY')];
 						array_push($changeToAirShipping, $value);
 					}else{
@@ -653,7 +653,7 @@ class RestockAction extends CommonAction{
 				}else{
 					if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 						$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$value[C('DB_RESTOCK_QUANTITY')];
-						$seaVolume = $seaVolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$value[C('DB_RESTOCK_QUANTITY')];
+						$seavolume = $seavolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$value[C('DB_RESTOCK_QUANTITY')];
 					}else{
 						$this->error('无法计算，产品 '.$value[C('DB_RESTOCK_SKU')].' 包装信息缺失');
 					}	
