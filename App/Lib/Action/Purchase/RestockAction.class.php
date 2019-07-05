@@ -600,8 +600,12 @@ class RestockAction extends CommonAction{
 			foreach ($data as $key => $value) {
 				$p = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_RESTOCK_SKU')]))->find();
 				$usswFirstSaleDate = $usswSalePlan->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_RESTOCK_SKU')]))->getField(C('DB_USSW_SALE_PLAN_FIRST_DATE'));
-				$cntFirstSale=time()-strtotime($usswFirstSaleDate);//与已知时间的差值
-				$daysFirstSale = ceil($cntFirstSale/(3600*24));//算出天数
+				if($usswFirstSaleDate==null){
+					$daysFirstSale=0;
+				}else{
+					$cntFirstSale=time()-strtotime($usswFirstSaleDate);//与已知时间的差值
+					$daysFirstSale = ceil($cntFirstSale/(3600*24));//算出天数
+				}				
 				$purchaseMap[C('DB_PURCHASE_ITEM_SKU')] = array('eq',$value[C('DB_RESTOCK_SKU')]);
 				$purchaseMap[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('in',array('美自建仓','万邑通美西'));
 				$purchaseMap[C('DB_PURCHASE_STATUS')] = array('eq','全部到货');
