@@ -611,10 +611,14 @@ class RestockAction extends CommonAction{
 					
 					if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 						$msq = $this->getUsswMads($value[C('DB_RESTOCK_SKU')],6,$restockPara[C('DB_RESTOCK_PARA_ELQ')])/6;
-						$ainventory = $usstorageTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_RESTOCK_SKU')]))->getField(C('DB_USSTORAGE_AINVENTORY'))+$this->getUsswInboundAirIInventory($sku);
+						$ainventory = $usstorageTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_RESTOCK_SKU')]))->getField(C('DB_USSTORAGE_AINVENTORY'))+$this->getUsswInboundAirIInventory($value[C('DB_RESTOCK_SKU')]);
 						$ainventorySaleDays = ceil($ainventory/$msq);
-						$cntSeaShippingTimes=time()-strtotime($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')]));//与已知时间的差值
-						$seaEstimatedArriveDays = ceil($restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')]-$cntSeaShippingTimes/(3600*24));//算出天数
+						if($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')])==null){
+							$seaEstimatedArriveDays=$restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')];//与已知时间的差值
+						}else{
+							$cntSeaShippingTimes=time()-strtotime($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')]));//与已知时间的差值
+							$seaEstimatedArriveDays = ceil($restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')]-$cntSeaShippingTimes/(3600*24));//算出天数
+						}
 						if($seaEstimatedArriveDays>0 && $ainventorySaleDays<$seaEstimatedArriveDays){
 							if(intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq)<$value[C('DB_RESTOCK_QUANTITY')]){
 								$airQuantity = intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq);
@@ -631,14 +635,14 @@ class RestockAction extends CommonAction{
 							$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算');
 						}
 					}else{
-						$this->error('无法计算，产品包装信息缺失');
+						$this->error('无法计算，产品 '.$value[C('DB_RESTOCK_SKU')].' 包装信息缺失');
 					}					
 				}else{
 					if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 						$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$value[C('DB_RESTOCK_QUANTITY')];
 						$seaVolume = $seaVolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$value[C('DB_RESTOCK_QUANTITY')];
 					}else{
-						$this->error('无法计算，产品包装信息缺失');
+						$this->error('无法计算，产品 '.$value[C('DB_RESTOCK_SKU')].' 包装信息缺失');
 					}	
 				}
 			}
@@ -684,27 +688,24 @@ class RestockAction extends CommonAction{
 	}
 
 	private function getUsswInboundAirIInventory($sku){
-		$usswInbound = D(C('UsswInboundView'));
 		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
 		$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
 		$map[C('DB_USSW_INBOUND_SHIPPING_WAY')] = array('eq','空运');
-		return D(C('UsswInboundView'))->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
+		return D('UsswInboundView')->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
 	}
 
 	private function getUsswInboundSeaIInventory($sku){
-		$usswInbound = D(C('UsswInboundView'));
 		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
 		$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
 		$map[C('DB_USSW_INBOUND_SHIPPING_WAY')] = array('eq','海运');
-		return D(C('UsswInboundView'))->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
+		return D('UsswInboundView')->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
 	}
 
 	private function getUsswInboundSeaShippingDate($sku){
-		$usswInbound = D(C('UsswInboundView'));
 		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
 		$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
 		$map[C('DB_USSW_INBOUND_SHIPPING_WAY')] = array('eq','海运');
-		return D(C('UsswInboundView'))->where($map)->limit(1)->getField(C('DB_USSW_INBOUND_DATE'));
+		return D('UsswInboundView')->where($map)->limit(1)->getField(C('DB_USSW_INBOUND_DATE'));
 	}
 
 	public function updateUsswRestockTable(){
