@@ -81,11 +81,18 @@ class OutboundAction extends CommonOutboundAction{
                     $woo[C('DB_WINIT_OUTBOUND_SHIPPING_COMPANY')]=$objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
                     $woo[C('DB_WINIT_OUTBOUND_SHIPPING_WAY')]=$objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
                     $woo[C('DB_WINIT_OUTBOUND_STATUS')]='已出库';
+
+                    /*
+                    //使用前台给出的时间填充出库单创建时间
                     if(I('post.order_date')==null || I('post.order_date')==''){
                         $woo[C('DB_WINIT_OUTBOUND_CREATE_TIME')]=Date('Y-m-d H:i:s');
                     }else{
                         $woo[C('DB_WINIT_OUTBOUND_CREATE_TIME')]=Date(I('post.order_date'));
-                    }
+                    }*/
+
+                    //使用ebay订单付款时间填充出库单创建时间
+                    $woo[C('DB_WINIT_OUTBOUND_CREATE_TIME')]=$objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
+
                     $woo[C('DB_WINIT_OUTBOUND_SELLER_ID')]=$objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
                     $woo[C('DB_WINIT_OUTBOUND_BUYER_ID')]=$objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
                     $woo[C('DB_WINIT_OUTBOUND_BUYER_NAME')]=$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
@@ -271,6 +278,7 @@ class OutboundAction extends CommonOutboundAction{
                     $tmpdata['Sale Price'] = $objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue();
                     $tmpdata['Shipping and Handling'] = $objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue();
                     $tmpdata['Total Price'] = $objPHPExcel->getActiveSheet()->getCell("V".$i)->getValue();
+                    $tmpdata['Create Date'] =Date('Y-m-d H:i:s', strtotime($objPHPExcel->getActiveSheet()->getCell("AA".$i)->getValue())+3600);
                     $winitOutOrder = $this->getWinitOutOrder($winitOutOrder,$tmpdata); 
                 }
                 $this->preTypeExportWinitOutOrder($winitOutOrder);
@@ -286,11 +294,12 @@ class OutboundAction extends CommonOutboundAction{
     private function preTypeExportWinitOutOrder($winitOutOrder){
         $exportFile = array();
         $cellName = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ');
-        $expCellName = array('Seller Order NO.','Warehouse','Shipping Service','Value-added service 1','Value-added service 2','Insured amount','VATNo','eBaySellerID','eBayBuyerID','Buyer Fullname','Buyer Phone Number','Buyer Email','Buyer Address 1','Buyer Address 2','Buyer City','Buyer State','Buyer Postcode','Buyer Country','House No.','Duplicate order','SKU No.','Attribute','Quantity','Item Number','Transaction ID','SKU No.','Attribute','Quantity','Item Number','Transaction ID','SKU No.','Attribute','Quantity','Item Number','Transaction ID');
+        $expCellName = array('Seller Order NO.','Warehouse','Shipping Method','Value-added service 1','Value-added service 2','Insured amount','VATNo','eBaySellerID','eBayBuyerID','Buyer Fullname','Buyer Phone Number','Buyer Email','Buyer Address 1','Buyer Address 2','Buyer City','Buyer State','Buyer Postcode','Buyer Country','House No.','Duplicate order','SKU No.','Attribute','Quantity','Item Number','Transaction ID','SKU No.','Attribute','Quantity','Item Number','Transaction ID','SKU No.','Attribute','Quantity','Item Number','Transaction ID');
         foreach ($winitOutOrder as $key => $value) {
             $tmpdata['A'] = $value['Sales Record Number'];
             $tmpdata['B'] = $value['Warehouse'];
             $tmpdata['C'] = $value['Shipping Service'];
+            $tmpdata['F'] = $value['Create Date'];
             $tmpdata['H'] = $_POST['sellerID'];
             $tmpdata['I'] = $value['User Id'];
             $tmpdata['J'] = $value['Buyer Fullname'];
