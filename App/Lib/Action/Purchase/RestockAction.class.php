@@ -691,9 +691,9 @@ class RestockAction extends CommonAction{
 
 			if($setFirstWay==true){
 				$this->assign('arweight',$airweight);
-				$this->assign('arVolume',$airvolume);
+				$this->assign('arvolume',$airvolume);
 				$this->assign('srweight',$seaweight);
-				$this->assign('srVolume',$seavolume);
+				$this->assign('srvolume',$seavolume);
 				$this->display('index');
 			}else{
 				$this->assign('airweight',$airweight);
