@@ -24,10 +24,28 @@
 	 <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<label class="control-label">空运重量:{$airweight} kg</label>
-		<label class="control-label">空运体积:{$airvolumen} m³</label>
+		<label class="control-label">空运体积:{$airvolume} m³</label>
 		<label class="control-label">海运重量:{$seaweight} kg</label>
-		<label class="control-label">海运体积:{$seavolumen} m³</label>
-		<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
+		<label class="control-label">海运体积:{$seavolume} m³</label>
 	</div>
+	<div class="content">
+		 <table id="tablelist" class="tablelist">
+			<tr>
+				<th><div class="tl">补货表编号</div></th>
+				<th><div class="tl">产品编码</div></th>
+				<th><div class="tl">数量</div></th>
+				<th><div class="tl">仓库</div></th>
+			</tr>
+			<volist name="changeToAir" id="vo">
+				<tr>
+				<td><div class="tl">{$vo.id}</div></td>
+				<td><div class="tl">{$vo.sku}</div></td>
+				<td><div class="tl">{$vo.quantity}</div></td>
+				<td><div class="tl">{$vo.warehouse}</div></td>
+				</tr>	
+			</volist> 	 								
+		</table>
+	</div>
+	<a class="btn btn-s btn-grey" href="javascript:history.back();">返回</a>
 </body>
 </html>

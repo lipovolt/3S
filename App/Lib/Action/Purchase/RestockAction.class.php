@@ -596,7 +596,7 @@ class RestockAction extends CommonAction{
 			$data = $restockTable->where($map)->select();
 			$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
 
-			$changeToAirShipping=null;
+			$changeToAirShipping=array();
 			foreach ($data as $key => $value) {
 				$p = $product->where(array(C('DB_PRODUCT_SKU')=>$value[C('DB_RESTOCK_SKU')]))->find();
 				$usswFirstSaleDate = $usswSalePlan->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_RESTOCK_SKU')]))->getField(C('DB_USSW_SALE_PLAN_FIRST_DATE'));
@@ -607,7 +607,7 @@ class RestockAction extends CommonAction{
 				$purchaseMap[C('DB_PURCHASE_STATUS')] = array('eq','全部到货');
 				$purchaseCount = $purchase->where($purchaseMap)->count();
 				
-				if($purchaseCount<=$restockPara[C('DB_RESTOCK_PARA_USSW_AFCL')] && $daysFirstSale<=$restockPara[C('DB_RESTOCK_PARA_USSW_AFDL')] && $p[C('DB_PRODUCT_TOUS')]=='空运'){
+				if(($purchaseCount>$restockPara[C('DB_RESTOCK_PARA_USSW_AFCL')] || $daysFirstSale>$restockPara[C('DB_RESTOCK_PARA_USSW_AFDL')]) && $p[C('DB_PRODUCT_TOUS')]=='空运'){
 					
 					if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 						$msq = $this->getUsswMads($value[C('DB_RESTOCK_SKU')],6,$restockPara[C('DB_RESTOCK_PARA_ELQ')])/6;
@@ -623,20 +623,25 @@ class RestockAction extends CommonAction{
 							if(intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq)<$value[C('DB_RESTOCK_QUANTITY')]){
 								$airQuantity = intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq);
 								$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
-								$seaVolume = $seaVolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
+								$seavolume = $seaVolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
 							}else{
 								$airQuantity = $value[C('DB_RESTOCK_QUANTITY')];
 							}							
 							$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$airQuantity;
-							$airVolume = $airVolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
+							$airvolume = $airVolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
 							$value['change_to_air_quantity'] = $airQuantity;
 							array_push($changeToAirShipping, $value);
-						}else{
+						}elseif($seaEstimatedArriveDays<0){
 							$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算');
 						}
 					}else{
 						$this->error('无法计算，产品 '.$value[C('DB_RESTOCK_SKU')].' 包装信息缺失');
 					}					
+				}elseif($purchaseCount<=$restockPara[C('DB_RESTOCK_PARA_USSW_AFCL')] && $daysFirstSale<=$restockPara[C('DB_RESTOCK_PARA_USSW_AFDL')] && $p[C('DB_PRODUCT_TOUS')]=='空运'){
+					$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$value[C('DB_RESTOCK_QUANTITY')];
+					$airvolume = $airVolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$value[C('DB_RESTOCK_QUANTITY')];
+					$value['change_to_air_quantity'] = $value[C('DB_RESTOCK_QUANTITY')];
+					array_push($changeToAirShipping, $value);
 				}else{
 					if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 						$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$value[C('DB_RESTOCK_QUANTITY')];
@@ -673,15 +678,16 @@ class RestockAction extends CommonAction{
 			}
 			if($setFirstWay==true){
 				$this->assign('arweight',$airweight);
-				$this->assign('arVolume',$airVolume);
+				$this->assign('arVolume',$airvolume);
 				$this->assign('srweight',$seaweight);
-				$this->assign('srVolume',$seaVolume);
+				$this->assign('srVolume',$seavolume);
 				$this->display('index');
 			}else{
 				$this->assign('airweight',$airweight);
-				$this->assign('airVolume',$airVolume);
+				$this->assign('airvolume',$airvolume);
 				$this->assign('seaweight',$seaweight);
-				$this->assign('seaVolume',$seaVolume);
+				$this->assign('seavolume',$seavolume);
+				$this->assign('changeToAir',$changeToAirShipping);
 				$this->display();
 			}			
 		}
