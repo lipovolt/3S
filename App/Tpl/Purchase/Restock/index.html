@@ -183,7 +183,7 @@
 					</div>
 				</div>
 			</br>
-				<div class="form-group">
+				<!-- <div class="form-group">
 					<div class="block-bd">
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalWinitdeRestockTable')}" >预算万德补货表</a>
 						<if condition="($winitde_lock eq 1)"> 
@@ -194,14 +194,20 @@
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/updateWinitdeRestockTable')}" >更新万德补货表</a>
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/resetWinitdeRestockTable')}" >重置万德补货表</a>
 					</div>
-				</div>
+				</div> -->
 				<div class="form-group">
 					<div class="block-bd">
-						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalWinitDeRestockTableNew')}" >新预算万德补货表</a><!-- 
-						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/updateUsswRestockTable')}" >新更新美自补货表</a> -->
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalWinitDeRestockTableNew')}" >新预算万德补货表</a>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalWinitDeRestockTableNew',array('setFirstWay'=>true))}" >新更新万德补货表</a>
+						<if condition="($winitde_lock eq 1)"> 
+							<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/unlockWinitdeRestockTable')}" >解锁万德补货表</a>
+						<else /> 
+							<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/lockWinitdeRestockTable')}" >锁定万德补货表</a>
+						</if>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/resetWinitdeRestockTable')}" >重置万德补货表</a>
 					</div>
 				</div>
-				<div class="block-bd">
+				<!-- <div class="block-bd">
 					<label for="keyword" class="control-label">空运待发货体积： {$arvolume} m³</label>
 					<label for="keyword" class="control-label">空运待发货重量： {$arweight} kg</label>
 					<label for="keyword" class="control-label">海运待发货体积： {$srvolume} m³</label>
@@ -210,7 +216,7 @@
 				<div class="block-bd">
 					<label for="keyword" class="control-label">延迟发货体积： {$dvolume} m³</label>
 					<label for="keyword" class="control-label">延迟发货重量： {$dweight} kg</label>
-				</div>
+				</div> -->
 				<table id="tablelist" class="tablelist">
 					<tr>
 						<th><div class="tl">
