@@ -894,9 +894,9 @@ class RestockAction extends CommonAction{
 	2. 产品是空运头程试算，仓库可用库存可售天数小于海运预估到仓时间，计算出能坚持到海运到仓的数量，发空运。
 	*/
 
-	public function precalUsswRestockTableNew($setFirstWay=false){
-		if(M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->getField(C('DB_RESTOCK_PARA_USSW_LOCK'))==1 && $setFirstWay==true){
-			$this->error('美自建仓补货表被锁定,无法计算');
+	public function precalWinitdeRestockTableNew($setFirstWay=false){
+		if(M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->getField(C('DB_RESTOCK_PARA_WINITDE_LOCK'))==1 && $setFirstWay==true){
+			$this->error('万邑通德国补货表被锁定,无法计算');
 		}else{
 			if($setFirstWay==true){
 				$this->resetWinitDeRestockTableHandle();
