@@ -583,6 +583,7 @@ class RestockAction extends CommonAction{
 			$this->error('美自建仓补货表被锁定,无法计算');
 		}else{
 			if($setFirstWay==true){
+				dump($setFirstWay);die;
 				$this->resetUsswRestockTableHandle();
 			}	
 			$restockTable = M(C('DB_RESTOCK'));
@@ -691,9 +692,9 @@ class RestockAction extends CommonAction{
 
 			if($setFirstWay==true){
 				$this->assign('arweight',$airweight);
-				$this->assign('arVolume',$airvolume);
+				$this->assign('arvolume',$airvolume);
 				$this->assign('srweight',$seaweight);
-				$this->assign('srVolume',$seavolume);
+				$this->assign('srvolume',$seavolume);
 				$this->display('index');
 			}else{
 				$this->assign('airweight',$airweight);
