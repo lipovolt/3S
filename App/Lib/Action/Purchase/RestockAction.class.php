@@ -126,8 +126,8 @@ class RestockAction extends CommonAction{
         $product = M(C('DB_PRODUCT'));
         $szstorag = M(C('DB_SZSTORAGE'));
         $ppRequirement = M(C('DB_PRODUCT_PACK_REQUIREMENT'));
-        $map[C('DB_RESTOCK_STATUS')] = array('neq', '已发货');
-        $xlsData  = $xlsModel->where($map)->select();
+    	$map[C('DB_RESTOCK_STATUS')] = array('neq', '已发货');
+    	$xlsData  = $xlsModel->where($map)->select();
         foreach ($xlsData as $key => $value) {
         	$p = $product->where(array('sku'=>$value[C('DB_RESTOCK_SKU')]))->find();
         	$xlsData[$key]['cname'] = $p[C('DB_PRODUCT_CNAME')];
@@ -616,7 +616,11 @@ class RestockAction extends CommonAction{
 					if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 						$msq = $this->getUsswMads($value[C('DB_RESTOCK_SKU')],6,$restockPara[C('DB_RESTOCK_PARA_ELQ')])/6;
 						$ainventory = $usstorageTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_RESTOCK_SKU')]))->getField(C('DB_USSTORAGE_AINVENTORY'))+$this->getUsswInboundAirIInventory($value[C('DB_RESTOCK_SKU')]);
-						$ainventorySaleDays = ceil($ainventory/$msq);
+						if($msq==0){
+							$ainventorySaleDays = 65536;
+						}else{
+							$ainventorySaleDays = ceil($ainventory/$msq);
+						}						
 						if($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')])==null){
 							$seaEstimatedArriveDays=$restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')];//与已知时间的差值
 						}else{
@@ -684,6 +688,7 @@ class RestockAction extends CommonAction{
 					}					
 				}
 			}
+
 			if($setFirstWay==true){
 				$this->assign('arweight',$airweight);
 				$this->assign('arVolume',$airvolume);
