@@ -14,7 +14,7 @@
 		  <elseif condition="I('session.username',0) eq 'admin'"/>
 		  	<a class="blue"  href="{:U('Todo/Todo/index',['keyword'=>'person','keywordValue'=>'张昱'])}">待办<font style="color:#F00; font-size: 16px"><b> {$todoQuantity}</b></font></a>
 		  <else />
-		  	<a class="blue"  href="{:U('Todo/Todo/index',['keyword'=>'person','keywordValue'=>I('session.username',0)])}">待办<font style="color:#F00;"><b> {$todoQuantity}</b></font></a>
+		  	<a class="blue"  href="{:U('Todo/Todo/index',['keyword'=>'person','keywordValue'=>C('PRODUCT_MANAGER_ENAME')[I('session.username',0)]])}">待办<font style="color:#F00;"><b> {$todoQuantity}</b></font></a>
 		</if>		
 	</div>
 	<div id='messagerieList'></div>
