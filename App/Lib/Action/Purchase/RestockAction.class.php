@@ -638,7 +638,7 @@ class RestockAction extends CommonAction{
 							$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$airQuantity;
 							$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
 							$value['change_to_air_quantity'] = $airQuantity;
-							if(!$this->isSkuChangedToAir($value,$changeToAirShipping && $airQuantity>0)){
+							if(!$this->isSkuChangedToAir($value,$changeToAirShipping) && $airQuantity>0){
 								array_push($changeToAirShipping, $value);
 							}							
 						}elseif($seaEstimatedArriveDays<0){
