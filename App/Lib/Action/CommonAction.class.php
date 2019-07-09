@@ -17,9 +17,11 @@ class CommonAction extends Action{
         if(I('session.username',0)=='张旻'){
             $this->assign('todoQuantity',M(C('DB_TODO'))->where(array(array(C('DB_TODO_PERSON')=>'Jade'),array(C('DB_TODO_STATUS')=>0)))->count());
         }elseif(I('session.username',0)=='admin'){
-            $this->assign('todoQuantity',M(C('DB_TODO'))->where(array(array(C('DB_TODO_PERSON')=>'张昱'),array(C('DB_TODO_STATUS')=>0)))->count());
+            $map[C('DB_TODO_PERSON')] = array('in',array('Yellow River','张昱'));
+            $map[C('DB_TODO_STATUS')] = array('eq',0);
+            $this->assign('todoQuantity',M(C('DB_TODO'))->where($map)->count());
         }else{
-            $this->assign('todoQuantity',M(C('DB_TODO'))->where(array(array(C('DB_TODO_PERSON')=>I('session.username',0)),array(C('DB_TODO_STATUS')=>0)))->count());
+            $this->assign('todoQuantity',M(C('DB_TODO'))->where(array(array(C('DB_TODO_PERSON')=>C('PRODUCT_MANAGER_ENAME')[I('session.username',0)]),array(C('DB_TODO_STATUS')=>0)))->count());
         }        
 	}
 
