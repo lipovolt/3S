@@ -920,7 +920,7 @@ class RestockAction extends CommonAction{
 			$salePlan = M(C('DB_YZHAN_816_PL_SALE_PLAN'));
 			
 			$purchase = D('PurchaseView');
-			$map[C('DB_RESTOCK_STATUS')] = array('in',array('待发货','已发货'));
+			$map[C('DB_RESTOCK_STATUS')] = array('in',array('待发货','延迟发货'));
 			$map[C('DB_RESTOCK_WAREHOUSE')] = array('eq','万邑通德国');
 			$data = $restockTable->where($map)->select();
 			$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
@@ -962,11 +962,11 @@ class RestockAction extends CommonAction{
 							$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$airQuantity;
 							$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
 							$value['change_to_air_quantity'] = $airQuantity;
-							if(!$this->isSkuChangedToAir($value,$changeToAirShipping && $airQuantity>0)){
+							if(!$this->isSkuChangedToAir($value,$changeToAirShipping) && $airQuantity>0){
 								array_push($changeToAirShipping, $value);
 							}
 						}elseif($seaEstimatedArriveDays<0){
-							$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算');
+							$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算','',15);
 						}
 					}else{
 						$this->error('无法计算，产品 '.$value[C('DB_RESTOCK_SKU')].' 包装信息缺失');
@@ -976,7 +976,7 @@ class RestockAction extends CommonAction{
 						$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$value[C('DB_RESTOCK_QUANTITY')];
 						$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$value[C('DB_RESTOCK_QUANTITY')];
 						$value['change_to_air_quantity'] = $value[C('DB_RESTOCK_QUANTITY')];
-						if(!$this->isSkuChangedToAir($value,$changeToAirShipping && $airQuantity>0)){
+						if(!$this->isSkuChangedToAir($value,$changeToAirShipping)){
 							array_push($changeToAirShipping, $value);
 						}
 					}else{
