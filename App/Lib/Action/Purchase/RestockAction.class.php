@@ -579,12 +579,6 @@ class RestockAction extends CommonAction{
 	*/
 
 	public function precalUsswRestockTableNew($setFirstWay=false){
-		$arr = array(
-			array('id'=>1,'sku'=>1001,'warehouse'=>'mei'),
-			array('id'=>2,'sku'=>1002,'warehouse'=>'mei'),
-		);
-		dump(in_array('1001',$arr));die;
-
 		if(M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->getField(C('DB_RESTOCK_PARA_USSW_LOCK'))==1 && $setFirstWay==true){
 			$this->error('美自建仓补货表被锁定,无法计算');
 		}else{
