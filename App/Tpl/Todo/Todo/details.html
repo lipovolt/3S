@@ -63,26 +63,36 @@
 				<div class="control-wrap">
 					<select name="{:C('DB_TODO_CREATER')}"  id="{:C('DB_TODO_CREATER')}">
 						<?php 
-							if($task[C('DB_TODO_CREATER')] == '孙志磊'){
+							if($task[C('DB_TODO_CREATER')] == 'Yangtze'){
 								echo '<option value="张昱" >张昱</option>
-									<option value="孙志磊" selected>孙志磊</option>
-									<option value="马良东" >马良东</option>
-									<option value="Jade" >Jade</option>';
-							}elseif($task[C('DB_TODO_CREATER')] == '马良东'){
+										<option value="Yellow River" >Yellow River</option>
+										<option value="Yangtze" selected="">Yangtze</option>
+										<option value="Pearl River" >Pearl River</option>
+										<option value="Jade" >Jade</option>';
+							}elseif($task[C('DB_TODO_CREATER')] == 'Pearl River'){
 								echo '<option value="张昱" >张昱</option>
-									<option value="孙志磊" >孙志磊</option>
-									<option value="马良东" selected>马良东</option>
-									<option value="Jade" >Jade</option>';
+										<option value="Yellow River" >Yellow River</option>
+										<option value="Yangtze">Yangtze</option>
+										<option value="Pearl River" selected="">Pearl River</option>
+										<option value="Jade" >Jade</option>';
 							}elseif($task[C('DB_TODO_CREATER')] == 'Jade'){
 								echo '<option value="张昱" >张昱</option>
-									<option value="孙志磊" >孙志磊</option>	
-									<option value="马良东" >马良东</option>
-									<option value="Jade" selected>Jade</option>';
+										<option value="Yellow River" >Yellow River</option>
+										<option value="Yangtze">Yangtze</option>
+										<option value="Pearl River">Pearl River</option>
+										<option value="Jade" selected="">Jade</option>';
+							}elseif($task[C('DB_TODO_CREATER')] == 'Yellow River'){
+								echo '<option value="张昱" >张昱</option>
+										<option value="Yellow River" selected="">Yellow River</option>
+										<option value="Yangtze">Yangtze</option>
+										<option value="Pearl River">Pearl River</option>
+										<option value="Jade">Jade</option>';
 							}else{
 								echo '<option value="张昱" selected>张昱</option>
-									<option value="孙志磊" >孙志磊</option>	
-									<option value="马良东" >马良东</option>
-									<option value="Jade" >Jade</option>';
+										<option value="Yellow River" >Yellow River</option>
+										<option value="Yangtze">Yangtze</option>
+										<option value="Pearl River">Pearl River</option>
+										<option value="Jade">Jade</option>';
 							}
 						?>							
 					</select>
@@ -93,36 +103,36 @@
 				<div class="control-wrap">
 					<select name="{:C('DB_TODO_PERSON')}"  id="{:C('DB_TODO_PERSON')}">
 						<?php 
-							if($task[C('DB_TODO_PERSON')] == '孙志磊'){
+							if($task[C('DB_TODO_PERSON')] == 'Yangtze'){
 								echo '<option value="张昱" >张昱</option>
-									<option value="孙志磊" selected>孙志磊</option>
-									<option value="褚金键" >褚金键</option>	
-									<option value="马良东" >马良东</option>
-									<option value="Jade" >Jade</option>';
-							}elseif($task[C('DB_TODO_PERSON')] == '褚金键'){
+										<option value="Yellow River" >Yellow River</option>
+										<option value="Yangtze" selected="">Yangtze</option>
+										<option value="Pearl River" >Pearl River</option>
+										<option value="Jade" >Jade</option>';
+							}elseif($task[C('DB_TODO_PERSON')] == 'Yellow River'){
 								echo '<option value="张昱" >张昱</option>
-									<option value="孙志磊" >孙志磊</option>
-									<option value="褚金键" selected>褚金键</option>	
-									<option value="马良东" >马良东</option>
-									<option value="Jade" >Jade</option>';
-							}elseif($task[C('DB_TODO_PERSON')] == '马良东'){
+										<option value="Yellow River" selected="">Yellow River</option>
+										<option value="Yangtze">Yangtze</option>
+										<option value="Pearl River" >Pearl River</option>
+										<option value="Jade" >Jade</option>';
+							}elseif($task[C('DB_TODO_PERSON')] == 'Pearl River'){
 								echo '<option value="张昱" >张昱</option>
-									<option value="孙志磊" >孙志磊</option>
-									<option value="褚金键" >褚金键</option>	
-									<option value="马良东" selected>马良东</option>
-									<option value="Jade" >Jade</option>';
+										<option value="Yellow River">Yellow River</option>
+										<option value="Yangtze">Yangtze</option>
+										<option value="Pearl River" selected="">Pearl River</option>
+										<option value="Jade" >Jade</option>';
 							}elseif($task[C('DB_TODO_PERSON')] == 'Jade'){
 								echo '<option value="张昱" >张昱</option>
-									<option value="孙志磊" >孙志磊</option>
-									<option value="褚金键" >褚金键</option>	
-									<option value="马良东" >马良东</option>
-									<option value="Jade" selected>Jade</option>';
+										<option value="Yellow River">Yellow River</option>
+										<option value="Yangtze">Yangtze</option>
+										<option value="Pearl River">Pearl River</option>
+										<option value="Jade" selected="">Jade</option>';
 							}else{
 								echo '<option value="张昱" selected>张昱</option>
-									<option value="孙志磊" >孙志磊</option>
-									<option value="褚金键" >褚金键</option>	
-									<option value="马良东" >马良东</option>
-									<option value="Jade" >Jade</option>';
+									<option value="Yellow River">Yellow River</option>
+										<option value="Yangtze">Yangtze</option>
+										<option value="Pearl River">Pearl River</option>
+										<option value="Jade">Jade</option>';
 							}
 						?>							
 					</select>
