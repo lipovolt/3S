@@ -625,7 +625,7 @@ class RestockAction extends CommonAction{
 							$seaEstimatedArriveDays=$restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')];//与已知时间的差值
 						}else{
 							$cntSeaShippingTimes=time()-strtotime($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')]));//与已知时间的差值
-							$seaEstimatedArriveDays = ceil($restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')]-$cntSeaShippingTimes/(3600*24));//算出天数
+							$seaEstimatedArriveDays = ceil($restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')]-($cntSeaShippingTimes/(3600*24)));//算出天数
 						}
 						if($seaEstimatedArriveDays>0 && $ainventorySaleDays<$seaEstimatedArriveDays){
 							if(intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq)<$value[C('DB_RESTOCK_QUANTITY')]){
@@ -642,7 +642,7 @@ class RestockAction extends CommonAction{
 								array_push($changeToAirShipping, $value);
 							}							
 						}elseif($seaEstimatedArriveDays<0){
-							$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算');
+							$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算','',15);
 						}
 					}else{
 						$this->error('无法计算，产品 '.$value[C('DB_RESTOCK_SKU')].' 包装信息缺失');
@@ -735,7 +735,7 @@ class RestockAction extends CommonAction{
 
 	private function getUsswInboundSeaShippingDate($sku){
 		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
-		$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
+		$map[C('DB_USSW_INBOUND_STATUS')] = array('eq','待入库');
 		$map[C('DB_USSW_INBOUND_SHIPPING_WAY')] = array('eq','海运');
 		return D('UsswInboundView')->where($map)->limit(1)->getField(C('DB_USSW_INBOUND_DATE'));
 	}
