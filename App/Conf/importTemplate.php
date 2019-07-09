@@ -164,6 +164,7 @@ return array(
 		'A' => '补货表编号',
 		'B' => '商品编码',
 		'C' => '数量',
+		'C' => '状态',
 		),
 
 	//update product packing weight length widht height from winit product template

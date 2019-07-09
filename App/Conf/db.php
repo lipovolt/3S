@@ -461,7 +461,7 @@ return array(
 	'DB_RESTOCK_QUANTITY' => 'quantity',
 	'DB_RESTOCK_WAREHOUSE' => 'warehouse', //美自建仓,万邑通美西，万邑通德国
 	'DB_RESTOCK_TRANSPORT' => 'transport', //空运，海运
-	'DB_RESTOCK_STATUS' => 'status', //待发货，已发货,延迟发货
+	'DB_RESTOCK_STATUS' => 'status', //待发货,已发货,延迟发货,包装中
 	'DB_RESTOCK_REMARK' => 'remark',
 
 	//restock parameters

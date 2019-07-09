@@ -579,6 +579,12 @@ class RestockAction extends CommonAction{
 	*/
 
 	public function precalUsswRestockTableNew($setFirstWay=false){
+		$arr = array(
+			array('id'=>1,'sku'=>1001,'warehouse'=>'mei'),
+			array('id'=>2,'sku'=>1002,'warehouse'=>'mei'),
+		);
+		dump(in_array('1001',$arr));die;
+
 		if(M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->getField(C('DB_RESTOCK_PARA_USSW_LOCK'))==1 && $setFirstWay==true){
 			$this->error('美自建仓补货表被锁定,无法计算');
 		}else{
@@ -591,7 +597,7 @@ class RestockAction extends CommonAction{
 			$usswSalePlan = M(C('DB_USSW_SALE_PLAN'));
 			
 			$purchase = D('PurchaseView');
-			$map[C('DB_RESTOCK_STATUS')] = array('neq','已发货');
+			$map[C('DB_RESTOCK_STATUS')] = array('in',array('待发货','延迟发货'));
 			$map[C('DB_RESTOCK_WAREHOUSE')] = array('in',array('美自建仓','万邑通美西'));
 			$data = $restockTable->where($map)->select();
 			$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
@@ -638,7 +644,9 @@ class RestockAction extends CommonAction{
 							$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$airQuantity;
 							$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
 							$value['change_to_air_quantity'] = $airQuantity;
-							array_push($changeToAirShipping, $value);
+							if(!$this->isSkuChangedToAir($value,$changeToAirShipping && $airQuantity>0)){
+								array_push($changeToAirShipping, $value);
+							}							
 						}elseif($seaEstimatedArriveDays<0){
 							$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算');
 						}
@@ -650,7 +658,9 @@ class RestockAction extends CommonAction{
 						$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$value[C('DB_RESTOCK_QUANTITY')];
 						$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$value[C('DB_RESTOCK_QUANTITY')];
 						$value['change_to_air_quantity'] = $value[C('DB_RESTOCK_QUANTITY')];
-						array_push($changeToAirShipping, $value);
+						if(!$this->isSkuChangedToAir($value,$changeToAirShipping)){
+							array_push($changeToAirShipping, $value);
+						}						
 					}else{
 						$this->error('无法计算，产品 '.$value[C('DB_RESTOCK_SKU')].' 包装信息缺失');
 					}					
@@ -704,6 +714,15 @@ class RestockAction extends CommonAction{
 				$this->display();
 			}			
 		}
+	}
+
+	private function isSkuChangedToAir($new,$changeToAir){
+		foreach ($changeToAir as $key => $value) {
+			if($new[C('DB_RESTOCK_SKU')]==$value[C('DB_RESTOCK_SKU')] && $new[C('DB_RESTOCK_WAREHOUSE')]==$value[C('DB_RESTOCK_WAREHOUSE')]){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private function getUsswInboundAirIInventory($sku){
@@ -907,7 +926,7 @@ class RestockAction extends CommonAction{
 			$salePlan = M(C('DB_YZHAN_816_PL_SALE_PLAN'));
 			
 			$purchase = D('PurchaseView');
-			$map[C('DB_RESTOCK_STATUS')] = array('neq','已发货');
+			$map[C('DB_RESTOCK_STATUS')] = array('in',array('待发货','已发货'));
 			$map[C('DB_RESTOCK_WAREHOUSE')] = array('eq','万邑通德国');
 			$data = $restockTable->where($map)->select();
 			$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
@@ -949,7 +968,9 @@ class RestockAction extends CommonAction{
 							$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$airQuantity;
 							$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
 							$value['change_to_air_quantity'] = $airQuantity;
-							array_push($changeToAirShipping, $value);
+							if(!$this->isSkuChangedToAir($value,$changeToAirShipping && $airQuantity>0)){
+								array_push($changeToAirShipping, $value);
+							}
 						}elseif($seaEstimatedArriveDays<0){
 							$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算');
 						}
@@ -961,7 +982,9 @@ class RestockAction extends CommonAction{
 						$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$value[C('DB_RESTOCK_QUANTITY')];
 						$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$value[C('DB_RESTOCK_QUANTITY')];
 						$value['change_to_air_quantity'] = $value[C('DB_RESTOCK_QUANTITY')];
-						array_push($changeToAirShipping, $value);
+						if(!$this->isSkuChangedToAir($value,$changeToAirShipping && $airQuantity>0)){
+							array_push($changeToAirShipping, $value);
+						}
 					}else{
 						$this->error('无法计算，产品 '.$value[C('DB_RESTOCK_SKU')].' 包装信息缺失');
 					}					
@@ -1684,9 +1707,9 @@ class RestockAction extends CommonAction{
                 	if($restockItem[C('DB_RESTOCK_STATUS')] == '已发货'){
                 		$errorInFile[$i] = '该产品已经发出，无法再次更改状态';
                 	}
-                	/*if($restockItem[C('DB_RESTOCK_WAREHOUSE')] == '美自建仓'){
-                		$errorInFile[$i] = '该产品目的仓是美自建仓';
-                	}*/
+                	if($restockItem[C('DB_RESTOCK_STATUS')] == null){
+                		$errorInFile[$i] = '状态不能为空';
+                	}
                 }
                 if($errorInFile != null){
                 	dump($errorInFile);
@@ -1698,14 +1721,20 @@ class RestockAction extends CommonAction{
                 	for($i=2;$i<=$highestRow;$i++){
                 		$id = $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
                 		$restockQuantity = $restock->where(array(C('DB_RESTOCK_ID')=>$id))->getField(C('DB_RESTOCK_QUANTITY'));
-                		if($restockQuantity <= $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue()){
-                			$tmp[C('DB_RESTOCK_STATUS')] = '已发货';
-                            $tmp[C('DB_RESTOCK_SHIPPING_DATE')] = date("Y-m-d H:i:s" ,time());
-                            $restock->where(array(C('DB_RESTOCK_ID')=>$id))->save($tmp);
-                		}else{
-                            $rest = $restockQuantity - $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
-                            $restock->where(array(C('DB_RESTOCK_ID')=>$id))->setField(C('DB_RESTOCK_QUANTITY'),$rest);
-                        }
+                		if($objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue()=='已发货'){
+                			if($restockQuantity <= $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue()){
+	                			$tmp[C('DB_RESTOCK_STATUS')] = '已发货';
+	                			$tmp[C('DB_RESTOCK_SHIPPING_DATE')] = date("Y-m-d H:i:s" ,time());
+	                			$restock->where(array(C('DB_RESTOCK_ID')=>$id))->save($tmp);
+	                		}else{
+	                			$rest = $restockQuantity - $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
+	                            $restock->where(array(C('DB_RESTOCK_ID')=>$id))->setField(C('DB_RESTOCK_QUANTITY'),$rest);                           
+	                        }
+                		}elseif($objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue()=='包装中'){
+                			$tmp[C('DB_RESTOCK_STATUS')] = '包装中';
+	                		$restock->where(array(C('DB_RESTOCK_ID')=>$id))->save($tmp);
+                		}
+                		
 	                }
 	                $restock->commit(); 
 	                $this->success('导入成功！');

@@ -28,6 +28,13 @@ class EmailTemplateAction extends CommonAction{
 				Es gibt ein kleines Problem für Ihre Bestellung. Die gestern geschickte Packung erfüllt nicht die Verpackungsanforderungen von DHL. Der Bereit der Verpackung ist 10cm. Der DHL benötigt 11 cm. Deswegen die Sendung wird zurück zu uns geschickt. Wenn die Sendung zurück ist, verpacken wir den Artikel und noch mal verschicken. Aber es könnt noch 1-3 Tage dauern. <br>
 					Können Sie dafür warten? Oder soll ich den Kauf abbrechen? Ich bitte um Ihre Entschuldigung für den Umstände.',
 			'德国退货地址'=>'Amelie-Jie Tian<br>Hinsbecker Loeh 12<br>45257 Essen',
+			'顾客要求取消订单，但是已经发货'=>'Hallo,
+
+Ich habe gerade Ihre Abbruch Anfrage gesehen. Und die Anfrage war von System automatisch geantwortet. Ich möchte noch mal erklären warum die Bestellung nicht storniert werden kann.
+
+Wir benutzen eines System. Das System lesen automatisch die Bestellungen von ebay und kaufen Versandschein von Post und leiten die Bestellungen an Lager weiter. Das System dient zur Beschleunigung der Verarbeitung der Bestellungen. 
+
+Wenn ich Ihre Nachricht gesehen habe, Ihre Bestellung war schon von Post abgeholt. Deswegen kann Ihre Bestellung nicht storniert werde. Ich bitte um Ihre Verständnisse. ',
 			);
 		$en_templates = array(
 			'USPS 爆仓'=>'Hello,<br>
