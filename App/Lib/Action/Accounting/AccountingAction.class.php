@@ -876,6 +876,13 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurTaxCollection = $eurTaxCollection+$amountCM['amount'];
         			}
+        		}elseif($transactionType=='Order Payment' && $paymentType=='Other' && $paymentDetail=='Gift Wrap Tax'){
+        			if($amountCM['currency']=='usd'){
+        				$usdTaxCollection = $usdTaxCollection+$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurTaxCollection = $eurTaxCollection+$amountCM['amount'];
+        			}
         		}elseif($transactionType=='Order Payment' && $paymentType=='Other' && $paymentDetail=='Shipping'){
         			if($amountCM['currency']=='usd'){
         				$usdShippingFee = $usdShippingFee+$amountCM['amount'];
