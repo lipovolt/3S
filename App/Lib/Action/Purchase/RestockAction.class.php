@@ -576,6 +576,7 @@ class RestockAction extends CommonAction{
 	算法判断
 	1. 产品是空运头程试算，首次刊登时间小于两个月并且产品采购次数小于3次视为新产品，所有待发货产品发空运。
 	2. 产品是空运头程试算，仓库可用库存可售天数小于海运预估到仓时间，计算出能坚持到海运到仓的数量，发空运。
+	3. 产品是空运头程试算，可用加在途库存等于0. 补30天的销量过去。
 	*/
 
 	public function precalUsswRestockTableNew($setFirstWay=false){
@@ -616,34 +617,50 @@ class RestockAction extends CommonAction{
 					if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 						$msq = $this->getUsswMads($value[C('DB_RESTOCK_SKU')],6,$restockPara[C('DB_RESTOCK_PARA_ELQ')])/6;
 						$ainventory = $usstorageTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_RESTOCK_SKU')]))->getField(C('DB_USSTORAGE_AINVENTORY'))+$this->getUsswInboundAirIInventory($value[C('DB_RESTOCK_SKU')]);
-						if($msq==0){
-							$ainventorySaleDays = 65536;
-						}else{
-							$ainventorySaleDays = ceil($ainventory/$msq);
-						}						
-						if($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')])==null){
-							$seaEstimatedArriveDays=$restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')];//与已知时间的差值
-						}else{
-							$cntSeaShippingTimes=time()-strtotime($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')]));//与已知时间的差值
-							$seaEstimatedArriveDays = ceil($restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')]-($cntSeaShippingTimes/(3600*24)));//算出天数
-						}
-						if($seaEstimatedArriveDays>0 && $ainventorySaleDays<$seaEstimatedArriveDays){
-							if(intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq)<$value[C('DB_RESTOCK_QUANTITY')]){
-								$airQuantity = intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq);
+						if($ainventory<=0){
+							$airQuantity=$this->getUsswMads($value[C('DB_RESTOCK_SKU')],30,$restockPara[C('DB_RESTOCK_PARA_ELQ')]);
+							if($airQuantity<$value[C('DB_RESTOCK_QUANTITY')]){
+								$airQuantity = $value[C('DB_RESTOCK_QUANTITY')]-$airQuantity;
 								$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
 								$seavolume = $seavolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
-							}else{
-								$airQuantity = $value[C('DB_RESTOCK_QUANTITY')];
-							}							
+							}
 							$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$airQuantity;
 							$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
 							$value['change_to_air_quantity'] = $airQuantity;
 							if(!$this->isSkuChangedToAir($value,$changeToAirShipping) && $airQuantity>0){
 								array_push($changeToAirShipping, $value);
-							}							
-						}elseif($seaEstimatedArriveDays<0){
-							$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算','',15);
+							}
+						}else{
+							if($msq==0){
+								$ainventorySaleDays = 65536;
+							}else{
+								$ainventorySaleDays = ceil($ainventory/$msq);
+							}						
+							if($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')])==null){
+								$seaEstimatedArriveDays=$restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')];//与已知时间的差值
+							}else{
+								$cntSeaShippingTimes=time()-strtotime($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')]));//与已知时间的差值
+								$seaEstimatedArriveDays = ceil($restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')]-($cntSeaShippingTimes/(3600*24)));//算出天数
+							}
+							if($seaEstimatedArriveDays>0 && $ainventorySaleDays<$seaEstimatedArriveDays){
+								if(intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq)<$value[C('DB_RESTOCK_QUANTITY')]){
+									$airQuantity = intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq);
+									$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
+									$seavolume = $seavolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
+								}else{
+									$airQuantity = $value[C('DB_RESTOCK_QUANTITY')];
+								}							
+								$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$airQuantity;
+								$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
+								$value['change_to_air_quantity'] = $airQuantity;
+								if(!$this->isSkuChangedToAir($value,$changeToAirShipping) && $airQuantity>0){
+									array_push($changeToAirShipping, $value);
+								}							
+							}elseif($seaEstimatedArriveDays<0){
+								$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算','',15);
+							}
 						}
+						
 					}else{
 						$this->error('无法计算，产品 '.$value[C('DB_RESTOCK_SKU')].' 包装信息缺失');
 					}					
@@ -945,28 +962,43 @@ class RestockAction extends CommonAction{
 					if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 						$msq = $this->getWinitMads($value[C('DB_RESTOCK_SKU')],1,6,$restockPara[C('DB_RESTOCK_PARA_ELQ')])/6;
 						$ainventory = $winitdestorageTable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$value[C('DB_RESTOCK_SKU')]))->getField(C('DB_USSTORAGE_AINVENTORY'));
-						if($msq==0){
-							$ainventorySaleDays = 65536;
-						}else{
-							$ainventorySaleDays = ceil($ainventory/$msq);
-						}						
-						$seaEstimatedArriveDays=30;
-						if($seaEstimatedArriveDays>0 && $ainventorySaleDays<$seaEstimatedArriveDays){
-							if(intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq)<$value[C('DB_RESTOCK_QUANTITY')]){
-								$airQuantity = intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq);
+						if($ainventory<=0){
+							$airQuantity=$this->getWinitMads($value[C('DB_RESTOCK_SKU')],1,30,$restockPara[C('DB_RESTOCK_PARA_ELQ')]);
+							if($airQuantity<$value[C('DB_RESTOCK_QUANTITY')]){
+								$airQuantity = $value[C('DB_RESTOCK_QUANTITY')]-$airQuantity;
 								$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
 								$seavolume = $seavolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
-							}else{
-								$airQuantity = $value[C('DB_RESTOCK_QUANTITY')];
-							}							
+							}
 							$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$airQuantity;
 							$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
 							$value['change_to_air_quantity'] = $airQuantity;
 							if(!$this->isSkuChangedToAir($value,$changeToAirShipping) && $airQuantity>0){
 								array_push($changeToAirShipping, $value);
 							}
-						}elseif($seaEstimatedArriveDays<0){
-							$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算','',15);
+						}else{
+							if($msq==0){
+								$ainventorySaleDays = 65536;
+							}else{
+								$ainventorySaleDays = ceil($ainventory/$msq);
+							}						
+							$seaEstimatedArriveDays=30;
+							if($seaEstimatedArriveDays>0 && $ainventorySaleDays<$seaEstimatedArriveDays){
+								if(intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq)<$value[C('DB_RESTOCK_QUANTITY')]){
+									$airQuantity = intval(($seaEstimatedArriveDays-$ainventorySaleDays)*$msq);
+									$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
+									$seavolume = $seavolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*($value[C('DB_RESTOCK_QUANTITY')]-$airQuantity);
+								}else{
+									$airQuantity = $value[C('DB_RESTOCK_QUANTITY')];
+								}							
+								$airweight = $airweight+$p[C('DB_PRODUCT_PWEIGHT')]/1000*$airQuantity;
+								$airvolume = $airvolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$airQuantity;
+								$value['change_to_air_quantity'] = $airQuantity;
+								if(!$this->isSkuChangedToAir($value,$changeToAirShipping) && $airQuantity>0){
+									array_push($changeToAirShipping, $value);
+								}
+							}elseif($seaEstimatedArriveDays<0){
+								$this->error('海运预估到仓天数减去 商品编码: '.$value[C('DB_RESTOCK_SKU')].'的最早一批海运在途已发出天数为负数，无法计算空运补货数量！可以通过更改海运预估到仓天数重新计算','',15);
+							}
 						}
 					}else{
 						$this->error('无法计算，产品 '.$value[C('DB_RESTOCK_SKU')].' 包装信息缺失');
