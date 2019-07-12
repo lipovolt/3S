@@ -609,7 +609,7 @@ class RestockAction extends CommonAction{
 				}				
 				$purchaseMap[C('DB_PURCHASE_ITEM_SKU')] = array('eq',$value[C('DB_RESTOCK_SKU')]);
 				$purchaseMap[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('in',array('美自建仓','万邑通美西'));
-				$purchaseMap[C('DB_PURCHASE_STATUS')] = array('eq','全部到货');
+				$purchaseMap[C('DB_PURCHASE_STATUS')] = array('in',array('部分到货','全部到货'));
 				$purchaseCount = $purchase->where($purchaseMap)->count();
 				
 				if(($purchaseCount>$restockPara[C('DB_RESTOCK_PARA_USSW_AFCL')] || $daysFirstSale>$restockPara[C('DB_RESTOCK_PARA_USSW_AFDL')]) && $p[C('DB_PRODUCT_TOUS')]=='空运'){
