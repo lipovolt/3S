@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="product.dwt" codeOutsideHTMLIsLocked="false" -->
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>导入海外仓补货表</title>
+<title></title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -14,27 +14,25 @@
 	<div class="header">
 		<div class="top">
 			<div class="area">
-				<include file="./Public/Tpl/header.html" />
+				<span>
+					<include file="./Public/Tpl/header.html" />
 			</div>
-		</div>
-	
-		
+		</div>		
 		<div class="nav">
 			<div class="area">
 				<include file="./Public/Tpl/top.html" />
 			</div>
 		</div>
 	</div>	
-	
-    <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
+		<!-- 左边栏 -->
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>采购管理</strong></div>
+			<div class="sidenav-hd"><strong>万邑通仓</strong></div>
 			<div class="sidenav-bd">
-				<include file="./Public/Tpl/purchaseMenu.html" />	
+				<include file="./Public/Tpl/winitMenu.html" />	
 			</div>
 		</div>
-		<div class="content">
+	<div class="content">
 			<script>
 			var GlobalData = {
 				_COMMON_DATA_PROCESSING_ : "数据处理中...",
@@ -48,28 +46,26 @@
 					<ul class="tab">
 						<li class="on">
 						<i class="before"></i>
-							<span>导入海外仓补货表更新发货状态</span>
+							<span>入库单号 {$orderID}</span>
 						<i class="after"></i>
 						</li>					
 					</ul>
 					<div class="tab-content">
 						<div class="tab-inner-content" style="">
 							<div class="block">
+								<div class="block-hd">
+									<i class="icon import"></i>
+									<strong>批量导入装箱信息</strong>
+								</div>
 								<div class="block-bd">
 									<div class="block-indent" style="overflow:hidden;">
-										<div style="float:left;width:auto;">
-											<p>请<a href="http://www.lipovolt.com/3s/Download/Import_Restock_Shipping_Status_Template.xls" style="color: #6495ED">点击此处</a>下载模板，填写信息完成后，上传数据。</p>
+										<div style="float:left;width:456px;">
+											<p>请<a href="http://www.lipovolt.com/3s/Download/Import_Inbound_Package_Template.xls">点击此处</a>下载产品导入模板，填写产品信息完成后，上传数据。</p>
 											<div>
-												 <form action="{:U('Purchase/Restock/updateRestockShippingStatus')}" method="post" enctype="multipart/form-data">
-												 	<div class="form-group">
-												 		<label for="winitUsStorage" class="control-label">美国或德国仓补货表</label>
-													 	<div class="control-wrap">
-											            	<input type="file" name="winitUsStorage"/>
-											            </div>
-										            </div>
-										            <div class="form-group">
-										             	<input class="btn btn-blue btn-s" type="submit" value="导入"/>
-										             </div>
+												 <form action="{:U('Winit/Inbound/addPackage',array('orderID'=>$orderID))}" method="post" enctype="multipart/form-data">
+										            <input type="file" name="import"/>
+								          			<input type="hidden" name="table" value="tablename"/>
+									             	<input type="submit" value="导入"/>
 									         	</form>
 
 											</div>
@@ -85,9 +81,11 @@
 			<!-- 主页面结束 -->
 		</div>
 	</div>
+	</div>
+		
 	<!-- InstanceEndEditable -->
 	<div class="area footer">
-		<include file=".App/Tpl/Index/Manage/footer" />
+		<include file="./Public/Tpl/footer.html" />
 	</div> 
 </body>
 <!-- InstanceEnd --></html>
