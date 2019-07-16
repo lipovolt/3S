@@ -387,6 +387,38 @@ function save(){
 							</div>
 						</div>  
 					</div>
+					<div class="item">
+						<volist name="usswSaleAccount" id="usswvo">
+							<div class="form-group">
+								<label class="control-label">{$usswvo.platform}_{$usswvo.account}</label>
+								<div class="tl">
+									<if condition="$usswvo['sale_status'] eq 0"><input type="checkbox" name="usswvo[]" value="{$usswvo['sale_table']}">
+									    <else /> <input type="checkbox" name="usswvo[]" value="{$usswvo['sale_table']}" checked="">
+									</if>
+								</div>
+							</div>
+						</volist>
+						<volist name="winitDeSaleAccount" id="winitdevo">
+							<div class="form-group">
+								<label class="control-label">{$winitdevo.platform}_{$winitdevo.account}</label>
+								<div class="tl">
+									<if condition="$winitdevo['sale_status'] eq 0"><input type="checkbox" name="winitdevo[]" value="{$winitdevo['sale_table']}">
+									    <else /> <input type="checkbox" name="winitdevo[]" value="{$winitdevo['sale_table']}" checked="">
+									</if>								
+								</div>
+							</div>
+						</volist>
+						<volist name="szswSaleAccount" id="szswvo">
+							<div class="form-group">
+								<label class="control-label">{$szswvo.platform}_{$szswvo.account}</label>
+								<div class="tl">
+									<if condition="$szswvo['sale_status'] eq 0"><input type="checkbox" name="szswvo[]" value="{$szswvo['sale_table']}">
+									    <else /> <input type="checkbox" name="szswvo[]" value="{$szswvo['sale_table']}" checked="">
+									</if>
+								</div>
+							</div>
+						</volist>
+					</div>
 				</div>
 			</div>
 		</div>

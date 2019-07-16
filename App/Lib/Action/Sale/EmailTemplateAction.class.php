@@ -66,6 +66,11 @@ Wenn ich Ihre Nachricht gesehen habe, Ihre Bestellung war schon von Post abgehol
 				I (customer service) can't direct change the shipping address. I have cancelled the order, please make a new order with correct address. Thanks",
 			'美国退货地址'=>'Min Zhang<br>13754 mango dr unit 303, del mar, ca 92014<br>626-203-7018',
 			"发货时间或指定日期到货"=>"the order before 9 o'clock will be sent on the same working day. Otherwise the order will be sent on the next working day. I regret I can't guarantee the transportation speed of USPS. I ask for your understanding.",
+			"ebay global shipping 解释"=>"Hello,
+
+Your order is shipped through ebay global shipping program. That means we send the item to ebay warehouse in USA. Then ebay send the item from USA to you.
+
+The tracking number 9400109699938567132513 is for the first way. The item is delivered to ebay warehouse. Now the item will be shipped to you. But when the ebay will ship the item and what is the tracking number, I don't know yet. You can wait a few days. Or direct contact ebay online customer service.",
 			);
 		if($language=='de'){
 			$this->assign('templates', $de_templates);

@@ -146,7 +146,22 @@ class ProductAction extends CommonAction{
     Public function productEdit($sku){
         $product = M(C('db_product'))->where(array(C('db_product_sku')=>$sku))->select();
         $product[0][C('DB_METADATA_USED_UPC')] = M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->getField(C('DB_METADATA_USED_UPC'));
+        $usswSaleAccount = $this->getUsswSalePlanTableNames();
+        foreach ($usswSaleAccount as $key => $value) {
+            $usswSaleAccount[$key]['sale_status']=M($value['sale_table'])->where(array('sku'=>$sku))->getField('sale_status');
+        }
+        $winitDeSaleAccount = $this->getWinitDeSalePlanTableNames();
+        foreach ($winitDeSaleAccount as $key => $value) {
+            $winitDeSaleAccount[$key]['sale_status']=M($value['sale_table'])->where(array('sku'=>$sku))->getField('sale_status');
+        }
+        $szswSaleAccount = $this->getSzswSalePlanTableNames();
+        foreach ($szswSaleAccount as $key => $value) {
+            $szswSaleAccount[$key]['sale_status']=M($value['sale_table'])->where(array('sku'=>$sku))->getField('sale_status');
+        }       
         $this->assign('product',$product);
+        $this->assign('usswSaleAccount',$usswSaleAccount);
+        $this->assign('winitDeSaleAccount',$winitDeSaleAccount);
+        $this->assign('szswSaleAccount',$szswSaleAccount);
         $this->display();
 
     }
@@ -234,6 +249,27 @@ class ProductAction extends CommonAction{
             $result =  $product->save($data);
             $product->commit();
             if(false !== $result || 0 !== $result) {
+                foreach ($this->getUsswSalePlanTableNames() as $key => $value) {
+                    if(in_array($value['sale_table'], I('post.'.'usswvo','','htmlspecialchars'))){
+                        M($value['sale_table'])->where(array('sku'=>$data[C('db_product_sku')]))->setField('sale_status',1);
+                    }else{
+                        M($value['sale_table'])->where(array('sku'=>$data[C('db_product_sku')]))->setField('sale_status',0);
+                    }
+                }
+                foreach ($this->getWinitDeSalePlanTableNames() as $key => $value) {
+                    if(in_array($value['sale_table'], I('post.'.'winitdevo','','htmlspecialchars'))){
+                        M($value['sale_table'])->where(array('sku'=>$data[C('db_product_sku')]))->setField('sale_status',1);
+                    }else{
+                        M($value['sale_table'])->where(array('sku'=>$data[C('db_product_sku')]))->setField('sale_status',0);
+                    }
+                }
+                foreach ($this->getSzswSalePlanTableNames() as $key => $value) {
+                    if(in_array($value['sale_table'], I('post.'.'szswvo','','htmlspecialchars'))){
+                        M($value['sale_table'])->where(array('sku'=>$data[C('db_product_sku')]))->setField('sale_status',1);
+                    }else{
+                        M($value['sale_table'])->where(array('sku'=>$data[C('db_product_sku')]))->setField('sale_status',0);
+                    }
+                }
                 $this->success('操作成功！');
             }else{
                 $this->error('写入错误！');
@@ -340,7 +376,7 @@ class ProductAction extends CommonAction{
                                 $data[C('db_product_ustariff')]= $objPHPExcel->getActiveSheet()->getCell("AF".$i)->getValue()==0 ?5:$objPHPExcel->getActiveSheet()->getCell("AF".$i)->getValue();
                             }                           
                             $tmp = $products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->find();
-                            if($tmp != null && ($tmp[C('db_product_pweight')]==null || $tmp[C('db_product_pweight')]==0)){
+                            if($tmp != null && ($tmp[C('db_product_pweight')]==null || $tmp[C('db_product_pweight')]==0) && ($tmp[C('db_product_plength')]==null || $tmp[C('db_product_plength')]==0)){
                                 $result = $products->where(array(C('db_product_sku')=>$data[C('db_product_sku')]))->save($data);
                             }
                         }

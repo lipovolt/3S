@@ -1178,7 +1178,7 @@ class WinitDeSaleAction extends CommonAction{
             $firstRow['A'] = '*Action(SiteID=Germany|Country=DE|Currency=EUR|Version=941)';
 
             if($this->verifyEbayFxtcn($firstRow)){
-            	$storageTable=M($this->getStorageTableName($account));
+            	$storageTable=M($this->getStorageTableNameByAccount($account));
             	$salePlanTable=M($this->getSalePlanTableName($account));
             	$productTable=M(C('DB_PRODUCT'));
             	$j=0;
@@ -1363,7 +1363,7 @@ class WinitDeSaleAction extends CommonAction{
             	}else{
             		$salePlan=M($this->getSalePlanTableName($account))->limit($_POST['startRow'], $_POST['endRow']==-1?M($this->getSalePlanTableName($account))->count():$_POST['endRow'])->select();
             	}            	
-		    	$storageTable=M($this->getStorageTableName($account));
+		    	$storageTable=M($this->getStorageTableNameByAccount($account));
 		    	$productTable=M(C("DB_PRODUCT"));
 		    	$storageTable->startTrans();
 		    	$productTable->startTrans();
@@ -1481,7 +1481,7 @@ class WinitDeSaleAction extends CommonAction{
     }
 
 	//Return the storage table name according to the account
-    private function getStorageTableName($account){
+    private function getStorageTableNameByAccount($account){
     	switch ($account) {
     		case 'rc-helicar':
     			return C('DB_WINIT_DE_STORAGE');

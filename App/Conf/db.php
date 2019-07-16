@@ -185,6 +185,7 @@ return array(
     CREATE TABLE IF NOT EXISTS `3s_ussw_inbound`(
     `id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
     `date` date default null,
+    `receive_date` date default null,
     `way` varchar(10) default null,
     `pQuantity` smallint(6) default 0,
     `weight` decimal(5,2) default 0,
@@ -197,6 +198,7 @@ return array(
 	'DB_USSW_INBOUND' => 'ussw_inbound',
 	'DB_USSW_INBOUND_ID' => 'id',
 	'DB_USSW_INBOUND_DATE' => 'date',
+	'DB_USSW_INBOUND_RECEIVE_DATE' => 'receive_date',
 	'DB_USSW_INBOUND_SHIPPING_WAY' => 'shipping_way',  //空运，海运
 	'DB_USSW_INBOUND_STATUS' => 'status', //产品已导入，装箱已导入，待入库，已入库
 
@@ -493,7 +495,7 @@ return array(
 	  `ussw_air_first_days_limit` smallint(6) default 0,
 	  `winitde_estimated_days_sea_shipping` smallint(6) default 0,
 	  `winitde_air_first_count_limit` smallint(6) default 0,
-	  `winitde_air_first_days_limit` smallint(6) default 0,
+	  `winitde_air_first_days_limit` smallint(6) default 0
 	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 	*/
 	'DB_RESTOCK_PARA' => 'restock_parameters',
@@ -1294,6 +1296,68 @@ return array(
 	'DB_TODO_STATUS' => 'status',
 	'DB_TODO_TASK' => 'task', //0, 待处理，1 已处理
 	'DB_TODO_REMARK' => 'remark',
+
+	//winitde_inbound
+	/*创建winitdeInbound表
+    CREATE TABLE IF NOT EXISTS `3s_winitde_inbound`(
+    `id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
+    `date` date default null,
+    `receive_date` date default null,
+    `shipping_way` varchar(10) default null,
+    `status` varchar(10) default null
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;        
+    */
+	'DB_WINITDE_INBOUND' => 'winitde_inbound',
+	'DB_WINITDE_INBOUND_ID' => 'id',
+	'DB_WINITDE_INBOUND_DATE' => 'date',
+	'DB_WINITDE_INBOUND_RECEIVE_DATE' => 'receive_date',
+	'DB_WINITDE_INBOUND_SHIPPING_WAY' => 'shipping_way',  //空运，海运
+	'DB_WINITDE_INBOUND_STATUS' => 'status', //产品已导入，装箱已导入，待入库，已入库
+
+	//winitde_inbound_package
+	/*
+	CREATE TABLE IF NOT EXISTS `3s_winitde_inbound_package` (
+	`id` smallint(6) unsigned primary key NOT NULL AUTO_INCREMENT,
+	`inbound_id` smallint(6) default 0,
+	`package_number` varchar(10) default null,
+	`confirme` tinyint(1) default 0,
+	`weight` decimal(10,2) default 0,
+	`length` decimal(10,2) default 0,
+	`width`  decimal(10,2) default 0,
+	`height`  decimal(10,2) default 0
+	)ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
+	'DB_WINITDE_INBOUND_PACKAGE' => 'winitde_inbound_package',
+	'DB_WINITDE_INBOUND_PACKAGE_ID' => 'id',
+	'DB_WINITDE_INBOUND_PACKAGE_IOID' => 'inbound_id',
+	'DB_WINITDE_INBOUND_PACKAGE_NUMBER' => 'package_number',
+	'DB_WINITDE_INBOUND_PACKAGE_CONFIRM' => 'confirme',
+	'DB_WINITDE_INBOUND_PACKAGE_WEIGHT' => 'weight',
+	'DB_WINITDE_INBOUND_PACKAGE_LENGTH' => 'length',
+	'DB_WINITDE_INBOUND_PACKAGE_WIDTH' => 'width',
+	'DB_WINITDE_INBOUND_PACKAGE_HEIGHT' => 'height',
+	
+
+	//winitde_inbound_item
+	/*创建美国自建仓入库产品明细表
+    create table if not exists `3s_winitde_inbound_item` (
+    `id` smallint(10) unsigned primary key not null auto_increment,
+    `inbound_id` smallint(6),
+    `package_number` varchar(10) default null,
+    `restock_id` smallint(6),
+    `sku` varchar(10),
+    `declare_quantity` smallint(6),
+    `confirmed_quantity` smallint(6)
+    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+	*/
+	'DB_WINITDE_INBOUND_ITEM' => 'winitde_inbound_item',
+	'DB_WINITDE_INBOUND_ITEM_ID' => 'id',
+	'DB_WINITDE_INBOUND_ITEM_IOID' => 'inbound_id',
+	'DB_WINITDE_INBOUND_ITEM_PACKAGE_NUMBER' => 'package_number',
+	'DB_WINITDE_INBOUND_ITEM_RESTOCK_ID' => 'restock_id',
+	'DB_WINITDE_INBOUND_ITEM_SKU' => 'sku',
+	'DB_WINITDE_INBOUND_ITEM_DQUANTITY' => 'declare_quantity',
+	'DB_WINITDE_INBOUND_ITEM_CQUANTITY' => 'confirmed_quantity',
 
 
 	//winit_outbound

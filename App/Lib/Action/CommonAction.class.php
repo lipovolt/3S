@@ -22,7 +22,7 @@ class CommonAction extends Action{
             $this->assign('todoQuantity',M(C('DB_TODO'))->where($map)->count());
         }else{
             $this->assign('todoQuantity',M(C('DB_TODO'))->where(array(array(C('DB_TODO_PERSON')=>C('PRODUCT_MANAGER_ENAME')[I('session.username',0)]),array(C('DB_TODO_STATUS')=>0)))->count());
-        }        
+        }
 	}
 
 	public function exportExcel($expTitle,$expCellName,$expTableData){
@@ -134,6 +134,142 @@ class CommonAction extends Action{
         }
         M(C('DB_METADATA'))->where(array(C('DB_METADATA_ID')=>1))->setField(C('DB_METADATA_USED_UPC'),$upc);
         return $upc;
+    }
+
+    public function getUsswSalePlanTableNames(){
+        return array(
+            array('platform'=>'ebay','account'=>'greatgoodshop','sale_table'=>C('DB_USSW_SALE_PLAN')),
+            array('platform'=>'amazon','account'=>'lipovolt','sale_table'=>C('DB_USSW_SALE_PLAN2')),
+            array('platform'=>'groupon','account'=>'lipovolt','sale_table'=>C('DB_USSW_SALE_PLAN3')),
+            array('platform'=>'ebay','account'=>'blackfive','sale_table'=>C('DB_USSW_SALE_PLAN4'))
+        );
+    }
+
+    public function getWinitDeSalePlanTableNames(){
+        return array(
+            array('platform'=>'ebay','account'=>'yzhan-816','sale_table'=>C('DB_YZHAN_816_PL_SALE_PLAN')),
+            array('platform'=>'amazon','account'=>'shangsitech@qq.com','sale_table'=>C('DB_WINIT_DE_AMAZON_SALE_PLAN'))
+        );
+    }
+
+    public function getSzswSalePlanTableNames(){
+        return array(
+            array('platform'=>'ebay','account'=>'rc-helicar','sale_table'=>C('DB_RC_DE_SALE_PLAN'))
+        );
+    }
+
+    public function getStorageTableName($warehouse){
+        switch ($warehouse) {
+            case 'ussw':
+                return C('DB_USSTORAGE');
+                break;
+            case '美自建仓':
+                return C('DB_USSTORAGE');
+                break;
+            case 'winitde':
+                return C('DB_WINIT_DE_STORAGE');
+                break;
+            case '万邑通德国':
+                return C('DB_WINIT_DE_STORAGE');
+                break;
+            case 'szsw':
+                return C('DB_SZSTORAGE');
+                break;
+            case '深圳仓':
+                return C('DB_SZSTORAGE');
+                break;
+            default:
+                return null;
+                break;
+        }
+    }
+
+    public function getInboundViewTableName($warehouse){
+        switch ($warehouse) {
+            case 'ussw':
+                return 'UsswInboundView';
+                break;
+            case '美自建仓':
+                return 'UsswInboundView';
+                break;
+            case 'winitde':
+                return 'WinitdeInboundView';
+                break;
+            case '万邑通德国':
+                return 'WinitdeInboundView';
+                break;
+            default:
+                return null;
+                break;
+        }
+    }
+
+    public function getInboundTableName($warehouse){
+        switch ($warehouse) {
+            case 'ussw':
+                return C('DB_USSW_INBOUND');
+                break;
+            case '美自建仓':
+                return C('DB_USSW_INBOUND');
+                break;
+            case 'winitde':
+                return C('DB_WINITDE_INBOUND');
+                break;
+            case '万邑通德国':
+                return C('DB_WINITDE_INBOUND');
+                break;
+            default:
+                return null;
+                break;
+        }
+    }
+
+    public function getOutboundViewTableName($warehouse){
+        switch ($warehouse) {
+            case 'ussw':
+                return 'UsswOutboundView';
+                break;
+            case '美自建仓':
+                return 'UsswOutboundView';
+                break;
+            case 'winitde':
+                return 'WinitOutboundView';
+                break;
+            case '万邑通德国':
+                return 'WinitOutboundView';
+                break;
+            default:
+                return null;
+                break;
+        }
+    }
+
+    public function getCountry($warehouse){
+        switch ($warehouse) {
+            case 'ussw':
+                return 'us';
+                break;
+            case '美自建仓':
+                return 'us';
+                break;
+            case 'winitde':
+                return 'de';
+                break;
+            case '万邑通德国':
+                return 'de';
+                break;
+            default:
+                return null;
+                break;
+        }
+    }
+
+    public function getSalePlanTableNames($warehouse){
+        if($this->getCountry($warehouse)=='us'){
+            return $this->getUsswSalePlanTableNames();
+        }elseif($this->getCountry($warehouse)=='winitde'){
+            return $this->getWinitDeSalePlanTableNames();
+        }
     }
 }
 

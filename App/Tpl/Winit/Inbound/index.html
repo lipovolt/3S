@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- InstanceBeginEditable name="doctitle" -->
-<title>美国自建仓入库单</title>
+<title>万邑通德国仓入库单</title>
 <!-- InstanceEndEditable -->
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
@@ -52,9 +52,9 @@ function directInbound(){
     <!-- InstanceBeginEditable name="左边栏" -->
 	<div class="area clearfix">
 		<div class="sidenav">
-			<div class="sidenav-hd"><strong>美国自建仓</strong></div>
+			<div class="sidenav-hd"><strong>万邑通仓</strong></div>
 			<div class="sidenav-bd">
-				<include file="./Public/Tpl/usswMenu.html" />	
+				<include file="./Public/Tpl/winitMenu.html" />	
 			</div>
 		</div>
 	<div class="content">
@@ -77,10 +77,10 @@ function directInbound(){
 					</tr>
 					<volist name="inbounds" id="vo">
 						<tr>
-						<td><div class="tl">{$vo[C('DB_USSW_INBOUND_ID')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_USSW_INBOUND_DATE')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_USSW_INBOUND_RECEIVE_DATE')]}</div></td>
-						<td><div class="tl">{$vo[C('DB_USSW_INBOUND_Shipping_WAY')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_WINITDE_INBOUND_ID')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_WINITDE_INBOUND_DATE')]}</div></td>
+						<td><div class="tl">{$vo[C('DB_WINITDE_INBOUND_RECEIVE_DATE')]}</div></td>	
+						<td><div class="tl">{$vo[C('DB_WINITDE_INBOUND_Shipping_WAY')]}</div></td>
 						<td><div class="tl">{$vo.declare-package-quantity}</div></td>
 						<td><div class="tl">{$vo.volume}</div></td>
 						<td><div class="tl">{$vo.volumeWeight}</div></td>
@@ -88,13 +88,13 @@ function directInbound(){
 						<td><div class="tl">{$vo.declare-item-quantity}/<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'<font style="color:#F00;">':'' ;?>{$vo.confirmed-item-quantity}<?php echo $vo['declare-item-quantity']!=$vo['confirmed-item-quantity']?'</font>':'';?></div></td>
 						<td><div class="tl">{$vo.status}</div></td>
 						<td>
-							<a href="{:U('Ussw/Inbound/importPackage',array('orderID'=>$vo['id']))}">导入包裹</a>
-							<a href="{:U('Ussw/Inbound/inboundOrderPackage',array('orderID'=>$vo['id']))}">包裹明细</a>
-							<a href="{:U('Ussw/Inbound/importItem',array('orderID'=>$vo['id']))}">导入产品</a>
-							<a href="{:U('Ussw/Inbound/inboundOrderItems',array('orderID'=>$vo['id']))}">产品明细</a>
-							<a href="{:U('Ussw/Inbound/updateStorage',array('ioid'=>$vo['id']))}">入库</a>
-							<a href="{:U('Ussw/Inbound/directInbound',array('ioid'=>$vo['id']))}" onclick='return directInbound()'>直接入库</a>
-							<a href="{:U('Ussw/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']))}" onclick='return del()'>删除</a>
+							<a href="{:U('Winit/Inbound/importPackage',array('orderID'=>$vo['id']))}">导入包裹</a>
+							<a href="{:U('Winit/Inbound/inboundOrderPackage',array('orderID'=>$vo['id']))}">包裹明细</a>
+							<a href="{:U('Winit/Inbound/importItem',array('orderID'=>$vo['id']))}">导入产品</a>
+							<a href="{:U('Winit/Inbound/inboundOrderItems',array('orderID'=>$vo['id']))}">产品明细</a>
+							<a href="{:U('Winit/Inbound/updateStorage',array('ioid'=>$vo['id']))}">入库</a>
+							<a href="{:U('Winit/Inbound/directInbound',array('ioid'=>$vo['id']))}" onclick='return directInbound()'>直接入库</a>
+							<a href="{:U('Winit/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']))}" onclick='return del()'>删除</a>
 						</td>
 						</tr>	
 					</volist> 								
