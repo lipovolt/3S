@@ -2011,37 +2011,39 @@ class RestockAction extends CommonAction{
     	$airweight = 0;
 	    $airvolume = 0;
     	foreach ($data as $key => $value) {
-    		$p = $productTable->where(array('sku'=>$value['sku']))->find();
-    		//if($value[C('DB_SZSTORAGE_AINVENTORY')]>0 && $p[C('DB_PRODUCT_TOUS')]=='空运' && !$this->isBannedByAllAccount($value['sku'],'美自建仓')){    						
-    			if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
-    				$averangeSaleQuantity = $this->getRestockADSQNew($value['sku'],'美自建仓',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],$restockPara[C('DB_RESTOCK_PARA_ELQ')]);
-    				$toAir=array();
-					$toAir['sku'] = $value['sku'];
-					$toAir['asq'] = $averangeSaleQuantity;
-					if($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')])!=null){
-						$cntSeaShippingTimes=time()-strtotime($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')]));//与已知时间的差值
-						$seaEstimatedArriveDays = ceil($restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')]-($cntSeaShippingTimes/(3600*24)));//算出天数
-					}else{
-						$seaEstimatedArriveDays=$restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')];
-					}
-					if($seaEstimatedArriveDays<ceil($usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))/$averangeSaleQuantity)){
-						$toAir['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_tD')]-$usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getUsswInboundAirIInventory($value['sku'])-$this->getUsswInboundSeaIInventory($value['sku']));
-					}else{
-						$toAir['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_tD')]-$usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getUsswInboundAirIInventory($value['sku']));
-					}
-					
-					if($toAir['quantity']>0){
-						if($toAir['quantity']>$value[C('DB_SZSTORAGE_AINVENTORY')]){
-    						$toAir['quantity'] = $value[C('DB_SZSTORAGE_AINVENTORY')];
-    					}
-    					array_push($airRestock, $toAir);    					
-    					$airweight = $airweight+$p[C('DB_PRODUCT_WEIGHT')]*$toAir['quantity']/1000;
-    					$airvolume = $airvolume+$p[C('DB_PRODUCT_LENGTH')]*$p[C('DB_PRODUCT_HEIGHT')]*$p[C('DB_PRODUCT_WIDTH')]/1000000*$toAir['quantity'];  
-					}    					  					
-					$toAir=null;
-    			/*}else{
-    				$this->error('无法计算，产品 '.$value['sku'].' 包装信息缺失');
-    			}*/
+    		if(!$this->isBannedByAllAccount($value['sku'],'美自建仓')){
+    			$p = $productTable->where(array('sku'=>$value['sku']))->find();
+	    		//if($value[C('DB_SZSTORAGE_AINVENTORY')]>0 && $p[C('DB_PRODUCT_TOUS')]=='空运' && !$this->isBannedByAllAccount($value['sku'],'美自建仓')){    						
+	    			if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
+	    				$averangeSaleQuantity = $this->getRestockADSQNew($value['sku'],'美自建仓',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],$restockPara[C('DB_RESTOCK_PARA_ELQ')]);
+	    				$toAir=array();
+						$toAir['sku'] = $value['sku'];
+						$toAir['asq'] = $averangeSaleQuantity;
+						if($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')])!=null){
+							$cntSeaShippingTimes=time()-strtotime($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')]));//与已知时间的差值
+							$seaEstimatedArriveDays = ceil($restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')]-($cntSeaShippingTimes/(3600*24)));//算出天数
+						}else{
+							$seaEstimatedArriveDays=$restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')];
+						}
+						if($seaEstimatedArriveDays<ceil($usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))/$averangeSaleQuantity)){
+							$toAir['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_tD')]-$usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getUsswInboundAirIInventory($value['sku'])-$this->getUsswInboundSeaIInventory($value['sku']));
+						}else{
+							$toAir['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_tD')]-$usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getUsswInboundAirIInventory($value['sku']));
+						}
+						
+						if($toAir['quantity']>0){
+							if($toAir['quantity']>$value[C('DB_SZSTORAGE_AINVENTORY')]){
+	    						$toAir['quantity'] = $value[C('DB_SZSTORAGE_AINVENTORY')];
+	    					}
+	    					array_push($airRestock, $toAir);    					
+	    					$airweight = $airweight+$p[C('DB_PRODUCT_WEIGHT')]*$toAir['quantity']/1000;
+	    					$airvolume = $airvolume+$p[C('DB_PRODUCT_LENGTH')]*$p[C('DB_PRODUCT_HEIGHT')]*$p[C('DB_PRODUCT_WIDTH')]/1000000*$toAir['quantity'];  
+						}    					  					
+						$toAir=null;
+	    			/*}else{
+	    				$this->error('无法计算，产品 '.$value['sku'].' 包装信息缺失');
+	    			}*/
+	    		}
     		}
     	}
 		return array('weight'=>$airweight,'volume'=>$airvolume,'restock'=>$airRestock);
@@ -2199,7 +2201,7 @@ class RestockAction extends CommonAction{
     		if($storage['ainventory']<=0){
     			if($this->isNewProduct($sku,$warehouse)){
     				return round($this->getCinventory($sku,$warehouse,$this->getFirstSaleDate($sku,$warehouse),$this->getLastOutboundDate($sku,$warehouse))/((strtotime($this->getLastOutboundDate($sku,$warehouse))-strtotime($this->getFirstSaleDate($sku,$warehouse)))/(60*60*24)),2);
-    			}elseif(!$this->isBannedByAllAccount($sku,$warehouse)){
+    			}else{
     				$lastShippingDate = $this->getLastOutboundDate($sku,$warehouse);
     				if(ceil((time()-strtotime($lastShippingDate))/(60*60*24))<30){
     					return round($this->getCsale($sku,$warehouse,date('Y-m-d',strtotime($lastShippingDate)-60*60*24*30),$lastShippingDate,$excludeLargeQuantity)/30,2);
