@@ -1952,7 +1952,7 @@ class RestockAction extends CommonAction{
 		d.	累加海运补货体积和重量
     */
 
-    public function calRestockQuantity($warehouse,$shippingWay,$realCal,$sr,$er){
+    public function calRestockQuantity($warehouse,$shippingWay,$realCal){
     	if($warehouse=='ussw' && M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->getField(C('DB_RESTOCK_PARA_USSW_LOCK'))==1){
 			$this->error('美自建仓补货表被锁定,无法计算');
 		}elseif($warehouse=='winitde' && M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->getField(C('DB_RESTOCK_PARA_WINITDE_LOCK'))==1){
@@ -1960,7 +1960,7 @@ class RestockAction extends CommonAction{
 		}else{
 
 			if($warehouse=='ussw' && $shippingWay=='air'){
-				$restock = $this->getUsswAirRestockQuantity($sr,$er);
+				$restock = $this->getUsswAirRestockQuantity();
 			}elseif($warehouse=='ussw' && $shippingWay=='sea'){
 				$restock = $this->getUsswSeaRestockQuantity($realCal);
 			}elseif($warehouse=='winitde' && $shippingWay=='air'){
@@ -1968,7 +1968,7 @@ class RestockAction extends CommonAction{
 			}elseif($warehouse=='winitde' && $shippingWay=='sea'){
 				$restock = $this->getWinitdeSeaRestockQuantity($realCal);
 			}
-			
+
 			if($realCal==false){
 				$this->assign('weight',$restock['weight']);
 				$this->assign('volume',$restock['volume']);
@@ -2000,12 +2000,12 @@ class RestockAction extends CommonAction{
 		}
     }
 
-    public function getUsswAirRestockQuantity($sr,$er){
+    public function getUsswAirRestockQuantity(){
 		$productTable=M(C('DB_PRODUCT'));
     	$usstorageTable=M(C('DB_USSTORAGE'));
     	$szmap[C('DB_SZSTORAGE_AINVENTORY')] = array('gt',0);
     	$szmap[C('DB_PRODUCT_TOUS')] = array('eq','空运');
-    	$data=D('SzStorageView')->limit($sr,$er)->where($szmap)->select();
+    	$data=D('SzStorageView')->where($szmap)->select();
     	$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
     	$airRestock=array();
     	$airweight = 0;
@@ -2193,26 +2193,26 @@ class RestockAction extends CommonAction{
 			ii.	距离现在大于30天，空运返回 0.1，海运统计最后一个出库单往前30天的销量。返回销量/30
 	2.	可用库存数量>0，返回近30天平均日销量
     */
-    private function getRestockADSQNew($sku, $warehouse,$days,$excludeLargeQuantity=null){
+    private function getRestockADSQNew($sku, $warehouse,$days,$excludeLargeQuantity){
     	$storage = M($this->getStorageTableName($warehouse))->where(array('sku'=>$sku))->find();
     	if($storage!=null && $storage!=false){
     		if($storage['ainventory']<=0){
     			if($this->isNewProduct($sku,$warehouse)){
     				return round($this->getCinventory($sku,$warehouse,$this->getFirstSaleDate($sku,$warehouse),$this->getLastOutboundDate($sku,$warehouse))/((strtotime($this->getLastOutboundDate($sku,$warehouse))-strtotime($this->getFirstSaleDate($sku,$warehouse)))/(60*60*24)),2);
-    			}else{
+    			}elseif(!$this->isBannedByAllAccount($sku,$warehouse)){
     				$lastShippingDate = $this->getLastOutboundDate($sku,$warehouse);
     				if(ceil((time()-strtotime($lastShippingDate))/(60*60*24))<30){
-    					return $this->getCsale($sku,$warehouse,date('Y-m-d',strtotime($lastShippingDate)-60*60*24*30),$lastShippingDate)/30;
+    					return round($this->getCsale($sku,$warehouse,date('Y-m-d',strtotime($lastShippingDate)-60*60*24*30),$lastShippingDate,$excludeLargeQuantity)/30,2);
     				}else{
     					if($this->isAirProduct($sku,$warehouse)){
     						return 0.1;
     					}else{
-    						return $this->getCsale($sku,$warehouse,date('Y-m-d',strtotime($lastShippingDate)-60*60*24*30),$lastShippingDate)/30;
+    						return round($this->getCsale($sku,$warehouse,date('Y-m-d',strtotime($lastShippingDate)-60*60*24*30),$lastShippingDate,0)/30,2);
     					}
     				}
     			}
     		}else{
-    			return $this->getCsale($sku,$warehouse,date('Y-m-d',time()-60*60*24*30),date('Y-m-d',time()))/30;
+    			return round($this->getCsale($sku,$warehouse,date('Y-m-d',time()-60*60*24*30),date('Y-m-d',time()),$excludeLargeQuantity)/30,2);
     		}
     	}else{
     		return 0;
@@ -2292,6 +2292,14 @@ class RestockAction extends CommonAction{
     }
 
     private function getCsale($sku,$warehouse,$startDate,$endDate,$excludeLargeQuantity){
+    	$unbannedAccount = array();
+        $saleTableNames = $this->getSalePlanTableNames($warehouse);
+    	foreach ($saleTableNames as $key => $value) {
+    		if(M($value['sale_table'])->where(array('sku'=>$sku))->getField('sale_status')==0 && !in_array($value['account'], $unbannedAccount)){
+    			array_push($unbannedAccount, $value['account']);
+    		}
+    	}
+    	$outboundmap['seller_id'] = array('in',$unbannedAccount);
     	$outboundmap['create_time'] = array('elt',$endDate);
     	$outboundmap['create_time'] = array('gt',$startDate);
     	$outboundmap['sku'] = array('eq',$sku);
