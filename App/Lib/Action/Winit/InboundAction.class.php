@@ -212,14 +212,24 @@ class InboundAction extends CommonAction{
                         $restock = M(C('DB_RESTOCK'));
                         $restock->startTrans(); 
                         foreach ($data as $key => $value){
-                            $restockQuantity = $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_WINITDE_INBOUND_ITEM_RESTOCK_ID')]))->getField(C('DB_RESTOCK_QUANTITY'));
-                            if($restockQuantity <= $value[C('DB_WINITDE_INBOUND_ITEM_DQUANTITY')]){
-                                $tmp[C('DB_RESTOCK_STATUS')] = '已发货';
-                                $tmp[C('DB_RESTOCK_SHIPPING_DATE')] = date("Y-m-d H:i:s" ,time());
-                                $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_WINITDE_INBOUND_ITEM_RESTOCK_ID')]))->save($tmp);
+                            $r = $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_WINITDE_INBOUND_ITEM_RESTOCK_ID')]))->find();
+                            if($r[C('DB_RESTOCK_QUANTITY')] <= $value[C('DB_WINITDE_INBOUND_ITEM_DQUANTITY')]){
+                                $r[C('DB_RESTOCK_STATUS')] = '已发货';
+                                $r[C('DB_RESTOCK_SHIPPING_DATE')] = date("Y-m-d H:i:s" ,time());
+                                $restock->save($r);
                             }else{
-                                $rest = $restockQuantity - $value[C('DB_WINITDE_INBOUND_ITEM_DQUANTITY')];
-                                $restock->where(array(C('DB_RESTOCK_ID')=>$value[C('DB_WINITDE_INBOUND_ITEM_RESTOCK_ID')]))->setField(C('DB_RESTOCK_QUANTITY'),$rest);
+                                $tmp[C('DB_RESTOCK_QUANTITY')] = $value[C('DB_WINITDE_INBOUND_ITEM_DQUANTITY')];
+                                $tmp[C('DB_RESTOCK_STATUS')] = '已发货';
+                                $tmp[C('DB_RESTOCK_SKU')] = $value[C('DB_WINITDE_INBOUND_ITEM_SKU')];
+                                $tmp[C('DB_RESTOCK_CREATE_DATE')] = date("Y-m-d H:i:s" ,time());
+                                $tmp[C('DB_RESTOCK_SHIPPING_DATE')] = date("Y-m-d H:i:s" ,time());
+                                $tmp[C('DB_RESTOCK_MANAGER')] = $r[C('DB_RESTOCK_MANAGER')];
+                                $tmp[C('DB_RESTOCK_WAREHOUSE')] = $r[C('DB_RESTOCK_WAREHOUSE')];
+                                $tmp[C('DB_RESTOCK_TRANSPORT')] = $r[C('DB_RESTOCK_TRANSPORT')];
+                                $restock->add($tmp);
+                                $r[C('DB_RESTOCK_QUANTITY')]= $r[C('DB_RESTOCK_QUANTITY')]-$value[C('DB_WINITDE_INBOUND_ITEM_DQUANTITY')];
+                                $r[C('DB_RESTOCK_STATUS')] = '延迟发货';
+                                $restock->save($r);
                             }
                             
                         } 

@@ -1974,7 +1974,7 @@ class RestockAction extends CommonAction{
 						$newRestock[C('DB_RESTOCK_QUANTITY')] = $cvalue['quantity'];
 						$newRestock[C('DB_RESTOCK_WAREHOUSE')] = $warehouse;
 						$newRestock[C('DB_RESTOCK_TRANSPORT')] = $shippingWay;
-						$newRestock[C('DB_RESTOCK_STATUS')] = '待发货';
+						$newRestock[C('DB_RESTOCK_STATUS')] = $shippingWay=='air'?'待发货':'包装中';
 						if($restockTable->add($newRestock)!=false){
 							$cvalue[C('DB_RESTOCK_QUANTITY')] = $cvalue[C('DB_RESTOCK_QUANTITY')]-$cvalue['change_to_air_quantity'];
 							$szst = $szstorageTable->where(array(C('DB_SZSTORAGE_SKU')=>$cvalue['sku']))->find();
