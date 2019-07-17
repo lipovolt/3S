@@ -159,12 +159,14 @@
 						<input class="btn btn-s btn-blue" type="button" onclick="eInvoice();" value="导出美国发票"/>
 						<input class="btn btn-s btn-blue" type="button" onclick="wInbound();" value="导出万邑通入库单"/>
 						<input class="btn btn-s btn-blue" type="button" onclick="winitOutConfirme();" value="万邑通确认发货"/>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/returnToSzsw')}" onclick="if(confirm('确定要把待发货和延迟发货的货物转回深圳仓？')){return true;}else{return false;}">未发转回深仓</a>
 					</div>
 				</div>
 			</br>
 				<div class="form-group">
 					<div class="block-bd">
-						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/calRestockQuantity',array('warehouse'=>ussw,'shippingWay'=>air,'realCal'=>0))}" >预算美自补货表</a>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/calRestockQuantity',array('warehouse'=>ussw,'shippingWay'=>'air','realCal'=>0))}" >预算美空补货表</a>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/calRestockQuantity',array('warehouse'=>ussw,'shippingWay'=>'sea','realCal'=>0))}" >预算美海补货表</a>
 						<!-- <if condition="($ussw_lock eq 1)"> 
 							<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/unlockUsswRestockTable')}" >解锁美自补货表</a>
 						<else /> 

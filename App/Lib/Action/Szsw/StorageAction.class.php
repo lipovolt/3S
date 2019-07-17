@@ -142,6 +142,17 @@ class StorageAction extends CommonAction{
       $this->exportExcel($xlsName,$xlsCell,$xlsData);
     }
 
+    public function resetOinventory(){
+      $szStorageTable=M(C('DB_SZSTORAGE'));
+      $map[C('DB_SZSTORAGE_OINVENTORY')] = array('gt',0);
+      $szst = $szStorageTable->where($map)->select();
+      foreach ($szst as $key => $value) {
+        $value[C('DB_SZSTORAGE_AINVENTORY')]=$value[C('DB_SZSTORAGE_AINVENTORY')]+$value[C('DB_SZSTORAGE_OINVENTORY')];
+        $value[C('DB_SZSTORAGE_OINVENTORY')]=0;
+        $szStorageTable->save($value);
+      }
+      $this->success('已重置待出库库存');
+    }
 }
 
 ?>

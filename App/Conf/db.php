@@ -613,6 +613,7 @@ return array(
 	  `sku` varchar(10) NOT NULL,
 	  `cinventory` smallint(6) DEFAULT 0,
 	  `ainventory` smallint(6) DEFAULT 0,
+	  `oinventory` smallint(6) DEFAULT 0,
 	  `csales` smallint(6) DEFAULT 0,
 	  `remark` varchar(255) DEFAULT NULL
 	) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
@@ -623,6 +624,7 @@ return array(
 	'DB_SZSTORAGE_SKU' => 'sku',
 	'DB_SZSTORAGE_CINVENTORY' => 'cinventory',
 	'DB_SZSTORAGE_AINVENTORY' => 'ainventory',
+	'DB_SZSTORAGE_OINVENTORY' => 'oinventory',
 	'DB_SZSTORAGE_CSALES' => 'csales',
 	'DB_SZSTORAGE_REMARK' => 'remark',
 

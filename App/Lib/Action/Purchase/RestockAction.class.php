@@ -204,6 +204,16 @@ class RestockAction extends CommonAction{
 	}
 
 	public function findUsOutOfStockItem($start, $end){
+		if($start==0){
+			$szStorageTable=M(C('DB_SZSTORAGE'));
+		    $map[C('DB_SZSTORAGE_OINVENTORY')] = array('gt',0);
+		    $szst = $szStorageTable->where($map)->select();
+		    foreach ($szst as $key => $value) {
+		    	$value[C('DB_SZSTORAGE_AINVENTORY')]=$value[C('DB_SZSTORAGE_AINVENTORY')]+$value[C('DB_SZSTORAGE_OINVENTORY')];
+		        $value[C('DB_SZSTORAGE_OINVENTORY')]=0;
+		        $szStorageTable->save($value);
+		    }
+		}		
         $GLOBALS["outOfStock"] = null;
 		$GLOBALS["indexOfOutOfStock"] = 0;
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
@@ -221,7 +231,8 @@ class RestockAction extends CommonAction{
 		if($end==-1){
 			$end=M(C('DB_USSTORAGE'))->count();
 		}
-		$usstorage = M(C('DB_USSTORAGE'))->limit($start, $end)->select();
+    	$usstma[C('DB_PRODUCT_TOUS')] = array('neq','无');
+		$usstorage = D('UsstorageView')->limit($start, $end)->select();
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
 		$productTable = M(C('db_product'));
 		foreach ($usstorage as $ussk => $ussv) {
@@ -1355,34 +1366,12 @@ class RestockAction extends CommonAction{
 		$restockTable = M(C('DB_RESTOCK'));
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
 		$szai = $szstorageTable->where(array(C('DB_SZSTORAGE_SKU')=>$product[C('DB_PRODUCT_SKU')]))->find();
-		if($quantity>0 && $szai!==null && $szai!=false && (($warehouse=='美自建仓' && $restockPara[C('DB_RESTOCK_PARA_USSW_AUTO_MOVE')]==1) || ($warehouse=='万邑通德国' && $restockPara[C('DB_RESTOCK_PARA_WINITDE_AUTO_MOVE')]==1)) && ($szai[C('DB_SZSTORAGE_AINVENTORY')]-M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->getField(C('DB_RESTOCK_PARA_SZSW_MIN_AI')))>=$quantity){
-			//满足条件自动转仓不添加到补货表里
-			$restock=$restockTable->where(array(C('DB_RESTOCK_SKU')=>$product[C('DB_PRODUCT_SKU')],C('DB_RESTOCK_STATUS')=>'延迟发货',C('DB_RESTOCK_WAREHOUSE')=>$warehouse))->find();
-			if($restock!==null && $restock!==false){
-				$restock[C('DB_RESTOCK_QUANTITY')]=$restock[C('DB_RESTOCK_QUANTITY')]+$quantity; 
-				$szai[C('DB_SZSTORAGE_AINVENTORY')]=$szai[C('DB_SZSTORAGE_AINVENTORY')]-$quantity;
-				$szai[C('DB_SZSTORAGE_CINVENTORY')]=$szai[C('DB_SZSTORAGE_CINVENTORY')]-$quantity;
-				$szstorageTable->save($szai);
-				$restockTable->save($restock);
-			}else{
-				$data[C('DB_RESTOCK_SKU')]=$product[C('DB_PRODUCT_SKU')];
-				$data[C('DB_RESTOCK_CREATE_DATE')]= date("Y-m-d H:i:s",time());
-				$data[C('DB_RESTOCK_MANAGER')]= $product[C('DB_PRODUCT_MANAGER')];
-				$data[C('DB_RESTOCK_QUANTITY')]= $quantity;
-				$data[C('DB_RESTOCK_WAREHOUSE')]= $warehouse;
-				$data[C('DB_RESTOCK_STATUS')]= '延迟发货';
-				if($warehouse=='美自建仓' || $warehouse=='万邑通美西' || $warehouse=='美国FBA'){
-					$data[C('DB_RESTOCK_TRANSPORT')]= $product[C('DB_PRODUCT_TOUS')];
-				}
-				if($warehouse=='万邑通德国'){
-					$data[C('DB_RESTOCK_TRANSPORT')]= $product[C('DB_PRODUCT_TODE')];
-				}
-				$szai[C('DB_SZSTORAGE_AINVENTORY')]=$szai[C('DB_SZSTORAGE_AINVENTORY')]-$quantity;
-				$szai[C('DB_SZSTORAGE_CINVENTORY')]=$szai[C('DB_SZSTORAGE_CINVENTORY')]-$quantity;
-				$szstorageTable->save($szai);
-				$restockTable->add($data);
-			}
-			
+		if($quantity>0 && $szai!==null && $szai!=false && $szai[C('DB_SZSTORAGE_AINVENTORY')]>=$quantity){
+			//满足条件预留库存
+			$szai[C('DB_SZSTORAGE_AINVENTORY')]=$szai[C('DB_SZSTORAGE_AINVENTORY')]-$quantity;
+			$szai[C('DB_SZSTORAGE_CINVENTORY')]=$szai[C('DB_SZSTORAGE_CINVENTORY')]-$quantity;
+			$szai[C('DB_SZSTORAGE_OINVENTORY')]=$szai[C('DB_SZSTORAGE_OINVENTORY')]+$quantity;
+			$szstorageTable->save($szai);
 		}else{
 			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $warehouse;
 			if($warehouse=='美自建仓' || $warehouse=='万邑通美西'){
@@ -2011,39 +2000,37 @@ class RestockAction extends CommonAction{
     	$airweight = 0;
 	    $airvolume = 0;
     	foreach ($data as $key => $value) {
-    		if(!$this->isBannedByAllAccount($value['sku'],'美自建仓')){
-    			$p = $productTable->where(array('sku'=>$value['sku']))->find();
-	    		//if($value[C('DB_SZSTORAGE_AINVENTORY')]>0 && $p[C('DB_PRODUCT_TOUS')]=='空运' && !$this->isBannedByAllAccount($value['sku'],'美自建仓')){    						
-	    			if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
-	    				$averangeSaleQuantity = $this->getRestockADSQNew($value['sku'],'美自建仓',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],$restockPara[C('DB_RESTOCK_PARA_ELQ')]);
-	    				$toAir=array();
-						$toAir['sku'] = $value['sku'];
-						$toAir['asq'] = $averangeSaleQuantity;
-						if($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')])!=null){
-							$cntSeaShippingTimes=time()-strtotime($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')]));//与已知时间的差值
-							$seaEstimatedArriveDays = ceil($restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')]-($cntSeaShippingTimes/(3600*24)));//算出天数
-						}else{
-							$seaEstimatedArriveDays=$restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')];
-						}
-						if($seaEstimatedArriveDays<ceil($usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))/$averangeSaleQuantity)){
-							$toAir['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_tD')]-$usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getUsswInboundAirIInventory($value['sku'])-$this->getUsswInboundSeaIInventory($value['sku']));
-						}else{
-							$toAir['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_tD')]-$usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getUsswInboundAirIInventory($value['sku']));
-						}
-						
-						if($toAir['quantity']>0){
-							if($toAir['quantity']>$value[C('DB_SZSTORAGE_AINVENTORY')]){
-	    						$toAir['quantity'] = $value[C('DB_SZSTORAGE_AINVENTORY')];
-	    					}
-	    					array_push($airRestock, $toAir);    					
-	    					$airweight = $airweight+$p[C('DB_PRODUCT_WEIGHT')]*$toAir['quantity']/1000;
-	    					$airvolume = $airvolume+$p[C('DB_PRODUCT_LENGTH')]*$p[C('DB_PRODUCT_HEIGHT')]*$p[C('DB_PRODUCT_WIDTH')]/1000000*$toAir['quantity'];  
-						}    					  					
-						$toAir=null;
-	    			/*}else{
-	    				$this->error('无法计算，产品 '.$value['sku'].' 包装信息缺失');
-	    			}*/
-	    		}
+    		$p = $productTable->where(array('sku'=>$value['sku']))->find();
+    		if(!$this->isBannedByAllAccount($value['sku'],'美自建仓')){    						
+    			if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
+    				$averangeSaleQuantity = $this->getRestockADSQ($value['sku'],'美自建仓',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],$restockPara[C('DB_RESTOCK_PARA_ELQ')]);
+    				$toAir=array();
+					$toAir['sku'] = $value['sku'];
+					$toAir['asq'] = $averangeSaleQuantity;
+					if($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')])!=null){
+						$cntSeaShippingTimes=time()-strtotime($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')]));//与已知时间的差值
+						$seaEstimatedArriveDays = ceil($restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')]-($cntSeaShippingTimes/(3600*24)));//算出天数
+					}else{
+						$seaEstimatedArriveDays=$restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')];
+					}
+					if($seaEstimatedArriveDays<ceil($usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))/$averangeSaleQuantity)){
+						$toAir['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')]-$usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getUsswInboundAirIInventory($value['sku'])-$this->getUsswInboundSeaIInventory($value['sku']));
+					}else{
+						$toAir['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')]-$usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getUsswInboundAirIInventory($value['sku']));
+					}
+					
+					if($toAir['quantity']>0){
+						if($toAir['quantity']>$value[C('DB_SZSTORAGE_AINVENTORY')]){
+    						$toAir['quantity'] = $value[C('DB_SZSTORAGE_AINVENTORY')];
+    					}
+    					array_push($airRestock, $toAir);    					
+    					$airweight = $airweight+$p[C('DB_PRODUCT_WEIGHT')]*$toAir['quantity']/1000;
+    					$airvolume = $airvolume+$p[C('DB_PRODUCT_LENGTH')]*$p[C('DB_PRODUCT_HEIGHT')]*$p[C('DB_PRODUCT_WIDTH')]/1000000*$toAir['quantity'];  
+					}    					  					
+					$toAir=null;
+    			}else{
+    				$this->error('无法计算，产品 '.$value['sku'].' 包装信息缺失');
+    			}
     		}
     	}
 		return array('weight'=>$airweight,'volume'=>$airvolume,'restock'=>$airRestock);
@@ -2061,128 +2048,32 @@ class RestockAction extends CommonAction{
 	    $seavolume = 0;
     	foreach ($data as $key => $value) {
     		$p = $productTable->where(array('sku'=>$value['sku']))->find();
-    		if($value[C('DB_SZSTORAGE_AINVENTORY')]>0 && $p[C('DB_PRODUCT_TOUS')]!='无' && !$this->isBannedByAllAccount($value['sku'],'美自建仓')){
+    		if(!$this->isBannedByAllAccount($value['sku'],'美自建仓')){
     			if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
-					$averangeSaleQuantity = $this->getRestockADSQ($value['sku'],'美自建仓',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')]);
+					$averangeSaleQuantity = $this->getRestockADSQ($value['sku'],'美自建仓',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],0);
 
 					//空运货平均销量大于0.33（30天销量10个以上），可以海运补点货
-					if($p[C('DB_PRODUCT_TOUS')]=='海运' || ($p[C('DB_PRODUCT_TOUS')]=='空运' && $averangeSaleQuantity>=0.33)){
+					if(($p[C('DB_PRODUCT_TOUS')]=='海运' && $averangeSaleQuantity>0) || ($p[C('DB_PRODUCT_TOUS')]=='空运' && $averangeSaleQuantity>=0.33)){
 						$toSea=array();
     					$toSea['sku'] = $value['sku'];
     					$toSea['asq'] = $averangeSaleQuantity;
 						$toSea['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_USSW_SEA_tD')]-$usstorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getUsswInboundAirIInventory($value['sku'])-$this->getUsswInboundSeaIInventory($value['sku']));
-    					if($toSea['quantity']>$value[C('DB_SZSTORAGE_AINVENTORY')]){
-    						$toSea['quantity'] = $value[C('DB_SZSTORAGE_AINVENTORY')];
-    					}
-    					array_push($seaRestock, $toSea);  
-    					$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]*$toSea['quantity']/1000;
-    					$seavolume = $seavolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$toSea['quantity'];
+						if($toSea['quantity']>0){
+							if($toSea['quantity']>$value[C('DB_SZSTORAGE_AINVENTORY')]){
+	    						$toSea['quantity'] = $value[C('DB_SZSTORAGE_AINVENTORY')];
+	    					}
+	    					array_push($seaRestock, $toSea);  
+	    					$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]*$toSea['quantity']/1000;
+	    					$seavolume = $seavolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$toSea['quantity'];
+						}
 						$toSea=null;
     				}
     			}else{
     				$this->error('无法计算，产品 '.$value['sku'].' 包装信息缺失');
     			}
-    		}
+    		}    		
     	}
 		return array('weight'=>$seaweight,'volume'=>$seavolume,'restock'=>$seaRestock);
-    }
-
-    /*
-	补货平均日销量算法
-	参数: sku, 仓库,天数,是否剔除大单
-	1.	计算天数内该仓库是否有这个sku的入库单
-		a.	有入库单，读出最早一个入仓日期
-			i.	可用库存数量=0
-				1.	统计（天数内取得的入库单的入库数量和-天数内大单销售数量）
-				2.	从最早一个入库单入仓日期开始，查找这个数量的卖完日期
-					a.	如果到当前日期仍得不到天数内取得的入库单的入库数量和， 那么就是有补寄情况，查找统计的入库数量和的80%卖完日期。如果到当前日期还是得不到80%的卖完日期，那么就以当前日期作为卖完日期。
-					b.	要考虑剔除大单的数量
-					c.	读取不禁售账号的销售数量
-				3.	返回 （天数内取得的入库单的入库数量和-天数内大单销售数量）/（卖完日期-天数内最早入仓日期之间的天数）
-			ii.	可用库存数量>0
-				1.	统计（天数内取得的入库单的入库数量和-天数内大单销售数量）
-				2.	读取不禁售账号的销售数量
-				3.	返回 （期间剔除大单卖出数量）/（当前日期-天数内最早入仓日期之间的天数）
-		b.	没有入库单
-			i.	可用库存数量=0
-				1.	找到最近一个入库单的入库数量和入库日期。
-				2.	从该入库日期开始找这个数量卖完的日期。
-					a.	如果到当前日期仍得不到天数内取得的入库单的入库数量和， 那么就是有补寄情况，查找统计的入库数量和的80%卖完日期。如果到当前日期还是得不到80%的买=卖完日期，那么就以当前日期作为卖完日期。
-					b.	要考虑剔除大单的数量
-					c.	读取不禁售账号的销售数量
-				3.	返回 剔除大单入库单的数量/（卖完日期-入仓日期之间的天数）
-			ii.	可用库存数量>0
-				1.	返回 剔除大单天数内平均日销量。
-				2.	读取不禁售账号的销售数量
-    */
-
-    private function getRestockADSQ($sku, $warehouse,$days,$excludeLargeQuantity=null){
-    	$inboundTable = D($this->getInboundViewTableName($warehouse));
-    	$storageTable = M($this->getStorageTableName($warehouse));
-    	
-
-    	$daysDateStampe = time()-60*60*24*$days;
-    	$inboundmap['receive_date'] = array('gt',date("Y-m-d H:i:s",$daysDateStampe));
-    	$inboundmap['sku'] = array('eq',$sku);
-    	$inbounds = $inboundTable->where($inboundmap)->select();
-
-    	if($inbounds!=null && $inbounds!=false){
-    		//有入库单
-    		if($storageTable->where(array('sku'=>$sku))->getField('ainventory')<=0){
-    			//可用库存小于等于0
-    			$daysInboundQuantity = $inboundTable->where($inboundmap)->sum('confirmed_quantity');
-    			$earliestInboundDate = $inboundTable->order('id asc')->where($inboundmap)->limit(1)->getField('receive_date');
-    			if($this->getQuantitySoldOutDate($sku,$warehouse,$daysInboundQuantity,$earliestInboundDate)!=null){
-    				$soldOutDays = ceil((strtotime($this->getQuantitySoldOutDate($sku,$warehouse,$daysInboundQuantity,$earliestInboundDate))-strtotime($earliestInboundDate))/(60*60*24));
-    				$quantityExceptLargeOrder = $this->getQuantityExceptLargeOrder($sku,$warehouse,$earliestInboundDate,$this->getQuantitySoldOutDate($sku,$warehouse,$daysInboundQuantity,$earliestInboundDate),$excludeLargeQuantity);
-    				return round($quantityExceptLargeOrder/$soldOutDays,2);
-    			}elseif($this->getQuantitySoldOutDate($sku,$warehouse,$daysInboundQuantity*0.8,$earliestInboundDate)!=null){
-    				$soldOutDays = ceil((strtotime($this->getQuantitySoldOutDate($sku,$warehouse,$daysInboundQuantity*0.8,$earliestInboundDate))-strtotime($earliestInboundDate))/(60*60*24));
-    				$quantityExceptLargeOrder = $this->getQuantityExceptLargeOrder($sku,$warehouse,$earliestInboundDate,$this->getQuantitySoldOutDate($sku,$warehouse,$daysInboundQuantity*0.8,$earliestInboundDate),$excludeLargeQuantity);
-    				return round($quantityExceptLargeOrder/$soldOutDays,2);
-    			}else{
-    				$soldOutDays = ceil((time()-strtotime($earliestInboundDate))/(60*60*24));
-    				$quantityExceptLargeOrder = $this->getQuantityExceptLargeOrder($sku,$warehouse,$earliestInboundDate,date("Y-m-d H:i:s",time()),$excludeLargeQuantity);
-    				return round($quantityExceptLargeOrder/$soldOutDays,2);
-    			}
-    		}else{
-    			//可用库存大于0
-    			$earliestInboundDate = $inboundTable->order('id asc')->where($inboundmap)->limit(1)->getField('receive_date');
-    			$quantityExceptLargeOrder = $this->getQuantityExceptLargeOrder($sku,$warehouse,$earliestInboundDate,date("Y-m-d H:i:s",time()),$excludeLargeQuantity);
-    			$calDays = ceil((time()-strtotime($earliestInboundDate))/(60*60*24));
-    			return round($quantityExceptLargeOrder/$calDays,2);
-    		}	
-    	}elseif($inbounds==null){
-    		//没有入库单
-    		if($storageTable->where(array(C('sku')=>$sku))->getField('ainventory')<=0){
-    			//可用库存小于等于0
-    			$inboundmap['sku'] = array('eq',$sku);
-    			$inbounds = $inboundTable->where($inboundmap)->find();
-    			if($this->getQuantitySoldOutDate($sku,$warehouse,$inbounds['confirmed_quantity'],$inbounds['receive_date'])!=null){
-    				$soldOutDays = ceil((strtotime($this->getQuantitySoldOutDate($sku,$warehouse,$inbounds['confirmed_quantity'],$inbounds['receive_date']))-strtotime($inbounds['receive_date']))/(60*60*24));
-    				$quantityExceptLargeOrder = $this->getQuantityExceptLargeOrder($sku,$warehouse,$inbounds['receive_date'],$this->getQuantitySoldOutDate($sku,$warehouse,$inbounds['confirmed_quantity'],$inbounds['receive_date']),$excludeLargeQuantity);
-    				return round($quantityExceptLargeOrder/$soldOutDays,2);
-    			}elseif($this->getQuantitySoldOutDate($sku,$warehouse,$inbounds['confirmed_quantity']*0.8,$inbounds['receive_date'])!=null){
-    				$soldOutDays = ceil((strtotime($this->getQuantitySoldOutDate($sku,$warehouse,$inbounds['confirmed_quantity']*0.8,$inbounds['receive_date']))-strtotime($inbounds['receive_date']))/(60*60*24));
-    				$quantityExceptLargeOrder = $this->getQuantityExceptLargeOrder($sku,$warehouse,$inbounds['receive_date'],$this->getQuantitySoldOutDate($sku,$warehouse,$inbounds['confirmed_quantity']*0.8,$inbounds['receive_date']),$excludeLargeQuantity);
-    				return round($quantityExceptLargeOrder/$soldOutDay,2);
-    			}else{
-    				$soldOutDays = ceil((time()-strtotime($inbounds['receive_date']))/(60*60*24));
-    				$quantityExceptLargeOrder = $this->getQuantityExceptLargeOrder($sku,$warehouse,$inbounds['confirmed_quantity']*0.8,$inbounds['receive_date'],$excludeLargeQuantity);
-    				return round($quantityExceptLargeOrder/$soldOutDays,2);
-    			}
-    		}else{
-    			//可用库存大于0
-    			if($this->getCountry($warehouse)=='us'){
-					$quantity = $this->getUsswMads($sku,$days,$excludeLargeQuantity);
-				}elseif($this->getCountry($warehouse)=='de'){
-					$quantity = $this->getWinitMads($sku,1,$days,$excludeLargeQuantity);
-				}
-				return round($quantity/$days,2);
-    		}
-    	}else{
-    		$this->error('数据库读取错误，无法计算 '.$sku.' 在 '.$warehouse.' 仓的补货平均日销量');
-    	}
     }
 
     /*
@@ -2195,7 +2086,7 @@ class RestockAction extends CommonAction{
 			ii.	距离现在大于30天，空运返回 0.1，海运统计最后一个出库单往前30天的销量。返回销量/30
 	2.	可用库存数量>0，返回近30天平均日销量
     */
-    private function getRestockADSQNew($sku, $warehouse,$days,$excludeLargeQuantity){
+    private function getRestockADSQ($sku, $warehouse,$days,$excludeLargeQuantity){
     	$storage = M($this->getStorageTableName($warehouse))->where(array('sku'=>$sku))->find();
     	if($storage!=null && $storage!=false){
     		if($storage['ainventory']<=0){
@@ -2209,7 +2100,7 @@ class RestockAction extends CommonAction{
     					if($this->isAirProduct($sku,$warehouse)){
     						return 0.1;
     					}else{
-    						return round($this->getCsale($sku,$warehouse,date('Y-m-d',strtotime($lastShippingDate)-60*60*24*30),$lastShippingDate,0)/30,2);
+    						return round($this->getCsale($sku,$warehouse,date('Y-m-d',(strtotime($lastShippingDate)-60*60*24*30)),$lastShippingDate)/30,2);
     					}
     				}
     			}
@@ -2293,7 +2184,7 @@ class RestockAction extends CommonAction{
     	return D($this->getInboundViewTableName($warehouse))->where($inboundmap)->sum('confirmed_quantity');
     }
 
-    private function getCsale($sku,$warehouse,$startDate,$endDate,$excludeLargeQuantity){
+    private function getCsale($sku,$warehouse,$startDate,$endDate,$excludeLargeQuantity=null){
     	$unbannedAccount = array();
         $saleTableNames = $this->getSalePlanTableNames($warehouse);
     	foreach ($saleTableNames as $key => $value) {
@@ -2305,8 +2196,15 @@ class RestockAction extends CommonAction{
     	$outboundmap['create_time'] = array('elt',$endDate);
     	$outboundmap['create_time'] = array('gt',$startDate);
     	$outboundmap['sku'] = array('eq',$sku);
-    	$outboundmap['quantity'] = array('lt',$excludeLargeQuantity);
-    	return D($this->getOutboundViewTableName($warehouse))->where($outboundmap)->sum('quantity');
+    	if($excludeLargeQuantity!=null){
+        	$outboundmap[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')] = array('elt',$excludeLargeQuantity);
+        	$elelq =  D($this->getOutboundViewTableName($warehouse))->where($outboundmap)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
+        	$outboundmap[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')] = array('gt',$excludeLargeQuantity);
+        	$gelq = D($this->getOutboundViewTableName($warehouse))->where($outboundmap)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
+        	return $elelq + round($gelq/$excludeLargeQuantity);
+        }else{
+        	return D($this->getOutboundViewTableName($warehouse))->where($outboundmap)->sum('quantity');
+        }     	
     }
 
     private function getQuantitySoldOutDate($sku,$warehouse,$quantity,$startDate){
@@ -2382,26 +2280,20 @@ class RestockAction extends CommonAction{
         }       
     }
 
-    private function setReceivedDate(){
-    	$usswInboundTable = M(C('DB_USSW_INBOUND'));
-    	foreach ($usswInboundTable->select() as $key => $value) {
-    		if($value[C('DB_USSW_INBOUND_SHIPPING_WAY')]=='空运'){
-    			$value[C('DB_USSW_INBOUND_RECEIVE_DATE')] = date("Y-m-d H:i:s",strtotime($value[C('DB_USSW_INBOUND_DATE')])+60*60*24*4);
-    		}else{
-    			$value[C('DB_USSW_INBOUND_RECEIVE_DATE')] = date("Y-m-d H:i:s",strtotime($value[C('DB_USSW_INBOUND_DATE')])+60*60*24*35);
+    public function returnToSzsw(){
+    	$restockTable = M(C('DB_RESTOCK'));
+    	$szstorageTable = M(C('DB_SZSTORAGE'));
+    	$map[C('DB_RESTOCK_STATUS')]=array('in',array('待发货','延迟发货'));
+    	$restock = $restockTable->where($map)->select();
+    	foreach ($restock as $key => $value) {
+    		$szst=$szstorageTable->where(array(C('DB_SZSTORAGE_SKU')=>$value['sku']))->find();
+    		$szst[C('DB_SZSTORAGE_AINVENTORY')] = $szst[C('DB_SZSTORAGE_AINVENTORY')]+$value[C('DB_RESTOCK_QUANTITY')];
+    		$szst[C('DB_SZSTORAGE_CINVENTORY')] = $szst[C('DB_SZSTORAGE_CINVENTORY')]+$value[C('DB_RESTOCK_QUANTITY')];
+    		if($szstorageTable->save($szst)!=false){
+    			$restockTable->where(array('id'=>$value['id']))->delete();
     		}
-    		$usswInboundTable->save($value);
     	}
-
-    	$winitInboundTable = M(C('DB_WINITDE_INBOUND'));
-    	foreach ($winitInboundTable->select() as $key => $value) {
-    		if($value[C('DB_USSW_INBOUND_SHIPPING_WAY')]=='空运'){
-    			$value[C('DB_USSW_INBOUND_RECEIVE_DATE')] = date("Y-m-d H:i:s",strtotime($value[C('DB_USSW_INBOUND_DATE')])+60*60*24*15);
-    		}else{
-    			$value[C('DB_USSW_INBOUND_RECEIVE_DATE')] = date("Y-m-d H:i:s",strtotime($value[C('DB_USSW_INBOUND_DATE')])+60*60*24*65);
-    		}
-    		$winitInboundTable->save($value);
-    	}
+    	$this->redirect('index');
     }
 
     public function isBannedByAllAccount($sku,$warehouse){
