@@ -2101,6 +2101,7 @@ class RestockAction extends CommonAction{
     		if($storage['ainventory']<=0){
     			if($this->isNewProduct($sku,$warehouse)){
     				return round($this->getCinventory($sku,$warehouse,$this->getFirstSaleDate($sku,$warehouse),$this->getLastOutboundDate($sku,$warehouse))/((strtotime($this->getLastOutboundDate($sku,$warehouse))-strtotime($this->getFirstSaleDate($sku,$warehouse)))/(60*60*24)),2);
+    				
     			}else{
     				$lastShippingDate = $this->getLastOutboundDate($sku,$warehouse);
     				if(ceil((time()-strtotime($lastShippingDate))/(60*60*24))<30){
@@ -2117,7 +2118,23 @@ class RestockAction extends CommonAction{
     			return round($this->getCsale($sku,$warehouse,date('Y-m-d',time()-60*60*24*30),date('Y-m-d',time()),$excludeLargeQuantity)/30,2);
     		}
     	}else{
-    		return 0;
+    		//TODO 检测新产品是否在途，但是还没入海外仓。不是返回0.1，是返回0
+    		if($this->isOntheWayToWarehouse($sku,$warehouse)){
+    			return 0;
+    		}else{
+    			return 0.1;
+    		}
+    	}
+    }
+
+    private function isOntheWayToWarehouse($sku,$warehouse){
+    	$map['sku'] = array('eq',$sku);
+    	$map['status'] = array('neq','已入库');
+    	$iinventory=D($this->getInboundViewTableName($warehouse))->where($map)->find();
+    	if($iinventory!=false && $iinventory!=null){
+    		return true;
+    	}else{
+    		return false;
     	}
     }
 
@@ -2147,15 +2164,15 @@ class RestockAction extends CommonAction{
     		$salePlan = M(C('DB_USSW_SALE_PLAN'));
     	}elseif($this->getCountry($warehouse)=='de'){
     		$salePlan = M(C('DB_YZHAN_816_PL_SALE_PLAN'));
-    	}    	
+    	}	    	
     	$firstSaleDate = $salePlan->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->getField(C('DB_USSW_SALE_PLAN_FIRST_DATE'));
 		if($firstSaleDate==null){
 			$daysFirstSale=0;
 		}else{
 			$cntFirstSale=time()-strtotime($firstSaleDate);//与已知时间的差值
 			$daysFirstSale = ceil($cntFirstSale/(3600*24));//算出天数
-		}				
-		
+		}
+
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
 		if($purchaseCount==1 || ($purchaseCount<$restockPara[C('DB_RESTOCK_PARA_USSW_AFCL')] && $daysFirstSale<$restockPara[C('DB_RESTOCK_PARA_USSW_AFDL')])){
 			if($this->getCountry($warehouse)=='us'&& $p[C('DB_PRODUCT_TOUS')]=='空运'){
