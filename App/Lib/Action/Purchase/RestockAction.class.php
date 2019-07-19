@@ -1968,6 +1968,7 @@ class RestockAction extends CommonAction{
 			}else{
 				if($realCal==true && $restock['restock']!=null){
 		    		$szstorageTable=M('DB_SZSTORAGE');
+		    		$restockTable=M(C('DB_RESTOCK'));
 					foreach ($restock['restock'] as $key => $cvalue) {
 						$newRestock[C('DB_RESTOCK_CREATE_DATE')] = Date('Y-m-d');
 						$newRestock[C('DB_RESTOCK_SKU')] = $cvalue['sku'];

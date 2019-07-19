@@ -1748,7 +1748,7 @@ class SzSaleAction extends CommonAction{
 		return array('1517','1588');
 	}
 
-    private function getSalePlanTableNames($account){
+    public function getSalePlanTableNames($account){
     	if($account=='rc-helicar'){
     		$tableNames['Germany']=C('DB_SZ_DE_SALE_PLAN');
     		$tableNames['US']=C('DB_SZ_US_SALE_PLAN');
