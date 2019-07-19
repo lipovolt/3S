@@ -2134,20 +2134,7 @@ class RestockAction extends CommonAction{
 
     private function isNewProduct($sku,$warehouse){
     	$p=M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
-    	if($this->getCountry($warehouse)=='us'){
-    		$salePlan = M(C('DB_USSW_SALE_PLAN'));
-    	}elseif($this->getCountry($warehouse)=='de'){
-    		$salePlan = M(C('DB_YZHAN_816_PL_SALE_PLAN'));
-    	}
-    	
-    	$firstSaleDate = $salePlan->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->getField(C('DB_USSW_SALE_PLAN_FIRST_DATE'));
-		if($firstSaleDate==null){
-			$daysFirstSale=0;
-		}else{
-			$cntFirstSale=time()-strtotime($firstSaleDate);//与已知时间的差值
-			$daysFirstSale = ceil($cntFirstSale/(3600*24));//算出天数
-		}				
-		$purchaseMap[C('DB_PURCHASE_ITEM_SKU')] = array('eq',$value[C('DB_RESTOCK_SKU')]);
+    	$purchaseMap[C('DB_PURCHASE_ITEM_SKU')] = array('eq',$value[C('DB_RESTOCK_SKU')]);
 		if($this->getCountry($warehouse)=='us'){
     		$purchaseMap[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('in',array('美自建仓','万邑通美西'));
     	}elseif($this->getCountry($warehouse)=='de'){
@@ -2155,8 +2142,22 @@ class RestockAction extends CommonAction{
     	}		
 		$purchaseMap[C('DB_PURCHASE_STATUS')] = array('in',array('部分到货','全部到货'));
 		$purchaseCount = M(C('DB_PURCHASE'))->where($purchaseMap)->count();
+
+		if($this->getCountry($warehouse)=='us'){
+    		$salePlan = M(C('DB_USSW_SALE_PLAN'));
+    	}elseif($this->getCountry($warehouse)=='de'){
+    		$salePlan = M(C('DB_YZHAN_816_PL_SALE_PLAN'));
+    	}    	
+    	$firstSaleDate = $salePlan->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->getField(C('DB_USSW_SALE_PLAN_FIRST_DATE'));
+		if($firstSaleDate==null){
+			$daysFirstSale=0;
+		}else{
+			$cntFirstSale=time()-strtotime($firstSaleDate);//与已知时间的差值
+			$daysFirstSale = ceil($cntFirstSale/(3600*24));//算出天数
+		}				
+		
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
-		if($purchaseCount<$restockPara[C('DB_RESTOCK_PARA_USSW_AFCL')] && $daysFirstSale<$restockPara[C('DB_RESTOCK_PARA_USSW_AFDL')] ){
+		if($purchaseCount==1 || ($purchaseCount<$restockPara[C('DB_RESTOCK_PARA_USSW_AFCL')] && $daysFirstSale<$restockPara[C('DB_RESTOCK_PARA_USSW_AFDL')])){
 			if($this->getCountry($warehouse)=='us'&& $p[C('DB_PRODUCT_TOUS')]=='空运'){
 	    		return true;
 	    	}elseif($this->getCountry($warehouse)=='de'&& $p[C('DB_PRODUCT_TODE')]=='空运'){
