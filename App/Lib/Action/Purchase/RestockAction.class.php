@@ -2061,8 +2061,8 @@ class RestockAction extends CommonAction{
     			if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 					$averangeSaleQuantity = $this->getRestockADSQ($value['sku'],'美自建仓',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],0);
 
-					//空运货平均销量大于0.33（30天销量10个以上），可以海运补点货
-					if(($p[C('DB_PRODUCT_TOUS')]=='海运' && $averangeSaleQuantity>0) || ($p[C('DB_PRODUCT_TOUS')]=='空运' && $averangeSaleQuantity>=0.33) ||($p[C('DB_PRODUCT_PWEIGHT')]*1.2<($p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/5000) && $averangeSaleQuantity>0.16)){
+					//空运货平均销量大于0.33（30天销量10个以上），可以海运补点货。或者泡货或者重货，月销量大于5个可以海运补点货。
+					if(($p[C('DB_PRODUCT_TOUS')]=='海运' && $averangeSaleQuantity>0) || ($p[C('DB_PRODUCT_TOUS')]=='空运' && $averangeSaleQuantity>=0.33) || ($p[C('DB_PRODUCT_PWEIGHT')]*1.2<($p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/5000) && $averangeSaleQuantity>0.16 && $p[C('DB_PRODUCT_TOUS')]=='空运') || ($p[C('DB_PRODUCT_PWEIGHT')]>500 && $averangeSaleQuantity>0.16 && $p[C('DB_PRODUCT_TOUS')]=='空运')){
 						$toSea=array();
     					$toSea['sku'] = $value['sku'];
     					$toSea['asq'] = $averangeSaleQuantity;
