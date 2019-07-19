@@ -1932,13 +1932,14 @@ class RestockAction extends CommonAction{
 			c.	德国空运补货平均日销量=（sku, 万邑通德国，30，剔除大单）
 			d.	德国海运补货平均日销量=（sku,万邑通德国，90，不剔除大单）
 		4.	空运补货数量=补货平均日销量*空运可用加在途库存最大可售天数-空运在途数量-可用库存数量-海运快到仓的数量
-		a.	比较空运补货数量和深圳仓可用库存数量，那个小用哪个数量
-		b.	累加空运补货体积和重量
+			a.	比较空运补货数量和深圳仓可用库存数量，那个小用哪个数量
+			b.	累加空运补货体积和重量
 		5.	海运补货数量=补货平均日销量*海运可用加在途库存最大可售天数-空运和海运在途数量-可用库存数量
-		a.	空运近一段时间日销量大于0.33（30天剔除大单卖10个以上），可以考虑发海运补货
-		b.	空转海补货数量=补货平均日销量*海运预估到仓天数-空运和海运在途数量-可用库存数量
-		c.	比较空转海数量和深圳仓可用库存数量，那个小用哪个数量
-		d.	累加海运补货体积和重量
+			a.	空运近一段时间日销量大于0.33（30天剔除大单卖10个以上），可以考虑发海运补货
+			b.	空运近一段时间日销量大于0.16（30天剔除大单卖5个以上），并且包装体积重大于实重1.2倍。可以考虑发海运补货
+			c.	空转海补货数量=补货平均日销量*海运预估到仓天数-空运和海运在途数量-可用库存数量
+			d.	比较空转海数量和深圳仓可用库存数量，那个小用哪个数量
+			e.	累加海运补货体积和重量
     */
 
     public function calRestockQuantity($warehouse,$shippingWay,$realCal){
@@ -2061,7 +2062,7 @@ class RestockAction extends CommonAction{
 					$averangeSaleQuantity = $this->getRestockADSQ($value['sku'],'美自建仓',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],0);
 
 					//空运货平均销量大于0.33（30天销量10个以上），可以海运补点货
-					if(($p[C('DB_PRODUCT_TOUS')]=='海运' && $averangeSaleQuantity>0) || ($p[C('DB_PRODUCT_TOUS')]=='空运' && $averangeSaleQuantity>=0.33)){
+					if(($p[C('DB_PRODUCT_TOUS')]=='海运' && $averangeSaleQuantity>0) || ($p[C('DB_PRODUCT_TOUS')]=='空运' && $averangeSaleQuantity>=0.33) ||($p[C('DB_PRODUCT_PWEIGHT')]*1.2<($p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/5000) && $averangeSaleQuantity>0.16)){
 						$toSea=array();
     					$toSea['sku'] = $value['sku'];
     					$toSea['asq'] = $averangeSaleQuantity;
