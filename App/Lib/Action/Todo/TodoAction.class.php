@@ -9,7 +9,7 @@ class TodoAction extends CommonAction{
         $Page = new Page($count,20);            
         $Page->setConfig('header', '条数据');
         $show = $Page->show();
-        if($_POST['keyword']=="" || $_POST['keyword']==null){
+        if($_POST['keyword']==null && $keyword==null){
             if($keyword!=null){
                 $map[$keyword] = array('like','%'.$keywordValue.'%');
                 $map[C('DB_TODO_STATUS')] = array('eq',$skeywordValue);
@@ -20,13 +20,28 @@ class TodoAction extends CommonAction{
             }else{
                 $task = $Data->order('id desc')->limit($Page->firstRow.','.$Page->listRows)->select();
             }  
-        }
-        else{
+        }elseif($keyword!=null && $keywordValue!=null){            
+            $person = explode('+', $keywordValue);
+            if(count($person)>1){
+                foreach ($person as $key => $value) {
+                    $sperson = $sperson.$value.' ';
+                }
+            }else{
+                $sperson = $person[0];
+            }
+            
+            $map[C('DB_TODO_PERSON')] = array('like','%'.trim($sperson).'%');
+            $map['status'] = array('eq','0');
+            $task = $Data->order('id desc')->where($map)->limit($Page->firstRow.','.$Page->listRows)->select();
+            $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
+            $this->assign('keywordValue', $sperson);
+            $this->assign('skeywordValue', I('post.skeywordValue','','htmlspecialchars'));
+        }else{            
             $map[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
             $map[I('post.skeyword','','htmlspecialchars')] = array('eq',I('post.skeywordValue','','htmlspecialchars'));
             $task = $Data->order('id desc')->where($map)->limit($Page->firstRow.','.$Page->listRows)->select();
             $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
-            $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
+            $this->assign('keywordValue', I('post.skeywordValue','','htmlspecialchars'));
             $this->assign('skeywordValue', I('post.skeywordValue','','htmlspecialchars'));
         }
         $this->assign('task',$task);
