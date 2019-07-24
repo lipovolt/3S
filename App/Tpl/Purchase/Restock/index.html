@@ -189,18 +189,20 @@
 					</div>
 				</div>
 			</br>
-				<!-- <div class="form-group">
+				<div class="form-group">
 					<div class="block-bd">
-						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalWinitdeRestockTable')}" >预算万德补货表</a>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/calRestockQuantity',array('warehouse'=>winitde,'shippingWay'=>'air','realCal'=>0))}" >预算万德空补表</a>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/calRestockQuantity',array('warehouse'=>winitde,'shippingWay'=>'sea','realCal'=>0))}" >预算万德海补表</a>
 						<if condition="($winitde_lock eq 1)"> 
 							<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/unlockWinitdeRestockTable')}" >解锁万德补货表</a>
 						<else /> 
 							<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/lockWinitdeRestockTable')}" >锁定万德补货表</a>
 						</if>
-						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/updateWinitdeRestockTable')}" >更新万德补货表</a>
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/resetWinitdeRestockTable')}" >重置万德补货表</a>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/calRestockQuantity',array('warehouse'=>winitde,'shippingWay'=>'air','realCal'=>1))}" >更新万德空补表</a>
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/calRestockQuantity',array('warehouse'=>winitde,'shippingWay'=>'sea','realCal'=>1))}" >更新万德海补表</a>
 					</div>
-				</div> -->
+				</div>
 				<div class="form-group">
 					<div class="block-bd">
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalWinitdeRestockTableNew')}" >新预算万德补货表</a>

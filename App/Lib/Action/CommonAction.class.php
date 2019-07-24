@@ -267,7 +267,7 @@ class CommonAction extends Action{
     public function getSalePlanTableNames($warehouse){
         if($this->getCountry($warehouse)=='us'){
             return $this->getUsswSalePlanTableNames();
-        }elseif($this->getCountry($warehouse)=='winitde'){
+        }elseif($this->getCountry($warehouse)=='de'){
             return $this->getWinitDeSalePlanTableNames();
         }
     }
