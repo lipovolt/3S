@@ -1994,6 +1994,7 @@ class RestockAction extends CommonAction{
 					foreach ($restock['restock'] as $key => $cvalue) {
 						$newRestock[C('DB_RESTOCK_CREATE_DATE')] = Date('Y-m-d');
 						$newRestock[C('DB_RESTOCK_SKU')] = $cvalue['sku'];
+						$newRestock[C('DB_PRODUCT_MANAGER')] = $cvalue[C('DB_PRODUCT_MANAGER')];
 						$newRestock[C('DB_RESTOCK_QUANTITY')] = $cvalue['quantity'];
 						if($warehouse=='ussw'){
 							$newRestock[C('DB_RESTOCK_WAREHOUSE')] = '美自建仓';
@@ -2053,6 +2054,7 @@ class RestockAction extends CommonAction{
 						if($toAir['quantity']>$value[C('DB_SZSTORAGE_AINVENTORY')]){
     						$toAir['quantity'] = $value[C('DB_SZSTORAGE_AINVENTORY')];
     					}
+    					$toAir[C('DB_PRODUCT_MANAGER')] = $p[C('DB_PRODUCT_MANAGER')];
     					array_push($airRestock, $toAir);    					
     					$airweight = $airweight+$p[C('DB_PRODUCT_WEIGHT')]*$toAir['quantity']/1000;
     					$airvolume = $airvolume+$p[C('DB_PRODUCT_LENGTH')]*$p[C('DB_PRODUCT_HEIGHT')]*$p[C('DB_PRODUCT_WIDTH')]/1000000*$toAir['quantity'];  
@@ -2092,6 +2094,7 @@ class RestockAction extends CommonAction{
 							if($toSea['quantity']>$value[C('DB_SZSTORAGE_AINVENTORY')]){
 	    						$toSea['quantity'] = $value[C('DB_SZSTORAGE_AINVENTORY')];
 	    					}
+	    					$toSea[C('DB_PRODUCT_MANAGER')] = $p[C('DB_PRODUCT_MANAGER')];
 	    					array_push($seaRestock, $toSea);  
 	    					$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]*$toSea['quantity']/1000;
 	    					$seavolume = $seavolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$toSea['quantity'];
@@ -2140,6 +2143,7 @@ class RestockAction extends CommonAction{
 						if($toAir['quantity']>$value[C('DB_SZSTORAGE_AINVENTORY')]){
     						$toAir['quantity'] = $value[C('DB_SZSTORAGE_AINVENTORY')];
     					}
+    					$toAir[C('DB_PRODUCT_MANAGER')] = $p[C('DB_PRODUCT_MANAGER')];
     					array_push($airRestock, $toAir);    					
     					$airweight = $airweight+$p[C('DB_PRODUCT_WEIGHT')]*$toAir['quantity']/1000;
     					$airvolume = $airvolume+$p[C('DB_PRODUCT_LENGTH')]*$p[C('DB_PRODUCT_HEIGHT')]*$p[C('DB_PRODUCT_WIDTH')]/1000000*$toAir['quantity'];  
@@ -2179,6 +2183,7 @@ class RestockAction extends CommonAction{
 							if($toSea['quantity']>$value[C('DB_SZSTORAGE_AINVENTORY')]){
 	    						$toSea['quantity'] = $value[C('DB_SZSTORAGE_AINVENTORY')];
 	    					}
+	    					$toSea[C('DB_PRODUCT_MANAGER')] = $p[C('DB_PRODUCT_MANAGER')];
 	    					array_push($seaRestock, $toSea);  
 	    					$seaweight = $seaweight+$p[C('DB_PRODUCT_PWEIGHT')]*$toSea['quantity']/1000;
 	    					$seavolume = $seavolume+$p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/1000000*$toSea['quantity'];
