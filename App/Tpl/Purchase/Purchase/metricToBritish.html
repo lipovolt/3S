@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="Untitled-14.dwt" codeOutsideHTMLIsLocked="false" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>新增采购单</title>
+<!-- InstanceEndEditable -->
+<link rel="stylesheet" href="__PUBLIC__/Css/base.css">
+<link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
+<!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>采购管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/purchaseMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+<!-- 主页面开始  -->
+<div id="WarehouseOutbound" class="main">
+<script>
+function change(){
+	var length = document.getElementById('length').value;
+	var i = parseInt(length/2.58);
+	var str = "";
+	if(i>0){
+		var d64 = Math.round(((length/2.58)-i)/0.015625);
+		var d32 = Math.round(((length/2.58)-i)/0.03125);
+		var d16 = Math.round(((length/2.58)-i)/0.0625);
+		var d8 = Math.round(((length/2.58)-i)/0.125);
+		var d4 = Math.round(((length/2.58)-i)/0.25);
+		var d2 = Math.round(((length/2.58)-i)/0.5);
+		if(gcd(d2,2)==1){
+			str = str+i+"-"+d2+"/2 or ";
+		}		
+		if(gcd(d4,4)==1){
+			str = str+i+"-"+d4+"/4 or ";
+		}
+		if(gcd(d8,8)==1){
+			str = str+i+"-"+d8+"/8 or ";
+		}
+		if(gcd(d16,16)==1){
+			str = str+i+"-"+d16+"/16 or ";
+		}
+		if(gcd(d32,32)==1){
+			str = str+i+"-"+d32+"/32 or ";
+		}
+		if(gcd(d64,64)==1){
+			str = str+i+"-"+d64+"/64";
+		}
+		alert(str);
+	}else{
+		var d64 = Math.round((length/2.58)/0.015625);
+		var d32 = Math.round((length/2.58)/0.03125);
+		var d16 = Math.round((length/2.58)/0.0625);
+		var d8 = Math.round((length/2.58)/0.125);
+		var d4 = Math.round((length/2.58)/0.25);
+		var d2 = Math.round((length/2.58)/0.55);
+		if(gcd(d2,2)==1){
+			str = str+d2+"/2 or ";
+		}		
+		if(gcd(d4,4)==1){
+			str = str+d4+"/4 or ";
+		}
+		if(gcd(d8,8)==1){
+			str = str+d8+"/8 or ";
+		}
+		if(gcd(d16,16)==1){
+			str = str+d16+"/16 or ";
+		}
+		if(gcd(d32,32)==1){
+			str = str+d32+"/32 or ";
+		}
+		if(gcd(d64,64)==1){
+			str = str+d64+"/64 ";
+		}
+		alert(str);
+	}	
+}
+
+function gcd(a,b){
+    if(b == 0){
+        return a;
+    }
+    var r = a % b;
+    console.log(r);
+    return gcd(b,r);
+}
+</script>
+
+<!--产品列表-->
+<div class="block-outer">
+	<form method="POST" id="form" name="form" action="#" method="POST">
+	<div class="block-outer-hd">
+		<div class="form-group">
+            <label for="" class="control-label">长度cm：</label>
+            <div class="control-wrap">
+            	<input id="length" name="length" value=""></input>
+            </div>
+        </div>
+        <button class="btn btn-blue btn-s" id="savePurchaseItemInfo" onclick="change();return false;">转换</button>
+    </div>
+	</form>	
+</div>
+
+</div>
+</div>
+	</div>
+	</div>
+	<!-- InstanceEndEditable -->
+	<div class="area footer">
+		<include file="./Public/Tpl/footer.html" />
+	</div> 
+</body>
+<!-- InstanceEnd --></html>

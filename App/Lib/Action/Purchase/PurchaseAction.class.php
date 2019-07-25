@@ -547,6 +547,10 @@ class PurchaseAction extends CommonAction{
                 return false;
         }
     }
+
+    public function metricToBrtish(){
+        $this->display();
+    }
 }
 
 ?>
