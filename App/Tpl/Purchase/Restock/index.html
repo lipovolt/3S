@@ -176,7 +176,7 @@
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/calRestockQuantity',array('warehouse'=>ussw,'shippingWay'=>'sea','realCal'=>1))}" >更新美海补货表</a>
 					</div>
 				</div>
-				<div class="form-group">
+				<!-- <div class="form-group">
 					<div class="block-bd">
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalUsswRestockTableNew')}" >新预算美自补货表</a>
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalUsswRestockTableNew',array('setFirstWay'=>true))}" >新更新美自补货表</a>
@@ -187,7 +187,7 @@
 						</if>
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/resetUsswRestockTable')}" >重置美自补货表</a>
 					</div>
-				</div>
+				</div> -->
 			</br>
 				<div class="form-group">
 					<div class="block-bd">
@@ -197,13 +197,13 @@
 							<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/unlockWinitdeRestockTable')}" >解锁万德补货表</a>
 						<else /> 
 							<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/lockWinitdeRestockTable')}" >锁定万德补货表</a>
-						</if>
-						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/resetWinitdeRestockTable')}" >重置万德补货表</a>
+						</if><!-- 
+						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/resetWinitdeRestockTable')}" >重置万德补货表</a> -->
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/calRestockQuantity',array('warehouse'=>winitde,'shippingWay'=>'air','realCal'=>1))}" >更新万德空补表</a>
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/calRestockQuantity',array('warehouse'=>winitde,'shippingWay'=>'sea','realCal'=>1))}" >更新万德海补表</a>
 					</div>
 				</div>
-				<div class="form-group">
+				<!-- <div class="form-group">
 					<div class="block-bd">
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalWinitdeRestockTableNew')}" >新预算万德补货表</a>
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/precalWinitdeRestockTableNew',array('setFirstWay'=>true))}" >新更新万德补货表</a>
@@ -214,7 +214,7 @@
 						</if>
 						<a class="btn btn-blue btn-s" href="{:U('Purchase/Restock/resetWinitdeRestockTable')}" >重置万德补货表</a>
 					</div>
-				</div>
+				</div> -->
 				<!-- <div class="block-bd">
 					<label for="keyword" class="control-label">空运待发货体积： {$arvolume} m³</label>
 					<label for="keyword" class="control-label">空运待发货重量： {$arweight} kg</label>
