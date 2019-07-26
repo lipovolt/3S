@@ -8,36 +8,16 @@
 <link rel="stylesheet" href="__PUBLIC__/Css/base.css">
 <link rel="stylesheet" href="__PUBLIC__/Css/zh-cn.css">
 <!-- InstanceBeginEditable name="head" --><!-- InstanceEndEditable -->
-</head>
-<body>
-
-	<div class="header">
-		<div class="top">
-			<div class="area">
-				<span>
-					<include file="./Public/Tpl/header.html" />
-			</div>
-		</div>		
-		<div class="nav">
-			<div class="area">
-				<include file="./Public/Tpl/top.html" />
-			</div>
-		</div>
-	</div>	
-	
-    <!-- InstanceBeginEditable name="左边栏" -->
-	<div class="area clearfix">
-		<div class="sidenav">
-			<div class="sidenav-hd"><strong>采购管理</strong></div>
-			<div class="sidenav-bd">
-				<include file="./Public/Tpl/purchaseMenu.html" />	
-			</div>
-		</div>
-	<div class="content">
-<!-- 主页面开始  -->
-<div id="WarehouseOutbound" class="main">
-<script>
+<script  type="text/javascript">
 function change(){
+	if(document.getElementById('length').value>30.48){
+		changeToFeet();
+	}else{
+		changeToInche();
+	}
+}
+
+function changeToInche(){	
 	var length = document.getElementById('length').value;
 	var i = parseInt(length/2.54);
 	var str = "";
@@ -66,7 +46,6 @@ function change(){
 		if(gcd(d64,64)==1){
 			str = str+i+"-"+d64+"/64";
 		}
-		alert(str);
 	}else{
 		var d64 = Math.round((length/2.54)/0.015625);
 		var d32 = Math.round((length/2.54)/0.03125);
@@ -92,8 +71,68 @@ function change(){
 		if(gcd(d64,64)==1){
 			str = str+d64+"/64 ";
 		}
-		alert(str);
-	}	
+	}
+	var british=document.getElementById("british");
+	british.innerHTML = '<span style="color:red">'+"英寸 Inche: "+'</span>'+str;	
+}
+
+function changeToFeet(){	
+	var length = document.getElementById('length').value;
+	var i = parseInt(length/30.48);
+	var str = "";
+	if(i>0){
+		var d64 = Math.round(((length/30.48)-i)/0.015625);
+		var d32 = Math.round(((length/30.48)-i)/0.03125);
+		var d16 = Math.round(((length/30.48)-i)/0.0625);
+		var d8 = Math.round(((length/30.48)-i)/0.125);
+		var d4 = Math.round(((length/30.48)-i)/0.25);
+		var d2 = Math.round(((length/30.48)-i)/0.5);
+		if(gcd(d2,2)==1){
+			str = str+i+"-"+d2+"/2 or ";
+		}		
+		if(gcd(d4,4)==1){
+			str = str+i+"-"+d4+"/4 or ";
+		}
+		if(gcd(d8,8)==1){
+			str = str+i+"-"+d8+"/8 or ";
+		}
+		if(gcd(d16,16)==1){
+			str = str+i+"-"+d16+"/16 or ";
+		}
+		if(gcd(d32,32)==1){
+			str = str+i+"-"+d32+"/32 or ";
+		}
+		if(gcd(d64,64)==1){
+			str = str+i+"-"+d64+"/64";
+		}
+	}else{
+		var d64 = Math.round((length/30.48)/0.015625);
+		var d32 = Math.round((length/30.48)/0.03125);
+		var d16 = Math.round((length/30.48)/0.0625);
+		var d8 = Math.round((length/30.48)/0.125);
+		var d4 = Math.round((length/30.48)/0.25);
+		var d2 = Math.round((length/30.48)/0.55);
+		if(gcd(d2,2)==1){
+			str = str+d2+"/2 or ";
+		}		
+		if(gcd(d4,4)==1){
+			str = str+d4+"/4 or ";
+		}
+		if(gcd(d8,8)==1){
+			str = str+d8+"/8 or ";
+		}
+		if(gcd(d16,16)==1){
+			str = str+d16+"/16 or ";
+		}
+		if(gcd(d32,32)==1){
+			str = str+d32+"/32 or ";
+		}
+		if(gcd(d64,64)==1){
+			str = str+d64+"/64 ";
+		}
+	}
+	var british=document.getElementById("british");
+	british.innerHTML = '<span style="color:red">'+"英尺 Feet: "+'</span>'+str;	
 }
 
 function gcd(a,b){
@@ -104,21 +143,52 @@ function gcd(a,b){
     console.log(r);
     return gcd(b,r);
 }
-</script>
 
+function inputChanged(){
+	var british=document.getElementById("british");
+	british.innerHTML = "";
+}
+</script>
+</head>
+<body>
+
+	<div class="header">
+		<div class="top">
+			<div class="area">
+				<span>
+					<include file="./Public/Tpl/header.html" />
+			</div>
+		</div>		
+		<div class="nav">
+			<div class="area">
+				<include file="./Public/Tpl/top.html" />
+			</div>
+		</div>
+	</div>	
+	
+    <!-- InstanceBeginEditable name="左边栏" -->
+	<div class="area clearfix">
+		<div class="sidenav">
+			<div class="sidenav-hd"><strong>采购管理</strong></div>
+			<div class="sidenav-bd">
+				<include file="./Public/Tpl/purchaseMenu.html" />	
+			</div>
+		</div>
+	<div class="content">
+<!-- 主页面开始  -->
+<div id="WarehouseOutbound" class="main">
 <!--产品列表-->
 <div class="block-outer">
-	<form method="POST" id="form" name="form" action="#" method="POST">
 	<div class="block-outer-hd">
 		<div class="form-group">
-            <label for="" class="control-label">长度cm：</label>
+            <label class="control-label">长度cm：</label>
             <div class="control-wrap">
-            	<input id="length" name="length" value=""></input>
+            	<input id="length" name="length" value="" onchange="inputChanged()"></input>
             </div>
-        </div>
+        </div>        
         <button class="btn btn-blue btn-s" id="savePurchaseItemInfo" onclick="change();return false;">转换</button>
+        <div id="british"></div>
     </div>
-	</form>	
 </div>
 
 </div>
