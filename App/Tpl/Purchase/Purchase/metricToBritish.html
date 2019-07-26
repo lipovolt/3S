@@ -39,15 +39,15 @@
 <script>
 function change(){
 	var length = document.getElementById('length').value;
-	var i = parseInt(length/2.58);
+	var i = parseInt(length/2.54);
 	var str = "";
 	if(i>0){
-		var d64 = Math.round(((length/2.58)-i)/0.015625);
-		var d32 = Math.round(((length/2.58)-i)/0.03125);
-		var d16 = Math.round(((length/2.58)-i)/0.0625);
-		var d8 = Math.round(((length/2.58)-i)/0.125);
-		var d4 = Math.round(((length/2.58)-i)/0.25);
-		var d2 = Math.round(((length/2.58)-i)/0.5);
+		var d64 = Math.round(((length/2.54)-i)/0.015625);
+		var d32 = Math.round(((length/2.54)-i)/0.03125);
+		var d16 = Math.round(((length/2.54)-i)/0.0625);
+		var d8 = Math.round(((length/2.54)-i)/0.125);
+		var d4 = Math.round(((length/2.54)-i)/0.25);
+		var d2 = Math.round(((length/2.54)-i)/0.5);
 		if(gcd(d2,2)==1){
 			str = str+i+"-"+d2+"/2 or ";
 		}		
@@ -68,12 +68,12 @@ function change(){
 		}
 		alert(str);
 	}else{
-		var d64 = Math.round((length/2.58)/0.015625);
-		var d32 = Math.round((length/2.58)/0.03125);
-		var d16 = Math.round((length/2.58)/0.0625);
-		var d8 = Math.round((length/2.58)/0.125);
-		var d4 = Math.round((length/2.58)/0.25);
-		var d2 = Math.round((length/2.58)/0.55);
+		var d64 = Math.round((length/2.54)/0.015625);
+		var d32 = Math.round((length/2.54)/0.03125);
+		var d16 = Math.round((length/2.54)/0.0625);
+		var d8 = Math.round((length/2.54)/0.125);
+		var d4 = Math.round((length/2.54)/0.25);
+		var d2 = Math.round((length/2.54)/0.55);
 		if(gcd(d2,2)==1){
 			str = str+d2+"/2 or ";
 		}		
