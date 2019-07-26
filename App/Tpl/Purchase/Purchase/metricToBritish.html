@@ -143,11 +143,6 @@ function gcd(a,b){
     console.log(r);
     return gcd(b,r);
 }
-
-function inputChanged(){
-	var british=document.getElementById("british");
-	british.innerHTML = "";
-}
 </script>
 </head>
 <body>
@@ -183,10 +178,9 @@ function inputChanged(){
 		<div class="form-group">
             <label class="control-label">长度cm：</label>
             <div class="control-wrap">
-            	<input id="length" name="length" value="" onchange="inputChanged()"></input>
+            	<input id="length" name="length" value="" onchange="change()"></input>
             </div>
-        </div>        
-        <button class="btn btn-blue btn-s" id="savePurchaseItemInfo" onclick="change();return false;">转换</button>
+        </div>
         <div id="british"></div>
     </div>
 </div>
