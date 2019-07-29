@@ -148,7 +148,7 @@ return array(
 		0 => 'rc-helicar',
 		1 => 'vtkg5755',
 		2 => 'yzhan-816',
-		3 => 'zuck',
+		3 => 'shangsitech@qq.com',
 		),
 
 	//Share type

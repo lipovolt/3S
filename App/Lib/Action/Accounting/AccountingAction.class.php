@@ -181,7 +181,7 @@ class AccountingAction extends CommonAction{
 				$this->importEbayEnSaleRecordHandle();		
 			}elseif ($_POST['sellerID']=='rc-helicar') {
 				$this->importEbayEnSaleRecordHandle();
-			}elseif($_POST['sellerID']=='lipovolt'){
+			}elseif($_POST['sellerID']=='lipovolt' || $_POST['sellerID']=='shangsitech@qq.com'){
 				$this->importAmazonEnSaleRecordHandle();
 			}elseif($_POST['sellerID']=='g-lipovolt'){
 				$this->importGrouponSaleRecordHandle();				
@@ -1111,6 +1111,8 @@ class AccountingAction extends CommonAction{
 				return 'cooperate';
 			case 'zuck':
 				return 'personal';
+			case 'shangsitech@qq.com':
+				return 'personal';
 			default:
 				break;
 		}
@@ -1120,6 +1122,8 @@ class AccountingAction extends CommonAction{
 		switch ($sellerID) {
 			case 'lipovolt':
 				return C('DB_SALEFEE_USSWSFLOCAL');
+			case 'shangsitech@qq.com':
+				return C('DB_SALEFEE_THIRDPARTYSFLOCAL');
 			default:
 				break;
 		}
@@ -1181,6 +1185,11 @@ class AccountingAction extends CommonAction{
 					'ebay_shop'=>C('PLATFORM_FEE')['Ebay_CN_Shop'],
 					);
 			case 'lipovolt':
+				return array(
+					'amazon_percent'=>C('PLATFORM_FEE')['Amazon_US_Percent'],
+					'amazon_shop'=>C('PLATFORM_FEE')['Amazon_US_Shop'],
+					);
+			case 'shangsitech@qq.com':
 				return array(
 					'amazon_percent'=>C('PLATFORM_FEE')['Amazon_US_Percent'],
 					'amazon_shop'=>C('PLATFORM_FEE')['Amazon_US_Shop'],
@@ -1935,11 +1944,11 @@ class AccountingAction extends CommonAction{
 
 	private function getWarehouse($sellerID,$currency){
 		if($sellerID=='rc-helicar' && $currency=='eur'){
-			return C('winit_de_warehouse');
+			return C('SZSW');
 		}elseif($sellerID=='rc-helicar' && $currency=='usd'){
 			return C('winit_uswc_warehouse');
-		}elseif($sellerID=='vtkg5755' || $sellerID=='y-zhan816'){
-			return C('SZSW');
+		}elseif($sellerID=='y-zhan816'){
+			return C('winit_de_warehouse');
 		}else{
 			return C('USSW');
 		}
