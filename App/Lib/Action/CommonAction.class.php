@@ -274,7 +274,7 @@ class CommonAction extends Action{
 
     public function skuDecode($sku){
         if(is_numeric(substr($sku, 0,1)) && is_numeric(substr($sku, strlen($sku)-1,1))){
-            //sku首位字母都是数字，标准不需要处理，直接返回
+            //sku首尾字母都是数字，标准不需要处理，直接返回
             return $sku;
         }elseif(!is_numeric(substr($sku, 0,1)) && is_numeric(substr($sku, strlen($sku)-1,1))){
             if(substr($sku, 0,1)=='S' && strlen($sku)==7){
@@ -283,11 +283,17 @@ class CommonAction extends Action{
             }elseif(substr($sku, 0,3)=='SZL' && strlen($sku)==9){
                 //孙志磊账号,sku格式SZL100101
                 return substr($sku,3,strlen($sku));
+            }elseif(substr($sku, 0,4)=='FBA_'){
+                //标准FBA SKU格式,sku格式FBA_1001.01
+                return substr($sku,4,strlen($sku));
             }
         }elseif(is_numeric(substr($sku, 0,1)) && !is_numeric(substr($sku, strlen($sku)-1,1))){
             if(substr($sku, strlen($sku),1)=='Z'){
                 //郑德杰账号，sku格式100101Z
                 return substr($sku,0,strlen($sku)-1);
+            }elseif(substr($sku, strlen($sku)-4,4)=='_gen'){
+                //标准跟卖格式，sku格式1001.0_gen
+                return substr($sku,0,strlen($sku)-4);
             }
         }
         return null;

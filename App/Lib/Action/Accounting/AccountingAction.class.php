@@ -759,11 +759,15 @@ class AccountingAction extends CommonAction{
         	$kpiSaleRecordTable=M(C('DB_KPI_SALE_RECORD'));
         	$kpiSaleRecordTable->startTrans();
         	for($i=5;$i<=$highestRow;$i++){
-        		$sku = $this->fbaSkuToStandardSku($objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue());
+        		$sku = $this->skuDecode($objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue());
         		$transactionType = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
         		$paymentType = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
         		$paymentDetail = $objPHPExcel->getActiveSheet()->getCell("F".$i)->getValue();
-        		$amountCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue());
+        		if(I('post.sellerID')=="shangsitech@qq.com"){
+        			$amountCM = array('currency'=>'eur','amount'=>$objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue());
+        		}else{
+        			$amountCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("G".$i)->getValue());
+        		}        		
         		$quantity = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
         		$pmanager = $productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_MANAGER'));
 
@@ -1016,10 +1020,14 @@ class AccountingAction extends CommonAction{
         	$data[C('DB_INCOMECOST_MARKETFEE')] = $usdAmazonFee;
         	$data[C('DB_INCOMECOST_TAX_COLLECTION')] = $usdTaxCollection;
         	M(C('DB_INCOMECOST'))->add($data);
+        	if($usdPmpa==null){        		
+	        	foreach ($eurPmpa as $key => $value) {
+	        		$usdPmpa[$key] = $value*$eurToUsd;
+	        	}
+        	}
         	$wagesTable = M(C('DB_WAGES'));
         	$wagesTable->startTrans();
         	foreach ($usdPmpa as $key => $value) {
-        		$usdPmpa[$key] = $value + $eurPmpa[$key]*$eurToUsd;
         		$wmap[C('DB_WAGES_MONTH')] = array('eq', $_POST['month']);
 	        	$wmap[C('DB_WAGES_NAME')] = array('eq', C('PRODUCT_MANAGER_NAME')[$key]);
 	        	$result = $wagesTable->where($wmap)->find();
@@ -1212,20 +1220,17 @@ class AccountingAction extends CommonAction{
 	public function getCurrencyAmount($price){
 		if(is_numeric($price)){
 			return array('currency'=>'usd','amount'=>$price);
-		}
-		if(substr($price,0,1)=='$'){
+		}elseif(substr($price,0,1)=='$'){
 			return array('currency'=>'usd','amount'=>substr($price, 1));
-		}
-		if(substr($price,0,4)=='US $'){
+		}elseif(substr($price,0,4)=='US $'){
 			return array('currency'=>'usd','amount'=>str_replace(",",".",substr($price, 4)));
-		}
-		if(substr($price,0,4)=='EUR '){
+		}elseif(substr($price,0,4)=='EUR '){
 			return array('currency'=>'eur','amount'=>str_replace(",",".",substr($price, 4)));
-		}
-		if(!is_numeric($price) && is_numeric(substr($price,0,1))){
+		}elseif(!is_numeric($price) && is_numeric(substr($price,0,1))){
 			return array('currency'=>'eur','amount'=>str_replace(",",".",$price));
-		}
-		return array('currency'=>null,'amount'=>null);
+		}else{
+			return array('currency'=>null,'amount'=>null);
+		}		
 	}
 
 	private function verifyGroupOnOrderAnalyzeColumnName($firstRow){
