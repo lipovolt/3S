@@ -553,5 +553,19 @@ return array(
 		'AV' => 'Click And Collect',
 		'AW' => 'Click And Collect Reference Number',
 		),
+
+	//Shenzhen storage check inventory template
+	'IMPORT_SSW_STORAGE' => array(
+		'A' => '库存编号',
+		'B' => '货位',
+		'C' => '产品编码',
+		'D' => '中文名称',
+		'E' => '累计入库',
+		'F' => '可用库存',
+		'G' => '累计销量',
+		'H' => '采购价¥',
+		'I' => '重量g',
+		'J' => '实际库存',
+		),
 	);
 ?>

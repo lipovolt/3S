@@ -153,6 +153,72 @@ class StorageAction extends CommonAction{
       }
       $this->success('已重置待出库库存');
     }
+
+    public function importSzswStorage(){
+        $this->display();
+    }
+
+    public function importSzswStorageHandle(){
+        if(!empty($_FILES)){
+            import('ORG.Net.UploadFile');
+            $config=array(
+                'allowExts'=>array('xlsx','xls'),
+                'savePath'=>'./Public/upload/szswStorage/',
+                'saveRule'=>'szswStorage_'.time(),
+            );
+            $upload = new UploadFile($config);
+            if (!$upload->upload()) {
+                $this->error($upload->getErrorMsg());
+            } else {
+                $info = $upload->getUploadFileInfo();
+                 
+            }
+            
+            vendor("PHPExcel.PHPExcel");
+            $file_name=$info[0]['savepath'].$info[0]['savename'];
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
+            $objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+            $sheet = $objPHPExcel->getSheet(0);
+            $highestRow = $sheet->getHighestRow(); // 取得总行数
+            $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+            //excel first column name verify
+            for($c='A';$c!=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue(); 
+            }
+
+            if($this->verifySzswStorageColumnName($firstRow)){
+                $szswStorage=M(C('DB_SZSTORAGE'));
+                $szswStorage->startTrans();
+                for($i=2;$i<=$highestRow;$i++){                  
+                  $tmp = $szswStorage->where(array(C('DB_SZSTORAGE_ID')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->find();
+                  $tmp[C('DB_SZSTORAGE_AINVENTORY')] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue()==null?0:$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+                  $tmp[C('DB_SZSTORAGE_CINVENTORY')] = $tmp[C('DB_SZSTORAGE_AINVENTORY')]+$tmp[C('DB_SZSTORAGE_OINVENTORY')];
+                  $tmp[C('DB_SZSTORAGE_OINVENTORY')]=0;
+                  if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()!=null){
+                    $tmp[C('DB_SZSTORAGE_POSITION')] = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+                  }
+                  $szswStorage->save($tmp);
+                  $tmp=null;
+                }
+                $szswStorage->commit();
+                $this->success("导入成功");
+            }else{
+                $this->error("不是深圳仓盘点库存模板，请检查");
+            }
+        }else{
+            $this->error("请选择上传的文件");
+        }
+    }
+
+    private function verifySzswStorageColumnName($firstRow){
+      foreach (array_keys(C('IMPORT_SSW_STORAGE')) as $key => $value) {
+        if(trim($firstRow[$value]) != C('IMPORT_SSW_STORAGE')[$value]){
+          return false;
+        }
+      }
+      return true; 
+    }
 }
 
 ?>
