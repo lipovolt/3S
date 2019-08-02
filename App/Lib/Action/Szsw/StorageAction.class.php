@@ -193,7 +193,7 @@ class StorageAction extends CommonAction{
                 for($i=2;$i<=$highestRow;$i++){                  
                   $tmp = $szswStorage->where(array(C('DB_SZSTORAGE_ID')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->find();
                   $tmp[C('DB_SZSTORAGE_AINVENTORY')] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue()==null?0:$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
-                  $tmp[C('DB_SZSTORAGE_CINVENTORY')] = $tmp[C('DB_SZSTORAGE_AINVENTORY')]+$tmp[C('DB_SZSTORAGE_OINVENTORY')];
+                  $tmp[C('DB_SZSTORAGE_CINVENTORY')] = $tmp[C('DB_SZSTORAGE_AINVENTORY')]+$tmp[C('DB_SZSTORAGE_OINVENTORY')]+$tmp[C('DB_SZSTORAGE_CSALES')];
                   $tmp[C('DB_SZSTORAGE_OINVENTORY')]=0;
                   if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()!=null){
                     $tmp[C('DB_SZSTORAGE_POSITION')] = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
