@@ -89,10 +89,7 @@ function directInbound(){
 						<td><div class="tl">{$vo.status}</div></td>
 						<td>
 							<a href="{:U('Winit/Inbound/importPackage',array('orderID'=>$vo['id']))}">导入包裹</a>
-							<a href="{:U('Winit/Inbound/inboundOrderPackage',array('orderID'=>$vo['id']))}">包裹明细</a>
 							<a href="{:U('Winit/Inbound/importItem',array('orderID'=>$vo['id']))}">导入产品</a>
-							<a href="{:U('Winit/Inbound/inboundOrderItems',array('orderID'=>$vo['id']))}">产品明细</a>
-							<a href="{:U('Winit/Inbound/updateStorage',array('ioid'=>$vo['id']))}">入库</a>
 							<a href="{:U('Winit/Inbound/directInbound',array('ioid'=>$vo['id']))}" onclick='return directInbound()'>直接入库</a>
 							<a href="{:U('Winit/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']))}" onclick='return del()'>删除</a>
 						</td>
