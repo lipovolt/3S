@@ -965,7 +965,7 @@ class GgsUsswSaleAction extends CommonAction{
         	
         	$data[$key]['gprofit']=$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]*100,2).'%';
-        	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')]*0.0352740,2);
+        	$data[$key]['weight']=round($value[C('DB_PRODUCT_PWEIGHT')]*0.0352740,2);
         	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')]*0.3937008,2);
         	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')]*0.3937008,2);
         	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')]*0.3937008,2);
@@ -1017,7 +1017,7 @@ class GgsUsswSaleAction extends CommonAction{
         	}
         	$data[$key]['gprofit']=$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]-$data[$key]['cost'];
         	$data[$key]['grate']=round($data[$key]['gprofit']/$data[$key][C('DB_USSW_SALE_PLAN_PRICE')]*100,2).'%';
-        	$data[$key]['weight']=round($value[C('DB_PRODUCT_WEIGHT')]*0.0352740,2);
+        	$data[$key]['weight']=round($value[C('DB_PRODUCT_PWEIGHT')]*0.0352740,2);
         	$data[$key]['length']=round($value[C('DB_PRODUCT_LENGTH')]*0.3937008,2);
         	$data[$key]['width']=round($value[C('DB_PRODUCT_WIDTH')]*0.3937008,2);
         	$data[$key]['height']=round($value[C('DB_PRODUCT_HEIGHT')]*0.3937008,2);

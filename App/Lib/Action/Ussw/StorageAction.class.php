@@ -104,13 +104,14 @@ class StorageAction extends CommonAction{
             array(C('DB_USSTORAGE_OINVENTORY'),'待出库'),
             array(C('DB_USSTORAGE_IINVENTORY'),'在途库存'),
             array(C('DB_USSTORAGE_CSALES'),'累计销量'),
+            array('30dayssales','30天销量'),
             array(C('DB_PRODUCT_PRICE'),'采购价¥'),
             array(C('DB_PRODUCT_WEIGHT'),'重量g')  
             );
         $xlsData  = D("UsstorageView")->order(C('DB_USSTORAGE_SKU'))->select();
-        /*foreach ($xlsData as $key => $value) {
+        foreach ($xlsData as $key => $value) {
             $xlsData[$key]['30dayssales'] = $this->get30DaysSales($value[C('DB_USSTORAGE_SKU')]);
-        }*/
+        }
         $this->exportExcel($xlsName,$xlsCell,$xlsData);
     }
 

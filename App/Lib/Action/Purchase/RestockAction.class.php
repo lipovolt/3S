@@ -1383,45 +1383,33 @@ class RestockAction extends CommonAction{
 	}
 
 	private function addRestockOrder($warehouse,$quantity,$product,$ainventory,$iinventory,$csales){
-		$szstorageTable = M(C('DB_SZSTORAGE'));
-		$restockTable = M(C('DB_RESTOCK'));
-		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
-		$szai = $szstorageTable->where(array(C('DB_SZSTORAGE_SKU')=>$product[C('DB_PRODUCT_SKU')]))->find();
-		if($quantity>0 && $szai!==null && $szai!=false && $szai[C('DB_SZSTORAGE_AINVENTORY')]>=$quantity){
-			//满足条件预留库存
-			$szai[C('DB_SZSTORAGE_AINVENTORY')]=$szai[C('DB_SZSTORAGE_AINVENTORY')]-$quantity;
-			$szai[C('DB_SZSTORAGE_CINVENTORY')]=$szai[C('DB_SZSTORAGE_CINVENTORY')]-$quantity;
-			$szai[C('DB_SZSTORAGE_OINVENTORY')]=$szai[C('DB_SZSTORAGE_OINVENTORY')]+$quantity;
-			$szstorageTable->save($szai);
-		}else{
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $warehouse;
-			if($warehouse=='美自建仓' || $warehouse=='万邑通美西'){
-				$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['wayToWarehouse'] = $product[C('DB_PRODUCT_TOUS')];
-			}elseif($warehouse=='万邑通德国') {
-				$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['wayToWarehouse'] = $product[C('DB_PRODUCT_TODE')];
-			}
-			
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $product[C('DB_USSTORAGE_SKU')];
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $product[C('DB_USSTORAGE_CNAME')];
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = $quantity;
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $product[C('db_product_manager')];
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $product[C('DB_PRODUCT_PRICE')];
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $product[C('DB_PRODUCT_SUPPLIER')];
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['purchase_link'] = $product[C('DB_PRODUCT_PURCHASE_LINK')];
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['rquantity'] = $this->getRestockQuantity($warehouse,$product[C('DB_PRODUCT_SKU')]);
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['iquantity'] = $this->getPurchasedQuantity($warehouse,$product[C('DB_PRODUCT_SKU')]);
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sz_ainventory'] = $this->getSzIinventory($product[C('DB_PRODUCT_SKU')]);
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['ainventory'] = $ainventory;
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['iinventory'] = $iinventory;
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['csales'] = $csales;
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sz_ainventory'] = $this->getSzAinventory($product[C('DB_PRODUCT_SKU')]);
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['pweight'] = $product[C('DB_PRODUCT_PWEIGHT')];
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['plength'] = $product[C('DB_PRODUCT_PLENGTH')];
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['pwidth'] = $product[C('DB_PRODUCT_PWIDTH')];
-			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['pheight'] = $product[C('DB_PRODUCT_PHEIGHT')];
-			$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
-		}		
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['warehouse'] = $warehouse;
+		if($warehouse=='美自建仓' || $warehouse=='万邑通美西'){
+			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['wayToWarehouse'] = $product[C('DB_PRODUCT_TOUS')];
+		}elseif($warehouse=='万邑通德国') {
+			$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['wayToWarehouse'] = $product[C('DB_PRODUCT_TODE')];
+		}
+		
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sku'] = $product[C('DB_USSTORAGE_SKU')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['cname'] = $product[C('DB_USSTORAGE_CNAME')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['quantity'] = $quantity;
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['manager'] = $product[C('db_product_manager')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['price'] = $product[C('DB_PRODUCT_PRICE')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['supplier'] = $product[C('DB_PRODUCT_SUPPLIER')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['purchase_link'] = $product[C('DB_PRODUCT_PURCHASE_LINK')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['date'] = Date('Y-m-d');
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['rquantity'] = $this->getRestockQuantity($warehouse,$product[C('DB_PRODUCT_SKU')]);
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['iquantity'] = $this->getPurchasedQuantity($warehouse,$product[C('DB_PRODUCT_SKU')]);
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sz_ainventory'] = $this->getSzIinventory($product[C('DB_PRODUCT_SKU')]);
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['ainventory'] = $ainventory;
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['iinventory'] = $iinventory;
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['csales'] = $csales;
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['sz_ainventory'] = $this->getSzAinventory($product[C('DB_PRODUCT_SKU')]);
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['pweight'] = $product[C('DB_PRODUCT_PWEIGHT')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['plength'] = $product[C('DB_PRODUCT_PLENGTH')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['pwidth'] = $product[C('DB_PRODUCT_PWIDTH')];
+		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['pheight'] = $product[C('DB_PRODUCT_PHEIGHT')];
+		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;		
 	}
 
 	// return max periode sales of 3 periods of sku. excludeLargeQuantity means the quantity over this value will be calculated special. 0==winit us warehouse, 1== winit de warehouse

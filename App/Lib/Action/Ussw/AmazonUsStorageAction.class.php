@@ -51,7 +51,7 @@ class amazonUsStorageAction extends CommonAction{
     }
 
     private function get30DaysSales($sku){
-        $map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('gt',date("Y-m-d H:i:s",strtotime("last month")));
+        $map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('gt',date("Y-m-d H:i:s",(time()-60*60*24*30)));
         $map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
         $result = D("UsFBAOutboundView")->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
         if($result!=null){
