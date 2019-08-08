@@ -2021,6 +2021,10 @@ class RestockAction extends CommonAction{
     		if(!$this->isBannedByAllAccount($value['sku'],'美自建仓')){    						
     			if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
     				$averangeSaleQuantity = $this->getRestockADSQ($value['sku'],'美自建仓',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],$restockPara[C('DB_RESTOCK_PARA_ELQ')]);
+
+					if($this->isInFba($value['sku'])){
+						$averangeSaleQuantity = $averangeSaleQuantity+$this->getRestockADSQ($value['sku'],'美国FBA',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],$restockPara[C('DB_RESTOCK_PARA_ELQ')]);
+					}
     				$toAir=array();
 					$toAir['sku'] = $value['sku'];
 					$toAir['asq'] = $averangeSaleQuantity;
@@ -2069,7 +2073,9 @@ class RestockAction extends CommonAction{
     		if(!$this->isBannedByAllAccount($value['sku'],'美自建仓')){
     			if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 					$averangeSaleQuantity = $this->getRestockADSQ($value['sku'],'美自建仓',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],0);
-
+					if($this->isInFba($value['sku'])){
+						$averangeSaleQuantity = $averangeSaleQuantity+$this->getRestockADSQ($value['sku'],'美国FBA',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],0);;
+					}
 					//空运货平均销量大于0.33（30天销量10个以上），可以海运补点货。或者泡货或者重货，月销量大于5个可以海运补点货。
 					if(($p[C('DB_PRODUCT_TOUS')]=='海运' && $averangeSaleQuantity>0) || ($p[C('DB_PRODUCT_TOUS')]=='空运' && $averangeSaleQuantity>=0.33) || ($p[C('DB_PRODUCT_PWEIGHT')]*1.2<($p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/5000) && $averangeSaleQuantity>0.16 && $p[C('DB_PRODUCT_TOUS')]=='空运') || ($p[C('DB_PRODUCT_PWEIGHT')]>500 && $averangeSaleQuantity>0.16 && $p[C('DB_PRODUCT_TOUS')]=='空运')){
 						$toSea=array();
@@ -2294,13 +2300,7 @@ class RestockAction extends CommonAction{
     }
 
     private function getLastOutboundDate($sku,$warehouse){
-    	if($this->getCountry($warehouse)=='us'){
-    		return D('UsswOutboundView')->where(array('sku'=>$sku))->getField(C('DB_USSW_OUTBOUND_CREATE_TIME'));
-    	}elseif($this->getCountry($warehouse)=='de'){
-    		return D('WinitOutboundView')->where(array('sku'=>$sku))->getField(C('DB_USSW_OUTBOUND_CREATE_TIME'));
-    	}else{
-    		return null;
-    	}
+    	return D($this->getOutboundViewTableName($warehouse))->where(array('sku'=>$sku))->getField(C('DB_USSW_OUTBOUND_CREATE_TIME'));
     }
 
     private function getCinventory($sku,$warehouse,$startDate,$endDate){
@@ -2430,6 +2430,16 @@ class RestockAction extends CommonAction{
     		}
     	}
     	return true;
+    }
+
+    private function isInFba($sku){
+    	$map[C('DB_AMAZON_US_STORAGE_SKU')] = array('like','%'.$sku);
+    	$result = M(C('DB_AMAZON_US_STORAGE'))->where($map)->find();
+    	if($result!=null && $result!=false){
+    		return true;
+    	}else{
+    		return false;
+    	}
     }
 }
 

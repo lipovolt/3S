@@ -232,6 +232,9 @@ class CommonAction extends Action{
             case '美自建仓':
                 return 'UsswOutboundView';
                 break;
+            case '美国FBA':
+                return 'UsFBAOutboundView';
+                break;
             case 'winitde':
                 return 'WinitOutboundView';
                 break;
