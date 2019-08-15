@@ -2227,7 +2227,7 @@ class RestockAction extends CommonAction{
     		if($this->isOntheWayToWarehouse($sku,$warehouse)){
     			return 0;
     		}else{
-    			return 0.1;
+    			return 0.07;
     		}
     	}
     }
@@ -2419,6 +2419,20 @@ class RestockAction extends CommonAction{
     			$restockTable->where(array('id'=>$value['id']))->delete();
     		}
     	}
+    	$this->redirect('index');
+    }
+
+    public function returnToSzswSingle($id){
+    	$restockTable = M(C('DB_RESTOCK'));
+    	$szstorageTable = M(C('DB_SZSTORAGE'));
+    	$map[C('DB_RESTOCK_ID')]=array('eq',$id);
+    	$restock = $restockTable->where($map)->find();
+    	$szst=$szstorageTable->where(array(C('DB_SZSTORAGE_SKU')=>$restock['sku']))->find();
+		$szst[C('DB_SZSTORAGE_AINVENTORY')] = $szst[C('DB_SZSTORAGE_AINVENTORY')]+$restock[C('DB_RESTOCK_QUANTITY')];
+		$szst[C('DB_SZSTORAGE_CINVENTORY')] = $szst[C('DB_SZSTORAGE_CINVENTORY')]+$restock[C('DB_RESTOCK_QUANTITY')];
+		if($szstorageTable->save($szst)!=false){
+			$restockTable->where(array('id'=>$id))->delete();
+		}
     	$this->redirect('index');
     }
 

@@ -270,6 +270,15 @@
 									}
 									">删除
 							</a>
+							<a class="btn-blue btn-s" href="{:U('Purchase/Restock/returnToSzswSingle',array('id'=>$vo[C('DB_RESTOCK_ID')]))}"
+								onclick="
+									if(confirm('确定要移回深圳仓么?')){
+										return true;
+									}else{
+										return false;
+									}
+									">移回深圳仓
+							</a>
 						</div></td>
 						</tr>	
 					</volist> 								

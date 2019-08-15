@@ -515,7 +515,7 @@ class WinitDeSaleAction extends CommonAction{
 
 		//检查是否需要清货
 		if($asqsq==0){
-			$firstShippingDate = M(C('DB_RESTOCK'))->order('shipping_date asc')->where(array('sku'=>$sku,'warehouse'=>'万邑通德国'))->limit(1)->getField(C('DB_RESTOCK_SHIPPING_DATE'));
+			$firstShippingDate = M(C('DB_YZHAN_816_PL_SALE_PLAN'))->where(array('sku'=>$sku))->getField(C('DB_YZHAN_816_PL_SALE_PLAN_FIRST_DATE'));
 			if(strtotime($firstShippingDate)<(time()-60*60*24*$clear_nod)){
 				$startDate = date('Y-m-d H:i:s',time()-60*60*24*$clear_nod);
 				$clearNodSaleQuantity = $this->calWinitDeSaleQuantity($account,$sku,$startDate);
@@ -530,7 +530,7 @@ class WinitDeSaleAction extends CommonAction{
 
 		//检查是否需要重新刊登
 		if($asqsq==0){
-			$firstShippingDate = M(C('DB_RESTOCK'))->order('shipping_date asc')->where(array('sku'=>$sku,'warehouse'=>'万邑通德国'))->limit(1)->getField(C('DB_RESTOCK_SHIPPING_DATE'));
+			$firstShippingDate = M(C('DB_YZHAN_816_PL_SALE_PLAN'))->where(array('sku'=>$sku))->getField(C('DB_YZHAN_816_PL_SALE_PLAN_FIRST_DATE'));
 			if(strtotime($firstShippingDate)<(time()-60*60*24*$relisting_nod)){
 				$startDate = date('Y-m-d H:i:s',time()-60*60*24*$relisting_nod);
 				$relistingNodSaleQuantity = $this->calWinitDeSaleQuantity($account,$sku,$startDate);
