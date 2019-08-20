@@ -229,7 +229,7 @@ class RestockAction extends CommonAction{
 
 	private function findUsswOutOfStockItem($start, $end){
 		if($end==-1){
-			$end=M(C('DB_USSTORAGE'))->count();
+			$end=M(C('DB_USSTORAGE'))->count()-$start;
 		}
     	$usstma[C('DB_PRODUCT_TOUS')] = array('neq','无');
 		$usstorage = D('UsstorageView')->limit($start, $end)->select();

@@ -34,8 +34,8 @@ class OutboundAction extends CommonOutboundAction{
                     $where[C('DB_SZSTORAGE_POSITION')] = I('post.position','','htmlspecialchars');
                 }                
                 $row = M(C('DB_SZSTORAGE'))->where($where)->find();
-                $data[C('DB_SZSTORAGE_CSALES')] = $row[C('DB_SZSTORAGE_CSALES')]+1;
-                $data[C('DB_SZSTORAGE_AINVENTORY')] = $row[C('DB_SZSTORAGE_AINVENTORY')]-1;
+                $data[C('DB_SZSTORAGE_CSALES')] = $row[C('DB_SZSTORAGE_CSALES')]+I('post.quantity','','htmlspecialchars');
+                $data[C('DB_SZSTORAGE_AINVENTORY')] = $row[C('DB_SZSTORAGE_AINVENTORY')]-I('post.quantity','','htmlspecialchars');
 
                 $result = M(C('DB_SZSTORAGE'))->where($where)->save($data);
                 if(false !== $result and 0!== $result){
