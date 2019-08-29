@@ -2281,13 +2281,10 @@ class RestockAction extends CommonAction{
 
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
 		if($purchaseCount==1 || ($purchaseCount<$restockPara[C('DB_RESTOCK_PARA_USSW_AFCL')] && $daysFirstSale<$restockPara[C('DB_RESTOCK_PARA_USSW_AFDL')])){
-			if($this->getCountry($warehouse)=='us'&& $p[C('DB_PRODUCT_TOUS')]=='空运'){
-	    		return true;
-	    	}elseif($this->getCountry($warehouse)=='de'&& $p[C('DB_PRODUCT_TODE')]=='空运'){
-	    		return true;
-	    	}
+			return true;
+		}else{
+			return false;
 		}		
-		return false;
     }
 
     private function getFirstSaleDate($sku,$warehouse){
