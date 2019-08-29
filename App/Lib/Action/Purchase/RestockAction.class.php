@@ -2165,8 +2165,10 @@ class RestockAction extends CommonAction{
     			if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
 					$averangeSaleQuantity = $this->getRestockADSQ($value['sku'],'万邑通德国',$restockPara[C('DB_RESTOCK_PARA_WINITDE_AIR_AD')],0);
 
-					//空运货平均销量大于0.33（30天销量10个以上），可以海运补点货。或者泡货或者重货，月销量大于5个可以海运补点货。
-					if(($p[C('DB_PRODUCT_TODE')]=='海运' && $averangeSaleQuantity>0) || ($p[C('DB_PRODUCT_TODE')]=='空运' && $averangeSaleQuantity>=0.33) || ($p[C('DB_PRODUCT_PWEIGHT')]*1.2<($p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/5000) && $averangeSaleQuantity>0.16 && $p[C('DB_PRODUCT_TODE')]=='空运') || ($p[C('DB_PRODUCT_PWEIGHT')]>500 && $averangeSaleQuantity>0.16 && $p[C('DB_PRODUCT_TODE')]=='空运')){
+					/*//空运货平均销量大于0.33（30天销量10个以上），可以海运补点货。或者泡货或者重货，月销量大于5个可以海运补点货。
+					if(($p[C('DB_PRODUCT_TODE')]=='海运' && $averangeSaleQuantity>0) || ($p[C('DB_PRODUCT_TODE')]=='空运' && $averangeSaleQuantity>=0.33) || ($p[C('DB_PRODUCT_PWEIGHT')]*1.2<($p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/5000) && $averangeSaleQuantity>0.16 && $p[C('DB_PRODUCT_TODE')]=='空运') || ($p[C('DB_PRODUCT_PWEIGHT')]>500 && $averangeSaleQuantity>0.16 && $p[C('DB_PRODUCT_TODE')]=='空运')){*/
+					//所有平均销量大于0的空运或者海运商品都可以通过海运补货
+					if($averangeSaleQuantity>0){
 						$toSea=array();
     					$toSea['sku'] = $value['sku'];
     					$toSea['asq'] = $averangeSaleQuantity;
@@ -2205,7 +2207,7 @@ class RestockAction extends CommonAction{
     	if($storage!=null && $storage!=false){
     		if($storage['ainventory']<=0){
     			if($this->isNewProduct($sku,$warehouse)){
-    				return round($this->getCinventory($sku,$warehouse,$this->getFirstSaleDate($sku,$warehouse),$this->getLastOutboundDate($sku,$warehouse))/((strtotime($this->getLastOutboundDate($sku,$warehouse))-strtotime($this->getFirstSaleDate($sku,$warehouse)))/(60*60*24)),2);
+    				return round($this->getCsale($sku,$warehouse,$this->getFirstSaleDate($sku,$warehouse),$this->getLastOutboundDate($sku,$warehouse))/((strtotime($this->getLastOutboundDate($sku,$warehouse))-strtotime($this->getFirstSaleDate($sku,$warehouse)))/(60*60*24)),2);
     				
     			}else{
     				$lastShippingDate = $this->getLastOutboundDate($sku,$warehouse);
@@ -2256,15 +2258,9 @@ class RestockAction extends CommonAction{
 
     private function isNewProduct($sku,$warehouse){
     	$p=M(C('DB_PRODUCT'))->where(array(C('DB_PRODUCT_SKU')=>$sku))->find();
-    	$purchaseMap[C('DB_PURCHASE_ITEM_SKU')] = array('eq',$value[C('DB_RESTOCK_SKU')]);
-		if($this->getCountry($warehouse)=='us'){
-    		$purchaseMap[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('in',array('美自建仓','万邑通美西'));
-    	}elseif($this->getCountry($warehouse)=='de'){
-    		$purchaseMap[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('in',array('万邑通德国'));
-    	}		
+    	$purchaseMap[C('DB_PURCHASE_ITEM_SKU')] = array('eq',$sku);		
 		$purchaseMap[C('DB_PURCHASE_STATUS')] = array('in',array('部分到货','全部到货'));
-		$purchaseCount = M(C('DB_PURCHASE'))->where($purchaseMap)->count();
-
+		$purchaseCount = D('PurchaseView')->where($purchaseMap)->count();
 		if($this->getCountry($warehouse)=='us'){
     		$salePlan = M(C('DB_USSW_SALE_PLAN'));
     	}elseif($this->getCountry($warehouse)=='de'){
@@ -2285,7 +2281,7 @@ class RestockAction extends CommonAction{
 	    	}elseif($this->getCountry($warehouse)=='de'&& $p[C('DB_PRODUCT_TODE')]=='空运'){
 	    		return true;
 	    	}
-		}
+		}		
 		return false;
     }
 
@@ -2300,7 +2296,7 @@ class RestockAction extends CommonAction{
     }
 
     private function getLastOutboundDate($sku,$warehouse){
-    	return D($this->getOutboundViewTableName($warehouse))->where(array('sku'=>$sku))->getField(C('DB_USSW_OUTBOUND_CREATE_TIME'));
+    	return D($this->getOutboundViewTableName($warehouse))->order('id desc')->limit(1)->where(array('sku'=>$sku))->getField(C('DB_USSW_OUTBOUND_CREATE_TIME'));
     }
 
     private function getCinventory($sku,$warehouse,$startDate,$endDate){
