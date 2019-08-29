@@ -2167,12 +2167,17 @@ class RestockAction extends CommonAction{
 
 					/*//空运货平均销量大于0.33（30天销量10个以上），可以海运补点货。或者泡货或者重货，月销量大于5个可以海运补点货。
 					if(($p[C('DB_PRODUCT_TODE')]=='海运' && $averangeSaleQuantity>0) || ($p[C('DB_PRODUCT_TODE')]=='空运' && $averangeSaleQuantity>=0.33) || ($p[C('DB_PRODUCT_PWEIGHT')]*1.2<($p[C('DB_PRODUCT_PLENGTH')]*$p[C('DB_PRODUCT_PHEIGHT')]*$p[C('DB_PRODUCT_PWIDTH')]/5000) && $averangeSaleQuantity>0.16 && $p[C('DB_PRODUCT_TODE')]=='空运') || ($p[C('DB_PRODUCT_PWEIGHT')]>500 && $averangeSaleQuantity>0.16 && $p[C('DB_PRODUCT_TODE')]=='空运')){*/
+
 					//所有平均销量大于0的空运或者海运商品都可以通过海运补货
 					if($averangeSaleQuantity>0){
 						$toSea=array();
     					$toSea['sku'] = $value['sku'];
     					$toSea['asq'] = $averangeSaleQuantity;
-						$toSea['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_WINITDE_SEA_tD')]-$winitdestorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getWinitdeInboundAirIInventory($value['sku'])-$this->getWinitdeInboundSeaIInventory($value['sku']));
+    					if($this->isNewProduct($sku,$warehouse)){
+    						$toSea['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_WINITDE_AIR_tD')]-$winitdestorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getWinitdeInboundAirIInventory($value['sku'])-$this->getWinitdeInboundSeaIInventory($value['sku']));
+    					}else{
+    						$toSea['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_WINITDE_SEA_tD')]-$winitdestorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getWinitdeInboundAirIInventory($value['sku'])-$this->getWinitdeInboundSeaIInventory($value['sku']));
+    					}						
 						if($toSea['quantity']>0){
 							if($toSea['quantity']>$value[C('DB_SZSTORAGE_AINVENTORY')]){
 	    						$toSea['quantity'] = $value[C('DB_SZSTORAGE_AINVENTORY')];
