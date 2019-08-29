@@ -2173,7 +2173,7 @@ class RestockAction extends CommonAction{
 						$toSea=array();
     					$toSea['sku'] = $value['sku'];
     					$toSea['asq'] = $averangeSaleQuantity;
-    					if($this->isNewProduct($sku,$warehouse)){
+    					if($this->isNewProduct($value['sku'],'万邑通德国')){
     						$toSea['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_WINITDE_AIR_tD')]-$winitdestorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getWinitdeInboundAirIInventory($value['sku'])-$this->getWinitdeInboundSeaIInventory($value['sku']));
     					}else{
     						$toSea['quantity'] = intval($averangeSaleQuantity*$restockPara[C('DB_RESTOCK_PARA_WINITDE_SEA_tD')]-$winitdestorageTable->where(array(C('DB_USSTORAGE_SKU')=>$value['sku']))->getField(C('DB_USSTORAGE_AINVENTORY'))-$this->getWinitdeInboundAirIInventory($value['sku'])-$this->getWinitdeInboundSeaIInventory($value['sku']));
