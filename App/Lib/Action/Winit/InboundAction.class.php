@@ -493,7 +493,7 @@ class InboundAction extends CommonAction{
         $this->redirect("inboundOrderItems",array('orderID'=>$orderID));
     }
 
-    public function updateStorage($ioid){
+    /*public function updateStorage($ioid){
         $status = M(C('DB_WINITDE_INBOUND'))->where(array(C('DB_WINITDE_INBOUND_ID')=>$ioid))->getField('status');
         if($status != "已入库"){
             $items = M(C('DB_WINITDE_INBOUND_ITEM'))->where(array(C('DB_WINITDE_INBOUND_ITEM_IOID')=>$ioid))->select();
@@ -525,7 +525,7 @@ class InboundAction extends CommonAction{
         else{
             $this->error('该单已入库！');
         }
-    }
+    }*/
 
     public function directInbound($ioid){
         $status = M(C('DB_WINITDE_INBOUND'))->where(array(C('DB_WINITDE_INBOUND_ID')=>$ioid))->getField('status');
@@ -538,7 +538,7 @@ class InboundAction extends CommonAction{
                $winitdeInboundItemTable->save($value);
             }
             $winitdeInboundItemTable->commit();
-            $this->updateStorage($ioid);
+            //$this->updateStorage($ioid);
         }
         else{
             $this->error('该单已经入库！');

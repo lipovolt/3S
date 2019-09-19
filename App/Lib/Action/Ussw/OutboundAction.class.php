@@ -486,7 +486,7 @@ class OutboundAction extends CommonOutboundAction{
                                         $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_SKU')]=$departedSkuQuantityValue['sku'];
                                         $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')]=$departedSkuQuantityValue['quantity'];
                                         $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
-                                        $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AR".$i)->getValue();
+                                        $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AS".$i)->getValue();
                                         $k=$k+1; 
                                     }
                                 }                         
@@ -524,7 +524,7 @@ class OutboundAction extends CommonOutboundAction{
                                     $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_SKU')]=$departedSkuQuantityValue['sku'];
                                     $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')]=$departedSkuQuantityValue['quantity'];
                                     $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
-                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AR".$i)->getValue();
+                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AS".$i)->getValue();
                                     $k=$k+1;
                                 }
                             }                        

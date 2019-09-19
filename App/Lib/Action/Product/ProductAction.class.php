@@ -16,7 +16,10 @@ class ProductAction extends CommonAction{
         }
         else{
             $where[I('post.keyword','','htmlspecialchars')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
-            $this->products = M(C('db_product'))->where($where)->select();
+            $where[C('DB_PRODUCT_ENAME')] = array('like','%'.I('post.keywordValue','','htmlspecialchars').'%');
+            $where['_logic'] = 'or';
+            $data['_complex'] = $where; 
+            $this->products = M(C('db_product'))->where($data)->select();
             $this->assign('keyword', I('post.keyword','','htmlspecialchars'));
             $this->assign('keywordValue', I('post.keywordValue','','htmlspecialchars'));
         }
