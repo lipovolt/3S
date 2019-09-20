@@ -87,7 +87,7 @@ class OutboundAction extends CommonOutboundAction{
                     $buyerID =  $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
                     $sku = $objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue();
                     //判断ebay订单号是否已存在
-                    if($this->duplicateSaleNo($this->getMarket($objPHPExcel->getActiveSheet()->getCell("AE".$i)->getValue()),$_POST['sellerID'],$saleNo)){ 
+                    if($this->duplicateSaleNo($this->getMarket($objPHPExcel->getActiveSheet()->getCell("AD".$i)->getValue()),$_POST['sellerID'],$saleNo)){ 
                         //ebay订单号在出库表中，添加错误信息
                         $errorInFile[$indexForErrorOfFile]['saleno'] = $saleNo;
                         $errorInFile[$indexForErrorOfFile]['error'] = '该ebay订单号已存在';
@@ -103,7 +103,7 @@ class OutboundAction extends CommonOutboundAction{
                             }else{
                                 $outboundOrder[$j][C('DB_SZ_OUTBOUND_CREATE_TIME')]= Date(I('post.order_date'));
                             }
-                            $outboundOrder[$j][C('DB_SZ_OUTBOUND_MARKET')] = $this->getMarket($objPHPExcel->getActiveSheet()->getCell("AE".$i)->getValue());
+                            $outboundOrder[$j][C('DB_SZ_OUTBOUND_MARKET')] = $this->getMarket($objPHPExcel->getActiveSheet()->getCell("AD".$i)->getValue());
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_SELLER_ID')] = $_POST['sellerID'];
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_BUYER_ID')] = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_BUYER_NAME')] = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
@@ -115,7 +115,7 @@ class OutboundAction extends CommonOutboundAction{
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_BUYER_STATE')] = $objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue();
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_BUYER_ZIP')] = $objPHPExcel->getActiveSheet()->getCell("S".$i)->getValue();
                             $outboundOrder[$j][C('DB_SZ_OUTBOUND_BUYER_COUNTRY')] = $objPHPExcel->getActiveSheet()->getCell("T".$i)->getValue();
-                            $outboundOrder[$j][C('DB_SZ_OUTBOUND_SHIPPING_WAY')] = $objPHPExcel->getActiveSheet()->getCell("AQ".$i)->getValue();
+                            $outboundOrder[$j][C('DB_SZ_OUTBOUND_SHIPPING_WAY')] = $objPHPExcel->getActiveSheet()->getCell("AP".$i)->getValue();
                             $j=$j+1;
 
                             if($sku!=''){
@@ -151,7 +151,7 @@ class OutboundAction extends CommonOutboundAction{
                                         $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_SKU')]=$departedSkuQuantityValue['sku'];
                                         $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_QUANTITY')]=$departedSkuQuantityValue['quantity'];
                                         $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
-                                        $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AS".$i)->getValue();
+                                        $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AR".$i)->getValue();
                                         $k=$k+1; 
                                     }
                                 }                         
@@ -189,7 +189,7 @@ class OutboundAction extends CommonOutboundAction{
                                     $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_SKU')]=$departedSkuQuantityValue['sku'];
                                     $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_QUANTITY')]=$departedSkuQuantityValue['quantity'];
                                     $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
-                                    $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AS".$i)->getValue();
+                                    $outboundOrderItems[$k][C('DB_SZ_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AR".$i)->getValue();
                                     $k=$k+1;
                                 }
                             }                        
