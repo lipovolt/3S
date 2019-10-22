@@ -999,6 +999,20 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
         			}
+        		}elseif($transactionType=='Order retrocharge' && $paymentType=='Other'  && $paymentDetail=='Shipping tax'){
+        			if($amountCM['currency']=='usd'){
+        				$usdTaxCollection = $usdTaxCollection+$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurTaxCollection = $eurTaxCollection+$amountCM['amount'];
+        			}
+        		}elseif($transactionType=='Order retrocharge' && $paymentType=='Other'  && $paymentDetail=='Tax'){
+        			if($amountCM['currency']=='usd'){
+        				$usdTaxCollection = $usdTaxCollection+$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurTaxCollection = $eurTaxCollection+$amountCM['amount'];
+        			}
         		}
         		else{
         			$this->error('第 '.$i.' 行费用无法确认！');

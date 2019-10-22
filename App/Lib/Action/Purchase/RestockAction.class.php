@@ -2020,6 +2020,7 @@ class RestockAction extends CommonAction{
     		$p = $productTable->where(array('sku'=>$value['sku']))->find();
     		if(!$this->isBannedByAllAccount($value['sku'],'美自建仓')){    						
     			if($p[C('DB_PRODUCT_PWEIGHT')]>0 && $p[C('DB_PRODUCT_PLENGTH')]>0 && $p[C('DB_PRODUCT_PHEIGHT')]>0 && $p[C('DB_PRODUCT_PWIDTH')]>0){
+
     				$averangeSaleQuantity = $this->getRestockADSQ($value['sku'],'美自建仓',$restockPara[C('DB_RESTOCK_PARA_USSW_AIR_AD')],$restockPara[C('DB_RESTOCK_PARA_ELQ')]);
 
 					if($this->isInFba($value['sku'])){
@@ -2028,6 +2029,7 @@ class RestockAction extends CommonAction{
     				$toAir=array();
 					$toAir['sku'] = $value['sku'];
 					$toAir['asq'] = $averangeSaleQuantity;
+
 					if($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')])!=null){
 						$cntSeaShippingTimes=time()-strtotime($this->getUsswInboundSeaShippingDate($value[C('DB_RESTOCK_SKU')]));//与已知时间的差值
 						$seaEstimatedArriveDays = ceil($restockPara[C('DB_RESTOCK_PARA_USSW_EDSS')]-($cntSeaShippingTimes/(3600*24)));//算出天数
@@ -2209,6 +2211,7 @@ class RestockAction extends CommonAction{
     */
     private function getRestockADSQ($sku, $warehouse,$days,$excludeLargeQuantity){
     	$storage = M($this->getStorageTableName($warehouse))->where(array('sku'=>$sku))->find();
+    						
     	if($storage!=null && $storage!=false){
     		if($storage['ainventory']<=0){
     			if($this->isNewProduct($sku,$warehouse)){
@@ -2217,12 +2220,22 @@ class RestockAction extends CommonAction{
     			}else{
     				$lastShippingDate = $this->getLastOutboundDate($sku,$warehouse);
     				if(ceil((time()-strtotime($lastShippingDate))/(60*60*24))<30){
-    					return round($this->getCsale($sku,$warehouse,date('Y-m-d',strtotime($lastShippingDate)-60*60*24*30),$lastShippingDate,$excludeLargeQuantity)/30,2);
+    					$tmp=round($this->getCsale($sku,$warehouse,date('Y-m-d',strtotime($lastShippingDate)-60*60*24*30),$lastShippingDate,$excludeLargeQuantity)/30,2);
+    					if($tmp==0.03){
+    						return 0.04;
+    					}else{
+    						return $tmp;
+    					}
     				}else{
     					if($this->isAirProduct($sku,$warehouse)){
     						return 0.1;
     					}else{
-    						return round($this->getCsale($sku,$warehouse,date('Y-m-d',(strtotime($lastShippingDate)-60*60*24*30)),$lastShippingDate)/30,2);
+    						$tmp=round($this->getCsale($sku,$warehouse,date('Y-m-d',(strtotime($lastShippingDate)-60*60*24*30)),$lastShippingDate)/30,2);
+    						if($tmp==0.03){
+	    						return 0.04;
+	    					}else{
+	    						return $tmp;
+	    					}
     					}
     				}
     			}
