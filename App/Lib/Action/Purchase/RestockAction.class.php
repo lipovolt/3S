@@ -2222,7 +2222,7 @@ class RestockAction extends CommonAction{
     				if(ceil((time()-strtotime($lastShippingDate))/(60*60*24))<30){
     					$tmp=round($this->getCsale($sku,$warehouse,date('Y-m-d',strtotime($lastShippingDate)-60*60*24*30),$lastShippingDate,$excludeLargeQuantity)/30,2);
     					if($tmp==0.03){
-    						return 0.04;
+    						return 0.07;
     					}else{
     						return $tmp;
     					}
@@ -2232,7 +2232,7 @@ class RestockAction extends CommonAction{
     					}else{
     						$tmp=round($this->getCsale($sku,$warehouse,date('Y-m-d',(strtotime($lastShippingDate)-60*60*24*30)),$lastShippingDate)/30,2);
     						if($tmp==0.03){
-	    						return 0.04;
+	    						return 0.07;
 	    					}else{
 	    						return $tmp;
 	    					}
@@ -2240,7 +2240,12 @@ class RestockAction extends CommonAction{
     				}
     			}
     		}else{
-    			return round($this->getCsale($sku,$warehouse,date('Y-m-d',time()-60*60*24*30),date('Y-m-d',time()),$excludeLargeQuantity)/30,2);
+    			$tmp=round($this->getCsale($sku,$warehouse,date('Y-m-d',time()-60*60*24*30),date('Y-m-d',time()),$excludeLargeQuantity)/30,2);
+    			if($tmp==0.03){
+					return 0.04;
+				}else{
+					return $tmp;
+				}
     		}
     	}else{
     		//TODO 检测新产品是否在途，但是还没入海外仓。不是返回0.1，是返回0

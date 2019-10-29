@@ -469,7 +469,7 @@ class GgsUsswSaleAction extends CommonAction{
 		$ainventory = M(C('DB_USSTORAGE'))->where(array(C('DB_USSTORAGE_SKU')=>$sku))->getField(C('DB_USSTORAGE_AINVENTORY'));
 
 		$startDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
-		$asqsq = intval($this->calUsswSaleQuantity($account,$sku,$startDate))*intval($standard_period)/intval($adjust_period);
+		$asqsq = intval($this->calUsswSaleQuantity($account,$sku,$startDate))*$standard_period/$adjust_period;
 		$startDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period*2);
 		$endDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
 		$lspsq = $this->calUsswSaleQuantity($account,$sku,$startDate,$endDate)*$standard_period/$adjust_period;
@@ -510,13 +510,13 @@ class GgsUsswSaleAction extends CommonAction{
 		if($lspsq<$sqnr){
 			$lspsq = $denominator;
 		}
-		if($diff/$lspsq>$grfr/100 && $cost/$price<C('DB_SZ_SALE_PLAN_METADATA_PROFIT_LIMIT')){
+		if(($diff/$lspsq)>($grfr/100) && ($cost/$price)<C('DB_SZ_SALE_PLAN_METADATA_PROFIT_LIMIT')){
 			$sugg=null;
 			$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $price+$price*($pcr/100);
 			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_PRICE_UP');
 			return $sugg;
 		}
-		if($ainventory>0 && $diff/$lspsq<-($grfr/100)){
+		if($ainventory>0 && ($diff/$lspsq)<-($grfr/100)){
 			$sugg=null;
 			if($price-$price*($pcr/100)<$cost){
 				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost;
@@ -643,6 +643,7 @@ class GgsUsswSaleAction extends CommonAction{
 			$usswOutboundItem = D("UsswOutboundView");
 			$map[C('DB_USSW_OUTBOUND_CREATE_TIME')] = array('between',array($startDate,$endDate));
 			$map[C('DB_USSW_OUTBOUND_ITEM_SKU')] = array('eq',$sku);
+			$map[C('DB_USSW_OUTBOUND_SELLER_ID')] = array('eq',$account);
 			return $usswOutboundItem->where($map)->sum(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'));
 		}else{
 			$usswOutboundItem = D("UsswOutboundView");
