@@ -1656,7 +1656,7 @@ class RestockAction extends CommonAction{
     }
 
     private function getPurchasedQuantity($warehouse,$sku){
-    	$map[C('DB_PURCHASE_STATUS')] = array('in','待确认,待付款,待发货');
+    	$map[C('DB_PURCHASE_STATUS')] = array('in',array('待确认','待付款','待发货'));
     	$map[C('DB_PURCHASE_ITEM_WAREHOUSE')] = array('in',array($warehouse,'深圳仓'));
     	$map[C('DB_PURCHASE_ITEM_SKU')] = array('eq',$sku);
     	$result=D("PurchaseView")->where($map)->sum(C('DB_PURCHASE_ITEM_PURCHASE_QUANTITY'));
