@@ -685,12 +685,12 @@ class OutboundAction extends CommonOutboundAction{
     }
 
     private function verifyEWSOColumnName($firstRow){
-        for($c='A';$c!=$this->getMaxKeyOfArray(C('IMPORT_EBAY_EN_ORDER'));$c++){
-            if(trim($firstRow[$c]) != C('IMPORT_EBAY_EN_ORDER')[$c]){
+        foreach (array_keys(C('IMPORT_EBAY_EN_ORDER')) as $key => $value) {
+            if(trim($firstRow[$value]) != C('IMPORT_EBAY_EN_ORDER')[$value]){
                 return false;
-            }  
+            }
         }
-        return true;
+        return true;          
     }
 }
 
