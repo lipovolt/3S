@@ -1415,9 +1415,6 @@ class AccountingAction extends CommonAction{
 		}elseif($incomeCost[C('DB_INCOMECOST_MARKETFEE')]==null ||$incomeCost[C('DB_INCOMECOST_MARKETFEE')]=='' ||$incomeCost[C('DB_INCOMECOST_MARKETFEE')]==0){
 			$this->error('greatgoodshop的 '.$month.' 的ebay费用查不到！','incomeCost');
 			return false;
-		}elseif($incomeCost[C('DB_INCOMECOST_PAYPALFEE')]==null ||$incomeCost[C('DB_INCOMECOST_PAYPALFEE')]=='' ||$incomeCost[C('DB_INCOMECOST_PAYPALFEE')]==0){
-			$this->error('greatgoodshop的 '.$month.' 的paypal费用查不到！','incomeCost');
-			return false;
 		}
 		$incomeCostMap[C('DB_INCOMECOST_SLLERID')] = array('eq','lipovolt');
 		$incomeCost = $incomeCostTable->where($incomeCostMap)->find();
