@@ -933,23 +933,15 @@ class WinitDeSaleAction extends CommonAction{
 		if($weight>0 And $weight <= 1000 and $l<=35.3 and $w<=30 and $h<=15){
 			if($weight>=0 and $weight<=500){
 				if($l<10 or $w<7){
-					return 2.32+0.1; //0.1 small parcel packing fee
+					return 3.08+0.1; //0.1 small parcel packing fee
 				}else{
-					return 2.32;
+					return 3.08;
 				}
-			}
-			elseif($weight>500 and $weight<=800){
+			}elseif($weight>500 and $weight<=1000){
 				if($l<10 or $w<7){
-					return 2.95+0.1; //0.1 small parcel packing fee
+					return 3.38+0.1; //0.1 small parcel packing fee
 				}else{
-					return 2.95;
-				}
-			}
-			elseif($weight>800 and $weight<=1000){
-				if($l<10 or $w<7){
-					return 3.03+0.1; //0.1 small parcel packing fee
-				}else{
-					return 3.03;
+					return 3.38;
 				}
 			}			
 		}
