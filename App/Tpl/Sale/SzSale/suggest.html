@@ -162,6 +162,7 @@ function bModify(){
 				<input class="btn btn-s btn-blue" type="button" onclick="bIgnore()" value="批量忽略（选择的）" style="width:150px;"/>
 				<input class="btn btn-s btn-blue" type="button" onclick="bModify()" value="批量已修改（选择的）" style="width:150px;"/>
 				<a class="btn btn-s btn-blue" type="button" href="{:U('Sale/SzSale/updateSalePrice',array('market'=>$market,'account'=>$account,'country'=>$country))}">批量更新售价</a>
+				<a class="btn btn-s btn-blue" type="button" href="{:U('Sale/SzSale/exportSzUsSaleSuggestTable')}">导出表格</a>
 				<table id="tablelist" class="tablelist">
 					<tr>
 						<th><div class="tl">
