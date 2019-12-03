@@ -1685,7 +1685,8 @@ class RestockAction extends CommonAction{
     }
 
     private function getUsswIInventory($sku){
-    	$map[C('DB_USSW_INBOUND_STATUS')] = array('neq','已入库');
+    	$map[C('DB_USSW_INBOUND_STATUS')] = array('eq','待入库');
+    	$map[C('DB_USSW_INBOUND_SHIPPING_WAY')] = array('eq','空运');
 		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
 		$iinventory = D("UsswInboundView")->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
 		return $iinventory==null?0:$iinventory;  
