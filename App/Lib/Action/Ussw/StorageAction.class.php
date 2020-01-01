@@ -173,6 +173,72 @@ class StorageAction extends CommonAction{
       }
       return $data;
     }
+
+    public function importUsswStorage(){
+        $this->display();
+    }
+
+    public function importUsswStorageHandle(){
+        if(!empty($_FILES)){
+            import('ORG.Net.UploadFile');
+            $config=array(
+                'allowExts'=>array('xlsx','xls'),
+                'savePath'=>'./Public/upload/usswStorage/',
+                'saveRule'=>'usswStorage_'.time(),
+            );
+            $upload = new UploadFile($config);
+            if (!$upload->upload()) {
+                $this->error($upload->getErrorMsg());
+            } else {
+                $info = $upload->getUploadFileInfo();
+                 
+            }
+            
+            vendor("PHPExcel.PHPExcel");
+            $file_name=$info[0]['savepath'].$info[0]['savename'];
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
+            $objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+            $sheet = $objPHPExcel->getSheet(0);
+            $highestRow = $sheet->getHighestRow(); // 取得总行数
+            $highestColumn = $sheet->getHighestColumn(); // 取得总列数
+
+            //excel first column name verify
+            for($c='A';$c!=$highestColumn;$c++){
+                $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue(); 
+            }
+
+            if($this->verifyUsswStorageColumnName($firstRow)){
+                $usswStorage=M(C('DB_USSTORAGE'));
+                $usswStorage->startTrans();
+                for($i=2;$i<=$highestRow;$i++){                  
+                  $tmp = $usswStorage->where(array(C('DB_USSTORAGE_ID')=>$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()))->find();
+                  $tmp[C('DB_USSTORAGE_AINVENTORY')] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue()==null?0:$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
+                  $tmp[C('DB_USSTORAGE_CINVENTORY')] = $tmp[C('DB_USSTORAGE_AINVENTORY')]+$tmp[C('DB_USSTORAGE_OINVENTORY')]+$tmp[C('DB_USSTORAGE_CSALES')];
+                  $tmp[C('DB_USSTORAGE_OINVENTORY')]=0;
+                  if($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue()!=null){
+                    $tmp[C('DB_USSTORAGE_POSITION')] = $objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue();
+                  }
+                  $usswStorage->save($tmp);
+                  $tmp=null;
+                }
+                $usswStorage->commit();
+                $this->success("导入成功");
+            }else{
+                $this->error("不是美自建仓盘点库存模板，请检查");
+            }
+        }else{
+            $this->error("请选择上传的文件");
+        }
+    }
+
+    private function verifyUsswStorageColumnName($firstRow){
+      foreach (array_keys(C('IMPORT_SSW_STORAGE')) as $key => $value) {
+        if(trim($firstRow[$value]) != C('IMPORT_SSW_STORAGE')[$value]){
+          return false;
+        }
+      }
+      return true; 
+    }
 }
 
 ?>
