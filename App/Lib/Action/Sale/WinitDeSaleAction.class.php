@@ -930,7 +930,7 @@ class WinitDeSaleAction extends CommonAction{
 	}
 
 	private function calWinitPostLargeFee($weight,$l,$w,$h){
-		if($weight>0 And $weight <= 1000 and $l<=35.3 and $w<=30 and $h<=15){
+		if($weight>0 And $weight <= 1000 and $l<=35.3 and $w<=25 and $h<=5){
 			if($weight>=0 and $weight<=500){
 				if($l<10 or $w<7){
 					return 3.08+0.1; //0.1 small parcel packing fee
