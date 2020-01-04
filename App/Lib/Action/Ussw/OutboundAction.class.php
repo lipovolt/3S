@@ -165,7 +165,7 @@ class OutboundAction extends CommonOutboundAction{
                         }
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_MARKET')] = 'amazon';
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_SELLER_ID')] = $sellerID;
-                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_NAME')] = $objPHPExcel->getActiveSheet()->getCell("I".$i)->getValue();
+                        $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_NAME')] = $objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue();
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_TEL')] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_EMAIL')] = $objPHPExcel->getActiveSheet()->getCell("H".$i)->getValue();
                         $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')] = $objPHPExcel->getActiveSheet()->getCell("S".$i)->getValue();
@@ -444,7 +444,7 @@ class OutboundAction extends CommonOutboundAction{
                             $outboundOrder[$j][C('DB_USSW_OUTBOUND_MARKET')] = 'ebay';
                             $outboundOrder[$j][C('DB_USSW_OUTBOUND_SELLER_ID')] = $sellerID;
                             $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ID')] = $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
-                            $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_NAME')] = $objPHPExcel->getActiveSheet()->getCell("D".$i)->getValue();
+                            $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_NAME')] = $objPHPExcel->getActiveSheet()->getCell("M".$i)->getValue();
                             $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_TEL')] = $objPHPExcel->getActiveSheet()->getCell("N".$i)->getValue();
                             $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_EMAIL')] = $objPHPExcel->getActiveSheet()->getCell("E".$i)->getValue();
                             $outboundOrder[$j][C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')] = $objPHPExcel->getActiveSheet()->getCell("O".$i)->getValue();
@@ -1015,6 +1015,7 @@ class OutboundAction extends CommonOutboundAction{
             array(C('DB_USSW_OUTBOUND_BUYER_ZIP'),'邮编'),
             array(C('DB_USSW_OUTBOUND_ITEM_POSITION'),'货位'),
             array(C('DB_USSW_OUTBOUND_ITEM_SKU'),'产品编码'),
+            array(C('DB_PRODUCT_CNAME'),'产品名称'),
             array(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'),'数量') 
             );
         $this->exportExcel($xlsName,$xlsCell,$this->getPackingList($outboundOrder));
@@ -1024,6 +1025,7 @@ class OutboundAction extends CommonOutboundAction{
         $i=0;
         $obo=M(C('DB_USSW_OUTBOUND'));
         $oboi=M(C('DB_USSW_OUTBOUND_ITEM'));
+        $products=M(C('DB_PRODUCT'));
         foreach ($outboundOrder as $key => $value) {
             $order=$obo->where(array(C('DB_USSW_OUTBOUND_MARKET_NO')=>$value[C('DB_USSW_OUTBOUND_MARKET_NO')]))->find();
             $items=$oboi->where(array(C('DB_USSW_OUTBOUND_ITEM_OOID')=>$order[C('DB_USSW_OUTBOUND_ID')]))->select();
@@ -1038,6 +1040,7 @@ class OutboundAction extends CommonOutboundAction{
             foreach ($items as $keyItem => $valueItem) {
                 $data[$i][C('DB_USSW_OUTBOUND_ITEM_POSITION')]=$valueItem[C('DB_USSW_OUTBOUND_ITEM_POSITION')];
                 $data[$i][C('DB_USSW_OUTBOUND_ITEM_SKU')]=$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')];
+                $data[$i][C('DB_PRODUCT_CNAME')]=$products->where(array(C('DB_PRODUCT_SKU')=>$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
                 $data[$i][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')]=$valueItem[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
                 $i=$i+1;
             }
