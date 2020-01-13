@@ -711,6 +711,25 @@ class InboundAction extends CommonAction{
         return false;
     }
 
+    public function exportInboundList($ioid){
+        $inboundItems = M(C('DB_USSW_INBOUND_ITEM'))->where(array(C('DB_USSW_INBOUND_ITEM_IOID')=>$ioid))->select();
+        $usstorage = D("UsstorageView");
+        foreach ($inboundItems as $key => $value) {
+            $inboundItems[$key][C('DB_USSTORAGE_POSITION')] = $usstorage->where(array(C('DB_USSTORAGE_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_USSTORAGE_POSITION'));
+            $inboundItems[$key][C('DB_USSTORAGE_CNAME')] = $usstorage->where(array(C('DB_USSTORAGE_SKU')=>$value[C('DB_USSTORAGE_SKU')]))->getField(C('DB_USSTORAGE_CNAME'));
+        }
+        $expTitle = "USSW_INBOUND";
+        $xlsCell  = array(
+            array(C('DB_USSTORAGE_ID'),'库存编号'),
+            array(C('DB_USSTORAGE_POSITION'),'货位'),
+            array(C('DB_USSW_INBOUND_ITEM_SKU'),'产品编码'),
+            array(C('DB_USSTORAGE_CNAME'),'中文名称'),
+            array(C('DB_USSW_INBOUND_ITEM_DQUANTITY'),'预报数量'),
+            array(C('DB_USSW_INBOUND_ITEM_CQUANTITY'),'实到数量')  
+            );
+        $this->exportExcel($expTitle,$xlsCell,$inboundItems);
+    }
+
 }
 
 ?>

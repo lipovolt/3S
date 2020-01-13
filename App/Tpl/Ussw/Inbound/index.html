@@ -94,6 +94,7 @@ function directInbound(){
 							<a href="{:U('Ussw/Inbound/inboundOrderItems',array('orderID'=>$vo['id']))}">产品明细</a>
 							<a href="{:U('Ussw/Inbound/updateStorage',array('ioid'=>$vo['id']))}">入库</a>
 							<a href="{:U('Ussw/Inbound/directInbound',array('ioid'=>$vo['id']))}" onclick='return directInbound()'>直接入库</a>
+							<a href="{:U('Ussw/Inbound/exportInboundList',array('ioid'=>$vo['id']))}">导出入库单</a>
 							<a href="{:U('Ussw/Inbound/deleteInboundOrder',array('orderIDToDelete'=>$vo['id']))}" onclick='return del()'>删除</a>
 						</td>
 						</tr>	
