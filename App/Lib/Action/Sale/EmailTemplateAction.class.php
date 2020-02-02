@@ -35,6 +35,11 @@ Ich habe gerade Ihre Abbruch Anfrage gesehen. Und die Anfrage war von System aut
 Wir benutzen eines System. Das System lesen automatisch die Bestellungen von ebay und kaufen Versandschein von Post und leiten die Bestellungen an Lager weiter. Das System dient zur Beschleunigung der Verarbeitung der Bestellungen. 
 
 Wenn ich Ihre Nachricht gesehen habe, Ihre Bestellung war schon von Post abgeholt. Deswegen kann Ihre Bestellung nicht storniert werde. Ich bitte um Ihre Verständnisse. ',
+			'德国收款银行账户'=>'Bank name: Wirecard Bank AG<br>
+								Bank Adresse: Einsteinring 35 85609 Aschheim, Germany<br>
+								BIC: WIREDEMM<br>
+								IBAN: DE24512308006501748392<br>
+								Konto Inhaber: Yu Zhang',
 			);
 		$en_templates = array(
 			'USPS 爆仓'=>'Hello,<br>
