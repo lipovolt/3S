@@ -10,7 +10,7 @@ class CommonOutboundAction extends CommonAction{
     public function outboundItemPriceUp($account,$sku){
         $stable = M($this->getSalePlanTableName($account));        
         $sr=$stable->where(array(C('DB_USSW_SALE_PLAN_SKU')=>$sku))->find();
-        if($sr[C('DB_USSW_SALE_PLAN_STATUS')]==1 && strtotime($sr[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')])<(time()-60*60*3)){
+        if($sr[C('DB_USSW_SALE_PLAN_STATUS')]==1 && strtotime($sr[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')])<(time()-60*60*24)){
             $metaMap[C('DB_USSW_SALE_PLAN_METADATA_ID')] = array('eq',1);
             $pcr = M(C('DB_USSW_SALE_PLAN_METADATA'))->where($metaMap)->getField(C('DB_USSW_SALE_PLAN_METADATA_PCR'));
             $country = $this->getItemLocationCountry($account);
@@ -58,7 +58,7 @@ class CommonOutboundAction extends CommonAction{
                     a.  库存量大的产品不调价
 
             */
-            if($profitRate<0.15 || (($country=='cn' || $country=='us') && $profitRate<=0.18)){
+            if($profitRate<0.15 || ($country=='cn'&& $profitRate<=0.18)){
                 $sr[C('DB_USSW_SALE_PLAN_PRICE')] = $sr[C('DB_USSW_SALE_PLAN_PRICE')]*(1+$pcr/100);
                 $sr[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
                 $stable->save($sr);
@@ -77,7 +77,7 @@ class CommonOutboundAction extends CommonAction{
                     $stable->save($sr);
                 }
                 
-            }elseif($country=='us' && $profitRate>=0.18 && $profitRate<0.25){
+            }elseif($country=='us' && $profitRate>=0.15 && $profitRate<0.18){
                 $ggsAction = A('Sale/GgsUsswSale');
                 if($this->isFBASku($sku)){
                     $saleQuantity = $ggsAction->calUsFBASaleQuantity($account,$sku,date('Y-m-d H:i:s',time()-60*60*24*5),date('Y-m-d H:i:s',time()));
