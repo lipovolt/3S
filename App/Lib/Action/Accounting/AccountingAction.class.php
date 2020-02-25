@@ -950,6 +950,13 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurShippingFee = $eurShippingFee-$amountCM['amount'];
         			}
+        		}elseif($transactionType=='Shipping services purchased through Amazon' && $paymentType=='Other'){
+        			if($amountCM['currency']=='usd'){
+        				$usdShippingFee = $usdShippingFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurShippingFee = $eurShippingFee-$amountCM['amount'];
+        			}
         		}elseif($transactionType=='Service Fees' && $paymentType=='Amazon fees'){
         			if($amountCM['currency']=='usd'){
         				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
