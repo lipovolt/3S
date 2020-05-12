@@ -147,9 +147,9 @@ class AccountingAction extends CommonAction{
 			$usdIncome = $usdIncome + $value[C('DB_INCOMECOST_USDINCOME')];
 			$usdIncome = $usdIncome + $value[C('DB_INCOMECOST_EURINCOME')]*$metaData[C('DB_METADATA_EURTOUSD')];
 		}
-		$usdIncome = $usdIncome - 8750*count(C('WAGES_BASE'));
+		$usdIncome = $usdIncome - 14000*count(C('WAGES_BASE'));
 		if($usdIncome>0){
-			$bonus = ceil($usdIncome/5000)*$bonusBase;
+			$bonus = ceil($usdIncome/6000)*$bonusBase;
 		}
 		$quantity = count(C('WAGES_BASE'))-2;
 		$bonusForEachPerson = intval($bonus/$quantity);

@@ -1115,7 +1115,7 @@ class GgsUsswSaleAction extends CommonAction{
 	}
 
 	private function getUsswAirFirstTransportFee($weight,$l,$w,$h){
-		return round($weight / 1000 * 6.5,2);	
+		return round($weight / 1000 * 7.5,2);	
 	}
 
 	private function getUsswSeaFirstTransportFee($l,$w,$h){

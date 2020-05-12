@@ -40,6 +40,12 @@ Wenn ich Ihre Nachricht gesehen habe, Ihre Bestellung war schon von Post abgehol
 								BIC: WIREDEMM<br>
 								IBAN: DE24512308006501748392<br>
 								Konto Inhaber: Yu Zhang',
+			'新冠病毒导致延误，请顾客多等一周'=>'Hallo,
+Ihre Artikel ist am #################### per Deutsche Post Warensendung aus Bremen verschickt. Normalerweise das Packet kann innerhalb 3-8 Arbeitstage zugestellt werden.
+wegen der COVID-19 Virus, die Lieferzeit des Pakets kann nicht exakt der üblichen entsprechen. Die Bearbeitungszeit der Post ist jetzt stark verzögert. Bitte warten Sie eine Woche mehr.
+Vielen Dank für Ihre Verständnisse.',
+'新冠病毒导致延误'=>'Hallo,
+Ihre Artikel ist am ################ per Deutsche Post Warensendung aus Bremen verschickt. Normaleriweise Post brauche ca. 3-8 Arbeitstage um das Packet zu zustellen. Aber wegen COVID-19 Virus die Lieferzeit von Post könnte länger dauern. Bitte warten Sie noch ein paar Tage. Vielen Dank',
 			);
 		$en_templates = array(
 			'USPS 爆仓'=>'Hello,<br>
@@ -58,7 +64,7 @@ Wenn ich Ihre Nachricht gesehen habe, Ihre Bestellung war schon von Post abgehol
 			'包裹已送达邮局，没有A-Scan'=>'Hello,<br>
 				Your package has been given to the local post office. Tracking number is XXXXXXXXXXXXXXX. Sometime they do not do A-scan and transit all packages together to package processing center. So you can not see the tracking information immediately. But the package is in transit.',
 			'Fisrt Class Mail显示已投递，顾客说没收到'=>'Hello,<br>
-				The package may be delivered to wrong mail box or delayed. If you can see the postman or contact the postman, please ask help of the postman. They can give you better helpful information about this issue. If the postman can not help you to find the package, then tell me, i will resend the item.',
+				The package may be delivered to wrong mailbox or forgotten in the mail truck. In the first case, the recipient will return the package to the postman. That need some time. In second case the postman will delivery the package in the next working day.',
 			'亚马逊跟卖警告1'=>'Hello，<br>
 				We are the registered proprietor of the USA Trade Mark Number 4996636 for LIPOVOLT in classes 9（Registered Date： July-12 2016）.Please refrain from using our Trademark when selling or listing any of your products.<br>
 				Please remove your listing from our advert immediately ASIN: *******<br>
@@ -71,11 +77,11 @@ Wenn ich Ihre Nachricht gesehen habe, Ihre Bestellung war schon von Post abgehol
 				I (customer service) can't direct change the shipping address. I have cancelled the order, please make a new order with correct address. Thanks",
 			'美国退货地址'=>'Min Zhang<br>13754 mango dr unit 303, del mar, ca 92014<br>626-203-7018<br>New Address:<br>7960 Silverton Avenue, Suite 107，San Diego, CA 92126',
 			"发货时间或指定日期到货"=>"the order before 9 o'clock will be sent on the same working day. Otherwise the order will be sent on the next working day. I regret I can't guarantee the transportation speed of USPS. I ask for your understanding.",
-			"ebay global shipping 解释"=>"Hello,
-
-Your order is shipped through ebay global shipping program. That means we send the item to ebay warehouse in USA. Then ebay send the item from USA to you.
-
-The tracking number 9400109699938567132513 is for the first way. The item is delivered to ebay warehouse. Now the item will be shipped to you. But when the ebay will ship the item and what is the tracking number, I don't know yet. You can wait a few days. Or direct contact ebay online customer service.",
+			"ebay global shipping 解释"=>"Hello,<br>
+			Your order is shipped through ebay global shipping program. That means we send the item to ebay warehouse in USA. Then ebay send the item from USA to you. The tracking number 9400109699938567132513 is for the first way. The item is delivered to ebay warehouse. Now the item will be shipped to you. But when the ebay will ship the item and what is the tracking number, I don't know yet. You can wait a few days. Or direct contact ebay online customer service.",
+			"发货时间或指定日期到货"=>"the order before 9 o'clock will be sent on the same working day. Otherwise the order will be sent on the next working day. I regret I can't guarantee the transportation speed of USPS. I ask for your understanding.",
+			"COVID-19导致投递时效延误解释"=>"Hello,<br>
+			The package was given to the USPS on #################. Because of the COVID-19 Viren, The processing speed of the post office was affected.Please wait a few more days. thank you for your patience.",
 			);
 		if($language=='de'){
 			$this->assign('templates', $de_templates);
