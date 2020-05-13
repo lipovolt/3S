@@ -218,9 +218,9 @@ class RestockAction extends CommonAction{
 		$GLOBALS["indexOfOutOfStock"] = 0;
 		$restockPara = M(C('DB_RESTOCK_PARA'))->where(array(C('DB_RESTOCK_PARA_ID')=>1))->find();
 		$this->findUsswOutOfStockItem($start, $end);
-		if($end==-1){
+		/*if($end==-1){
 			$this->findUsFbaOutOfStockItemPurhaseView();
-		}
+		}*/
 		//$this->findWinitUsOutOfStockItem();
 		F('out',$GLOBALS["outOfStock"]);
 		$this->assign('outofstock',$GLOBALS["outOfStock"]);
@@ -1686,7 +1686,9 @@ class RestockAction extends CommonAction{
 
     private function getUsswIInventory($sku){
     	$map[C('DB_USSW_INBOUND_STATUS')] = array('eq','待入库');
-    	$map[C('DB_USSW_INBOUND_SHIPPING_WAY')] = array('eq','空运');
+    	/*只检测空运在途数量是使用这个条件
+    	*$map[C('DB_USSW_INBOUND_SHIPPING_WAY')] = array('eq','空运');
+    	*/
 		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
 		$iinventory = D("UsswInboundView")->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
 		return $iinventory==null?0:$iinventory;  
