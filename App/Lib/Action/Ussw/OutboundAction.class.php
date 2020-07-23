@@ -412,8 +412,7 @@ class OutboundAction extends CommonOutboundAction{
 
             //excel second column name verify
             for($c='A';$c!=$highestColumn;$c++){
-                $secondRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'2')->getValue();
-                
+                $secondRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'2')->getValue(); 
             }
 
             if($this->verifyImportedEbayEnOrderColumnName($secondRow)){
@@ -486,7 +485,7 @@ class OutboundAction extends CommonOutboundAction{
                                         $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_SKU')]=$departedSkuQuantityValue['sku'];
                                         $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')]=$departedSkuQuantityValue['quantity'];
                                         $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
-                                        $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AR".$i)->getValue();
+                                        $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AV".$i)->getValue();
                                         $k=$k+1; 
                                     }
                                 }                         
@@ -524,7 +523,7 @@ class OutboundAction extends CommonOutboundAction{
                                     $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_SKU')]=$departedSkuQuantityValue['sku'];
                                     $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')]=$departedSkuQuantityValue['quantity'];
                                     $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_MARKET_NO')]=$objPHPExcel->getActiveSheet()->getCell("U".$i)->getValue();
-                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AR".$i)->getValue();
+                                    $outboundOrderItems[$k][C('DB_USSW_OUTBOUND_ITEM_TRANSACTION_NO')]=$objPHPExcel->getActiveSheet()->getCell("AV".$i)->getValue();
                                     $k=$k+1;
                                 }
                             }                        

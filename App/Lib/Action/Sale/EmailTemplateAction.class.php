@@ -61,10 +61,13 @@ Ihre Artikel ist am ################ per Deutsche Post Warensendung aus Bremen v
 				Thanks for your purchasing. I just received message from warehouse, this item can not be found in warehouse. To avoid long waiting time, i will cancel the order. Apologize for the inconvenience.',
 			'没库存，询问是否可以等待'=>'Hello,<br>
 				Thanks for your purchasing. I have listed wrong quantity of the item. It is now out of stock. The new item will be restocked in one week. Can you wait? Or i should cancel the order? Apologize for the inconvenience.',
+			'订单已发走，无法取消订单'=>'Hello,<br>
+				I just see the cancellation request. Then I immediately contacted warehouse to confirm the order status. But the package has been given to USPS. I am very sorry I can not cancel the order. Apologize for the inconvenience.',
 			'包裹已送达邮局，没有A-Scan'=>'Hello,<br>
 				Your package has been given to the local post office. Tracking number is XXXXXXXXXXXXXXX. Sometime they do not do A-scan and transit all packages together to package processing center. So you can not see the tracking information immediately. But the package is in transit.',
-			'Fisrt Class Mail显示已投递，顾客说没收到'=>'Hello,<br>
-				The package may be delivered to wrong mailbox or forgotten in the mail truck. In the first case, the recipient will return the package to the postman. That need some time. In second case the postman will delivery the package in the next working day.',
+			'Fisrt Class Mail显示已投递，顾客说没收到'=>'This should be a issue of the local postman.The package may be delivered to wrong mailbox or forgotten in the mail truck. Could you see the local postman and confirm the package status? 
+
+Item is in yellow bubble envelope 4.5" x 7"',
 			'亚马逊跟卖警告1'=>'Hello，<br>
 				We are the registered proprietor of the USA Trade Mark Number 4996636 for LIPOVOLT in classes 9（Registered Date： July-12 2016）.Please refrain from using our Trademark when selling or listing any of your products.<br>
 				Please remove your listing from our advert immediately ASIN: *******<br>

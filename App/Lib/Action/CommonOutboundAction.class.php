@@ -58,7 +58,7 @@ class CommonOutboundAction extends CommonAction{
                     a.  库存量大的产品不调价
 
             */
-            if($profitRate<0.18 || ($country=='cn'&& $profitRate<=0.18) || ($country=='us'&& $profitRate<=0.24)){
+            if($profitRate<0.18 || ($country=='cn'&& $profitRate<=0.18) || ($country=='us'&& $profitRate<=0.20)){
                 $sr[C('DB_USSW_SALE_PLAN_PRICE')] = $sr[C('DB_USSW_SALE_PLAN_PRICE')]*(1+$pcr/100);
                 $sr[C('DB_USSW_SALE_PLAN_LAST_MODIFY_DATE')] = date('Y-m-d H:i:s',time());
                 $stable->save($sr);
@@ -77,7 +77,7 @@ class CommonOutboundAction extends CommonAction{
                     $stable->save($sr);
                 }
                 
-            }elseif($country=='us' && $profitRate>0.24 && $profitRate<0.33){
+            }elseif($country=='us' && $profitRate>0.20 && $profitRate<0.3){
                 $ggsAction = A('Sale/GgsUsswSale');
                 if($this->isFBASku($sku)){
                     $saleQuantity = $ggsAction->calUsFBASaleQuantity($account,$sku,date('Y-m-d H:i:s',time()-60*60*24*5),date('Y-m-d H:i:s',time()));
