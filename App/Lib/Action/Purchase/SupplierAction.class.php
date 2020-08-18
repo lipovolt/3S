@@ -50,11 +50,9 @@ class SupplierAction extends CommonAction{
 
 	public function edit(){
 		if(IS_POST){
-			$where[C('DB_SUPPLIER_COMPANY')] = array('in', array(I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars'),I('post.'.C('DB_SUPPLIER_WANGWANG'),'','htmlspecialchars')));
-			$where[C('DB_SUPPLIER_WANGWANG')] = array('in', array(I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars'),I('post.'.C('DB_SUPPLIER_WANGWANG'),'','htmlspecialchars')));
-			$where['_logic'] = 'or';
+			$where[C('DB_SUPPLIER_ID')] = array('eq', I('post.'.C('DB_SUPPLIER_ID'),'','htmlspecialchars'));
 			$existSup = M(C('DB_SUPPLIER'))->where($where)->find();
-			if($existSup ==null){
+			if($existSup !== null || $existSup !== false){
 				$data[C('DB_SUPPLIER_ID')] = I('post.'.C('DB_SUPPLIER_ID'),'','htmlspecialchars');
 				$data[C('DB_SUPPLIER_COMPANY')] = I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars');
 				$data[C('DB_SUPPLIER_PERSON')] = I('post.'.C('DB_SUPPLIER_PERSON'),'','htmlspecialchars');
@@ -67,7 +65,7 @@ class SupplierAction extends CommonAction{
 				M(C('DB_SUPPLIER'))->save($data);
 				$this->redirect('Purchase/Supplier/index');
 			}else{
-				$this->error('供货商'.I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars').' 已存在！ 供货商编号： '.$existSup[C('DB_SUPPLIER_ID')]);
+				$this->error('供货商'.I('post.'.C('DB_SUPPLIER_COMPANY'),'','htmlspecialchars').' 不存在！ 供货商编号： '.$existSup[C('DB_SUPPLIER_ID')]);
 			}			
 		}
 	}

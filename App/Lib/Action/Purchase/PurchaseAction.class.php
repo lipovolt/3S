@@ -248,8 +248,13 @@ class PurchaseAction extends CommonAction{
 
     public function deletePurchaseOrder($purchaseID){
         $purchaseOrderStatus = M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->getField(C('DB_PURCHASE_STATUS'));
-        M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->delete();
-        $this->success("采购单已删除");
+        if($purchaseOrderStatus=='待确认'){
+            M(C('DB_PURCHASE'))->where(array(C('DB_PURCHASE_ID')=>$purchaseID))->delete();
+            M(C('DB_PURCHASE_ITEM'))->where(array(C('DB_PURCHASE_ITEM_PURCHASE_ID')=>$purchaseID))->delete();
+            $this->success("采购单已删除");
+        }else{
+            $this->error("已付款采购单不能删除！");
+        }        
     }
 
     public function updatePurchaseOrder(){

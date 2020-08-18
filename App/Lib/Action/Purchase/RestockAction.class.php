@@ -146,14 +146,14 @@ class RestockAction extends CommonAction{
 	        array('sku','产品编码'),
 	        array('cname','中文名称'),
 	        array('price','单价'),
-	        array('quantity','数量'),
+	        array('quantity','数量(未考虑海运在途)'),
 	        array('warehouse','仓库'), 
 	        array('wayToWarehouse','头程方式'),        
 	        array('manager','产品经理'),
 	        array('supplier','供货商'),
 	        array('purchase_link','采购链接'),
 	        array('ainventory','可用库存'),
-	        array('iinventory','在途数量'),
+	        array('iinventory','在途数量(不含海运在途)'),
 	        array('csales','周期销量'),
 	        array('rquantity','待发货数量'),
 	        array('iquantity','待收货数量'),	 
@@ -256,6 +256,7 @@ class RestockAction extends CommonAction{
 					if($msq>0 && $neededQuantity>$availableQuantity){
 						$q=ceil($neededQuantity-$availableQuantity);
 						$this->addRestockOrder('美自建仓',$q,$product,$ussv[C('DB_USSTORAGE_AINVENTORY')],$ussv[C('DB_USSTORAGE_IINVENTORY')],$msq);
+
 					}
 				}else{
 					$preCalRQ = $this->preCalRestockQuantity('美自建仓',$ussv[C('DB_USSTORAGE_SKU')]);
@@ -1409,7 +1410,8 @@ class RestockAction extends CommonAction{
 		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['plength'] = $product[C('DB_PRODUCT_PLENGTH')];
 		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['pwidth'] = $product[C('DB_PRODUCT_PWIDTH')];
 		$GLOBALS["outOfStock"][$GLOBALS["indexOfOutOfStock"]]['pheight'] = $product[C('DB_PRODUCT_PHEIGHT')];
-		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;		
+		$GLOBALS["indexOfOutOfStock"] = $GLOBALS["indexOfOutOfStock"]+1;
+
 	}
 
 	// return max periode sales of 3 periods of sku. excludeLargeQuantity means the quantity over this value will be calculated special. 0==winit us warehouse, 1== winit de warehouse
@@ -1686,9 +1688,7 @@ class RestockAction extends CommonAction{
 
     private function getUsswIInventory($sku){
     	$map[C('DB_USSW_INBOUND_STATUS')] = array('eq','待入库');
-    	/*只检测空运在途数量是使用这个条件
-    	*$map[C('DB_USSW_INBOUND_SHIPPING_WAY')] = array('eq','空运');
-    	*/
+    	$map[C('DB_USSW_INBOUND_SHIPPING_WAY')] = array('eq','空运');    	
 		$map[C('DB_USSW_INBOUND_ITEM_SKU')] = array('eq',$sku);
 		$iinventory = D("UsswInboundView")->where($map)->sum(C('DB_USSW_INBOUND_ITEM_DQUANTITY'));
 		return $iinventory==null?0:$iinventory;  
