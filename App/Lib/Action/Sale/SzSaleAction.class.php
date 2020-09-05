@@ -822,20 +822,16 @@ class SzSaleAction extends CommonAction{
 	private function calSpeedPAKStandardFee($weight,$l,$w,$h){
 		if($weight>2000 || $l>60 || ($l+$w+$h)>90){
 			return 65536;
-		}elseif ($weight>0 && $weight<=400) {
-			return 14.5+$weight*0.0767;
-		}elseif ($weight>400 && $weight<=2000) {
-			return 20.2+$weight*0.0484;
+		}else{
+			return 22+$weight*0.12;
 		}
 	}
 
 	private function calSpeedPAKEconomyFee($weight,$l,$w,$h){
 		if($weight>2000 || $l>60 || ($l+$w+$h)>90){
 			return 65536;
-		}elseif ($weight>0 && $weight<=220) {
-			return 7.3+$weight*0.0747;
-		}elseif ($weight>220 && $weight<=2000) {
-			return 11.8+$weight*0.0484;
+		}elseif{
+			return 15+$weight*0.12;
 		}
 	}
 
