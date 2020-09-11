@@ -55,9 +55,9 @@ class GgsUsswSaleAction extends CommonAction{
 
 	public function calUsswSaleInfo($account){
 		$this->calUsswSaleInfoHandle($account);
-		if($this->getMarketByAccount($account)=='amazon'){
+		/*if($this->getMarketByAccount($account)=='amazon'){
 			$this->calFBASaleInfoHandle($account);
-		}		
+		}	*/	
 		$this->redirect('usswSaleSuggest',array('account'=>$account));
 	}
 

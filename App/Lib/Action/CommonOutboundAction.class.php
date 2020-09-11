@@ -77,7 +77,7 @@ class CommonOutboundAction extends CommonAction{
                     $stable->save($sr);
                 }
                 
-            }elseif($country=='us' && $profitRate>0.20 && $profitRate<0.3){
+            }elseif($country=='us' && $profitRate>0.20 && $profitRate<0.25){
                 $ggsAction = A('Sale/GgsUsswSale');
                 if($this->isFBASku($sku)){
                     $saleQuantity = $ggsAction->calUsFBASaleQuantity($account,$sku,date('Y-m-d H:i:s',time()-60*60*24*5),date('Y-m-d H:i:s',time()));

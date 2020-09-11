@@ -855,6 +855,13 @@ class AccountingAction extends CommonAction{
         			if($amountCM['currency']=='eur'){
         				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
         			}
+        		}elseif($transactionType=='Refund' && $paymentType=='Other' && $paymentDetail=='Other concession'){
+        			if($amountCM['currency']=='usd'){
+        				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
+        			}
+        			if($amountCM['currency']=='eur'){
+        				$eurAmazonFee = $eurAmazonFee-$amountCM['amount'];
+        			}
         		}elseif($transactionType=='Order Payment' && $paymentType=='Amazon fees'){
         			if($amountCM['currency']=='usd'){
         				$usdAmazonFee = $usdAmazonFee-$amountCM['amount'];
