@@ -65,9 +65,14 @@ Ihre Artikel ist am ################ per Deutsche Post Warensendung aus Bremen v
 				I just see the cancellation request. Then I immediately contacted warehouse to confirm the order status. But the package has been given to USPS. I am very sorry I can not cancel the order. Apologize for the inconvenience.',
 			'包裹已送达邮局，没有A-Scan'=>'Hello,<br>
 				Your package has been given to the local post office. Tracking number is XXXXXXXXXXXXXXX. Sometime they do not do A-scan and transit all packages together to package processing center. So you can not see the tracking information immediately. But the package is in transit.',
-			'Fisrt Class Mail显示已投递，顾客说没收到'=>'This should be a issue of the local postman.The package may be delivered to wrong mailbox or forgotten in the mail truck. Could you see the local postman and confirm the package status? 
+			'Fisrt Class Mail显示已投递，顾客说没收到'=>'Hello, This should be a issue of the local postman.The package may be delivered to wrong mailbox or forgotten in the mail truck. Could you see the local postman and confirm the package status? 
 
 Item is in yellow bubble envelope 4.5" x 7"',
+			'Fisrt Class Mail显示已投递，顾客说没收到,让我们联系邮局'=>'Hello,
+
+I can go to my local post office to ask the package status. But they can not give helpful information for this problem.
+
+This should be a issue of the postman, who is responsible for your local. The package may be delivered to wrong mailbox or forgotten in the mail truck. The best way to resolve the problem is to ask the local postman. He should remember this package. Item is in black plastic bag 4.5" x 8"',
 			'亚马逊跟卖警告1'=>'Hello，<br>
 				We are the registered proprietor of the USA Trade Mark Number 4996636 for LIPOVOLT in classes 9（Registered Date： July-12 2016）.Please refrain from using our Trademark when selling or listing any of your products.<br>
 				Please remove your listing from our advert immediately ASIN: *******<br>

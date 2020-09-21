@@ -1039,7 +1039,7 @@ class AccountingAction extends CommonAction{
         	$data[C('DB_INCOMECOST_MONTH')] = $_POST['month'];
         	$data[C('DB_INCOMECOST_SLLERID')] = $_POST['sellerID'];
         	$data[C('DB_INCOMECOST_SLLERIDTYPE')] = $this->getSellerIDType($_POST['sellerID']);
-        	$data[C('DB_INCOMECOST_USDINCOME')] = $usdIncome;
+        	$data[C('DB_INCOMECOST_USDINCOME')] = $usdIncome-$usdRefund;
         	$data[C('DB_INCOMECOST_USDITEMCOST')] = $usdCost;
         	$data[C('DB_INCOMECOST_USDRETURN')] = $usdRefund;
         	$data[C('DB_INCOMECOST_EURINCOME')] = $eurIncome;
