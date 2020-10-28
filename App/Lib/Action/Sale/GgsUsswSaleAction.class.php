@@ -474,7 +474,7 @@ class GgsUsswSaleAction extends CommonAction{
 		$endDate = date('Y-m-d H:i:s',time()-60*60*24*$adjust_period);
 		$lspsq = $this->calUsswSaleQuantity($account,$sku,$startDate,$endDate)*$standard_period/$adjust_period;
 
-		//检查是否需要清货
+		/*//检查是否需要清货
 		if($asqsq==0){
 			$firstShippingDate = M(C('DB_USSW_SALE_PLAN'))->where(array('sku'=>$sku))->getField(C('DB_USSW_SALE_PLAN_FIRST_DATE'));			
 			if(strtotime($firstShippingDate)<(time()-60*60*24*$clear_nod)){
@@ -502,7 +502,7 @@ class GgsUsswSaleAction extends CommonAction{
 					return $sugg;
 				}
 			}
-		}
+		}*/
 
 
 		//检查是否需要调价
@@ -516,7 +516,7 @@ class GgsUsswSaleAction extends CommonAction{
 			$sugg[C('DB_USSW_SALE_PLAN_SUGGEST')] = C('USSW_SALE_PLAN_PRICE_UP');
 			return $sugg;
 		}
-		if($ainventory>0 && ($diff/$lspsq)<-($grfr/100)){
+		if($ainventory>0 && ($asqsq==0 || ($diff/$lspsq)<-($grfr/100))){
 			$sugg=null;
 			if($price-$price*($pcr/100)<$cost){
 				$sugg[C('DB_USSW_SALE_PLAN_SUGGESTED_PRICE')] = $cost;

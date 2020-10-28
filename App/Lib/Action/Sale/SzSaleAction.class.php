@@ -471,38 +471,10 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function getSzUsShippingWay($weight,$l,$w,$h,$register){
-		/*//计算出不同物流深圳发美国的最低运费方式
-		if($register || $register ==1){
-			return $this->getSzUsRsw($weight,$l,$w,$h);
-		}else{
-			return $this->getSzUsSw($weight,$l,$w,$h);
-		}*/
-
-		/*//计算出运德深圳发美国的最低运费方式
-		if($register || $register ==1){
-			return "运德南京EUB";
-		}else{
-			return $this->getWedoSzUsSw($weight,$l,$w,$h);
-		}*/
 		return $this->calSpeedPAKUSStandardWay($weight,$l,$w,$h);
 	}
 
 	private function getSzUsShippingFee($weight,$l,$w,$h,$register){
-		/*//计算出不同物流深圳发美国的最低运费
-		if($register || $register==1){
-			return $this->getSzUsRsf($weight,$l,$w,$h);
-		}else{
-			return $this->getSzUsSf($weight,$l,$w,$h);
-		}*/
-
-		/*//计算出运德深圳发美国的最低运费
-		if($register || $register==1){
-			$fee = $this->calWedoNjEubFee($weight,$l,$w,$h);
-			return $fee==0?65536:$fee;
-		}else{
-			$fee = $this->getWedoSzUsSf($weight,$l,$w,$h);
-			return $fee==0?65536:$fee;
-		}*/
 		return $this->calSpeedPAKUSStandardFee($weight,$l,$w,$h);
 	}
 
@@ -515,269 +487,25 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function calSpeedPAKUSStandardFee($weight,$l,$w,$h){
-		if($weight>31500 || $l>66 || ($l+2*($w+$h))>330){
+		if($weight>31500 || $l>66 || ($l+2*($w+$h))>274){
 			return 65536;
-		}elseif ($weight<66) {
-			return 13+66*0.083;
-		}elseif ($weight>=66 && $weight<=100) {
-			return 13+$weight*0.083;
-		}elseif ($weight>100 && $weight<=200) {
-			return 13+$weight*0.083;
-		}elseif ($weight>200 && $weight<=500) {
-			return 12+$weight*0.078;
-		}elseif ($weight>500 && $weight<=2000) {
-			return 12+$weight*0.073;
-		}elseif ($weight>2000 && $weight<=31500) {
-			return 12+$weight*0.067;
 		}else{
-			return 65536;
-		}
-	}
-
-	private function getSzUsRsw($weight,$l,$w,$h){
-		$ways=array(
-				0=>'No way',
-				1=>'飞特EUB',
-				2=>'运德南京EUB'
-			);
-		$fees=array(
-				0=>0,
-				1=>$this->calFlytEubFee($weight,$l,$w,$h),
-				2=>$this->calWedoNjEubFee($weight,$l,$w,$h)
-			);
-		$cheapest=65536;
-		$way=0;
-		for ($i=0; $i < 3; $i++) { 
-			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
-				$cheapest = $fees[$i];
-				$way = $i;
+			if($l>40 || $w>40 || $h>40){
+				$vweight = $l*$w*$h/6000;
+			}
+			if($vweight>$weight*1.3){
+				$weight = $weight+($vweight-$weight*1.3);
+			}
+			if($weight<50){
+				return 15+50*0.13;
+			}else{
+				return 15+$weight*0.13;
 			}
 		}
-		return $ways[$way];
 	}
 
-	private function getSzUsRsf($weight,$l,$w,$h){
-		$fees=array(
-				0=>0,
-				1=>$this->calFlytEubFee($weight,$l,$w,$h),
-				2=>$this->calWedoNjEubFee($weight,$l,$w,$h)
-			);
-		$cheapest=65536;
-		for ($i=0; $i < 3; $i++) { 
-			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
-				$cheapest = $fees[$i];
-			}
-		}
-		return $cheapest;
-	}
-
-	private function getSzUsSw($weight,$l,$w,$h){
-		$ways=array(
-				0=>'No way',
-				1=>'飞特中邮',
-				2=>'运德漳州平邮',
-				3=>'运德广州平邮'
-			);
-		$fees=array(
-				0=>0,
-				1=>$this->calFlytCpUsFee($weight,$l,$w,$h),
-				2=>$this->calWedoZzCpUsFee($weight,$l,$w,$h),
-				3=>$this->calWedoGzCpUsFee($weight,$l,$w,$h)
-			);
-		$cheapest=65536;
-		$way=0;
-		for ($i=0; $i < 4; $i++) { 
-			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
-				$cheapest = $fees[$i];
-				$way = $i;
-			}
-		}
-		return $ways[$way];
-	}
-
-	private function getSzUsSf($weight,$l,$w,$h){
-		$fees=array(
-				0=>0,
-				1=>$this->calFlytCpUsFee($weight,$l,$w,$h),
-				2=>$this->calWedoZzCpUsFee($weight,$l,$w,$h),
-				3=>$this->calWedoGzCpUsFee($weight,$l,$w,$h)
-			);
-		$cheapest=65536;
-		for ($i=0; $i < 4; $i++) { 
-			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
-				$cheapest = $fees[$i];
-			}
-		}
-		return $cheapest;
-	}
-
-	private function getFlytSzUsShippingWay($weight,$l,$w,$h,$register){
-		if($register){
-			return "飞特EUB";
-		}else{
-			return "飞特中邮平邮";
-		}
-	}
-
-	private function getFlytSzUsShippingFee($weight,$l,$w,$h,$register){
-		if($register){
-			return $this->calFlytEubFee($weight,$l,$w,$h);
-		}else{
-			return $this->calFlytCpUsFee($weight,$l,$w,$h);
-		}
-	}
-
-	private function getWedoSzUsShippingWay($weight,$l,$w,$h,$register){
-		if($register){
-			return "运德南京EUB";
-		}else{
-			return $this->getWedoSzUsSw($weight,$l,$w,$h);
-		}
-	}
-
-	private function getWedoSzUsShippingFee($weight,$l,$w,$h,$register){
-		if($register){
-			return $this->calWedoNjEubFee($weight,$l,$w,$h);
-		}else{
-			return $this->getWedoSzUsSf($weight,$l,$w,$h);
-		}
-	}
-
-	private function getWedoSzUsSw($weight,$l,$w,$h){
-		$ways=array(
-				0=>'No way',
-				1=>'运德漳州平邮',
-				2=>'运德广州平邮'
-			);
-		$fees=array(
-				0=>0,
-				1=>$this->calWedoZzCpUsFee($weight,$l,$w,$h),
-				2=>$this->calWedoGzCpUsFee($weight,$l,$w,$h)
-			);
-		$cheapest=65536;
-		$way=0;
-		for ($i=0; $i < 3; $i++) { 
-			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
-				$cheapest = $fees[$i];
-				$way = $i;
-			}
-		}
-		return $ways[$way];
-	}
-
-	private function getWedoSzUsSf($weight,$l,$w,$h){
-		$fees=array(
-				0=>0,
-				1=>$this->calWedoZzCpUsFee($weight,$l,$w,$h),
-				2=>$this->calWedoGzCpUsFee($weight,$l,$w,$h)
-			);
-		$cheapest=65536;
-		for ($i=0; $i < 3; $i++) { 
-			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
-				$cheapest = $fees[$i];
-			}
-		}
-		return $cheapest;
-	}
-
-	private function calFlytEubFee($weight,$l,$w,$h){
-		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			if($weight>0 and $weight<=200){
-				return $weight<50?9+50*0.08:9+$weight*0.08;
-			}
-			else{
-				return 9+$weight*0.075;
-			}
-		}
-		else{
-			return 0;
-		}
-	}
-
-	private function calFlytCprUsFee($weight,$l,$w,$h){
-		if ($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 8+90.5*$weight/1000;
-		}
-		else{
-			return 0;
-		}
-	}
-
-	private function calFlytCpUsFee($weight,$l,$w,$h){
-		if ($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return $weight<50?50*90.5:90.5*$weight/1000;
-		}
-		else{
-			return 0;
-		}
-	}
-
-	//运德美国EUB
-	private function calWedoNjEubFee($weight,$l,$w,$h){
-		if($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			if($weight<=200){
-				return $weight<50?(10+50*0.08):(10+$weight*0.08);
-			}
-			else{
-				return 10+$weight*0.075;
-			}
-		}
-		else{
-			return 0;
-		}
-	}
-
-	//运德漳州小包挂号
-	private function calWedoZzCprUsFee($weight,$l,$w,$h){
-		if ($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 8+90.5*$weight/1000;
-		}
-		else{
-			return 0;
-		}
-	}
-
-	//运德漳州小包平邮
-	private function calWedoZzCpUsFee($weight,$l,$w,$h){
-		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return $weight<50?50*0.085:$weight*0.085;
-		}else{
-			return 0;
-		}
-	}
-
-	//运德广州小包平邮
-	private function calWedoGzCpUsFee($weight,$l,$w,$h){
-		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return $weight<50?50*0.0905:$weight*0.0905;
-		}else{
-			return 0;
-		}
-	}
-
-	//运德广州小包挂号
-	private function calWedoGzCprUsFee($weight,$l,$w,$h){
-		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return $weight<50?8+50*0.0905:8+$weight*0.0905;
-		}else{
-			return 0;
-		}
-	}
-
+	
 	private function getSzDeShippingWay($weight,$l,$w,$h,$register){
-		/*//计算出不同物流深圳发德国的最低运费方式
-		if($register||$register==1){
-			return $this->getSzDeRsw($weight,$l,$w,$h);
-		}else{
-			return $this->getSzDeSw($weight,$l,$w,$h);
-		}*/
-
-		/*//计算出当前合作物流的深圳发德国发货方式
-		if($register||$register==1){
-			return "运德德国小包（新加坡）挂号";
-		}else{
-			return "运德德国小包（新加坡）平邮";
-		}*/
 		if($register||$register==1){
 			if($weight>2000 || $l>60 || ($l+$w+$h)>90){
 				return "No way";
@@ -795,21 +523,6 @@ class SzSaleAction extends CommonAction{
 	}
 
 	private function getSzDeShippingFee($weight,$l,$w,$h,$register){
-		/*//计算出不同物流深圳发德国的最低运费
-		if($register||$register==1){
-			return $this->getSzDeRsf($weight,$l,$w,$h);
-		}else{
-			return $this->getSzDeSf($weight,$l,$w,$h);
-		}*/
-
-		/*//计算出当前合作物流的深圳发德国发货运费
-		if($register||$register==1){
-			$fee=$this->calWedoHDRFee($weight,$l,$w,$h);
-			return $fee==0?65536:$fee;
-		}else{
-			$fee=$this->calWedoHDFee($weight,$l,$w,$h);
-			return $fee==0?65536:$fee;
-		}*/
 		if($register||$register==1){
 			$fee=$this->calSpeedPAKStandardFee($weight,$l,$w,$h);
 			return $fee==0?65536:$fee;
@@ -823,195 +536,23 @@ class SzSaleAction extends CommonAction{
 		if($weight>2000 || $l>60 || ($l+$w+$h)>90){
 			return 65536;
 		}else{
-			return 22+$weight*0.12;
+			if($weight<50){
+				return 25+50*0.15;
+			}else{
+				return 25+$weight*0.15;
+			}
 		}
 	}
 
 	private function calSpeedPAKEconomyFee($weight,$l,$w,$h){
 		if($weight>2000 || $l>60 || ($l+$w+$h)>90){
 			return 65536;
-		}elseif{
-			return 15+$weight*0.12;
-		}
-	}
-
-	private function getSzDeRsw($weight,$l,$w,$h){
-		$ways=array(
-				0=>'No way',
-				1=>'飞特香港德国专线挂号',
-				2=>'运德德国小包（香港）挂号'
-			);
-		$fees=array(
-				0=>0,
-				1=>$this->calFlytHDRFee($weight,$l,$w,$h),
-				2=>$this->calWedoHDRFee($weight,$l,$w,$h)
-			);
-		$cheapest=65536;
-		$way=0;
-		for ($i=0; $i < 3; $i++) { 
-			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
-				$cheapest = $fees[$i];
-				$way = $i;
+		}else{
+			if($weight<50){
+				return 15+50*0.15;
+			}else{
+				return 15+$weight*0.15;
 			}
-		}
-		return $ways[$way];
-	}
-
-	private function getSzDeRsf($weight,$l,$w,$h){
-		$fees=array(
-				0=>0,
-				1=>$this->calFlytHDRFee($weight,$l,$w,$h),
-				2=>$this->calWedoHDRFee($weight,$l,$w,$h)
-			);
-		$cheapest=65536;
-		for ($i=0; $i < 3; $i++) { 
-			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
-				$cheapest = $fees[$i];
-			}
-		}
-		return $cheapest;
-	}
-
-	private function getSzDeSw($weight,$l,$w,$h){
-		$ways=array(
-				0=>'No way',
-				1=>'飞特香港德国专线平邮',
-				2=>'运德德国小包（香港）平邮'
-			);
-		$fees=array(
-				0=>0,
-				1=>$this->calFlytHDFee($weight,$l,$w,$h),
-				2=>$this->calWedoHDFee($weight,$l,$w,$h)
-			);
-		$cheapest=65536;
-		$way=0;
-		for ($i=0; $i < 3; $i++) { 
-			if(($cheapest > $fees[$i]) and ($fees[$i] != 0)){
-				$cheapest = $fees[$i];
-				$way = $i;
-			}
-		}
-		return $ways[$way];
-	}
-
-	private function getSzDeSf($weight,$l,$w,$h){
-		$fees=array(
-				0=>0,
-				1=>$this->calFlytHDFee($weight,$l,$w,$h),
-				2=>$this->calWedoHDFee($weight,$l,$w,$h)
-			);
-		$cheapest=65536;
-		for ($i=0; $i < 3; $i++) { 
-			if(($cheapest > $fees[$i]) And ($fees[$i] != 0)){
-				$cheapest = $fees[$i];
-			}
-		}
-		return $cheapest;
-	}
-
-	private function getFlytSzDeShippingWay($weight,$l,$w,$h,$register){
-		if($register){
-			return "飞特香港德国专线挂号";
-		}else{
-			return "飞特香港德国专线平邮";
-		}
-	}
-
-	private function getFlytSzDeShippingFee($weight,$l,$w,$h,$register){
-		if($register){
-			return $this->calFlytHDRFee($weight,$l,$w,$h);
-		}else{
-			return $this->calFlytHDFee($weight,$l,$w,$h);
-		}
-	}
-
-	private function getWedoSzDeShippingWay($weight,$l,$w,$h,$register){
-		if($register){
-			return "运德德国小包（香港）挂号";
-		}else{
-			return "运德德国小包（香港）平邮";
-		}
-	}
-
-	private function getWedoSzDeShippingFee($weight,$l,$w,$h,$register){
-		if($register){
-			return $this->calWedoHDRFee($weight,$l,$w,$h);
-		}else{
-			return $this->calWedoHDFee($weight,$l,$w,$h);
-		}
-	}
-
-	private function calFlytHDRFee($weight,$l,$w,$h){
-		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 13.9+84*$weight/1000;
-		}
-		else{
-			return 0;
-		}
-	}
-
-	private function calFlytHDFee($weight,$l,$w,$h){
-		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 4.1+107*$weight/1000;
-		}
-		else{
-			return 0;
-		}
-	}
-
-	private function calWedoHDRFee($weight,$l,$w,$h){
-		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 16.52+74.2*$weight/1000;
-		}
-		else{
-			return 0;
-		}
-	}
-
-	//运德德国小包（香港）平邮
-	private function calWedoHDFee($weight,$l,$w,$h){
-		if($weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 3.66+110.5*$weight/1000;
-		}
-		else{
-			return 0;
-		}
-	}
-
-	private function getSzGlobalShippingWay($weight,$l,$w,$h,$register){
-		//计算出当前合作物流的深圳发全球发货方式
-		if($register||$register==1){
-			return "运德漳州/广州挂号";
-		}else{
-			return "运德漳州/广州平邮";
-		}
-	}
-
-	private function getSzGlobalShippingFee($weight,$l,$w,$h,$register){
-		//计算出当前合作物流的深圳发全球发货运费
-		if($register||$register==1){
-			return $this->calWedoZprFee($weight,$l,$w,$h);
-		}else{
-			return $this->calWedoZpFee($weight,$l,$w,$h);
-		}
-	}
-
-	//运德漳州挂号运费
-	private function calWedoZprFee($weight,$l,$w,$h){
-		if ($weight>0 And $weight <= 2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return 8+100*$weight/1000;
-		}
-		else{
-			return 65536;
-		}
-	}
-
-	//运德漳州平邮运费
-	private function calWedoZpFee($weight,$l,$w,$h){
-		if($weight>0 And $weight<=2000 And ($l + $w + $h) <= 90 And $l <=60){
-			return $weight<50?50*0.1:$weight*0.1;
-		}else{
-			return 65536;
 		}
 	}
 
@@ -1168,19 +709,11 @@ class SzSaleAction extends CommonAction{
         	if($account=="rc-helicar" && $country=="us"){
         		$data[$key]['local_shipping_way']=$this->getSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
         		$data[$key]['local_shipping_fee']=round($this->getSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
-        		$data[$key]['global_shipping_way']=$this->getSzGlobalShippingWay($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
-        		$data[$key]['global_shipping_fee']=round($this->getSzGlobalShippingFee($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
         		$data[$key]['cost']=$this->getSzUsCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key]['local_shipping_fee'],$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]);
         	}elseif($account=="rc-helicar" && $country=="de"){
         		$data[$key]['local_shipping_way']=$this->getSzDeShippingWay($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
         		$data[$key]['local_shipping_fee']=round($this->getSzDeShippingFee($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
-        		$data[$key]['global_shipping_way']=$this->getSzGlobalShippingWay($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
-        		$data[$key]['global_shipping_fee']=round($this->getSzGlobalShippingFee($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
         		$data[$key]['cost']=$this->getSzDeCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key]['local_shipping_fee'],$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]);
-        	}elseif($account=="zuck"){
-        		$data[$key]['global_shipping_way']=$this->getSzUsShippingWay($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]);
-        		$data[$key]['global_shipping_fee']=round($this->getSzUsShippingFee($value[C('DB_PRODUCT_PWEIGHT')]==0?$value[C('DB_PRODUCT_WEIGHT')]+20:$value[C('DB_PRODUCT_PWEIGHT')],$value[C('DB_PRODUCT_PLENGTH')],$value[C('DB_PRODUCT_PWIDTH')],$value[C('DB_PRODUCT_PHEIGHT')],$sp[C('DB_SZ_US_SALE_PLAN_REGISTER')]),2);
-        		$data[$key]['cost']=$this->getWishCost($data[$key][C('DB_PRODUCT_PRICE')],$data[$key]['global_shipping_fee'],$data[$key][C('DB_SZ_WISH_SALE_PLAN_PRICE')]);
         	}
         	
         	
