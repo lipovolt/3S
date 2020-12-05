@@ -2859,7 +2859,7 @@ class GgsUsswSaleAction extends CommonAction{
             case 'g-lipovolt':
                 return 'groupon';
                 break;
-            case 'blackfive':
+            case 'ali-retail':
                 return 'ebay';
                 break;
             default:
@@ -2906,10 +2906,7 @@ class GgsUsswSaleAction extends CommonAction{
             case 'g-lipovolt':
                 return 'UsswSalePlan3View';
                 break;
-            case 'blackfive':
-                return 'UsswSalePlan4View';
-                break;
-            case 'blackfive':
+            case 'ali-retail':
                 return 'UsswSalePlan4View';
                 break;
             default:
