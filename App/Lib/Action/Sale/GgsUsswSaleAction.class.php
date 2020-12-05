@@ -1775,7 +1775,11 @@ class GgsUsswSaleAction extends CommonAction{
                 for($i=2;$i<=$highestRow;$i++){
                 	$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
                 	foreach ($splitSku as $splitskukey => $splitskuvalue) {
-                		$splitSku[$splitskukey][0]=$this->toTextSku($splitskuvalue[0]);
+                		if(strcasecmp($account, 'ali-retail')==0){
+                			$splitSku[$splitskukey][0]=$this->ARSKUDecode($splitskuvalue[0]);
+                		}else{
+                			$splitSku[$splitskukey][0]=$this->toTextSku($splitskuvalue[0]);
+                		}                		
                 	}
 
                 	$data[$i-2][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
