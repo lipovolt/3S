@@ -138,7 +138,7 @@ return array(
 	//cooperate sellerID
 	'COOPERATE_SELLERID' => array(
 		0 => 'greatgoodshop',
-		1 => 'blackfive',
+		1 => 'ali-retail',
 		2 => 'lipovolt',
 		3 => 'g-lipovolt',
 		),

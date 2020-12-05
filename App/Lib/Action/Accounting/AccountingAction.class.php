@@ -1146,7 +1146,7 @@ class AccountingAction extends CommonAction{
 		switch ($sellerID) {
 			case 'greatgoodshop':
 				return 'cooperate';
-			case 'blackfive':
+			case 'ali-retail':
 				return 'cooperate';
 			case 'rc-helicar':
 				return 'personal';
