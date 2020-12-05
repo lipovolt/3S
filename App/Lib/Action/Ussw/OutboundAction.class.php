@@ -422,7 +422,12 @@ class OutboundAction extends CommonOutboundAction{
                 for($i=4;$i<=$highestRow-3;$i++){
                     $saleNo =  $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
                     $buyerID =  $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
-                    $sku = $objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue();
+                    if(strcasecmp($sellerID, "ali-retail")==0){
+                        $sku = $this->ARSKUDecode($objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue());
+                    }else{
+                        $sku = $objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue();
+                    }
+                    
                     //判断ebay订单号是否已存在
                     if($this->duplicateSaleNo($market,$sellerID,$saleNo)){ 
                     //ebay订单号在出库表中，添加错误信息

@@ -2837,7 +2837,7 @@ class GgsUsswSaleAction extends CommonAction{
             case 'g-lipovolt':
                 return C('DB_USSW_SALE_PLAN3');
                 break;
-            case 'blackfive':
+            case 'ali-retail':
                 return C('DB_USSW_SALE_PLAN4');
                 break;
             default:
@@ -2884,7 +2884,7 @@ class GgsUsswSaleAction extends CommonAction{
             case 'g-lipovolt':
                 return C('DB_USSTORAGE');
                 break;
-            case 'blackfive':
+            case 'ali-retail':
                 return C('DB_USSTORAGE');
                 break;
             default:

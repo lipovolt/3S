@@ -1597,7 +1597,7 @@ return array(
 	`id` smallint(6) unsigned primary key not null auto_increment,
 	`month` varchar(20) not null,
 	`seller_id` varchar(30) default null,
-	`seller_id_type` varchar(10) default null, //cooperate,personal
+	`seller_id_type` varchar(10) default null, 
 	`usd_income` decimal(10,2) default null,
 	`eur_income` decimal(10,2) default null,
 	`usd_item_cost` decimal(10,2) default null,
@@ -1613,7 +1613,7 @@ return array(
 	'DB_INCOMECOST_ID' => 'id',
 	'DB_INCOMECOST_MONTH' => 'month',
 	'DB_INCOMECOST_SLLERID' => 'seller_id',
-	'DB_INCOMECOST_SLLERIDTYPE' => 'seller_id_type',
+	'DB_INCOMECOST_SLLERIDTYPE' => 'seller_id_type',//cooperate,personal
 	'DB_INCOMECOST_USDINCOME' => 'usd_income',
 	'DB_INCOMECOST_USDITEMCOST' => 'usd_item_cost',
 	'DB_INCOMECOST_USDRETURN' => 'usd_return',

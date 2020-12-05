@@ -275,10 +275,69 @@ class CommonAction extends Action{
         }
     }
 
+
+    /*
+    *decode ali-retail sku to standard sku. Ali-retail sku formate AR1001C： AR prefix, 1001 main sku, c 03
+    */
+    public function ARSKUDecode($sku){
+        if(!is_numeric(substr($sku, 0,1)) && (substr($sku, 0,2)=='AR' || substr($sku, 0,2)=='ar') && is_numeric(substr($sku, 2,1)) && is_numeric(substr($sku, 3,1)) && is_numeric(substr($sku, 4,1)) && is_numeric(substr($sku, 5,1))){
+            //Ali-Retail账号, sku格式AR1001 or AR1001A=>1001.01
+            $skuExplodArr = explode('|', $sku);
+            foreach ($skuExplodArr as $seakey => $seavalue) {
+                $qtyExplodeArr = explode('*', $seavalue);
+                if($this->checkReplaceAliRetailSku($qtyExplodeArr[0])!=null){
+                    if(count($qtyExplodeArr)>1){
+                        if($decodedSku!=null){
+                            $decodedSku = $decodedSku.'|'.$this->checkReplaceAliRetailSku($qtyExplodeArr[0]).'*'.$qtyExplodeArr[1];
+                        }else{
+                            $decodedSku = $this->checkReplaceAliRetailSku($qtyExplodeArr[0]).'*'.$qtyExplodeArr[1];
+                        }                    
+                    }else{
+                        if($decodedSku!=null){
+                            $decodedSku = $decodedSku.'|'.$this->checkReplaceAliRetailSku($qtyExplodeArr[0]);
+                        }else{
+                            $decodedSku = $this->checkReplaceAliRetailSku($qtyExplodeArr[0]);
+                        }
+                    }
+                }else{
+                    return $sku;//无法解析，直接返回原sku
+                }                
+            }
+            return $decodedSku;            
+        }
+        return $sku;//不是ali-retail sku 格式，直接返回原sku
+    }
+
     public function skuDecode($sku){
         if(is_numeric(substr($sku, 0,1)) && is_numeric(substr($sku, strlen($sku)-1,1))){
             //sku首尾字母都是数字，标准不需要处理，直接返回
             return $sku;
+        }
+        if(!is_numeric(substr($sku, 0,1)) && (substr($sku, 0,2)=='AR' || substr($sku, 0,2)=='ar') && is_numeric(substr($sku, 2,1)) && is_numeric(substr($sku, 3,1)) && is_numeric(substr($sku, 4,1)) && is_numeric(substr($sku, 5,1))){
+            //Ali-Retail账号, sku格式AR1001 or AR1001A=>1001.01
+            $skuExplodArr = explode('|', $sku);
+            foreach ($skuExplodArr as $seakey => $seavalue) {
+                $qtyExplodeArr = explode('*', $seavalue);
+                if($this->checkReplaceAliRetailSku($qtyExplodeArr[0])!=null){
+                    if(count($qtyExplodeArr)>1){
+                        if($decodedSku!=null){
+                            $decodedSku = $decodedSku.'|'.$this->checkReplaceAliRetailSku($qtyExplodeArr[0]).'*'.$qtyExplodeArr[1];
+                        }else{
+                            $decodedSku = $this->checkReplaceAliRetailSku($qtyExplodeArr[0]).'*'.$qtyExplodeArr[1];
+                        }                    
+                    }else{
+                        if($decodedSku!=null){
+                            $decodedSku = $decodedSku.'|'.$this->checkReplaceAliRetailSku($qtyExplodeArr[0]);
+                        }else{
+                            $decodedSku = $this->checkReplaceAliRetailSku($qtyExplodeArr[0]);
+                        }
+                    }
+                }else{
+                    return $sku;
+                }                
+            }
+            return $decodedSku;
+            
         }elseif(!is_numeric(substr($sku, 0,1)) && is_numeric(substr($sku, strlen($sku)-1,1))){
             if(substr($sku, 0,1)=='S' && strlen($sku)==7){
                 //孙培华账号,sku格式S100101
@@ -300,6 +359,49 @@ class CommonAction extends Action{
             }
         }
         return null;
+    }
+
+    private function checkReplaceAliRetailSku($sku){
+        if(strlen($sku)==6){
+            return substr($sku, 2,strlen($sku));
+        }elseif(strlen($sku)>6){
+            for ($i=6; $i < strlen($sku); $i++) { 
+                if(is_numeric(substr($sku,$i,1))){
+                    return null;
+                }
+            }
+            return substr($sku, 2,4).'.'.$this->ABC2decimal(substr($sku, 6,strlen($sku)-6));
+        }
+    }
+
+    //字母（26）进制转10进制
+    private function ABC2decimal($abc){
+        $ten = 26*(strlen($abc)-1)+1;
+        $len = strlen($abc);
+        for($i=1;$i<=$len;$i++){
+            $char = substr($abc,0-$i,1);//反向获取单个字符
+
+            $int = ord(strtoupper($char));
+            $ten += ($int-65)*pow(26,$i-1);
+        }
+        if($ten<10){
+            return '0'.$ten;
+        }else{
+            return $ten;
+        }
+    }
+
+    /*
+    *根据 | 和 * 分解标准sku
+    */
+    public function splittStandardSku($sku){
+        $splittedSku=array();
+        $skuDepart = explode("|",$sku);
+        foreach ($skuDepart as $key => $value) {
+            $skuQuantityDepart = explode("*",$value);
+            array_push($splittedSku, array('sku'=>$skuQuantityDepart[0],'qty'=>$skuQuantityDepart[1]==null?1:$skuQuantityDepart[1]));
+        }
+        return $splittedSku;
     }
 }
 

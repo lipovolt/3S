@@ -177,7 +177,7 @@ class AccountingAction extends CommonAction{
 		}elseif(empty($_FILES)){
 			$this->error("请选择上传的文件");
 		}else{
-			if($_POST['sellerID']=='greatgoodshop' || $_POST['sellerID']=='blackfive' || $_POST['sellerID']=='vtkg5755' || $_POST['sellerID']=='yzhan-816'){
+			if($_POST['sellerID']=='greatgoodshop' || $_POST['sellerID']=='ali-retail' || $_POST['sellerID']=='vtkg5755' || $_POST['sellerID']=='yzhan-816'){
 				$this->importEbayEnSaleRecordHandle();		
 			}elseif ($_POST['sellerID']=='rc-helicar') {
 				$this->importEbayEnSaleRecordHandle();
@@ -354,7 +354,12 @@ class AccountingAction extends CommonAction{
         	$kpiSaleRecordTable=M(C('DB_KPI_SALE_RECORD'));
         	$kpiSaleRecordTable->startTrans();
         	for($i=2;$i<=$highestRow;$i++){
-        		$sku = $objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
+        		if(strcasecmp($_POST['sellerID'], 'ali-retail')==0){
+        			$sku = $this->ARSKUDecode($objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue());
+        		}else{
+        			$sku = $objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
+        		}
+        		
         		$quantity = $objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
         		$salePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue());
         		$shippingPriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("R".$i)->getValue());
@@ -391,8 +396,9 @@ class AccountingAction extends CommonAction{
 	        			}
 	        			$usdEbayFee = $usdEbayFee+$totalCM['amount']*$pfa['ebay_percent'];
 	        			$usdPmpa[$pmanager] = $usdPmpa[$pmanager]+$totalCM['amount'];
-	        			$usdCost = $usdCost+$productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_PRICE'))*$quantity;
-
+	        			foreach ($this->splittStandardSku($sku) as $iskey => $isvalue) {
+	        				$usdCost=$usdCost+$productTable->where(array(C('DB_PRODUCT_SKU')=>$isvalue['sku']))->getField(C('DB_PRODUCT_PRICE'))*$isvalue['qty']*$quantity;
+	        			}
 	        		}
 	        		if($totalCM['currency']=='eur'){
 	        			$eurIncome = $eurIncome+$totalCM['amount'];
@@ -453,7 +459,12 @@ class AccountingAction extends CommonAction{
 
 	        		for ($j=$i+1; $j<=$highestRow; $j++) { 
 	        			if($objPHPExcel->getActiveSheet()->getCell("A".$j)->getValue() == $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()){
-	        				$itemSku = $objPHPExcel->getActiveSheet()->getCell("AG".$j)->getValue();
+	        				if(strcasecmp($_POST['sellerID'], 'ali-retail')==0){
+			        			$itemSku = $this->ARSKUDecode($objPHPExcel->getActiveSheet()->getCell("AG".$j)->getValue());
+			        		}else{
+			        			$itemSku = $objPHPExcel->getActiveSheet()->getCell("AG".$j)->getValue();
+			        		}
+
 			        		$itemQuantity = $objPHPExcel->getActiveSheet()->getCell("P".$j)->getValue();
 			        		$itemSalePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("Q".$j)->getValue());
 			        		$pmanager = $productTable->where(array(C('DB_PRODUCT_SKU')=>$itemSku))->getField(C('DB_PRODUCT_MANAGER'));
@@ -461,7 +472,9 @@ class AccountingAction extends CommonAction{
 			        			$pmanager='Yellow River';
 			        		}
 			        		if($totalCM['currency']=='usd'){
-		        				$usdCost=$usdCost+$productTable->where(array(C('DB_PRODUCT_SKU')=>$itemSku))->getField(C('DB_PRODUCT_PRICE'))*$itemQuantity;
+			        			foreach ($this->splittStandardSku($itemSku) as $iskey => $isvalue) {
+			        				$usdCost=$usdCost+$productTable->where(array(C('DB_PRODUCT_SKU')=>$isvalue['sku']))->getField(C('DB_PRODUCT_PRICE'))*$isvalue['qty']*$itemQuantity;
+			        			}
 		        				if($difference==0){
 		        					$usdPmpa[$pmanager] = $usdPmpa[$pmanager]+$itemQuantity*$itemSalePriceCM['amount'];
 		        				}
@@ -1184,7 +1197,7 @@ class AccountingAction extends CommonAction{
 					'ebay_percent'=>C('PLATFORM_FEE')['Ebay_US_Percent'],
 					'ebay_shop'=>C('PLATFORM_FEE')['Ebay_US_Shop'],
 					);
-			case 'blackfive':
+			case 'ali-retail':
 				return array(
 					'paypal_percent'=>C('PLATFORM_FEE')['Paypal_US_Percent'], 
 					'paypal_base'=>C('PLATFORM_FEE')['Paypal_US_Base'],
