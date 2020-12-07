@@ -308,35 +308,31 @@ class CommonAction extends Action{
         return $sku;//不是ali-retail sku 格式，直接返回原sku
     }
 
-    public function skuDecode($sku){
+    public function isARSKUFormat($sku){
+        if(!is_numeric(substr($sku, 0,1)) && (substr($sku, 0,2)=='AR' || substr($sku, 0,2)=='ar') && is_numeric(substr($sku, 2,1)) && is_numeric(substr($sku, 3,1)) && is_numeric(substr($sku, 4,1)) && is_numeric(substr($sku, 5,1))){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function isStandardSkuFormat($sku){
         if(is_numeric(substr($sku, 0,1)) && is_numeric(substr($sku, strlen($sku)-1,1))){
+            //sku首尾字母都是数字，标准不需要处理，直接返回
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function skuDecode($sku){
+        if($this->isStandardSkuFormat($sku)){
             //sku首尾字母都是数字，标准不需要处理，直接返回
             return $sku;
         }
-        if(!is_numeric(substr($sku, 0,1)) && (substr($sku, 0,2)=='AR' || substr($sku, 0,2)=='ar') && is_numeric(substr($sku, 2,1)) && is_numeric(substr($sku, 3,1)) && is_numeric(substr($sku, 4,1)) && is_numeric(substr($sku, 5,1))){
+        if($this->isARSKUFormat($sku)){
             //Ali-Retail账号, sku格式AR1001 or AR1001A=>1001.01
-            $skuExplodArr = explode('|', $sku);
-            foreach ($skuExplodArr as $seakey => $seavalue) {
-                $qtyExplodeArr = explode('*', $seavalue);
-                if($this->checkReplaceAliRetailSku($qtyExplodeArr[0])!=null){
-                    if(count($qtyExplodeArr)>1){
-                        if($decodedSku!=null){
-                            $decodedSku = $decodedSku.'|'.$this->checkReplaceAliRetailSku($qtyExplodeArr[0]).'*'.$qtyExplodeArr[1];
-                        }else{
-                            $decodedSku = $this->checkReplaceAliRetailSku($qtyExplodeArr[0]).'*'.$qtyExplodeArr[1];
-                        }                    
-                    }else{
-                        if($decodedSku!=null){
-                            $decodedSku = $decodedSku.'|'.$this->checkReplaceAliRetailSku($qtyExplodeArr[0]);
-                        }else{
-                            $decodedSku = $this->checkReplaceAliRetailSku($qtyExplodeArr[0]);
-                        }
-                    }
-                }else{
-                    return $sku;
-                }                
-            }
-            return $decodedSku;
+            return $this->ARSKUDecode($sku);
             
         }elseif(!is_numeric(substr($sku, 0,1)) && is_numeric(substr($sku, strlen($sku)-1,1))){
             if(substr($sku, 0,1)=='S' && strlen($sku)==7){

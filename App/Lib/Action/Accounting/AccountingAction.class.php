@@ -327,6 +327,7 @@ class AccountingAction extends CommonAction{
         $file_name=$info[0]['savepath'].$info[0]['savename'];
         $objReader = PHPExcel_IOFactory::createReader('Excel5');
         $objPHPExcel = $objReader->load($file_name,$encode='utf-8');
+
         $sheet = $objPHPExcel->getSheet(0);
         $highestRow = $sheet->getHighestRow(); // 取得总行数
         $highestColumn = $sheet->getHighestColumn(); // 取得总列数
@@ -334,7 +335,7 @@ class AccountingAction extends CommonAction{
         for($c='A';$c!=$highestColumn;$c++){
             $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue(); 
         }
-        if($this->verifyEbayEnSaleRecordColumnName($firstRow)){
+        if($this->verifyEbayEnSaleRecordColumnName($firstRow) && stripos($_FILES['import']['name'], I('post.sellerID'))!==false){
         	$usdIncome = 0;
         	$usdPaypalFee = 0;
         	$usdEbayFee = 0;
@@ -354,11 +355,7 @@ class AccountingAction extends CommonAction{
         	$kpiSaleRecordTable=M(C('DB_KPI_SALE_RECORD'));
         	$kpiSaleRecordTable->startTrans();
         	for($i=2;$i<=$highestRow;$i++){
-        		if(strcasecmp($_POST['sellerID'], 'ali-retail')==0){
-        			$sku = $this->ARSKUDecode($objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue());
-        		}else{
-        			$sku = $objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue();
-        		}
+        		$sku = $this->skuDecode($objPHPExcel->getActiveSheet()->getCell("AG".$i)->getValue());
         		
         		$quantity = $objPHPExcel->getActiveSheet()->getCell("P".$i)->getValue();
         		$salePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("Q".$i)->getValue());
@@ -459,11 +456,7 @@ class AccountingAction extends CommonAction{
 
 	        		for ($j=$i+1; $j<=$highestRow; $j++) { 
 	        			if($objPHPExcel->getActiveSheet()->getCell("A".$j)->getValue() == $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue()){
-	        				if(strcasecmp($_POST['sellerID'], 'ali-retail')==0){
-			        			$itemSku = $this->ARSKUDecode($objPHPExcel->getActiveSheet()->getCell("AG".$j)->getValue());
-			        		}else{
-			        			$itemSku = $objPHPExcel->getActiveSheet()->getCell("AG".$j)->getValue();
-			        		}
+	        				$itemSku = $this->skuDecode($objPHPExcel->getActiveSheet()->getCell("AG".$j)->getValue());
 
 			        		$itemQuantity = $objPHPExcel->getActiveSheet()->getCell("P".$j)->getValue();
 			        		$itemSalePriceCM = $this->getCurrencyAmount($objPHPExcel->getActiveSheet()->getCell("Q".$j)->getValue());
@@ -531,7 +524,7 @@ class AccountingAction extends CommonAction{
 			$this->setBonus($_POST['month']);
         	$this->redirect('incomeCost');
         }else{
-        	$this->error("模板不正确，请检查");
+        	$this->error("模板不正确或者改文件不是这个账号 ".I('post.sellerID')." 的销售文件，请检查");
         }
 	}
 

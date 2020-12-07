@@ -1775,11 +1775,7 @@ class GgsUsswSaleAction extends CommonAction{
                 for($i=2;$i<=$highestRow;$i++){
                 	$splitSku = $this->splitSku($objPHPExcel->getActiveSheet()->getCell("K".$i)->getValue());
                 	foreach ($splitSku as $splitskukey => $splitskuvalue) {
-                		if(strcasecmp($account, 'ali-retail')==0){
-                			$splitSku[$splitskukey][0]=$this->ARSKUDecode($splitskuvalue[0]);
-                		}else{
-                			$splitSku[$splitskukey][0]=$this->toTextSku($splitskuvalue[0]);
-                		}                		
+                		$splitSku[$splitskukey][0]=$this->toTextSku($this->skuDecode($splitskuvalue[0]));               		
                 	}
 
                 	$data[$i-2][$firstRow['A']]=$objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
@@ -1798,7 +1794,7 @@ class GgsUsswSaleAction extends CommonAction{
                 		//Single sku
                 		$oinventory=0;
                 		for($e=1;$e<=$excludeHighestRow;$e++){
-                			if($excludeSheet->getCell("A".$e)->getValue()==$splitSku[0][0]){
+                			if($this->skuDecode($excludeSheet->getCell("A".$e)->getValue())==$splitSku[0][0]){
                 				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
                 			}
                 		}

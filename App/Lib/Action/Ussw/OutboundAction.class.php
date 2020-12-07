@@ -422,10 +422,18 @@ class OutboundAction extends CommonOutboundAction{
                 for($i=4;$i<=$highestRow-3;$i++){
                     $saleNo =  $objPHPExcel->getActiveSheet()->getCell("A".$i)->getValue();
                     $buyerID =  $objPHPExcel->getActiveSheet()->getCell("C".$i)->getValue();
-                    if(strcasecmp($sellerID, "ali-retail")==0){
-                        $sku = $this->ARSKUDecode($objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue());
-                    }else{
-                        $sku = $objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue();
+                    $sku = $this->skuDecode($objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue());
+
+                    //判断sku格式是否与账号要求的SKU格式一致
+                    if(strcasecmp($sellerID, 'greatgoodshop')==0 && !$this->isStandardSkuFormat($objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue())){
+                        $errorInFile[$indexForErrorOfFile]['saleno'] = $saleNo;
+                        $errorInFile[$indexForErrorOfFile]['error'] = '该ebay'.$sellerID.'订单号的SKU不是 greatgoodshop sku 格式';
+                        $indexForErrorOfFile = $indexForErrorOfFile+1;
+                    }
+                    if(strcasecmp($sellerID, 'ali-retail')==0 && !$this->isARSKUFormat($objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue())){
+                        $errorInFile[$indexForErrorOfFile]['saleno'] = $saleNo;
+                        $errorInFile[$indexForErrorOfFile]['error'] = '该ebay'.$sellerID.'订单号的SKU不是 ali-retail sku 格式';
+                        $indexForErrorOfFile = $indexForErrorOfFile+1;
                     }
                     
                     //判断ebay订单号是否已存在
@@ -773,7 +781,9 @@ class OutboundAction extends CommonOutboundAction{
         $kpiSaleRecord = M(C('DB_KPI_SALE_RECORD'));
         $kpiSaleRecord->startTrans();
         foreach ($outboundOrderItems as $key => $value) {
-            $oid=$usswOutbound->where(array(C('DB_USSW_OUTBOUND_MARKET_NO')=>$value[C('DB_USSW_OUTBOUND_ITEM_OOID')]))->getField('id');
+            $where[C('DB_USSW_OUTBOUND_MARKET_NO')] = array('eq',$value[C('DB_USSW_OUTBOUND_ITEM_OOID')]);
+            $where[C('DB_USSW_OUTBOUND_SELLER_ID')] = array('eq',$sellerID);
+            $oid=$usswOutbound->where($where)->getField('id');
             $value[C('DB_USSW_OUTBOUND_ITEM_OOID')]=$oid;
             $value[C('DB_SZ_OUTBOUND_ITEM_POSITION')]=$usstorage->where(array(C('DB_USSTORAGE_SKU')=>$value[C('DB_USSW_OUTBOUND_ITEM_SKU')]))->getField(C('DB_USSTORAGE_POSITION'));
             $usswOutboundItem->add($value);
@@ -1034,6 +1044,8 @@ class OutboundAction extends CommonOutboundAction{
             $order=$obo->where(array(C('DB_USSW_OUTBOUND_MARKET_NO')=>$value[C('DB_USSW_OUTBOUND_MARKET_NO')]))->find();
             $items=$oboi->where(array(C('DB_USSW_OUTBOUND_ITEM_OOID')=>$order[C('DB_USSW_OUTBOUND_ID')]))->select();
             $data[$i][C('DB_USSW_OUTBOUND_MARKET_NO')]=$value[C('DB_USSW_OUTBOUND_MARKET_NO')];
+            $data[$i][C('DB_USSW_OUTBOUND_SELLER_ID')]=$value[C('DB_USSW_OUTBOUND_SELLER_ID')];
+            $data[$i][C('DB_USSW_OUTBOUND_MARKET')]=$value[C('DB_USSW_OUTBOUND_MARKET')];
             $data[$i][C('DB_USSW_OUTBOUND_BUYER_NAME')]=$order[C('DB_USSW_OUTBOUND_BUYER_NAME')];
             $data[$i][C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')]=$order[C('DB_USSW_OUTBOUND_BUYER_ADDRESS1')];
             $data[$i][C('DB_USSW_OUTBOUND_BUYER_ADDRESS2')]=$order[C('DB_USSW_OUTBOUND_BUYER_ADDRESS2')];
