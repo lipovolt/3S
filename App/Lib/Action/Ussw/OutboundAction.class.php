@@ -425,14 +425,14 @@ class OutboundAction extends CommonOutboundAction{
                     $sku = $this->skuDecode($objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue());
 
                     //判断sku格式是否与账号要求的SKU格式一致
-                    if(strcasecmp($sellerID, 'greatgoodshop')==0 && !$this->isStandardSkuFormat($objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue())){
+                    if($sku!=null && strcasecmp($sellerID, 'greatgoodshop')==0 && !$this->isStandardSkuFormat($objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue())){
                         $errorInFile[$indexForErrorOfFile]['saleno'] = $saleNo;
-                        $errorInFile[$indexForErrorOfFile]['error'] = '该ebay'.$sellerID.'订单号的SKU不是 greatgoodshop sku 格式';
+                        $errorInFile[$indexForErrorOfFile]['error'] = '该ebay订单号的SKU不是 greatgoodshop sku 格式';
                         $indexForErrorOfFile = $indexForErrorOfFile+1;
                     }
-                    if(strcasecmp($sellerID, 'ali-retail')==0 && !$this->isARSKUFormat($objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue())){
+                    if($sku!=null && strcasecmp($sellerID, 'ali-retail')==0 && !$this->isARSKUFormat($objPHPExcel->getActiveSheet()->getCell("W".$i)->getValue())){
                         $errorInFile[$indexForErrorOfFile]['saleno'] = $saleNo;
-                        $errorInFile[$indexForErrorOfFile]['error'] = '该ebay'.$sellerID.'订单号的SKU不是 ali-retail sku 格式';
+                        $errorInFile[$indexForErrorOfFile]['error'] = '该ebay订单号的SKU不是 ali-retail sku 格式';
                         $indexForErrorOfFile = $indexForErrorOfFile+1;
                     }
                     
