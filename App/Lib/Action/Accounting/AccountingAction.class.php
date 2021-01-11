@@ -3,7 +3,15 @@
 class AccountingAction extends CommonAction{
 
 	public function incomeCost(){
-		$this->assign('data',M(C('DB_INCOMECOST'))->select());
+		$Data = M(C('DB_INCOMECOST'));
+        import('ORG.Util.Page');
+        $count = $Data->count();
+        $Page = new Page($count,50);            
+        $Page->setConfig('header', '条数据');
+        $show = $Page->show();
+        $record = $Data->order('id desc')->limit($Page->firstRow.','.$Page->listRows)->select();
+        $this->assign('data',$record);
+        $this->assign('page',$show);
 		$this->display();
 	}
 

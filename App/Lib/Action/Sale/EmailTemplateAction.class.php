@@ -89,7 +89,10 @@ This should be a issue of the postman, who is responsible for your local. The pa
 			Your order is shipped through ebay global shipping program. That means we send the item to ebay warehouse in USA. Then ebay send the item from USA to you. The tracking number 9400109699938567132513 is for the first way. The item is delivered to ebay warehouse. Now the item will be shipped to you. But when the ebay will ship the item and what is the tracking number, I don't know yet. You can wait a few days. Or direct contact ebay online customer service.",
 			"发货时间或指定日期到货"=>"the order before 9 o'clock will be sent on the same working day. Otherwise the order will be sent on the next working day. I regret I can't guarantee the transportation speed of USPS. I ask for your understanding.",
 			"COVID-19导致投递时效延误解释"=>"Hello,<br>
-			The package was given to the USPS on #################. Because of the COVID-19 Viren, The processing speed of the post office was affected.Please wait a few more days. thank you for your patience.",
+			The package has been given to the USPS on XXXXXXXXXXXXXXX. Because of the COVID-19 Viren, The processing speed of the post office is affected. Please wait a few more days. Thank you for your patience.",
+			"货物已经交给邮差，邮局未扫描的解释"=>"Hello,<br>
+			The package has been given to postman on XXXXXXXXXXXXXXX. The updating of tracking information 'SHIPMENT RECEIVED ACCEPTANCE PENDING' is from the postman who has picked up the package from our warehouse.
+			Then the postman bring the package to USPS processing center. If the package is scanned in processing center, the tracking information will be updated with the information 'ORIGIN ACCEPTANCE'.",
 			);
 		if($language=='de'){
 			$this->assign('templates', $de_templates);
