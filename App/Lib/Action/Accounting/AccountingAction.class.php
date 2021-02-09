@@ -393,8 +393,8 @@ class AccountingAction extends CommonAction{
         		//如果sku和ebay item id和总价都不为空，可以用总价确认收入，平台费用，产品经理绩效。用sku查找采购成本。通过运算计算是否有退款。
         		if($sku!=null && $ebay_id!=null && $totalCM['amount']!=null){
 	        		if($totalCM['currency']=='usd'){
-	        			$usdIncome = $usdIncome+$totalCM['amount']-$ectTaxCM['amount'];
-	        			$usdTaxCollection = $usdTaxCollection+$taxCM['amount'];
+	        			$usdIncome = $usdIncome+$totalCM['amount'];
+	        			$usdTaxCollection = $usdTaxCollection+$taxCM['amount']+$ectTaxCM['amount'];
 	        			if($totalCM['amount']<12){
 	        				$usdPaypalFee = $usdPaypalFee+$totalCM['amount']*$pfa['paypal__small_percent']+$pfa['paypal_small_base'];
 	        			}else{
@@ -407,7 +407,7 @@ class AccountingAction extends CommonAction{
 	        			}
 	        		}
 	        		if($totalCM['currency']=='eur'){
-	        			$eurIncome = $eurIncome+$totalCM['amount']-$ectTaxCM['amount'];
+	        			$eurIncome = $eurIncome+$totalCM['amount'];
 	        			$eurTaxCollection = $eurTaxCollection+$taxCM['amount'];
 	        			if($totalCM['amount']<12){
 	        				$eurPaypalFee = $eurPaypalFee+$totalCM['amount']*$pfa['paypal__small_percent']+$pfa['paypal_small_base'];
@@ -418,7 +418,7 @@ class AccountingAction extends CommonAction{
 	        			$eurPmpa[$pmanager] = $eurPmpa[$pmanager]+$totalCM['amount'];
 	        			$eurCost = $eurCost+$productTable->where(array(C('DB_PRODUCT_SKU')=>$sku))->getField(C('DB_PRODUCT_PRICE'))*$quantity;
 	        		}
-	        		$difference=($quantity*$salePriceCM['amount']+$shippingPriceCM['amount']+$taxCM['amount'])+$ectTaxCM['amount']-$totalCM['amount'];
+	        		$difference=($quantity*$salePriceCM['amount']+$shippingPriceCM['amount']+$taxCM['amount'])-$totalCM['amount'];
 	        		if($difference>0){
 	        			if($totalCM['currency']=='usd'){
 	        				$usdRefund=$usdRefund+$difference;
@@ -433,8 +433,8 @@ class AccountingAction extends CommonAction{
         		//如果ebay item id为空,总价不为空
         		if($ebay_id==null && $totalCM['amount']!=null){
         			if($totalCM['currency']=='usd'){
-	        			$usdIncome = $usdIncome+$totalCM['amount']-$ectTaxCM['amount'];
-	        			$usdTaxCollection = $usdTaxCollection+$taxCM['amount'];
+	        			$usdIncome = $usdIncome+$totalCM['amount'];
+	        			$usdTaxCollection = $usdTaxCollection+$taxCM['amount']+$ectTaxCM['amount'];
 	        			if($totalCM['amount']<12){
 	        				$usdPaypalFee = $usdPaypalFee+$totalCM['amount']*$pfa['paypal__small_percent']+$pfa['paypal_small_base'];
 	        			}else{
@@ -443,7 +443,7 @@ class AccountingAction extends CommonAction{
 	        			$usdEbayFee = $usdEbayFee+$totalCM['amount']*$pfa['ebay_percent'];
 	        		}
 	        		if($totalCM['currency']=='eur'){
-	        			$eurIncome = $eurIncome+$totalCM['amount']-$ectTaxCM['amount'];
+	        			$eurIncome = $eurIncome+$totalCM['amount'];
 	        			$eurTaxCollection = $eurTaxCollection+$taxCM['amount'];
 	        			if($totalCM['amount']<12){
 	        				$eurPaypalFee = $eurPaypalFee+$totalCM['amount']*$pfa['paypal__small_percent']+$pfa['paypal_small_base'];
@@ -453,7 +453,7 @@ class AccountingAction extends CommonAction{
 	        			$eurEbayFee = $eurEbayFee+$totalCM['amount']*$pfa['ebay_percent'];
 	        		}
 
-	        		$difference = $salePriceCM['amount']+$shippingPriceCM['amount']+$taxCM['amount']+$ectTaxCM['amount']-$totalCM['amount'];
+	        		$difference = $salePriceCM['amount']+$shippingPriceCM['amount']+$taxCM['amount']-$totalCM['amount'];
 	        		if($difference>0){
 	        			if($totalCM['currency']=='usd'){
 	        				$usdRefund=$usdRefund+$difference;

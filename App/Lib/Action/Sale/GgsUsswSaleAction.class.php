@@ -2036,7 +2036,7 @@ class GgsUsswSaleAction extends CommonAction{
 			    	$data[$key]["maximum-seller-allowed-price"]=$this->getUsswAmazonISP($p[C('DB_PRODUCT_PRICE')],$p[C('DB_PRODUCT_USTARIFF')],$p['ussw-fee'],$p['way-to-us-fee'],$p['local-shipping-fee1'],$_POST["maxbbpPercent"]);
 
 		    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]<$data[$key]["minimum-seller-allowed-price"]){
-		    			$data[$key]["minimum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
+		    			$data[$key]["minimum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")]*0.95;
 		    		}
 		    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]>$data[$key]["maximum-seller-allowed-price"]){
 		    			$data[$key]["maximum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
