@@ -203,7 +203,7 @@ class StorageAction extends CommonAction{
             $highestColumn = $sheet->getHighestColumn(); // 取得总列数
 
             //excel first column name verify
-            for($c='A';$c!=$highestColumn;$c++){
+            for($c='A';$c<=$highestColumn;$c++){
                 $firstRow[$c] = $objPHPExcel->getActiveSheet()->getCell($c.'1')->getValue(); 
             }
 
