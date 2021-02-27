@@ -215,7 +215,7 @@ class StorageAction extends CommonAction{
                   $tmp[C('DB_USSTORAGE_AINVENTORY')] = $objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue()==null?0:$objPHPExcel->getActiveSheet()->getCell("J".$i)->getValue();
                   $tmp[C('DB_USSTORAGE_CINVENTORY')] = $tmp[C('DB_USSTORAGE_AINVENTORY')]+$tmp[C('DB_USSTORAGE_OINVENTORY')]+$tmp[C('DB_USSTORAGE_CSALES')];
                   $tmp[C('DB_USSTORAGE_OINVENTORY')]=0;
-                  $tmp[C('DB_USSTORAGE_POSITION')] = $objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue();
+                  $tmp[C('DB_USSTORAGE_POSITION')] = strval($objPHPExcel->getActiveSheet()->getCell("B".$i)->getValue());
                   $usswStorage->save($tmp);
                   $tmp=null;
                 }
