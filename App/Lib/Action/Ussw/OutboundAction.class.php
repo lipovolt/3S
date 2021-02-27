@@ -1018,7 +1018,7 @@ class OutboundAction extends CommonOutboundAction{
 
     private function exportPackingList($outboundOrder){
         $xlsName  = "Packinglist";
-        $xlsCell  = array(
+        $xlsCellData  = array(
             array(C('DB_USSW_OUTBOUND_ITEM_MARKET_NO'),'平台订单号'),
             array(C('DB_USSW_OUTBOUND_BUYER_NAME'),'收货人'),
             array(C('DB_USSW_OUTBOUND_BUYER_ADDRESS1'),'收货地址1'),
@@ -1032,7 +1032,13 @@ class OutboundAction extends CommonOutboundAction{
             array(C('DB_PRODUCT_CNAME'),'产品名称'),
             array(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'),'数量') 
             );
-        $this->exportExcel($xlsName,$xlsCell,$this->getPackingList($outboundOrder));
+        $xlsCellPickup  = array(
+            array(C('DB_USSW_OUTBOUND_ITEM_POSITION'),'货位'),
+            array(C('DB_USSW_OUTBOUND_ITEM_SKU'),'产品编码'),
+            array(C('DB_USSW_OUTBOUND_ITEM_QUANTITY'),'数量'),
+            array(C('DB_PRODUCT_CNAME'),'产品名称')
+            );
+        $this->exportMoreSheetsExcel($xlsName,array($xlsCellData,$xlsCellPickup),$this->getPackingList($outboundOrder));
     }
 
     private function getPackingList($outboundOrder){
@@ -1040,6 +1046,9 @@ class OutboundAction extends CommonOutboundAction{
         $obo=M(C('DB_USSW_OUTBOUND'));
         $oboi=M(C('DB_USSW_OUTBOUND_ITEM'));
         $products=M(C('DB_PRODUCT'));
+
+        $pickup = array();
+
         foreach ($outboundOrder as $key => $value) {
             $order=$obo->where(array(C('DB_USSW_OUTBOUND_MARKET_NO')=>$value[C('DB_USSW_OUTBOUND_MARKET_NO')]))->find();
             $items=$oboi->where(array(C('DB_USSW_OUTBOUND_ITEM_OOID')=>$order[C('DB_USSW_OUTBOUND_ID')]))->select();
@@ -1059,9 +1068,28 @@ class OutboundAction extends CommonOutboundAction{
                 $data[$i][C('DB_PRODUCT_CNAME')]=$products->where(array(C('DB_PRODUCT_SKU')=>$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
                 $data[$i][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')]=$valueItem[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
                 $i=$i+1;
+
+                if(array_key_exists($valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')], $pickup)){
+                    $pickup[$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')]][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')] = $pickup[$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')]][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')] + $valueItem[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
+                }else{
+                    $pickup[$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')]] = array(C('DB_USSW_OUTBOUND_ITEM_POSITION')=>$valueItem[C('DB_USSW_OUTBOUND_ITEM_POSITION')],C('DB_USSW_OUTBOUND_ITEM_QUANTITY')=>$valueItem[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')],C('DB_PRODUCT_CNAME')=>$data[$i][C('DB_PRODUCT_CNAME')]);
+                }
             }
         }
-        return $data;
+        return array($data, $this->resortPickupArray($pickup));
+    }
+
+    private function resortPickupArray($pickup){
+        $new = array();
+        foreach ($pickup as $key => $value) {
+            array_push($new, array(C('DB_USSW_OUTBOUND_ITEM_SKU')=>strval($key),C('DB_USSW_OUTBOUND_ITEM_POSITION')=>$value[C('DB_USSW_OUTBOUND_ITEM_POSITION')],C('DB_USSW_OUTBOUND_ITEM_QUANTITY')=>$value[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')],C('DB_PRODUCT_CNAME')=>$value[C('DB_PRODUCT_CNAME')]));
+        }
+
+        foreach ($new as $key => $value) {
+            $position[$key] = $value[C('DB_USSW_OUTBOUND_ITEM_POSITION')];
+        }
+        array_multisort($position, SORT_ASC, $new);
+        return $new;
     }
 
     public function packing($sid){

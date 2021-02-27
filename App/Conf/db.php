@@ -318,7 +318,7 @@ return array(
 	/*
 	CREATE TABLE IF NOT EXISTS `3s_usstorage` (
 	  `id` smallint(10) unsigned primary key NOT NULL auto_increment,
-	  `position` varchar(10) NOT NULL,
+	  `position` varchar(10) DEFAULT NULL,
 	  `sku` varchar(10) NOT NULL,
 	  `cname` varchar(255) DEFAULT NULL,
 	  `ename` varchar(255) DEFAULT NULL,
