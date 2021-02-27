@@ -1067,13 +1067,12 @@ class OutboundAction extends CommonOutboundAction{
                 $data[$i][C('DB_USSW_OUTBOUND_ITEM_SKU')]=$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')];
                 $data[$i][C('DB_PRODUCT_CNAME')]=$products->where(array(C('DB_PRODUCT_SKU')=>$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')]))->getField(C('DB_PRODUCT_CNAME'));
                 $data[$i][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')]=$valueItem[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
-                $i=$i+1;
-
                 if(array_key_exists($valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')], $pickup)){
                     $pickup[$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')]][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')] = $pickup[$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')]][C('DB_USSW_OUTBOUND_ITEM_QUANTITY')] + $valueItem[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')];
                 }else{
                     $pickup[$valueItem[C('DB_USSW_OUTBOUND_ITEM_SKU')]] = array(C('DB_USSW_OUTBOUND_ITEM_POSITION')=>$valueItem[C('DB_USSW_OUTBOUND_ITEM_POSITION')],C('DB_USSW_OUTBOUND_ITEM_QUANTITY')=>$valueItem[C('DB_USSW_OUTBOUND_ITEM_QUANTITY')],C('DB_PRODUCT_CNAME')=>$data[$i][C('DB_PRODUCT_CNAME')]);
                 }
+                $i=$i+1;
             }
         }
         return array($data, $this->resortPickupArray($pickup));
