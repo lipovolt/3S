@@ -1768,6 +1768,17 @@ class GgsUsswSaleAction extends CommonAction{
             }
 
             if($this->verifyEbayFxtcn($firstRow) && $this->verifyExcludeFxt($excludeFirstRow)){
+            	//save exclude sheet as array
+            	for($e=2;$e<=$excludeHighestRow;$e++){
+            		if($excludeSheet->getCell("A".$e)->getValue()!=null){            			
+	        			if(array_key_exists($this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue())),$excludeArray)){
+	        				$excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] = $excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] + $excludeSheet->getCell('B'.$e)->getValue();
+	        			}else{
+	        				$excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] = $excludeSheet->getCell('B'.$e)->getValue();
+	        			}
+            		}            		
+        		}
+
             	$storageTable=M($this->getStorageTableName($account));
             	$salePlanTable=M($this->getSalePlanTableName($account));
             	$productTable=M(C('DB_PRODUCT'));
@@ -1792,12 +1803,18 @@ class GgsUsswSaleAction extends CommonAction{
 
                 	if(count($splitSku)==1){
                 		//Single sku
-                		$oinventory=0;
+                		/*$oinventory=0;
                 		for($e=1;$e<=$excludeHighestRow;$e++){
                 			if($this->skuDecode($excludeSheet->getCell("A".$e)->getValue())==$splitSku[0][0]){
                 				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
                 			}
-                		}
+                		}*/
+                		if(array_key_exists($splitSku[0][0], $excludeArray)){
+			    			$oinventory=$excludeArray[$splitSku[0][0]];
+			    		}else{
+			    			$oinventory=0;
+			    		}
+
                 		$salePlan=$salePlanTable->where(array('sku'=>$splitSku[0][0]))->find();
                 		$ainventory=$storageTable->where(array('sku'=>$splitSku[0][0]))->getField('ainventory');
                 		if($ainventory!=null){
@@ -1835,12 +1852,19 @@ class GgsUsswSaleAction extends CommonAction{
                 		$data[$i-2]['Suggest']="组合销售商品，无法给出建议售价";
                 		$data[$i-2][$firstRow['H']]=65536;
                 		foreach ($splitSku as $key => $skuQuantity){
-                			$oinventory=0;
+                			/*$oinventory=0;
 	                		for($e=1;$e<=$excludeHighestRow;$e++){
 	                			if($excludeSheet->getCell("A".$e)->getValue()==$skuQuantity[0]){
 	                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
 	                			}
-	                		}
+	                		}*/
+	                		if(array_key_exists($skuQuantity[0], $excludeArray)){
+				    			$oinventory=$excludeArray[$skuQuantity[0]];
+				    		}else{
+				    			$oinventory=0;
+				    		}
+
+			    		
                 			$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
                 			if($ainventory!=null){
                 				$ainventory=($ainventory-$oinventory)<0?0:($ainventory-$oinventory);
@@ -2006,6 +2030,17 @@ class GgsUsswSaleAction extends CommonAction{
 				
 
             if($this->verifyExcludeFxt($excludeFirstRow) && $this->verifyWithSellFxt($withSellFirstRow)){
+            	//save exclude sheet as array
+            	for($e=2;$e<=$excludeHighestRow;$e++){
+            		if($excludeSheet->getCell("A".$e)->getValue()!=null){            			
+	        			if(array_key_exists($this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue())),$excludeArray)){
+	        				$excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] = $excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] + $excludeSheet->getCell('B'.$e)->getValue();
+	        			}else{
+	        				$excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] = $excludeSheet->getCell('B'.$e)->getValue();
+	        			}
+            		}            		
+        		}
+
             	if($_POST['fbaFxc']==0){
             		$fxcmap['sku'] = array('notlike',array('FBA_%'));
             		$salePlan=M($this->getSalePlanTableName($account))->where($fxcmap)->limit($_POST['startRow'], $_POST['endRow']==-1?M($this->getSalePlanTableName($account))->count():$_POST['endRow'])->select();
@@ -2041,12 +2076,18 @@ class GgsUsswSaleAction extends CommonAction{
 		    		if($value[C("DB_USSW_SALE_PLAN_PRICE")]>$data[$key]["maximum-seller-allowed-price"]){
 		    			$data[$key]["maximum-seller-allowed-price"]=$value[C("DB_USSW_SALE_PLAN_PRICE")];
 		    		}
-		    		$oinventory=0;
-            		for($e=1;$e<=$excludeHighestRow;$e++){
+
+		    		if(array_key_exists($value[C("DB_USSW_SALE_PLAN_SKU")], $excludeArray)){
+		    			$oinventory=$excludeArray[$value[C("DB_USSW_SALE_PLAN_SKU")]];
+		    		}else{
+		    			$oinventory=0;
+		    		}
+		    		
+            		/*for($e=1;$e<=$excludeHighestRow;$e++){
             			if($excludeSheet->getCell("A".$e)->getValue()==$value[C("DB_USSW_SALE_PLAN_SKU")]){
             				$oinventory= $objPHPExcel->getActiveSheet()->getCell('B'.$e)->getValue();
             			}
-            		}
+            		}*/
 		    		
 		    		if(!$this->isFBASku($value[C("DB_USSW_SALE_PLAN_SKU")])){
 		    			if($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY"))==null){
@@ -2068,27 +2109,37 @@ class GgsUsswSaleAction extends CommonAction{
 		    		$data[$lengthOfData]['price'] = $withSellSheet->getCell("B".$wsi)->getValue();
 		    		$explodedSku = explode('_', $withSellSheet->getCell("A".$wsi)->getValue());
 		    		$splitSku = $this->splitSku($explodedSku[0]);
-		    		$oinventory=0;
 		    		if(count($splitSku)==1){
 		    			//single sku
 		    			if($splitSku[0][1]==1){
                 			//Single sku and Single sale quantity, get the ainventory quantity and the suggested sale price
-                			for($e=2;$e<=$excludeHighestRow;$e++){
+                			if(array_key_exists($splitSku[0][0], $excludeArray)){
+				    			$oinventory=$excludeArray[$splitSku[0][0]];
+				    		}else{
+				    			$oinventory=0;
+				    		}
+                			/*for($e=2;$e<=$excludeHighestRow;$e++){
 		            			if($excludeSheet->getCell("A".$e)->getValue()==$splitSku[0][0]){
 		            				$oinventory= $objPHPExcel->getSheet(0)->getCell('B'.$e)->getValue();
 		            				break;
 		            			}
-		            		}
+		            		}*/
+
                 			$ainventory=($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$splitSku[0][0]))->getField(C("DB_USSTORAGE_AINVENTORY")))-$oinventory;
 		    				$data[$lengthOfData]["quantity"]=$ainventory>0?$ainventory:0;
                 		}else{
                 			//Single sku and multiple sale quantity
-                			for($e=2;$e<=$excludeHighestRow;$e++){
+                			if(array_key_exists($splitSku[0][0], $excludeArray)){
+				    			$oinventory=$excludeArray[$splitSku[0][0]];
+				    		}else{
+				    			$oinventory=0;
+				    		}
+                			/*for($e=2;$e<=$excludeHighestRow;$e++){
 		            			if($excludeSheet->getCell("A".$e)->getValue()==$splitSku[0][0]){
 		            				$oinventory= $objPHPExcel->getSheet(0)->getCell('B'.$e)->getValue();
 		            				break;
 		            			}
-		            		}
+		            		}*/
 		            		$ainventory=($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$splitSku[0][0]))->getField(C("DB_USSTORAGE_AINVENTORY")))/$splitSku[0][1]-$oinventory;
 		            		$data[$lengthOfData]["quantity"]=$ainventory>0?$ainventory:0;
                 		}
@@ -2097,12 +2148,18 @@ class GgsUsswSaleAction extends CommonAction{
 		    			//multiple sku
 		    			$data[$lengthOfData]["quantity"]=65536;
 		    			foreach ($splitSku as $key => $skuQuantity){
-                			$oinventory=0;
+                			/*$oinventory=0;
 	                		for($e=1;$e<=$excludeHighestRow;$e++){
 	                			if($excludeSheet->getCell("A".$e)->getValue()==$skuQuantity[0]){
 	                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
 	                			}
-	                		}
+	                		}*/
+	                		if(array_key_exists($skuQuantity[0], $excludeArray)){
+				    			$oinventory=$excludeArray[$skuQuantity[0]];
+				    		}else{
+				    			$oinventory=0;
+				    		}
+
                 			if($skuQuantity[1]==1){
                 				//Multiple sku and Single sale quantity
                 				$ainventory=$storageTable->where(array('sku'=>$skuQuantity[0]))->getField('ainventory');
