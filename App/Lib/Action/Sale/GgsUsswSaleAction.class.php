@@ -1770,12 +1770,14 @@ class GgsUsswSaleAction extends CommonAction{
             if($this->verifyEbayFxtcn($firstRow) && $this->verifyExcludeFxt($excludeFirstRow)){
             	//save exclude sheet as array
             	for($e=2;$e<=$excludeHighestRow;$e++){
-            		if($excludeSheet->getCell("A".$e)->getValue()!=null){            			
-	        			if(array_key_exists($this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue())),$excludeArray)){
-	        				$excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] = $excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] + $excludeSheet->getCell('B'.$e)->getValue();
-	        			}else{
-	        				$excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] = $excludeSheet->getCell('B'.$e)->getValue();
-	        			}
+            		if($excludeSheet->getCell("A".$e)->getValue()!=null){
+            			foreach ($this->splittStandardSku(strval($excludeSheet->getCell("A".$e)->getValue())) as $key => $value) {
+            			     if(array_key_exists($this->skuDecode($value['sku']),$excludeArray)){
+		        				$excludeArray[$this->skuDecode($value['sku'])] = $excludeArray[$this->skuDecode($value['sku'])] + $value['qty']*$excludeSheet->getCell('B'.$e)->getValue();
+		        			}else{
+		        				$excludeArray[$this->skuDecode($value['sku'])] = $value['qty']*$excludeSheet->getCell('B'.$e)->getValue();
+		        			}
+            			} 
             		}            		
         		}
 
@@ -1803,12 +1805,6 @@ class GgsUsswSaleAction extends CommonAction{
 
                 	if(count($splitSku)==1){
                 		//Single sku
-                		/*$oinventory=0;
-                		for($e=1;$e<=$excludeHighestRow;$e++){
-                			if($this->skuDecode($excludeSheet->getCell("A".$e)->getValue())==$splitSku[0][0]){
-                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
-                			}
-                		}*/
                 		if(array_key_exists($splitSku[0][0], $excludeArray)){
 			    			$oinventory=$excludeArray[$splitSku[0][0]];
 			    		}else{
@@ -1852,12 +1848,6 @@ class GgsUsswSaleAction extends CommonAction{
                 		$data[$i-2]['Suggest']="组合销售商品，无法给出建议售价";
                 		$data[$i-2][$firstRow['H']]=65536;
                 		foreach ($splitSku as $key => $skuQuantity){
-                			/*$oinventory=0;
-	                		for($e=1;$e<=$excludeHighestRow;$e++){
-	                			if($excludeSheet->getCell("A".$e)->getValue()==$skuQuantity[0]){
-	                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
-	                			}
-	                		}*/
 	                		if(array_key_exists($skuQuantity[0], $excludeArray)){
 				    			$oinventory=$excludeArray[$skuQuantity[0]];
 				    		}else{
@@ -2032,12 +2022,14 @@ class GgsUsswSaleAction extends CommonAction{
             if($this->verifyExcludeFxt($excludeFirstRow) && $this->verifyWithSellFxt($withSellFirstRow)){
             	//save exclude sheet as array
             	for($e=2;$e<=$excludeHighestRow;$e++){
-            		if($excludeSheet->getCell("A".$e)->getValue()!=null){            			
-	        			if(array_key_exists($this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue())),$excludeArray)){
-	        				$excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] = $excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] + $excludeSheet->getCell('B'.$e)->getValue();
-	        			}else{
-	        				$excludeArray[$this->skuDecode(strval($excludeSheet->getCell("A".$e)->getValue()))] = $excludeSheet->getCell('B'.$e)->getValue();
-	        			}
+            		if($excludeSheet->getCell("A".$e)->getValue()!=null){
+            			foreach ($this->splittStandardSku(strval($excludeSheet->getCell("A".$e)->getValue())) as $key => $value) {
+            			     if(array_key_exists($this->skuDecode($value['sku']),$excludeArray)){
+		        				$excludeArray[$this->skuDecode($value['sku'])] = $excludeArray[$this->skuDecode($value['sku'])] + $value['qty']*$excludeSheet->getCell('B'.$e)->getValue();
+		        			}else{
+		        				$excludeArray[$this->skuDecode($value['sku'])] = $value['qty']*$excludeSheet->getCell('B'.$e)->getValue();
+		        			}
+            			} 
             		}            		
         		}
 
@@ -2083,12 +2075,6 @@ class GgsUsswSaleAction extends CommonAction{
 		    			$oinventory=0;
 		    		}
 		    		
-            		/*for($e=1;$e<=$excludeHighestRow;$e++){
-            			if($excludeSheet->getCell("A".$e)->getValue()==$value[C("DB_USSW_SALE_PLAN_SKU")]){
-            				$oinventory= $objPHPExcel->getActiveSheet()->getCell('B'.$e)->getValue();
-            			}
-            		}*/
-		    		
 		    		if(!$this->isFBASku($value[C("DB_USSW_SALE_PLAN_SKU")])){
 		    			if($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$value[C("DB_USSW_SALE_PLAN_SKU")]))->getField(C("DB_USSTORAGE_AINVENTORY"))==null){
 			    			$data[$key]["quantity"]=0;
@@ -2118,12 +2104,6 @@ class GgsUsswSaleAction extends CommonAction{
 				    		}else{
 				    			$oinventory=0;
 				    		}
-                			/*for($e=2;$e<=$excludeHighestRow;$e++){
-		            			if($excludeSheet->getCell("A".$e)->getValue()==$splitSku[0][0]){
-		            				$oinventory= $objPHPExcel->getSheet(0)->getCell('B'.$e)->getValue();
-		            				break;
-		            			}
-		            		}*/
 
                 			$ainventory=($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$splitSku[0][0]))->getField(C("DB_USSTORAGE_AINVENTORY")))-$oinventory;
 		    				$data[$lengthOfData]["quantity"]=$ainventory>0?$ainventory:0;
@@ -2134,12 +2114,7 @@ class GgsUsswSaleAction extends CommonAction{
 				    		}else{
 				    			$oinventory=0;
 				    		}
-                			/*for($e=2;$e<=$excludeHighestRow;$e++){
-		            			if($excludeSheet->getCell("A".$e)->getValue()==$splitSku[0][0]){
-		            				$oinventory= $objPHPExcel->getSheet(0)->getCell('B'.$e)->getValue();
-		            				break;
-		            			}
-		            		}*/
+
 		            		$ainventory=($storageTable->where(array(C("DB_USSTORAGE_SKU")=>$splitSku[0][0]))->getField(C("DB_USSTORAGE_AINVENTORY")))/$splitSku[0][1]-$oinventory;
 		            		$data[$lengthOfData]["quantity"]=$ainventory>0?$ainventory:0;
                 		}
@@ -2148,12 +2123,6 @@ class GgsUsswSaleAction extends CommonAction{
 		    			//multiple sku
 		    			$data[$lengthOfData]["quantity"]=65536;
 		    			foreach ($splitSku as $key => $skuQuantity){
-                			/*$oinventory=0;
-	                		for($e=1;$e<=$excludeHighestRow;$e++){
-	                			if($excludeSheet->getCell("A".$e)->getValue()==$skuQuantity[0]){
-	                				$oinventory=$excludeSheet->getCell("B".$e)->getValue();
-	                			}
-	                		}*/
 	                		if(array_key_exists($skuQuantity[0], $excludeArray)){
 				    			$oinventory=$excludeArray[$skuQuantity[0]];
 				    		}else{
