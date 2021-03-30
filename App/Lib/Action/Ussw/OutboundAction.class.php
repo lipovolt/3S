@@ -1052,7 +1052,7 @@ class OutboundAction extends CommonOutboundAction{
         foreach ($outboundOrder as $key => $value) {
             $order=$obo->where(array(C('DB_USSW_OUTBOUND_MARKET_NO')=>$value[C('DB_USSW_OUTBOUND_MARKET_NO')]))->find();
             $items=$oboi->where(array(C('DB_USSW_OUTBOUND_ITEM_OOID')=>$order[C('DB_USSW_OUTBOUND_ID')]))->select();
-            $data[$i][C('DB_USSW_OUTBOUND_MARKET_NO')]=$value[C('DB_USSW_OUTBOUND_MARKET_NO')];
+            $data[$i][C('DB_USSW_OUTBOUND_MARKET_NO')]= strval($value[C('DB_USSW_OUTBOUND_MARKET_NO')]);
             $data[$i][C('DB_USSW_OUTBOUND_SELLER_ID')]=$value[C('DB_USSW_OUTBOUND_SELLER_ID')];
             $data[$i][C('DB_USSW_OUTBOUND_MARKET')]=$value[C('DB_USSW_OUTBOUND_MARKET')];
             $data[$i][C('DB_USSW_OUTBOUND_BUYER_NAME')]=$order[C('DB_USSW_OUTBOUND_BUYER_NAME')];
